@@ -1,4 +1,4 @@
 yeoman-generators
 =================
 
-Yeoman Generators
+A repository containing Yeoman generators for scaffolding out applications.
