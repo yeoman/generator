@@ -13,3 +13,17 @@ which can use custom prompts, remote dependencies and can do a lot more.
 * yeoman - the default yeoman generator, which includes prompts and more advanced capabilities.
 
 Read about the capbilities of our generators in our [docs](https://github.com/yeoman/yeoman/blob/master/docs/cli/generators.md).
+
+## Generators included
+
+* BBB (Backbone Boilerplate)
+* Backbone-Rails
+* Ember-Rails
+* Ember-Starter
+* AngularJS
+* QuickStart
+* Yeoman 
+* Twitter Bootstrap SASS/Compass
+* Jasmine
+* Mocha
+* Chrome Apps Basic Boilerplate
