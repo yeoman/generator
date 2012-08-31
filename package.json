@@ -15,9 +15,6 @@
     "type": "git",
     "url": "git://github.com/yeoman/generators.git"
   },
-  "dependencies": {
-    "grunt": "https://nodeload.github.com/cowboy/grunt/tarball/0ba6d4b529"
-  },
   "devDependencies": {
   },
   "engines": {

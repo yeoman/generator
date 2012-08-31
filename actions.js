@@ -1,7 +1,7 @@
 var fs = require('fs'),
   path = require('path'),
   grunt = require('grunt'),
-  fetch = require('../utils/fetch'),
+  fetch = require('fetch'),
   _ = grunt.util._;
 
 // The action mixin is comprised of Grunt's file, log, helper and prompt API,
