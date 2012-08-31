@@ -1,0 +1,26 @@
+{
+  "name": "yeoman-generators",
+  "version": "0.0.1",
+  "description": "The Yeoman Generator system",
+  "keywords": [
+    "front-end",
+    "tool",
+    "cli"
+  ],
+  "homepage": "http://yeoman.io",
+  "bugs": "https://github.com/yeoman/generators/issues",
+  "author": "Chrome Developer Relations",
+  "main": "./generators",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yeoman/generators.git"
+  },
+  "dependencies": {
+    "grunt": "https://nodeload.github.com/cowboy/grunt/tarball/0ba6d4b529"
+  },
+  "devDependencies": {
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
