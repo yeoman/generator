@@ -1,6 +1,6 @@
 'use strict';
 
-<%= _.camelize(appname) %>App.controller('<%= _.classify(name) %>Ctrl', function($scope) {
+<%= _.camelize(appname) %>App.controller('MainCtrl', function($scope) {
   $scope.awesomeThings = [
     'HTML5 Boilerplate',
     'AngularJS',
