@@ -16,9 +16,9 @@ function Generator() {
 
 util.inherits(Generator, yeoman.generators.NamedBase);
 
-Generator.prototype.createControllerFiles = function createControllerFiles() {
-  this.template('controller.js', 'app/scripts/controllers/' + this.name + '.js');
-  this.template('spec/controller.js', 'test/spec/controllers/' + this.name + '.js');
+Generator.prototype.createFilterFiles = function createFilterFiles() {
+  this.template('filter.js', 'app/scripts/filters/' + this.name + '.js');
+  this.template('spec/filter.js', 'test/spec/filters/' + this.name + '.js');
 };
 
 Generator.prototype.rewriteIndexHtml = function() {
@@ -29,7 +29,7 @@ Generator.prototype.rewriteIndexHtml = function() {
     needle: '<!-- endbuild -->',
     haystack: body,
     splicable: [
-      '<script src="scripts/controllers/' + this.name + '.js"></script>'
+      '<script src="scripts/filters/' + this.name + '.js"></script>'
     ]
   });
 

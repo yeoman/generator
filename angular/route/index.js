@@ -1,8 +1,9 @@
 
 var path = require('path'),
   util = require('util'),
-  yeoman = require('../../../../'),
   grunt = require('grunt'),
+  _ = grunt.util._,
+  yeoman = require('../../../../'),
   angularUtils = require('../util.js');
 
 module.exports = Generator;
@@ -12,24 +13,29 @@ function Generator() {
   this.sourceRoot(path.join(__dirname, '../templates'));
 
   this.appname = path.basename(process.cwd());
+
+  this.hookFor('angular:controller', {
+    args: [this.name]
+  });
+  this.hookFor('angular:view', {
+    args: [this.name]
+  });
 }
 
 util.inherits(Generator, yeoman.generators.NamedBase);
 
-Generator.prototype.createControllerFiles = function createControllerFiles() {
-  this.template('controller.js', 'app/scripts/controllers/' + this.name + '.js');
-  this.template('spec/controller.js', 'test/spec/controllers/' + this.name + '.js');
-};
-
-Generator.prototype.rewriteIndexHtml = function() {
-  var file = 'app/index.html';
+Generator.prototype.rewriteAppJs = function() {
+  var file = 'app/scripts/' + this.appname + '.js';
   var body = grunt.file.read(file);
   
   body = angularUtils.rewrite({
-    needle: '<!-- endbuild -->',
+    needle: '.otherwise',
     haystack: body,
     splicable: [
-      '<script src="scripts/controllers/' + this.name + '.js"></script>'
+      ".when('/" + this.name + "', {",
+      "  templateUrl: 'views/" + this.name + ".html',",
+      "  controller: '" + _.classify(this.name) + "Ctrl'",
+      "})"
     ]
   });
 
