@@ -13,6 +13,13 @@ var generators = module.exports;
 generators.Base = require('./base');
 generators.NamedBase = require('./named-base');
 
+
+// backward compat, make them available as generators.generators.Base &
+// NamedBase (as most of generators use yeoman.generators.Stuff)
+generators.generators = {};
+generators.generators.Base = generators.Base;
+generators.generators.NamedBase = generators.NamedBase;
+
 // hidden namespaces don't show up in the help output
 // XXX hidden namespaces for now means app context, should we filter them
 // automatically in help output?
@@ -110,6 +117,11 @@ generators.setup = function setup(grunt) {
   // try to locate locally installed yeoman plugin
   generators.plugins = grunt.file.expandDirs('node_modules/yeoman-*');
 
+  // and built-in one in yeoman packages, within one of its npm deps
+  // XXX: this is clumpsy, works specifically for yeoman and when
+  // yeoman-generators is one of the top level deps.
+  generators.plugins = generators.plugins.concat(__dirname);
+
   return generators;
 };
 
@@ -176,7 +188,7 @@ generators.help = function help(args, options, config) {
   console.log(out);
 
   // strip out the yeoman base namespace
-  groups.yeoman = groups.yeoman.map(function(ns) {
+  groups.yeoman = (groups.yeoman || []).map(function(ns) {
     return ns.replace(/^yeoman:/, '');
   });
 
