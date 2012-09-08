@@ -26,4 +26,5 @@ Read about the capbilities of our generators in our [docs](https://github.com/ye
 * Twitter Bootstrap SASS/Compass
 * Jasmine
 * Mocha
+* Testacular
 * Chrome Apps Basic Boilerplate
