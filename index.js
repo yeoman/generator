@@ -456,7 +456,11 @@ generators.lookupHelp = function lookupHelp(basedir, args, options, config) {
     if ( typeof generator.module !== 'function' ) {
       return false;
     }
-    generator.instance = new generator.module(args, options, config);
+    try {
+        generator.instance = new generator.module(args, options, config);
+    } catch(e) {
+        console.log(e.message.red);
+    }
     return generator.instance instanceof generators.Base;
   }).sort(function(a, b) {
     return a.namespace < b.namespace;
