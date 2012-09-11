@@ -17,7 +17,7 @@ Available generators:
 ## Architecture
 
 Ember does not require an organized file structure. However, yeoman-ember
-allows you to use `yeman g ember:all` to create the following directory
+allows you to use `yeoman init ember:all` to create the following directory
 structure under `app/scripts`:
 
     controllers/
