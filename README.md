@@ -12,7 +12,7 @@ which can use custom prompts, remote dependencies and can do a lot more.
 * quickstart - a basic boilerplate generator with jQuery, Modernizr and HTML5 Boilerplate
 * yeoman - the default yeoman generator, which includes prompts and more advanced capabilities.
 
-Read about the capbilities of our generators in our [docs](https://github.com/yeoman/yeoman/blob/master/docs/cli/generators.md).
+Read about the capabilities of our generators in our [docs](https://github.com/yeoman/yeoman/blob/master/docs/cli/generators.md).
 
 ## Generators included
 
