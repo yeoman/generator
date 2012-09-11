@@ -15,7 +15,7 @@ function fetch(tarball, target, cb) {
 
   var log = this.log
     .subhead('Fetching ' + tarball)
-    .writeln('This might take a few moment'.yellow);
+    .writeln('This might take a few moments'.yellow);
 
   // tarball untar opts
   var extractOpts = { type: 'Directory', path: target, strip: 1 };
