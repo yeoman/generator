@@ -1,4 +1,3 @@
-
 name:     Chrome App Basics
 author:   Paul Lewis, with changes by Addy Osmani
 provides: HTML5 Boilerplate, manifest, icon, config.
