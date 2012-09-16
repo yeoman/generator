@@ -1,6 +1,5 @@
 var fs = require('fs'),
   path = require('path'),
-  colors = require('colors'),
   zlib = require('zlib'),
   request = require('request'),
   tar = require('tar');

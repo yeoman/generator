@@ -1,5 +1,10 @@
 var path = require('path');
 
+// some of our API is based on grunt helpers, so we need to ensure we init it,
+// now that it's pulled from generators package (and not from yeoman anymore)
+var grunt = require('grunt');
+grunt.task.init([]);
+
 //
 // Inspired by
 // https://github.com/rails/rails/blob/master/railties/lib/rails/generators.rb
