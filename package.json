@@ -15,9 +15,13 @@
     "type": "git",
     "url": "git://github.com/yeoman/generators.git"
   },
-  "devDependencies": {},
-  "engines": {
-    "node": ">=0.8.0"
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha test/*.js"
+  },
+  "devDependencies": {
+    "rimraf": "~2.0.2",
+    "mocha": "~1.4.2",
+    "mkdirp": "~0.3.4"
   },
   "dependencies": {
     "grunt": "https://nodeload.github.com/cowboy/grunt/tarball/0ba6d4b529",
