@@ -3,7 +3,8 @@ var path = require('path');
 // some of our API is based on grunt helpers, so we need to ensure we init it,
 // now that it's pulled from generators package (and not from yeoman anymore)
 var grunt = require('grunt');
-grunt.task.init([]);
+// Intialize with an init like task, to bypass the missing Gruntfile check.
+grunt.task.init(['init:yeoman']);
 
 //
 // Inspired by
