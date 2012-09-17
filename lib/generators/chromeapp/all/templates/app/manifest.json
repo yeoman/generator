@@ -2,7 +2,7 @@
   "name": "<%= appFullName %>",
   "version": "1",
   "manifest_version": 2,
-  "description": "",
+  "description": "<%= appDescription %>",
   "icons": {
     "16": "icon-16.png",
     "128": "icon-128.png"
