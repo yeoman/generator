@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "name": "<% appFullName %>",
+    "description": "The name of the application"
+  },
+  "appDescription": {
+    "name": "<% appDescription %>",
+    "description": "The description of the application"
+  }
+}
