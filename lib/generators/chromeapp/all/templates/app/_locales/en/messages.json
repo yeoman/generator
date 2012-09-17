@@ -1,10 +1,10 @@
 {
   "appName": {
-    "name": "<% appFullName %>",
+    "message": "<%= appFullName %>",
     "description": "The name of the application"
   },
   "appDescription": {
-    "name": "<% appDescription %>",
+    "message": "<%= appDescription %>",
     "description": "The description of the application"
   }
 }
