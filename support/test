@@ -1,0 +1,42 @@
+#!/bin/bash
+
+base=$(pwd)
+test_dir=$base/temp
+parser=$base/support/output-parse.js
+
+echo """
+Generator test script helper
+----------------------------
+
+    ./supports/test <generator>
+
+where <generator> is the name of the generator to test.
+
+This script will:
+
+1. create $test_dir directory
+2. cd into $test_dir
+3. Run yeoman init $1
+4. Redirect the output to $parser script
+5. Get back the generated yeoman init mocha:generator command
+6. Run it
+
+"""
+
+generator=$1
+
+[ -x $generator ] && exit 1
+
+mkdir -p $test_dir
+cd $test_dir
+
+cmd=$(yeoman init $1 | node $parser $1)
+
+cd $base
+rm -rf $test_dir
+
+echo """
+Running: $cmd
+"""
+
+$cmd
