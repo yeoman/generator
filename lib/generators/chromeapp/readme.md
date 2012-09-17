@@ -1,5 +1,5 @@
 name:     Chrome App Basics
-author:   Paul Lewis, with changes by Addy Osmani
+author:   Paul Lewis, with changes by Addy Osmani and Paul Kinlan
 provides: HTML5 Boilerplate, manifest, icon, config.
 usage:    yeoman init chromeapp
 
