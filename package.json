@@ -31,7 +31,8 @@
     "rimraf": "~2.0.2",
     "tar": "~0.1.13",
     "diff": "~1.0.3",
-    "mime": "~1.2.7"
+    "mime": "~1.2.7",
+    "prompt": "~0.1.12"
   },
   "devDependencies": {
     "mocha": "~1.4.2"
