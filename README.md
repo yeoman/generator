@@ -33,4 +33,3 @@ Read about the capabilities of our generators in our
 * [Mocha](https://github.com/yeoman/generators/tree/master/lib/generators/mocha/app#readme)
 * [QuickStart]((https://github.com/yeoman/generators/tree/master/lib/generators/quickstart#readme)
 * [Testacular](https://github.com/yeoman/generators/tree/master/lib/generators/testacular/app#readme)
-* [Twitter Bootstrap SASS/Compass](https://github.com/yeoman/generators/tree/master/lib/generators/sass/app#readme)
