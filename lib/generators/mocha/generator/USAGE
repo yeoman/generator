@@ -6,7 +6,7 @@ Description:
     assertions will be generated for you.
 
 Example:
-    yeoman generate mocha:generator Thing
+    yeoman init mocha:generator Thing
 
     This will create:
         test/generators/test-thing.js
