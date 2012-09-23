@@ -12,9 +12,9 @@ process.stdin.on('data', function(chunk){
       .replace('\u001b[32m', '')
       .replace('\u001b[39m', '')
   }).filter(function(l) {
-    return /^(create|identical|force)/.test(l);
+    return /^\s*(create|identical|force)/.test(l);
   }).map(function(l) {
-    return l.replace(/^(create|identical|force)/, '');
+    return l.replace(/^\s*(create|identical|force)/, '').trim();
   });
 
   var cmd = 'yeoman init mocha:generator ' + args[0];
