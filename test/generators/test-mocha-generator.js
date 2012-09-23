@@ -5,11 +5,11 @@ var helpers = require('../..').test;
 describe('Mocha:Generator generator test', function() {
   before(helpers.before(path.join(__dirname, './temp')));
 
-  it('should run sucessfully', function(done) {
+  it('runs sucessfully', function(done) {
     helpers.runGenerator('mocha:generator', done);
   });
 
-  describe('create expected files', function() {
+  it('creates expected files', function() {
   
     // Use helpers.assertFile() to help you test the output of your generator
     //
@@ -19,7 +19,7 @@ describe('Mocha:Generator generator test', function() {
     //    helpers.assertFile('app/model/post.js');
     //    // Check content
     //    helpers.assertFile('app/model/post.js', /Backbone\.model/);
-    it('should generate expected files');
+    it('should create expected files');
   
   });
 });
