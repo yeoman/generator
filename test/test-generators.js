@@ -3,12 +3,10 @@ var path = require('path'),
   events = require('events'),
   assert = require('assert'),
   grunt = require('grunt'),
-  generators = require('..'),
-  helpers = require('./helpers');
+  generators = require('..');
 
 describe('Generators', function() {
-
-  before(helpers.before);
+  before(generators.test.before(path.join(__dirname, 'temp')));
 
   describe('yeoman.generators', function() {
     it('should have a Base object to extend from', function() {
