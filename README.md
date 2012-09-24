@@ -19,7 +19,11 @@ a basic boilerplate generator with jQuery, Modernizr and HTML5 Boilerplate
 the default yeoman generator, which includes prompts and more advanced capabilities.
 
 Read about the capabilities of our generators in our
-[docs](https://github.com/yeoman/yeoman/blob/master/docs/cli/generators.md).
+[docs](https://github.com/yeoman/yeoman/blob/master/docs/cli/generators.md). This guide will also cover how to create a new generator template using the command-line.
+
+## Testing generators
+
+There is currently no formal infrastructure for testing generators, however you may find our [mocha generator](https://github.com/yeoman/yeoman/wiki/Testing-generators) for custom generators useful.
 
 ## Generators Included
 
