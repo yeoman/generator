@@ -4,18 +4,18 @@ var fs = require('fs'),
   util = require('util'),
   events = require('events'),
   assert = require('assert'),
-  yeoman = require('../'),
   grunt = require('grunt'),
-  helpers = require('./helpers');
+  generators = require('../');
 
 describe('yeoman.generators.Base', function() {
+  before(generators.test.before(path.join(__dirname, 'temp')));
 
   before(function() {
     function Dummy() {
-      yeoman.generators.Base.apply(this, arguments);
+      generators.Base.apply(this, arguments);
     }
 
-    util.inherits(Dummy, yeoman.generators.Base);
+    util.inherits(Dummy, generators.Base);
 
     Dummy.prototype.test = function () {
       this.shouldRun = true;
@@ -26,8 +26,6 @@ describe('yeoman.generators.Base', function() {
 
     this.fixtures = path.join(__dirname, 'fixtures');
   });
-
-  before(helpers.before);
 
   describe('grunt.file API', function() {
     it('should be available in the generator API', function() {
@@ -119,7 +117,7 @@ describe('yeoman.generators.Base', function() {
 
   describe('generator.destinationRoot(root)', function() {
     it('should update the "_destinationRoot" property when root is given', function() {
-      this.dummy.destinationRoot('.test');
+      this.dummy.destinationRoot('.');
       assert.equal(this.dummy._destinationRoot, process.cwd());
     });
 
@@ -129,13 +127,18 @@ describe('yeoman.generators.Base', function() {
   });
 
   describe('generator.copy(source, destination, options)', function() {
-    it('should copy source files relative to the "sourceRoot" value', function(done) {
+
+    before(function(done) {
+      this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       this.dummy.copy('foo.js', 'write/to/foo.js');
+      this.dummy.conflicter.resolve(done);
+    });
+
+    it('should copy source files relative to the "sourceRoot" value', function(done) {
       fs.stat('write/to/foo.js', done);
     });
 
     it('should allow absolute path, and prevent the relative paths join', function(done) {
-      this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       fs.stat('write/to/bar.js', done);
     });
   });
@@ -152,10 +155,16 @@ describe('yeoman.generators.Base', function() {
   });
 
   describe('generator.write(filepath, content)', function() {
+
+    before(function(done) {
+      this.body = 'var bar = \'bar\';\n';
+      this.dummy.write('write/to/foobar.js', this.body);
+      this.dummy.conflicter.resolve(done);
+    });
+
     it('should write the specified files relative to the "destinationRoot" value', function(done) {
-      var body = 'var bar = \'bar\';\n';
-      this.dummy.write('write/to/bar.js', body);
-      fs.readFile('write/to/bar.js', 'utf8', function(err, actual) {
+      var body = this.body;
+      fs.readFile('write/to/foobar.js', 'utf8', function(err, actual) {
         if(err) return done(err);
         assert.ok(actual, body);
         done();
@@ -165,31 +174,33 @@ describe('yeoman.generators.Base', function() {
 
   describe('generator.template(source, destination, data)', function() {
 
-    before(function() {
+    before(function(done) {
       this.dummy.foo = 'fooooooo';
+      this.dummy.template('foo-template.js', 'write/to/from-template.js');
+      this.dummy.template('foo-template.js');
+      this.dummy.template('foo-template.js', 'write/to/from-template-bar.js', {
+        foo: 'bar'
+      });
+      this.dummy.template('foo-template.js', 'write/to/from-template.js');
+
+      this.dummy.conflicter.resolve(done);
     });
 
     it('should copy and process source file to destination', function(done) {
-      this.dummy.template('foo-template.js', 'write/to/from-template.js');
       fs.stat('write/to/from-template.js', done);
     });
 
     it('should defaults the destination to the source filepath value, relative to "destinationRoot" value', function() {
-      this.dummy.template('foo-template.js');
       var body = fs.readFileSync('foo-template.js', 'utf8');
       assert.equal(body, 'var fooooooo = \'fooooooo\';\n');
     });
 
     it('should process underscore templates with the passed-in data', function() {
-      this.dummy.template('foo-template.js', 'write/to/from-template.js', {
-        foo: 'bar'
-      });
-      var body = fs.readFileSync('write/to/from-template.js', 'utf8');
+      var body = fs.readFileSync('write/to/from-template-bar.js', 'utf8');
       assert.equal(body, 'var bar = \'bar\';\n');
     });
 
     it('should process underscore templates with the actual generator instance, when no data is given', function() {
-      this.dummy.template('foo-template.js', 'write/to/from-template.js');
       var body = fs.readFileSync('write/to/from-template.js', 'utf8');
       assert.equal(body, 'var fooooooo = \'fooooooo\';\n');
     });
@@ -197,8 +208,23 @@ describe('yeoman.generators.Base', function() {
 
   describe('generator.directory(source, destination)', function() {
 
-    it('should copy and process source files to destination', function(done) {
+    before(function(done) {
+      // avoid hitting conflict state in this configuration for now
+      if(grunt.file.exists('foo.js')) {
+        fs.unlinkSync('foo.js');
+      }
+
+      // avoid hitting conflict state in this configuration for now
+      if(grunt.file.exists('foo-template.js')) {
+        fs.unlinkSync('foo-template.js');
+      }
+
       this.dummy.directory('./', 'directory');
+      this.dummy.directory('./');
+      this.dummy.conflicter.resolve(done);
+    });
+
+    it('should copy and process source files to destination', function(done) {
       fs.stat('directory/foo-template.js', function(err) {
         if(err) return done(err);
         fs.stat('directory/foo.js', done);
@@ -206,13 +232,11 @@ describe('yeoman.generators.Base', function() {
     });
 
     it('should defaults the destination to the source filepath value, relative to "destinationRoot" value', function(done) {
-      this.dummy.directory('./');
       fs.stat('foo-template.js', function(err) {
         if(err) return done(err);
         fs.stat('foo.js', done);
       });
     });
-
 
     it('should process underscore templates with the actual generator instance', function() {
       var body = fs.readFileSync('directory/foo-template.js', 'utf8');
