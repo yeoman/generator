@@ -1,6 +1,6 @@
 {
   "name": "yeoman-generators",
-  "version": "0.0.1",
+  "version": "0.9.1",
   "description": "The Yeoman Generator system",
   "keywords": [
     "front-end",
