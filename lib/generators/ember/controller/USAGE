@@ -2,7 +2,7 @@ Description:
     Creates a new Ember.js controller
 
 Example:
-    yeoman generate controller Thing
+    yeoman init controller Thing
 
     This will create:
         app/scripts/controllers/thing-controller.js

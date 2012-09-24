@@ -5,12 +5,10 @@ var fs = require('fs'),
   events = require('events'),
   assert = require('assert'),
   grunt = require('grunt'),
-  generators = require('..'),
-  helpers = require('./helpers');
+  generators = require('..');
 
 describe('yeoman.generators.Base', function() {
-
-  before(helpers.before);
+  before(generators.test.before(path.join(__dirname, 'temp')));
 
   before(function() {
     function Dummy() {
@@ -30,7 +28,7 @@ describe('yeoman.generators.Base', function() {
     this.Dummy = Dummy;
 
     // actual generator
-    this.generator = generators.setup(grunt).create('app', [], {}, {});
+    this.generator = generators.setup(grunt).create('generator', ['test'], {}, {});
   });
 
   describe('generator.run(args, cb)', function() {
@@ -47,7 +45,7 @@ describe('yeoman.generators.Base', function() {
     it('should go through all registered hooks, and invoke them in series', function(done) {
       this.generator.runHooks(function(err) {
         if(err) return err;
-        fs.stat('test/index.html', done);
+        fs.stat('test/generators/test-test.js', done);
       });
     });
   });

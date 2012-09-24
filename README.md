@@ -1,30 +1,35 @@
-# Yeoman Generators
+# Yeoman Generators [![Build Status](https://secure.travis-ci.org/yeoman/generators.png?branch=master)](http://travis-ci.org/yeoman/generators)
 
 Rails-like Generators for Yeoman that provide scaffolding for your apps.
 
-## Getting started
+![Generators output](https://img.skitch.com/20120923-jxbn2njgk5dp7ttk94i1tx9ek2.png)
+
+![Generators diff](https://img.skitch.com/20120922-kpjs68bgkshtsru4cwnb64fn82.png)
+
+## Getting Started
 
 If you're interested in writing your own Yeoman generator we recommend first
 checking out two of the sample generators in this repository. There are typically
 two types of generators - simple boilerplate 'copiers' and more advanced generators
 which can use custom prompts, remote dependencies and can do a lot more.
 
-* quickstart - a basic boilerplate generator with jQuery, Modernizr and HTML5 Boilerplate
-* yeoman - the default yeoman generator, which includes prompts and more advanced capabilities.
+* [quickstart](https://github.com/yeoman/generators/tree/master/lib/generators/quickstart#readme) -
+a basic boilerplate generator with jQuery, Modernizr and HTML5 Boilerplate
+* [yeoman](https://github.com/yeoman/generators/tree/master/lib/generators/yeoman/app#readme) -
+the default yeoman generator, which includes prompts and more advanced capabilities.
 
-Read about the capabilities of our generators in our [docs](https://github.com/yeoman/yeoman/blob/master/docs/cli/generators.md).
+Read about the capabilities of our generators in our
+[docs](https://github.com/yeoman/yeoman/blob/master/docs/cli/generators.md).
 
-## Generators included
+## Generators Included
 
-* BBB (Backbone Boilerplate)
-* Backbone-Rails
-* Ember-Rails
-* Ember-Starter
-* AngularJS
-* QuickStart
-* Yeoman 
-* Twitter Bootstrap SASS/Compass
-* Jasmine
-* Mocha
-* Testacular
-* Chrome Apps Basic Boilerplate
+* [AngularJS](https://github.com/yeoman/generators/tree/master/lib/generators/angular#readme)
+* [Backbone](https://github.com/yeoman/generators/tree/master/lib/generators/backbone#readme)
+* [BBB (Backbone Boilerplate)](https://github.com/yeoman/generators/tree/master/lib/generators/bbb#readme)
+* [Chrome Apps Basic Boilerplate](https://github.com/yeoman/generators/tree/master/lib/generators/chromeapp#readme)
+* [Ember](https://github.com/yeoman/generators/tree/master/lib/generators/ember#readme)
+* [Ember-Starter](https://github.com/yeoman/generators/tree/master/lib/generators/ember-starter#readme)
+* [Jasmine](https://github.com/yeoman/generators/tree/master/lib/generators/jasmine/app#readme)
+* [Mocha](https://github.com/yeoman/generators/tree/master/lib/generators/mocha/app#readme)
+* [QuickStart]((https://github.com/yeoman/generators/tree/master/lib/generators/quickstart#readme)
+* [Testacular](https://github.com/yeoman/generators/tree/master/lib/generators/testacular/app#readme)

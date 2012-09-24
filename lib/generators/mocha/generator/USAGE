@@ -1,0 +1,12 @@
+Description:
+    This generator is here to help you scaffold a very basic mocha test suite
+    for a given generator, using yeoman-generators helpers.
+
+    Give it additional arguments as filepath to check, and the correspoding
+    assertions will be generated for you.
+
+Example:
+    yeoman init mocha:generator Thing
+
+    This will create:
+        test/generators/test-thing.js
