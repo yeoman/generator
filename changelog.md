@@ -1,4 +1,4 @@
-### 0.9.21 (25 September, 2012)
+### 0.9.2 (25 September, 2012)
 
 * index.html conflict solved (Pull [#66](https://github.com/yeoman/generators/pull/66)).
 
@@ -14,9 +14,7 @@
 
 * angularjs: gets es5 shim and json3 conditionally for oldIE (Pull [#61](https://github.com/yeoman/generators/pull/61)).
 
-* Chrome Apps Generator gets few many fixes (Pull [#59](https://github.com/yeoman/generators/pull/59)).
+* Chrome Apps Generator gets a few many fixes (Pull [#59](https://github.com/yeoman/generators/pull/59)).
 
 * Fix for issues to do with library clobbering due to re-use of the scripts/vendor directory (Pull [#57](https://github.com/yeoman/generators/pull/57)).
-
-* Ensure server is launched before tests Pull ([#56](https://github.com/yeoman/generators/pull/56)).
 
