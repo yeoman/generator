@@ -18,3 +18,4 @@
 
 * Fix for issues to do with library clobbering due to re-use of the scripts/vendor directory (Pull [#57](https://github.com/yeoman/generators/pull/57)).
 
+* Fix for grunt-contrib-coffee breaking yeoman server (Pull [#57](https://github.com/yeoman/generators/pull/57)).
