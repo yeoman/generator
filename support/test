@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var grunt = require('grunt');
+var exec = require('child_process').exec;
+
+var args = process.argv.slice(2);
+
+var generator = args[0];
+
+var testdir = path.join(__dirname, 'temp');
+var parser = path.resolve(__dirname, 'output-parse');
+
+var help = [
+  'Generator test script helper',
+  '----------------------------',
+  '',
+  '    ./supports/test <generator>',
+  '',
+  'where <generator> is the name of the generator to test.',
+  '',
+  'This script will:',
+  '',
+  '1. create $test_dir directory',
+  '2. cd into $test_dir',
+  '3. Run yeoman init $1',
+  '4. Redirect the output to $parser script',
+  '5. Get back the generated yeoman init mocha:generator command',
+  '6. Run it',
+  ''
+].join('\n');
+
+help = help.replace(/\$test_dir/g, testdir).replace(/\$parser/g, parser);
+
+console.error(help);
+
+if(!generator) {
+  console.error('.. Missing generator name ..');
+  return process.exit(1);
+}
+
+grunt.file.mkdir(testdir);
+process.chdir(testdir);
+
+var cmd = 'yeoman init ' + generator + ' -f';
+cmd = cmd + ' | node ' + parser + ' ' + generator
+
+console.error('Running command:', cmd);
+console.error('Directory:', process.cwd());
+
+var run = exec(cmd , function(err, generatorCmd) {
+  if(err) {
+    console.error(err);
+    return process.exit(1);
+  }
+
+  console.error('Command to run is: ');
+  console.error();
+  console.log(generatorCmd);
+});

@@ -1,7 +1,6 @@
-
-name:     Backbone Boilerplate
-author:   Original project: Tim Branyen, Generator: Addy Osmani
-provides: HTML5 Boilerplate, jQuery, Backbone.js, Layout Manager, Mocha
+name:     Backbone Boilerplate  
+author:   Original project: Tim Branyen, Generator: Addy Osmani  
+provides: HTML5 Boilerplate, jQuery, Backbone.js, Layout Manager, Mocha  
 usage:    yeoman init bbb
 
 This boilerplate is the product of much research and frustration.  Existing
