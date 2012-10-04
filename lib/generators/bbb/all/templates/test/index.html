@@ -8,13 +8,13 @@
 <body>
   <div id="mocha"></div>
   <script src="lib/mocha/mocha.js"></script>
-  <script>mocha.setup('bdd')</script>
+  <!-- define globals for mocha -->
+  <script>mocha.setup({ ui: 'bdd', globals: ['_', '$', 'jQuery*', 'Backbone', 'JST'] })</script>
   <!-- assertion framework -->
   <script src="lib/chai.js"></script>
   <script>expect = chai.expect</script>
-  <!-- include source files here... -->
-  <!-- include spec files here... -->
-  <script src="spec/example.js"></script>
+  <!-- Load application -->
+  <script data-main="../app/scripts/config" src="../app/scripts/libs/require.js"></script>
   <!-- trigger the mocha runner -->
   <script src="runner/mocha.js"></script>
 </body>
