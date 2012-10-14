@@ -17,5 +17,5 @@ Example:
         app.js
 		/thing/index
 		/thing/create
-		/thing/update
-		/thing/view
+		/thing/update/:id
+		/thing/view/:id
