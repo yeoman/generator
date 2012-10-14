@@ -1,0 +1,21 @@
+Description:
+    Creates a new AngularJS route
+
+Example:
+    yeoman init angular:crud thing [--coffee]
+
+    This will create:
+        app/scripts/controllers/thing/thingIndex.js
+        app/scripts/controllers/thing/thingCreate.js
+        app/scripts/controllers/thing/thingList.js
+        app/scripts/controllers/thing/thingUpdate.js
+        app/views/thing/thingIndex.html
+        app/views/thing/thingCreate.html
+        app/views/thing/thingList.html
+        app/views/thing/thingUpdate.html
+    And add routing to:
+        app.js
+		/thing/index
+		/thing/create
+		/thing/list
+		/thing/update
