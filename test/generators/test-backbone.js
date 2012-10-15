@@ -74,4 +74,21 @@ describe('Backbone generator test', function() {
     helpers.assertFile('app/scripts/collections/application-collection.js');
   
   });
+
+  it('runs sucessfully with --coffee as argument', function(done) {
+    helpers.runGenerator('backbone', {coffee: true} ,done);
+  });
+
+  it("creates expected files when run with --coffee as argument", function(){
+    helpers.assertFile('app/scripts/main.coffee');
+
+    helpers.assertFile('app/scripts/routes/application-router.coffee');
+
+    helpers.assertFile('app/scripts/views/application-view.coffee');
+
+    helpers.assertFile('app/scripts/models/application-model.coffee');
+
+    helpers.assertFile('app/scripts/collections/application-collection.coffee');
+  })
+
 });
