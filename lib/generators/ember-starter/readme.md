@@ -1,8 +1,7 @@
-
 name:     Ember Starter
 author:   Generator: Anthony Bull 
 provides: HTML5 Boilerplate, jQuery, Ember, Handlebars 
-usage:    yeoman init ember-start
+usage:    yeoman init ember-starter
 
 ## Description 
  
@@ -12,7 +11,7 @@ Gets you started with a "Hello World" implementation of
 ## Steps 
 
 - Make a directory (e.g. myEmberProj) and switch to it
-- Once in, run the following: `yeoman init ember-start`
+- Once in, run the following: `yeoman init ember-starter`
 - Startup Yeoman with: `yeoman server` (your app should open in a browser tab)
 - Click "/app"; you should see "Hello World" 
 
