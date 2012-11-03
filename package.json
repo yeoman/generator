@@ -25,7 +25,7 @@
     "test": "node node_modules/mocha/bin/mocha test/test-*.js test/generators/test-*.js --reporter spec"
   },
   "dependencies": {
-    "grunt": "https://nodeload.github.com/cowboy/grunt/tarball/0ba6d4b529",
+    "grunt": "https://github.com/cowboy/grunt/archive/0ba6d4b529.tar.gz",
     "cheerio": "~0.10.0",
     "request": "~2.9.200",
     "rimraf": "~2.0.2",
