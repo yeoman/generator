@@ -6,7 +6,9 @@ describe('Angular generator test', function() {
   before(helpers.before(path.join(__dirname, './temp')));
 
   it('runs sucessfully', function(done) {
-    helpers.runGenerator('angular', done);
+    helpers.mockPrompt(function(done) {
+      helpers.runGenerator('angular', done);      
+    }, done);
   });
 
   it('creates expected files', function() {
@@ -31,9 +33,9 @@ describe('Angular generator test', function() {
 
     helpers.assertFile('package.json');
 
-    helpers.assertFile('test/lib/angular-mocks.js');
+    helpers.assertFile('test/vendor/angular-mocks.js');
 
-    helpers.assertFile('app/scripts/temp.js');
+    helpers.assertFile('app/scripts/app.js');
 
     helpers.assertFile('app/index.html');
 
