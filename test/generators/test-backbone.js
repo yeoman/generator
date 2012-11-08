@@ -79,7 +79,7 @@ describe('Backbone generator test', function() {
     helpers.runGenerator('backbone', {coffee: true} ,done);
   });
 
-  it("creates expected files when run with --coffee as argument", function(){
+  it('creates expected files when run with --coffee as argument', function(){
     helpers.assertFile('app/scripts/main.coffee');
 
     helpers.assertFile('app/scripts/routes/application-router.coffee');
@@ -89,6 +89,6 @@ describe('Backbone generator test', function() {
     helpers.assertFile('app/scripts/models/application-model.coffee');
 
     helpers.assertFile('app/scripts/collections/application-collection.coffee');
-  })
+  });
 
 });

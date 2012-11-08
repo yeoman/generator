@@ -3,7 +3,7 @@ window.<%= grunt.util._.camelize(appname) %> =
   Collections: {},
   Views: {},
   Routers: {},
-  init: ->() {
+  init: ->
     console.log 'Hello from Backbone!'
 
 
