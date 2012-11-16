@@ -8,7 +8,7 @@ var fs = require('fs'),
   generators = require('..');
 
 describe('yeoman.generators.Base', function() {
-  before(generators.test.before(path.join(__dirname, 'temp')));
+  before(generators.test.before(path.join(__dirname, 'temp.dev')));
 
   before(function() {
     function Dummy() {
@@ -29,6 +29,12 @@ describe('yeoman.generators.Base', function() {
 
     // actual generator
     this.generator = generators.setup(grunt).create('generator', ['test'], {}, {});
+  });
+
+  describe('generator.appname', function() {
+    it('should be set with the project directory name without non-alphanums', function() {
+      assert.equal( this.dummy.appname, "temp dev" );
+    });
   });
 
   describe('generator.run(args, cb)', function() {
