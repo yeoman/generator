@@ -1,1 +1,0 @@
-class <%= grunt.util._.camelize(appname) %>.Routers.<%= _.classify(name) %>Router extends Backbone.Router
