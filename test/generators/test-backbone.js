@@ -57,9 +57,9 @@ describe('Backbone generator test', function() {
   
     helpers.assertFile('test/lib/expect.js');
   
-    helpers.assertFile('test/lib/mocha-1.2.2/mocha.css');
+    helpers.assertFile('test/lib/mocha/mocha.css');
   
-    helpers.assertFile('test/lib/mocha-1.2.2/mocha.js');
+    helpers.assertFile('test/lib/mocha/mocha.js');
   
     helpers.assertFile('test/runner/mocha.js');
   
@@ -89,6 +89,26 @@ describe('Backbone generator test', function() {
     helpers.assertFile('app/scripts/models/application-model.coffee');
 
     helpers.assertFile('app/scripts/collections/application-collection.coffee');
+  });
+
+  it('runs successfully with --test-framework as argument', function(done) {
+    helpers.runGenerator('backbone', {'test-framework': 'jasmine'} ,done);
+  });
+
+  it('creates jasmine files when run with --test-framework',function(){
+    helpers.assertFile('test/runner/headless.js');
+
+    helpers.assertFile('test/runner/html.js');
+
+    helpers.assertFile('test/lib/jasmine-1.2.0/jasmine.css');
+
+    helpers.assertFile('test/lib/jasmine-1.2.0/jasmine-html.js');
+
+    helpers.assertFile('test/lib/jasmine-1.2.0/jasmine.js');
+
+    helpers.assertFile('test/spec/');
+
+    helpers.assertFile('test/spec/introduction.js');
   });
 
 });
