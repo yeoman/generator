@@ -15,7 +15,7 @@ which can use custom prompts, remote dependencies and can do a lot more.
 
 * [quickstart](https://github.com/yeoman/generators/tree/master/lib/generators/quickstart#readme) -
 a basic boilerplate generator with jQuery, Modernizr and HTML5 Boilerplate
-* [yeoman](https://github.com/yeoman/generators/tree/master/lib/generators/yeoman/app#readme) -
+* [yeoman](https://github.com/yeoman/generator-webapp#readme) -
 the default yeoman generator, which includes prompts and more advanced capabilities.
 
 Read about the capabilities of our generators in our
@@ -27,13 +27,13 @@ There is currently no formal infrastructure for testing generators, however you 
 
 ## Generators Included
 
-* [AngularJS](https://github.com/yeoman/generators/tree/master/lib/generators/angular#readme)
-* [Backbone](https://github.com/yeoman/generators/tree/master/lib/generators/backbone#readme)
-* [BBB (Backbone Boilerplate)](https://github.com/yeoman/generators/tree/master/lib/generators/bbb#readme)
-* [Chrome Apps Basic Boilerplate](https://github.com/yeoman/generators/tree/master/lib/generators/chromeapp#readme)
+* [AngularJS](https://github.com/yeoman/generator-angular#readme)
+* [Backbone](https://github.com/yeoman/generator-backbone#readme)
+* [BBB (Backbone Boilerplate)](https://github.com/yeoman/generator-bbb#readme)
+* [Chrome Apps Basic Boilerplate](https://github.com/yeoman/generator-chromeapp#readme)
 * [Ember](https://github.com/yeoman/generators/tree/master/lib/generators/ember#readme)
 * [Ember-Starter](https://github.com/yeoman/generators/tree/master/lib/generators/ember-starter#readme)
 * [Jasmine](https://github.com/yeoman/generators/tree/master/lib/generators/jasmine/app#readme)
 * [Mocha](https://github.com/yeoman/generators/tree/master/lib/generators/mocha/app#readme)
 * [QuickStart]((https://github.com/yeoman/generators/tree/master/lib/generators/quickstart#readme)
-* [Testacular](https://github.com/yeoman/generators/tree/master/lib/generators/testacular/app#readme)
+* [Testacular](https://github.com/yeoman/generator-testacular#readme)
