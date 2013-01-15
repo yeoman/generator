@@ -17,9 +17,6 @@
   "bugs": "https://github.com/yeoman/generators/issues",
   "author": "Chrome Developer Relations",
   "main": "./main.js",
-  "bin": {
-    "yeoman-init": "bin/generators"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/yeoman/generators.git"
