@@ -1,14 +1,16 @@
 
-var path    = require('path');
-var helpers = require('../..').test;
+var path       = require('path');
+var helpers    = require('../..').test;
+var generators = require('../..');
 
 describe('Angular generator test', function() {
+  // cleanup the temp dir and cd into it
   before(helpers.before(path.join(__dirname, './temp')));
 
-  it('runs sucessfully', function(done) {
-    helpers.mockPrompt(function(done) {
-      helpers.runGenerator('angular', done);      
-    }, done);
+  before(function(done) {
+    // setup the environment
+    this.env = generators().lookup('*:*');
+    this.env.run('angular:all foo bar', done)
   });
 
   it('creates expected files', function() {

@@ -1,11 +1,11 @@
 
-var fs = require('fs'),
-  path = require('path'),
-  util = require('util'),
-  events = require('events'),
-  assert = require('assert'),
-  grunt = require('grunt'),
-  generators = require('../');
+var fs         = require('fs');
+var path       = require('path');
+var util       = require('util');
+var events     = require('events');
+var assert     = require('assert');
+var generators = require('../');
+var exists     = fs.existsSync || path.existsSync;
 
 describe('yeoman.generators.Base', function() {
   before(generators.test.before(path.join(__dirname, 'temp')));
@@ -21,87 +21,15 @@ describe('yeoman.generators.Base', function() {
       this.shouldRun = true;
     };
 
-    this.dummy = new Dummy;
-    this.Dummy = Dummy;
+    var env = this.env = generators();
+    env.register(Dummy, 'dummy');
+    this.dummy = env.create('dummy');
 
     this.fixtures = path.join(__dirname, 'fixtures');
   });
 
-  describe('grunt.file API', function() {
-    it('should be available in the generator API', function() {
-      var methods = Object.keys(grunt.file);
-      methods.forEach(function(method) {
-        assert.equal(typeof this.dummy[method], typeof grunt.file[method]);
-      }, this);
-    });
-  });
-
-  describe('grunt.log API', function() {
-    it('should be available in the generator API through this.log property', function() {
-      var methods = Object.keys(grunt.log);
-      methods.forEach(function(method) {
-        assert.equal(typeof this.dummy.log[method], typeof grunt.log[method]);
-      }, this);
-    });
-  });
-
-  describe('generator.helper(name, args)', function() {
-    it('should be a 1:1 mapping with grunt.helper()', function() {
-      assert.equal(grunt.helper, this.dummy.helper);
-    });
-  });
-
-  describe('generator.prompt(defaults, prompts, cb)', function() {
-    it('should be a 1:1 mapping with grunt.helper("prompts", ...)', function(done) {
-      this.dummy.prompt([], done);
-    });
-  });
-
-  describe('generator.promptForObj()', function() {
-    it('should be a 1:1 mapping with grunt.helper("prompt_for_obj")', function() {
-      var obj = this.dummy.promptForObj();
-
-      // expected props
-      var props = [
-        'name',
-        'title',
-        'description',
-        'version',
-        'repository',
-        'homepage',
-        'bugs',
-        'licenses',
-        'author_name',
-        'author_email',
-        'author_url',
-        'jquery_version',
-        'node_version',
-        'main',
-        'bin',
-        'npm_test',
-        'grunt_version'
-      ];
-
-      props.forEach(function(prop) {
-        var prompt = obj[prop];
-        assert.ok(prompt);
-        assert.ok(prompt.message, 'Undfined message for ' + prop);
-        assert.ok(prompt['default'], 'Undfined default for ' + prop);
-      });
-    });
-  });
-
-  describe('generator.promptFor(name, default)', function() {
-    it('should be a 1:1 mapping with grunt.helper("prompt_for", ...)', function() {
-      var obj = this.dummy.promptFor('name');
-      assert.equal(obj.message, 'Project name');
-
-      obj = this.dummy.promptFor('name', {
-        message: 'Enter a project name'
-      });
-
-      assert.equal(obj.altDefault.message, 'Enter a project name');
-    });
+  it('generator.prompt(defaults, prompts, cb)', function(done) {
+    this.dummy.prompt([], done);
   });
 
   describe('generator.sourceRoot(root)', function() {
@@ -210,12 +138,12 @@ describe('yeoman.generators.Base', function() {
 
     before(function(done) {
       // avoid hitting conflict state in this configuration for now
-      if(grunt.file.exists('foo.js')) {
+      if(exists('foo.js')) {
         fs.unlinkSync('foo.js');
       }
 
       // avoid hitting conflict state in this configuration for now
-      if(grunt.file.exists('foo-template.js')) {
+      if(exists('foo-template.js')) {
         fs.unlinkSync('foo-template.js');
       }
 

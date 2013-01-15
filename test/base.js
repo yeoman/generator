@@ -1,16 +1,22 @@
 
-var fs = require('fs'),
-  path = require('path'),
-  util = require('util'),
-  events = require('events'),
-  assert = require('assert'),
-  grunt = require('grunt'),
-  generators = require('..');
+
+var fs     = require('fs');
+var path   = require('path');
+var util   = require('util');
+var events = require('events');
+var assert = require('assert');
+var generators = require('..');
+
 
 describe('yeoman.generators.Base', function() {
+
+  // todo, generate generator about to be tested, or add it in fixtures.
+
   before(generators.test.before(path.join(__dirname, 'temp.dev')));
 
   before(function() {
+    var env = this.env = generators();
+
     function Dummy() {
       generators.Base.apply(this, arguments);
     }
@@ -21,19 +27,35 @@ describe('yeoman.generators.Base', function() {
       this.shouldRun = true;
     };
 
-    this.dummy = new Dummy(['bar', 'baz', 'bom'], {
-      foo: true,
-      something: 'else'
-    });
-    this.Dummy = Dummy;
+    env.register(Dummy, 'ember:all');
+    env.register(Dummy, 'hook1:ember');
+    env.register(Dummy, 'hook2:ember:all');
+    env.register(Dummy, 'hook3');
+    env.register(function() {
+      this.write('app/scripts/models/application-model.js', '// ...');
+    }, 'hook4');
 
-    // actual generator
-    this.generator = generators.setup(grunt).create('generator', ['test'], {}, {});
+
+    this.Dummy = Dummy;
+    this.dummy = new Dummy(['bar', 'baz', 'bom'], {
+      foo: false,
+      something: 'else',
+
+      // mandatory options, created by the env#create() helper
+      resolved: 'ember:all',
+      env: env,
+    });
+
+    this.dummy
+      .hookFor('hook1')
+      .hookFor('hook2')
+      .hookFor('hook3')
+      .hookFor('hook4');
   });
 
   describe('generator.appname', function() {
     it('should be set with the project directory name without non-alphanums', function() {
-      assert.equal( this.dummy.appname, "temp dev" );
+      assert.equal(this.dummy.appname, "temp dev");
     });
   });
 
@@ -49,9 +71,9 @@ describe('yeoman.generators.Base', function() {
 
   describe('generator.runHooks(cb)', function() {
     it('should go through all registered hooks, and invoke them in series', function(done) {
-      this.generator.runHooks(function(err) {
+      this.dummy.runHooks(function(err) {
         if(err) return err;
-        fs.stat('test/generators/test-test.js', done);
+        fs.stat('app/scripts/models/application-model.js', done);
       });
     });
   });
@@ -79,10 +101,15 @@ describe('yeoman.generators.Base', function() {
   describe('generator.option(name, config)', function() {
     it('should add a new option to the set of generator expected options', function() {
       // every generator have the --help options
-      assert.equal(this.dummy._options.length, 1);
-      this.dummy.option('foo');
-      assert.equal(this.dummy._options.length, 2);
-      assert.deepEqual(this.dummy._options.pop(), {
+      var generator = new this.Dummy([], {
+        env: this.env,
+        resolved: 'test'
+      });
+
+      assert.equal(generator._options.length, 1);
+      generator.option('foo');
+      assert.equal(generator._options.length, 2);
+      assert.deepEqual(generator._options.pop(), {
         desc: 'Description for foo',
         name: 'foo',
         type: Boolean,
@@ -143,8 +170,8 @@ describe('yeoman.generators.Base', function() {
       assert.ok(help.match('yeoman init FOO one two three \\[options\\]'));
       assert.ok(help.match('A new desc for this generator'));
       assert.ok(help.match('Options:'));
-      assert.ok(help.match('  -h, --help   # Print generator\'s options and usage'));
-      assert.ok(help.match('      --ooOoo  # Description for ooOoo'));
+      assert.ok(help.match('--help   # Print generator\'s options and usage'));
+      assert.ok(help.match('--ooOoo  # Description for ooOoo'));
     });
   });
 
@@ -152,18 +179,6 @@ describe('yeoman.generators.Base', function() {
     it('should return the expected help / usage output', function() {
       var usage = this.dummy.usage();
       assert.equal(usage, 'yeoman init FOO one two three [options]\n\nA new desc for this generator');
-    });
-  });
-
-  describe('generator.optionsHelp()', function() {
-    it('should return the expected help / usage output', function() {
-      var help = this.dummy.optionsHelp();
-      assert.equal(help, [
-        '  -h, --help   # Print generator\'s options and usage  ',
-        '               # Default: false',
-        '      --ooOoo  # Description for ooOoo                ',
-        '               # Default: false'
-      ].join('\n'));
     });
   });
 });

@@ -7,6 +7,10 @@ var assert     = require('assert');
 var generators = require('..');
 
 describe('yeoman.generators.Base', function() {
+  // increase timeout to 15s for this suite (slow connections like mine
+  // needs that)
+  this.timeout(15000)
+
   before(generators.test.before(path.join(__dirname, 'temp')));
 
   before(function() {
@@ -20,10 +24,20 @@ describe('yeoman.generators.Base', function() {
       this.shouldRun = true;
     };
 
-    this.dummy = new Dummy();
+    this.env = generators();
+    this.dummy = new Dummy({
+      env: this.env,
+      resolved: 'test:fetch'
+    });
     this.Dummy = Dummy;
 
     this.homedir = process.platform === 'win32' ? process.env.USERPROFILE : process.env.HOME;
+  });
+
+  it('generator.install(name)', function(done) {
+    this.dummy.install('backbone', function(err) {
+      fs.stat('components/backbone', done);
+    });
   });
 
   describe('generator.tarball(tarball, destination, cb)', function() {
