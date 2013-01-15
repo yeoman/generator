@@ -6,7 +6,5 @@ General options:
 
 Please choose a generator below.
 
-
-Fixtures
-  fixtures:custom-generator-extend:support:scaffold
-  fixtures:custom-generator-simple
+  extend:support:scaffold
+  simple

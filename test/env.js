@@ -65,7 +65,7 @@ describe('Environment', function() {
       assert.equal(Object.keys(env.generators).length, 0);
 
       env
-        .register('../fixtures/custom-generator-simple')
+        .register('../fixtures/custom-generator-simple', 'fixtures:custom-generator-simple')
         .register('../fixtures/custom-generator-extend', 'scaffold');
 
       assert.equal(Object.keys(env.generators).length, 2);
@@ -88,7 +88,7 @@ describe('Environment', function() {
         .register('../fixtures/custom-generator-extend', 'support:scaffold')
         .namespaces();
 
-      assert.deepEqual(namespaces, ['fixtures:custom-generator-simple', 'fixtures:custom-generator-extend:support:scaffold', 'support:scaffold']);
+      assert.deepEqual(namespaces, ['simple', 'extend:support:scaffold', 'support:scaffold']);
     });
 
     it('output the general help', function() {
@@ -105,7 +105,7 @@ describe('Environment', function() {
 
     it('get() can be used to get a specific generator', function() {
       var env = generators()
-        .register('../fixtures/mocha-generator')
+        .register('../fixtures/mocha-generator', 'fixtures:mocha-generator')
         .register('../fixtures/mocha-generator', 'mocha:generator');
 
       var expected = require('./fixtures/mocha-generator');
@@ -132,12 +132,12 @@ describe('Environment', function() {
 
     it('invokes using the run() method, from generators handler', function(done) {
       var env = generators()
-        .register('../fixtures/mocha-generator-base')
+        .register('../fixtures/mocha-generator-base', 'fixtures:mocha-generator-base')
         .run(['fixtures:mocha-generator-base', 'foo', 'bar'], done);
     });
 
     it('invokes using the run() method, from specific generator', function(done) {
-      var env = generators().register('../fixtures/mocha-generator');
+      var env = generators().register('../fixtures/mocha-generator', 'fixtures:mocha-generator');
 
       var mocha = env.create('fixtures:mocha-generator');
       mocha.run(done);
