@@ -1,5 +1,5 @@
 {
-  "name": "yeoman-generators",
+  "name": "yeoman-generator",
   "version": "0.9.5",
   "description": "The Yeoman Generator system",
   "keywords": [
@@ -16,25 +16,37 @@
   "homepage": "http://yeoman.io",
   "bugs": "https://github.com/yeoman/generators/issues",
   "author": "Chrome Developer Relations",
-  "main": "./lib/generators",
+  "main": "./main.js",
+  "bin": {
+    "yeoman-init": "bin/generators"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/yeoman/generators.git"
   },
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha test/test-*.js test/generators/test-*.js --reporter spec"
+    "test": "DEBUG=generators:* mocha test/*.js --reporter list",
+    "legacy": "DEBUG=generators:* mocha test/legacy.js --reporter dot",
+    "test-generators": "mocha test/generators/*.js --reporter spec"
   },
   "dependencies": {
-    "grunt": "http://github.com/cowboy/grunt/archive/0ba6d4b529.tar.gz",
     "cheerio": "~0.10.0",
     "request": "~2.9.200",
     "rimraf": "~2.0.2",
     "tar": "~0.1.13",
     "diff": "~1.0.3",
     "mime": "~1.2.7",
-    "prompt": "~0.1.12"
+    "underscore.string": "~2.3.1",
+    "lodash": "~1.0.0-rc.3",
+    "mkdirp": "~0.3.4",
+    "read": "~0.1.1",
+    "glob": "~3.1.14",
+    "nopt": "~2.0.0",
+    "cli-table": "~0.2.0",
+    "debug": "~0.7.0",
+    "bower": "~0.6.8"
   },
   "devDependencies": {
-    "mocha": "~1.4.2"
+    "mocha": "~1.7.3"
   }
 }
