@@ -51,7 +51,7 @@ describe('conflicter', function() {
   });
 
 
-  describe('conflicter#collision(filepath, content, cb)', function(done) {
+  describe.skip('conflicter#collision(filepath, content, cb)', function(done) {
     var me = fs.readFileSync(__filename, 'utf8');
     it('identical status', function(done) {
       conflicter.collision(__filename, me, function(err, status) {
