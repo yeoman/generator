@@ -55,7 +55,7 @@ describe('Environment', function() {
       });
 
       // using a list of arguments as Array
-      var env = generators(['model', 'Post']);
+      env = generators(['model', 'Post']);
       assert.deepEqual(env.arguments, ['model', 'Post']);
       assert.deepEqual(env.options, {});
     });
@@ -304,13 +304,13 @@ describe('Environment', function() {
     });
 
     it('has the whole Underscore String API available as prorotype mehtod', function() {
-      var str = require('underscore.string');
+      var str = require('underscore.string').exports();
 
       Object.keys(str).forEach(function(prop) {
         if(typeof str[prop] !== 'function') return;
-        assert.equal(typeof this.dummy[prop], 'function');
+        assert.equal(typeof this.dummy._[prop], 'function');
       }, this);
 
-    })
+    });
   });
 });
