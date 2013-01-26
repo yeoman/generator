@@ -22,9 +22,9 @@
     "url": "git://github.com/yeoman/generators.git"
   },
   "scripts": {
-    "test": "DEBUG=generators:* mocha test/*.js --reporter list",
-    "legacy": "DEBUG=generators:* mocha test/legacy.js --reporter dot",
-    "test-generators": "mocha test/generators/*.js --reporter spec"
+    "test": "DEBUG=generators:* mocha test/*.js --reporter list --timeout 50000",
+    "legacy": "DEBUG=generators:* mocha test/legacy.js --reporter dot --timeout 50000",
+    "test-generators": "mocha test/generators/*.js --reporter spec --timeout 50000"
   },
   "dependencies": {
     "cheerio": "~0.10.0",
@@ -44,6 +44,6 @@
     "bower": "~0.6.8"
   },
   "devDependencies": {
-    "mocha": "~1.7.3"
+    "mocha": "~1.8.1"
   }
 }
