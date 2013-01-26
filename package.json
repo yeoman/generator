@@ -16,7 +16,7 @@
   "homepage": "http://yeoman.io",
   "bugs": "https://github.com/yeoman/generators/issues",
   "author": "Chrome Developer Relations",
-  "main": "./main.js",
+  "main": "main.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/yeoman/generators.git"
@@ -27,18 +27,18 @@
     "test-generators": "mocha test/generators/*.js --reporter spec --timeout 50000"
   },
   "dependencies": {
-    "cheerio": "~0.10.0",
-    "request": "~2.9.200",
-    "rimraf": "~2.0.2",
-    "tar": "~0.1.13",
-    "diff": "~1.0.3",
-    "mime": "~1.2.7",
+    "cheerio": "~0.10.5",
+    "request": "~2.12.0",
+    "rimraf": "~2.1.2",
+    "tar": "~0.1.14",
+    "diff": "~1.0.4",
+    "mime": "~1.2.9",
     "underscore.string": "~2.3.1",
     "lodash": "~1.0.0-rc.3",
     "mkdirp": "~0.3.4",
-    "read": "~0.1.1",
-    "glob": "~3.1.14",
-    "nopt": "~2.0.0",
+    "read": "~1.0.4",
+    "glob": "~3.1.17",
+    "nopt": "~2.1.1",
     "cli-table": "~0.2.0",
     "debug": "~0.7.0",
     "bower": "~0.6.8"
