@@ -143,7 +143,14 @@ describe('Environment', function () {
 
   describe('Engines', function() {
 
-    it('allows users to use their prefered engine', function () {
+    before (function() {
+      this.generator = new Base([], {
+        env: generators(),
+        resolved: __filename
+      });
+    });
+
+    it('allows users to use their prefered engine', function() {
       // engine should be able to take a fn, or a named engine (which we
       // provide adapters to, currently only underscore is supported)
       generators().engine('underscore');
@@ -157,22 +164,24 @@ describe('Environment', function () {
       }
     });
 
-    it('properly compiles and renders template',  function (done) {
-      var generator = new Base([], {
-        env: generators(),
-        resolved: __filename
-      });
+    it('properly compiles and renders template',  function(done) {
       var filename = 'boyah.js';
 
-      generator.template(path.join(__dirname, 'fixtures/template.jst'), filename, { foo: 'hey' });
-      generator.conflicter.resolve(function (err) {
-        if (err) {
+      this.generator.template(path.join(__dirname, 'fixtures/template.jst'), filename, { foo: 'hey' });
+      this.generator.conflicter.resolve(function(err) {
+        if(err) {
           return done(err);
         }
 
         assert.equal(fs.readFileSync(filename, 'utf8'), "var hey = 'hey';\n");
         done();
       });
+    });
+
+    it('lets you use %% and escape opening tags with underscore engine', function() {
+      var tpl = 'prefix/<%%= yeoman.app %>/foo/bar';
+      assert.equal(this.generator.engine(tpl), 'prefix/<%= yeoman.app %>/foo/bar');
+      assert.equal(this.generator.engine('<%% if(true) { %>'), '<% if(true) { %>');
     });
 
   });
