@@ -1,29 +1,27 @@
-/*global it describe before*/
-var fs         = require('fs');
-var path       = require('path');
-var util       = require('util');
-var assert     = require('assert');
+/*global it, describe, before */
+var fs = require('fs');
+var path = require('path');
+var util = require('util');
+var assert = require('assert');
 var generators = require('..');
-var helpers    = generators.test;
-var events     = require('events');
+var helpers = generators.test;
+var events = require('events');
 
 var Base = generators.Base;
 var Environment = require('../lib/env');
 
 // https://gist.github.com/87550fd10b7440a37df4
-describe('Environment', function() {
-
+describe('Environment', function () {
   before(generators.test.before(path.join(__dirname, 'temp')));
 
-  describe('Environment', function() {
-
-    it('to init the system, you need to create a new handler', function() {
+  describe('Environment', function () {
+    it('to init the system, you need to create a new handler', function () {
       var env = generators();
       assert.ok(env instanceof Environment);
       assert.ok(env instanceof events.EventEmitter);
     });
 
-    it('adds new filepath to the loadpahts using appendLookup / prependLookup', function() {
+    it('adds new filepath to the loadpahts using appendLookup / prependLookup', function () {
       var env = generators();
       assert.ok(env.lookups.length);
 
@@ -34,19 +32,19 @@ describe('Environment', function() {
     });
 
     // generators is an instance of event emitter.
-    it('generators() is an instance of EventEmitter', function() {
+    it('generators() is an instance of EventEmitter', function () {
       assert.ok(generators() instanceof events.EventEmitter, 'Not an instance of EventEmitter');
     });
 
-    it('generators.Base is the Base generator class', function() {
+    it('generators.Base is the Base generator class', function () {
       assert.equal(generators.Base.prototype.__proto__.constructor, events.EventEmitter, 'Not an EventEmitter');
     });
 
-    it('generators.NamedBase is inheriting from Base generator class', function() {
+    it('generators.NamedBase is inheriting from Base generator class', function () {
       assert.equal(generators.NamedBase.prototype.__proto__.constructor, generators.Base, 'Not a Base class');
     });
 
-    it('init the system using your own args / options', function() {
+    it('init the system using your own args / options', function () {
       // using a list of space-separated arguments as String
       var env = generators('model Post', { help: true });
       assert.deepEqual(env.arguments, ['model', 'Post']);
@@ -60,7 +58,7 @@ describe('Environment', function() {
       assert.deepEqual(env.options, {});
     });
 
-    it('registers generators using the .register() method', function() {
+    it('registers generators using the .register() method', function () {
       var env = generators();
       assert.equal(Object.keys(env.generators).length, 0);
 
@@ -81,7 +79,7 @@ describe('Environment', function() {
       assert.ok(extend.namespace, 'scaffold');
     });
 
-    it('get the list of namespaces', function() {
+    it('get the list of namespaces', function () {
       var namespaces = generators()
         .register('../fixtures/custom-generator-simple')
         .register('../fixtures/custom-generator-extend')
@@ -91,7 +89,7 @@ describe('Environment', function() {
       assert.deepEqual(namespaces, ['simple', 'extend:support:scaffold', 'support:scaffold']);
     });
 
-    it('output the general help', function() {
+    it('output the general help', function () {
       var env = generators()
         .register('../fixtures/custom-generator-simple')
         .register('../fixtures/custom-generator-extend');
@@ -103,7 +101,7 @@ describe('Environment', function() {
       assert.equal(env.help('gg').trim(), expected.replace('Usage: init', 'Usage: gg').trim());
     });
 
-    it('get() can be used to get a specific generator', function() {
+    it('get() can be used to get a specific generator', function () {
       var env = generators()
         .register('../fixtures/mocha-generator', 'fixtures:mocha-generator')
         .register('../fixtures/mocha-generator', 'mocha:generator');
@@ -113,7 +111,7 @@ describe('Environment', function() {
       assert.equal(env.get('fixtures:mocha-generator'), expected);
     });
 
-    it('create() can be used to get and instantiate a specific generator', function() {
+    it('create() can be used to get and instantiate a specific generator', function () {
       var env = generators().register('../fixtures/mocha-generator', 'mocha:generator')
 
       var mocha = env.create('mocha:generator');
@@ -130,15 +128,14 @@ describe('Environment', function() {
       assert.equal(mocha.options['assertion-framework'], 'chai');
     });
 
-    it('invokes using the run() method, from generators handler', function(done) {
+    it('invokes using the run() method, from generators handler', function (done) {
       var env = generators()
         .register('../fixtures/mocha-generator-base', 'fixtures:mocha-generator-base')
         .run(['fixtures:mocha-generator-base', 'foo', 'bar'], done);
     });
 
-    it('invokes using the run() method, from specific generator', function(done) {
+    it('invokes using the run() method, from specific generator', function (done) {
       var env = generators().register('../fixtures/mocha-generator', 'fixtures:mocha-generator');
-
       var mocha = env.create('fixtures:mocha-generator');
       mocha.run(done);
     });
@@ -146,13 +143,13 @@ describe('Environment', function() {
 
   describe('Engines', function() {
 
-    it('allows users to use their prefered engine', function() {
+    it('allows users to use their prefered engine', function () {
       // engine should be able to take a fn, or a named engine (which we
       // provide adapters to, currently only underscore is supported)
       generators().engine('underscore');
     });
 
-    it('throws on wrong engine', function(done) {
+    it('throws on wrong engine', function (done) {
       try {
         generators().engine('underscored');
       } catch(e) {
@@ -160,7 +157,7 @@ describe('Environment', function() {
       }
     });
 
-    it('properly compiles and renders template',  function(done) {
+    it('properly compiles and renders template',  function (done) {
       var generator = new Base([], {
         env: generators(),
         resolved: __filename
@@ -168,8 +165,8 @@ describe('Environment', function() {
       var filename = 'boyah.js';
 
       generator.template(path.join(__dirname, 'fixtures/template.jst'), filename, { foo: 'hey' });
-      generator.conflicter.resolve(function(err) {
-        if(err) {
+      generator.conflicter.resolve(function (err) {
+        if (err) {
           return done(err);
         }
 
@@ -186,10 +183,8 @@ describe('Environment', function() {
   // A series of events are emitted during the generation process. Both on
   // the global `generators` handler and each individual generators
   // involved in the process.
-
-  describe('Events', function() {
-
-    before(function() {
+  describe('Events', function () {
+    before(function () {
       var Generator = this.Generator = function () {
         generators.Base.apply(this, arguments);
       };
@@ -198,11 +193,11 @@ describe('Environment', function() {
 
       util.inherits(Generator, generators.Base);
 
-      Generator.prototype.createSomething = function() {};
-      Generator.prototype.createSomethingElse = function() {};
+      Generator.prototype.createSomething = function () {};
+      Generator.prototype.createSomethingElse = function () {};
     });
 
-    it('emits the series of event on a specific generator', function(done) {
+    it('emits the series of event on a specific generator', function (done) {
       var angular = new this.Generator([], {
         env: generators(),
         resolved: __filename
@@ -210,10 +205,10 @@ describe('Environment', function() {
 
       var lifecycle = ['start', 'createSomething', 'createSomethingElse', 'end'];
 
-      function assertEvent(ev) {
+      function assertEvent(e) {
         return function() {
-          assert.equal(ev, lifecycle.shift());
-          if(ev === 'end') {
+          assert.equal(e, lifecycle.shift());
+          if (e === 'end') {
             done();
           }
         };
@@ -237,7 +232,7 @@ describe('Environment', function() {
       angular.run();
     });
 
-    it('hoists up the series of event from specific generator to the generators handler', function(done) {
+    it('hoists up the series of event from specific generator to the generators handler', function (done) {
       var lifecycle = [
         'generators:start',
         'angular:all:start',
@@ -248,9 +243,9 @@ describe('Environment', function() {
       ];
 
       function assertEvent(ev) {
-        return function() {
+        return function () {
           assert.equal(ev, lifecycle.shift());
-          if(!lifecycle.length) {
+          if (!lifecycle.length) {
             done();
           }
         };
@@ -279,7 +274,6 @@ describe('Environment', function() {
         // actual run
         .run('angular:all myapp');
     });
-
   });
 
   // Underscore String
@@ -293,24 +287,23 @@ describe('Environment', function() {
   //
   // Since templates are invoked in the context of the Generator that render
   // them, all these String helpers are then available directly from templates.
-
-  describe('Underscore String', function() {
-
-    before(function() {
+  describe('Underscore String', function () {
+    before(function () {
       this.dummy = new generators.Base([], {
         env: generators(),
         resolved: __filename
       });
     });
 
-    it('has the whole Underscore String API available as prorotype mehtod', function() {
+    it('has the whole Underscore String API available as prorotype mehtod', function () {
       var str = require('underscore.string').exports();
 
-      Object.keys(str).forEach(function(prop) {
-        if(typeof str[prop] !== 'function') return;
+      Object.keys(str).forEach(function (prop) {
+        if (typeof str[prop] !== 'function') {
+          return;
+        }
         assert.equal(typeof this.dummy._[prop], 'function');
       }, this);
-
     });
   });
 });

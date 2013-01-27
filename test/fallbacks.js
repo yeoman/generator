@@ -1,18 +1,17 @@
-
-var path       = require('path');
-var assert     = require('assert');
+/*global describe, before, it */
+var path = require('path');
+var assert = require('assert');
 var generators = require('..');
-var helpers    = generators.test;
+var helpers = generators.test;
 
-describe('generators config', function() {
 
-  describe('when config("generators.test-framework") is set', function() {
-
-    before(function() {
-      this.env = generators().register(function() {}, 'ember:model');
+describe('generators config', function () {
+  describe('when config("generators.test-framework") is set', function () {
+    before(function () {
+      this.env = generators().register(function () {}, 'ember:model');
     });
 
-    it('I get the appropriate generator.options', function() {
+    it('I get the appropriate generator.options', function () {
       var generator = this.env.create('ember:model', {
         args: ['hey'],
         options: {
@@ -34,7 +33,5 @@ describe('generators config', function() {
 
       assert.equal(generator.options['test-framework'], 'mocha');
     });
-
   });
-
 });

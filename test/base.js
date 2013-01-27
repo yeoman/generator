@@ -1,20 +1,18 @@
-
-
-var fs     = require('fs');
-var path   = require('path');
-var util   = require('util');
+/*global describe, before, it */
+var fs = require('fs');
+var path = require('path');
+var util = require('util');
 var events = require('events');
 var assert = require('assert');
 var generators = require('..');
 
 
-describe('yeoman.generators.Base', function() {
-
-  // todo, generate generator about to be tested, or add it in fixtures.
+describe('yeoman.generators.Base', function () {
+  // TODO(mklabs): generate generator about to be tested, or add it in fixtures.
 
   before(generators.test.before(path.join(__dirname, 'temp.dev')));
 
-  before(function() {
+  before(function () {
     var env = this.env = generators();
 
     function Dummy() {
@@ -31,16 +29,14 @@ describe('yeoman.generators.Base', function() {
     env.register(Dummy, 'hook1:ember');
     env.register(Dummy, 'hook2:ember:all');
     env.register(Dummy, 'hook3');
-    env.register(function() {
+    env.register(function () {
       this.write('app/scripts/models/application-model.js', '// ...');
     }, 'hook4');
-
 
     this.Dummy = Dummy;
     this.dummy = new Dummy(['bar', 'baz', 'bom'], {
       foo: false,
       something: 'else',
-
       // mandatory options, created by the env#create() helper
       resolved: 'ember:all',
       env: env,
@@ -53,43 +49,45 @@ describe('yeoman.generators.Base', function() {
       .hookFor('hook4');
   });
 
-  describe('generator.appname', function() {
-    it('should be set with the project directory name without non-alphanums', function() {
+  describe('generator.appname', function () {
+    it('should be set with the project directory name without non-alphanums', function () {
       assert.equal(this.dummy.appname, "temp dev");
     });
   });
 
-  describe('generator.run(args, cb)', function() {
-    it('should run all methods in the given generator', function() {
+  describe('generator.run(args, cb)', function () {
+    it('should run all methods in the given generator', function () {
       this.dummy.run();
     });
 
-    it('should have the _running flag turned on', function() {
+    it('should have the _running flag turned on', function () {
       assert.ok(this.dummy._running);
     });
   });
 
-  describe('generator.runHooks(cb)', function() {
-    it('should go through all registered hooks, and invoke them in series', function(done) {
-      this.dummy.runHooks(function(err) {
-        if(err) return err;
+  describe('generator.runHooks(cb)', function () {
+    it('should go through all registered hooks, and invoke them in series', function (done) {
+      this.dummy.runHooks(function (err) {
+        if (err) {
+          return err;
+        }
         fs.stat('app/scripts/models/application-model.js', done);
       });
     });
   });
 
-  describe('generator.argument(name, config)', function() {
-    it('should add a new argument to the generator instance', function() {
+  describe('generator.argument(name, config)', function () {
+    it('should add a new argument to the generator instance', function () {
       assert.equal(this.dummy._arguments.length, 0);
       this.dummy.argument('foo');
       assert.equal(this.dummy._arguments.length, 1);
     });
 
-    it('should create the property specified with value from positional args', function() {
+    it('should create the property specified with value from positional args', function () {
       assert.equal(this.dummy.foo, 'bar');
     });
 
-    it('should slice positional arguments when config.type is Array', function() {
+    it('should slice positional arguments when config.type is Array', function () {
       this.dummy.argument('bar', {
         type: Array
       });
@@ -98,8 +96,8 @@ describe('yeoman.generators.Base', function() {
     });
   });
 
-  describe('generator.option(name, config)', function() {
-    it('should add a new option to the set of generator expected options', function() {
+  describe('generator.option(name, config)', function () {
+    it('should add a new option to the set of generator expected options', function () {
       // every generator have the --help options
       var generator = new this.Dummy([], {
         env: this.env,
@@ -119,16 +117,16 @@ describe('yeoman.generators.Base', function() {
     });
   });
 
-  describe('generator.hookFor(name, config)', function() {
-    it('should emit errors if called when running', function() {
+  describe('generator.hookFor(name, config)', function () {
+    it('should emit errors if called when running', function () {
       try {
         this.dummy.hookFor('maoow');
-      } catch(e) {
-        assert.equal(e.message, 'hookFor must be used within the constructor only');
+      } catch (err) {
+        assert.equal(err.message, 'hookFor must be used within the constructor only');
       }
     });
 
-    it('should create the macthing option', function() {
+    it('should create the macthing option', function () {
       this.dummy._running = false;
       this.dummy.hookFor('something');
       assert.deepEqual(this.dummy._options.pop(), {
@@ -140,29 +138,29 @@ describe('yeoman.generators.Base', function() {
       });
     });
 
-    it('should update the internal hooks holder', function() {
+    it('should update the internal hooks holder', function () {
       assert.deepEqual(this.dummy._hooks.pop(), {
         name: 'something'
       });
     });
   });
 
-  describe('generator.defaultFor(config)', function() {
-    it('should return the value for the option name, doing lookup in options and Grunt config', function() {
+  describe('generator.defaultFor(config)', function () {
+    it('should return the value for the option name, doing lookup in options and Grunt config', function () {
       var name = this.dummy.defaultFor('something');
       assert.equal(name, 'else');
     });
   });
 
-  describe('generator.desc(decription)', function() {
-    it('should update the internal description', function() {
+  describe('generator.desc(decription)', function () {
+    it('should update the internal description', function () {
       this.dummy.desc('A new desc for this generator');
       assert.equal(this.dummy.description, 'A new desc for this generator');
     });
   });
 
-  describe('generator.help()', function() {
-    it('should return the expected help / usage output', function() {
+  describe('generator.help()', function () {
+    it('should return the expected help / usage output', function () {
       this.dummy.option('ooOoo');
       var help = this.dummy.help();
 
@@ -175,8 +173,8 @@ describe('yeoman.generators.Base', function() {
     });
   });
 
-  describe('generator.usage()', function() {
-    it('should return the expected help / usage output', function() {
+  describe('generator.usage()', function () {
+    it('should return the expected help / usage output', function () {
       var usage = this.dummy.usage();
       assert.equal(usage, 'yeoman init FOO one two three [options]\n\nA new desc for this generator');
     });

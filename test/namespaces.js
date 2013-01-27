@@ -1,11 +1,11 @@
-
-var spawn      = require('child_process').spawn;
-var assert     = require('assert');
+/*global describe it */
+var spawn = require('child_process').spawn;
+var assert = require('assert');
 var generators = require('..');
 
-describe('Alias and namespaces', function() {
 
-  it('env.namespace()', function() {
+describe('Alias and namespaces', function () {
+  it('env.namespace()', function () {
     var env = generators();
     assert.equal(env.namespace('backbone/all/index.js'), 'backbone:all');
     assert.equal(env.namespace('backbone/all/main.js'), 'backbone:all');
@@ -23,7 +23,4 @@ describe('Alias and namespaces', function() {
     assert.equal(env.namespace('././local/stuff'), 'local:stuff');
     assert.equal(env.namespace('../../local/stuff'), 'local:stuff');
   });
-
 });
-
-

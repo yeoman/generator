@@ -1,9 +1,8 @@
-
 LIB_FILES ?= $(shell find lib -name '*.js')
 TEST_FILES ?= $(shell find test -name '*.js' -depth 1)
 
-MD_FILES 	 = $(patsubst lib/%.js,docs/api/%.md,$(LIB_FILES))
-MD_FILES 	 += $(patsubst test/%.js,docs/test/test-%.md,$(TEST_FILES))
+MD_FILES = $(patsubst lib/%.js,docs/api/%.md,$(LIB_FILES))
+MD_FILES += $(patsubst test/%.js,docs/test/test-%.md,$(TEST_FILES))
 
 all: submodule clean-docs docs
 
