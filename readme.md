@@ -15,7 +15,7 @@ two types of generators - simple boilerplate 'copiers' and more advanced generat
 which can use custom prompts, remote dependencies and can do a lot more.
 
 Read about the capabilities of our generators in our
-[docs](https://github.com/yeoman/yeoman/blob/master/docs/cli/generators.md). This guide will also cover how to create a new generator template using the command-line.
+[docs](https://github.com/yeoman/yeoman/wiki/Generators). This guide will also cover how to create a new generator template using the command-line.
 
 
 ## Testing generators
