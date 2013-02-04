@@ -27,10 +27,10 @@
     "test-generators": "mocha test/generators/*.js --reporter spec --timeout 50000"
   },
   "dependencies": {
-    "cheerio": "~0.10.5",
+    "cheerio": "~0.10.6",
     "request": "~2.12.0",
     "rimraf": "~2.1.2",
-    "tar": "~0.1.14",
+    "tar": "~0.1.16",
     "diff": "~1.0.4",
     "mime": "~1.2.9",
     "underscore.string": "~2.3.1",
@@ -41,7 +41,7 @@
     "nopt": "~2.1.1",
     "cli-table": "~0.2.0",
     "debug": "~0.7.0",
-    "bower": "~0.6.8"
+    "bower": "~0.7.0"
   },
   "devDependencies": {
     "mocha": "~1.8.1"
