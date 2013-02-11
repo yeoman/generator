@@ -60,13 +60,13 @@ describe('Environment', function () {
 
     it('registers generators using the .register() method', function () {
       var env = generators();
-      assert.equal(Object.keys(env.generators).length, 0);
+      assert.equal(Object.keys(env.generators).length, 1);
 
       env
         .register('../fixtures/custom-generator-simple', 'fixtures:custom-generator-simple')
         .register('../fixtures/custom-generator-extend', 'scaffold');
 
-      assert.equal(Object.keys(env.generators).length, 2);
+      assert.equal(Object.keys(env.generators).length, 3);
 
       var simple = env.generators['fixtures:custom-generator-simple'];
       assert.ok(simple);
@@ -86,7 +86,7 @@ describe('Environment', function () {
         .register('../fixtures/custom-generator-extend', 'support:scaffold')
         .namespaces();
 
-      assert.deepEqual(namespaces, ['simple', 'extend:support:scaffold', 'support:scaffold']);
+      assert.deepEqual(namespaces, ['generator', 'simple', 'extend:support:scaffold', 'support:scaffold']);
     });
 
     it('output the general help', function () {
@@ -95,6 +95,8 @@ describe('Environment', function () {
         .register('../fixtures/custom-generator-extend');
 
       var expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8');
+      // lazy "update the help fixtures because something changed" statement
+      // fs.writeFileSync(path.join(__dirname, 'fixtures/help.txt'), env.help().trim());
       assert.equal(env.help().trim(), expected.trim());
 
       // custom bin name
