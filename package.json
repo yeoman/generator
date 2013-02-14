@@ -1,30 +1,28 @@
 {
   "name": "yeoman-generator",
   "version": "0.9.5",
-  "description": "The Yeoman Generator system",
+  "description": "Rails-inspired generator system that provides scaffolding for your apps",
   "keywords": [
-    "front-end",
     "development",
     "dev",
     "build",
-    "web",
     "tool",
     "cli",
     "scaffold",
-    "stack"
+    "generate"
   ],
   "homepage": "http://yeoman.io",
-  "bugs": "https://github.com/yeoman/generators/issues",
+  "bugs": "https://github.com/yeoman/generator/issues",
   "author": "Chrome Developer Relations",
   "main": "main.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/yeoman/generators.git"
+    "url": "git://github.com/yeoman/generator.git"
   },
   "scripts": {
     "test": "DEBUG=generators:* mocha test/*.js --reporter list --timeout 50000",
     "legacy": "DEBUG=generators:* mocha test/legacy.js --reporter dot --timeout 50000",
-    "test-generators": "mocha test/generators/*.js --reporter spec --timeout 50000"
+    "test-generator": "mocha test/generators/*.js --reporter spec --timeout 50000"
   },
   "dependencies": {
     "cheerio": "~0.10.6",
