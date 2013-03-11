@@ -10,7 +10,7 @@ var generators = require('..');
 describe('yeoman.generators.Base', function () {
   // increase timeout to 15s for this suite (slow connections like mine
   // needs that)
-  this.timeout(15000)
+  this.timeout(50000)
 
   before(generators.test.before(path.join(__dirname, 'temp')));
 
