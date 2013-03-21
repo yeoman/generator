@@ -5,6 +5,7 @@ var util = require('util');
 var events = require('events');
 var assert = require('assert');
 var generators = require('../');
+var eol = require('os').EOL;
 
 
 describe('yeoman.generators.Base', function () {
@@ -72,23 +73,23 @@ describe('yeoman.generators.Base', function () {
 
     it('should allow to copy without using the templating (conficting with lodash/underscore)', function (done) {
       fs.stat('write/to/lodash.js', done);
-    })
+    });
   });
 
   describe('generator.read(filepath, encoding)', function () {
     it('should read files relative to the "sourceRoot" value', function () {
       var body = this.dummy.read('foo.js');
-      assert.equal(body, 'var foo = \'foo\';\n');
+      assert.equal(body, 'var foo = \'foo\';' + eol);
     });
     it('should allow absolute path, and prevent the relative paths join', function () {
       var body = this.dummy.read(path.join(__dirname, 'fixtures/foo.js'));
-      assert.equal(body, 'var foo = \'foo\';\n');
+      assert.equal(body, 'var foo = \'foo\';' + eol);
     });
   });
 
   describe('generator.write(filepath, content)', function () {
     before(function (done) {
-      this.body = 'var bar = \'bar\';\n';
+      this.body = 'var bar = \'bar\';' + eol;
       this.dummy.write('write/to/foobar.js', this.body);
       this.dummy.conflicter.resolve(done);
     });
@@ -123,17 +124,17 @@ describe('yeoman.generators.Base', function () {
 
     it('should defaults the destination to the source filepath value, relative to "destinationRoot" value', function () {
       var body = fs.readFileSync('foo-template.js', 'utf8');
-      assert.equal(body, 'var fooooooo = \'fooooooo\';\n');
+      assert.equal(body, 'var fooooooo = \'fooooooo\';' + eol);
     });
 
     it('should process underscore templates with the passed-in data', function () {
       var body = fs.readFileSync('write/to/from-template-bar.js', 'utf8');
-      assert.equal(body, 'var bar = \'bar\';\n');
+      assert.equal(body, 'var bar = \'bar\';' + eol);
     });
 
     it('should process underscore templates with the actual generator instance, when no data is given', function () {
       var body = fs.readFileSync('write/to/from-template.js', 'utf8');
-      assert.equal(body, 'var fooooooo = \'fooooooo\';\n');
+      assert.equal(body, 'var fooooooo = \'fooooooo\';' + eol);
     });
   });
 
@@ -175,7 +176,7 @@ describe('yeoman.generators.Base', function () {
     it('should process underscore templates with the actual generator instance', function () {
       var body = fs.readFileSync('directory/foo-template.js', 'utf8');
       var foo = this.dummy.foo;
-      assert.equal(body, 'var ' + foo + ' = \'' + foo + '\';\n');
+      assert.equal(body, 'var ' + foo + ' = \'' + foo + '\';' + eol);
     });
   });
 });
