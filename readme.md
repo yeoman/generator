@@ -29,4 +29,4 @@ There is currently no formal infrastructure for testing generators, however you 
 * [Ember](https://github.com/yeoman/generator-ember#readme)
 * [Jasmine](https://github.com/yeoman/generator-jasmine#readme)
 * [Mocha](https://github.com/yeoman/generator-mocha#readme)
-* [Testacular](https://github.com/yeoman/generator-testacular#readme)
+* [Karma](https://github.com/yeoman/generator-karma#readme)
