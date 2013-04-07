@@ -39,10 +39,10 @@
     "nopt": "~2.1.1",
     "cli-table": "~0.2.0",
     "debug": "~0.7.0",
-    "bower": "~0.8.5",
     "isbinaryfile": "~0.1.5"
   },
   "devDependencies": {
-    "mocha": "~1.8.1"
+    "mocha": "~1.8.1",
+    "proxyquire": "~0.4.0"
   }
 }
