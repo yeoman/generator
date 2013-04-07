@@ -4,6 +4,7 @@ var path = require('path');
 var util = require('util');
 var events = require('events');
 var assert = require('assert');
+var proxyquire = require('proxyquire');
 var generators = require('../');
 var eol = require('os').EOL;
 
@@ -177,6 +178,50 @@ describe('yeoman.generators.Base', function () {
       var body = fs.readFileSync('directory/foo-template.js', 'utf8');
       var foo = this.dummy.foo;
       assert.equal(body, 'var ' + foo + ' = \'' + foo + '\';' + eol);
+    });
+  });
+
+  describe('generator.install', function () {
+    var asyncStub = {
+      on: function (key, cb) {
+        if (key === 'exit') {
+          cb();
+        }
+        return asyncStub;
+      }
+    };
+
+    it('should spawn a bower process', function (done) {
+
+      function spawn(cmd, args) {
+        assert.equal(cmd, 'bower');
+        assert.deepEqual(args, ['install']);
+
+        return asyncStub;
+      }
+
+      var bower = proxyquire('../lib/actions/bower', {
+        child_process: {spawn: spawn}
+      });
+
+      bower.emit = function () {};
+      bower.install(null, done);
+    });
+
+    it('should spawn a bower process with formatted options', function (done) {
+
+      function spawn(cmd, args) {
+        assert.equal(cmd, 'bower');
+        assert.deepEqual(args, ['install', 'jquery', '--save-dev']);
+        return asyncStub;
+      }
+
+      var bower = proxyquire('../lib/actions/bower', {
+        child_process: {spawn: spawn}
+      });
+
+      bower.emit = function () {};
+      bower.install('jquery', {saveDev: true}, done);
     });
   });
 });
