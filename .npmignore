@@ -4,7 +4,5 @@
 .jshintrc
 .gitattributes
 contributing.md
-test
 docs
-support
 Makefile
