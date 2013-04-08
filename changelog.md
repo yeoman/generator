@@ -1,4 +1,13 @@
-### 0.10.0 - 2012-02-14
+### 0.10.4 - 2013-04-08
+
+- Generators can now be installed globally
+
+- Improved startup time
+
+- Improved error message when a generator is not found
+
+
+### 0.10.0 - 2013-02-14
 
 - Rewritten, but API compatible
 
