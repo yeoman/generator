@@ -181,7 +181,7 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.install', function () {
+  describe('actions/install', function () {
     var asyncStub = {
       on: function (key, cb) {
         if (key === 'exit') {
@@ -191,37 +191,82 @@ describe('yeoman.generators.Base', function () {
       }
     };
 
-    it('should spawn a bower process', function (done) {
+    describe('generator.bowerInstall', function () {
+      it('should spawn a bower process', function (done) {
+        var called = false;
 
-      function spawn(cmd, args) {
-        assert.equal(cmd, 'bower');
-        assert.deepEqual(args, ['install']);
+        function spawn(cmd, args) {
+          assert.equal(cmd, 'bower');
+          assert.deepEqual(args, ['install']);
+          called = true;
 
-        return asyncStub;
-      }
+          return asyncStub;
+        }
 
-      var bower = proxyquire('../lib/actions/bower', {
-        child_process: {spawn: spawn}
+        var install = proxyquire('../lib/actions/install', {
+          child_process: {spawn: spawn}
+        });
+
+        install.emit = function () {};
+        install.bowerInstall(null, done);
+        assert(called);
       });
 
-      bower.emit = function () {};
-      bower.install(null, done);
+      it('should spawn a bower process with formatted options', function (done) {
+        var called = false;
+
+        function spawn(cmd, args) {
+          assert.equal(cmd, 'bower');
+          assert.deepEqual(args, ['install', 'jquery', '--save-dev']);
+          called = true;
+
+          return asyncStub;
+        }
+
+        var install = proxyquire('../lib/actions/install', {
+          child_process: {spawn: spawn}
+        });
+
+        install.emit = function () {};
+        install.bowerInstall('jquery', {saveDev: true}, done);
+        assert(called);
+      });
     });
 
-    it('should spawn a bower process with formatted options', function (done) {
+    describe('generator.installDependencies', function () {
+      it('should spawn npm and bower', function () {
+        var commandsRun = [];
 
-      function spawn(cmd, args) {
-        assert.equal(cmd, 'bower');
-        assert.deepEqual(args, ['install', 'jquery', '--save-dev']);
-        return asyncStub;
-      }
+        function spawn(cmd, args) {
+          commandsRun.push(cmd);
+          return asyncStub;
+        }
 
-      var bower = proxyquire('../lib/actions/bower', {
-        child_process: {spawn: spawn}
+        var install = proxyquire('../lib/actions/install', {
+          child_process: {spawn: spawn}
+        });
+
+        install.emit = function () {};
+        install.installDependencies();
+        assert.deepEqual(commandsRun.sort(), ['bower', 'npm']);
       });
 
-      bower.emit = function () {};
-      bower.install('jquery', {saveDev: true}, done);
+      it('should not spawn anything with skipInstall', function () {
+        var commandsRun = [];
+
+        function spawn(cmd, args) {
+          commandsRun.push(cmd);
+          return asyncStub;
+        }
+
+        var install = proxyquire('../lib/actions/install', {
+          child_process: {spawn: spawn}
+        });
+
+        install.installDependencies.call(this.dummy, { skipInstall: true });
+        assert.deepEqual(commandsRun.length, 0);
+      });
+
     });
   });
 });
