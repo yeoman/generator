@@ -1,3 +1,8 @@
+### master
+
+- `generator.install` was renamed to `generator.bowerInstall`, also
+  `generator.installDependencies` and `generator.npmInstall` were added (Pull [#205](https://github.com/yeoman/generator/pull/205)).
+
 ### 0.10.4 - 2013-04-08
 
 - Generators can now be installed globally
