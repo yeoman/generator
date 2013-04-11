@@ -1,4 +1,4 @@
-/*global describe before it */
+/*global describe, before, it */
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -10,7 +10,7 @@ var generators = require('..');
 describe('yeoman.generators.Base', function () {
   // increase timeout to 15s for this suite (slow connections like mine
   // needs that)
-  this.timeout(50000)
+  this.timeout(50000);
 
   before(generators.test.before(path.join(__dirname, 'temp')));
 
@@ -35,8 +35,8 @@ describe('yeoman.generators.Base', function () {
     this.homedir = process.platform === 'win32' ? process.env.USERPROFILE : process.env.HOME;
   });
 
-  it('generator.install(name)', function (done) {
-    this.dummy.install('backbone', function(err) {
+  it('generator.bowerInstall(name)', function (done) {
+    this.dummy.bowerInstall('backbone', function (err) {
       fs.stat('components/backbone', done);
     });
   });
