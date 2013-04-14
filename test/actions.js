@@ -7,6 +7,7 @@ var assert = require('assert');
 var proxyquire = require('proxyquire');
 var generators = require('../');
 var eol = require('os').EOL;
+var EventEmitter = require('events').EventEmitter;
 
 
 describe('yeoman.generators.Base', function () {
@@ -266,6 +267,26 @@ describe('yeoman.generators.Base', function () {
         install.installDependencies.call(this.dummy, { skipInstall: true });
         assert.deepEqual(commandsRun.length, 0);
       });
+
+      it('npmInstall should run without callback', function () {
+        var commandsRun = [];
+        var emitter = new EventEmitter();
+
+        function spawn(cmd, args) {
+          commandsRun.push(cmd);
+          return emitter;
+        }
+
+        var install = proxyquire('../lib/actions/install', {
+          child_process: { spawn: spawn }
+        });
+
+        install.npmInstall.call(this.dummy, 'yo', { save: true });
+        assert.deepEqual(commandsRun.length, 1);
+
+        emitter.emit('exit');
+      });
+
 
     });
   });
