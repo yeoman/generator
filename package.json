@@ -39,7 +39,8 @@
     "cli-table": "~0.2.0",
     "debug": "~0.7.2",
     "isbinaryfile": "~0.1.8",
-    "prompt": "~0.2.9"
+    "prompt": "~0.2.9",
+    "revalidator": "~0.1.5"
   },
   "devDependencies": {
     "mocha": "~1.9.0",
