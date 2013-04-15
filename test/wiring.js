@@ -1,4 +1,4 @@
-/*global describe before it */
+/*global describe, before, it */
 var path = require('path');
 var fs = require('fs');
 var events = require('events');
@@ -26,6 +26,15 @@ describe('yeoman.generator.lib.actions.wiring', function () {
     ], '.tmp/');
 
     assert.equal(res.trim(), '<!-- build:js(.tmp/) main.js -->\npath/file1.js,path/file2.js        <!-- endbuild -->');
+  });
+
+  it('should generate block with multiple search paths', function () {
+    var res = wiring.generateBlock('js', 'main.js', [
+      'path/file1.js',
+      'path/file2.js'
+    ], ['.tmp/', 'dist/']);
+
+    assert.equal(res.trim(), '<!-- build:js({.tmp/,dist/}) main.js -->\npath/file1.js,path/file2.js        <!-- endbuild -->');
   });
 
   it('should append js files to an html string', function () {
