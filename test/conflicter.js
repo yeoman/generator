@@ -2,6 +2,7 @@
 var fs = require('fs');
 var events = require('events');
 var assert = require('assert');
+var proxyquire = require('proxyquire');
 var conflicter = require('../lib/util/conflicter');
 
 
@@ -77,5 +78,40 @@ describe('conflicter', function () {
   it('conflicter#diff(actual, expected)', function () {
     var diff = conflicter.diff('var', 'let');
     assert.equal(diff, '\n\u001b[41mremoved\u001b[0m \u001b[42madded\u001b[0m\n\n\u001b[42mlet\u001b[0m\u001b[41mvar\u001b[0m\n');
+  });
+
+  describe('conflicter#_ask', function () {
+    var promptMock = {
+      prompt: function (config, cb) {
+        cb(this.err, { overwrite: this.answer });
+      },
+      err: null,
+      answer: null
+    };
+
+    before(function () {
+      this.conflicter = proxyquire('../lib/util/conflicter', {
+        '../actions/prompt': promptMock.prompt.bind(promptMock)
+      });
+    });
+
+    it('skips on "n answer"', function (done) {
+      promptMock.answer = 'n';
+      this.conflicter._ask('/tmp/file', 'my file contents', function (err, result) {
+        assert.strictEqual(err, null);
+        assert(result, 'skip');
+        done();
+      });
+    });
+
+    it('enables force on "a" answer', function (done) {
+      promptMock.answer = 'a';
+      this.conflicter._ask('/tmp/file', 'my file contents', function (err, result) {
+        assert.strictEqual(err, null);
+        assert(result, 'force');
+        assert(this.conflicter.force);
+        done();
+      }.bind(this));
+    });
   });
 });
