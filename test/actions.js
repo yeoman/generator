@@ -6,8 +6,8 @@ var events = require('events');
 var assert = require('assert');
 var proxyquire = require('proxyquire');
 var generators = require('../');
-var eol = require('os').EOL;
 var EventEmitter = require('events').EventEmitter;
+var win32 = process.platform === 'win32';
 
 
 describe('yeoman.generators.Base', function () {
@@ -81,17 +81,17 @@ describe('yeoman.generators.Base', function () {
   describe('generator.read(filepath, encoding)', function () {
     it('should read files relative to the "sourceRoot" value', function () {
       var body = this.dummy.read('foo.js');
-      assert.equal(body, 'var foo = \'foo\';' + eol);
+      assert.equal(body, 'var foo = \'foo\';' + '\n');
     });
     it('should allow absolute path, and prevent the relative paths join', function () {
       var body = this.dummy.read(path.join(__dirname, 'fixtures/foo.js'));
-      assert.equal(body, 'var foo = \'foo\';' + eol);
+      assert.equal(body, 'var foo = \'foo\';' + '\n');
     });
   });
 
   describe('generator.write(filepath, content)', function () {
     before(function (done) {
-      this.body = 'var bar = \'bar\';' + eol;
+      this.body = 'var bar = \'bar\';' + '\n';
       this.dummy.write('write/to/foobar.js', this.body);
       this.dummy.conflicter.resolve(done);
     });
@@ -126,17 +126,17 @@ describe('yeoman.generators.Base', function () {
 
     it('should defaults the destination to the source filepath value, relative to "destinationRoot" value', function () {
       var body = fs.readFileSync('foo-template.js', 'utf8');
-      assert.equal(body, 'var fooooooo = \'fooooooo\';' + eol);
+      assert.equal(body, 'var fooooooo = \'fooooooo\';' + '\n');
     });
 
     it('should process underscore templates with the passed-in data', function () {
       var body = fs.readFileSync('write/to/from-template-bar.js', 'utf8');
-      assert.equal(body, 'var bar = \'bar\';' + eol);
+      assert.equal(body, 'var bar = \'bar\';' + '\n');
     });
 
     it('should process underscore templates with the actual generator instance, when no data is given', function () {
       var body = fs.readFileSync('write/to/from-template.js', 'utf8');
-      assert.equal(body, 'var fooooooo = \'fooooooo\';' + eol);
+      assert.equal(body, 'var fooooooo = \'fooooooo\';' + '\n');
     });
   });
 
@@ -178,7 +178,7 @@ describe('yeoman.generators.Base', function () {
     it('should process underscore templates with the actual generator instance', function () {
       var body = fs.readFileSync('directory/foo-template.js', 'utf8');
       var foo = this.dummy.foo;
-      assert.equal(body, 'var ' + foo + ' = \'' + foo + '\';' + eol);
+      assert.equal(body, 'var ' + foo + ' = \'' + foo + '\';' + '\n');
     });
   });
 
@@ -197,8 +197,8 @@ describe('yeoman.generators.Base', function () {
         var called = false;
 
         function spawn(cmd, args) {
-          assert.equal(cmd, 'bower');
-          assert.deepEqual(args, ['install']);
+          assert.equal(cmd, win32 ? 'cmd' : 'bower');
+          assert.deepEqual(args, win32 ? ['/c bower install'] : ['install']);
           called = true;
 
           return asyncStub;
@@ -217,8 +217,8 @@ describe('yeoman.generators.Base', function () {
         var called = false;
 
         function spawn(cmd, args) {
-          assert.equal(cmd, 'bower');
-          assert.deepEqual(args, ['install', 'jquery', '--save-dev']);
+          assert.equal(cmd, win32 ? 'cmd' : 'bower');
+                    assert.deepEqual(args, win32 ? ['/c bower install jquery --save-dev'] : ['install', 'jquery', '--save-dev']);
           called = true;
 
           return asyncStub;
@@ -249,7 +249,7 @@ describe('yeoman.generators.Base', function () {
 
         install.emit = function () {};
         install.installDependencies();
-        assert.deepEqual(commandsRun.sort(), ['bower', 'npm']);
+        assert.deepEqual(commandsRun.sort(), win32 ? ['cmd', 'cmd'] : ['bower', 'npm']);
       });
 
       it('should not spawn anything with skipInstall', function () {

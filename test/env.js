@@ -6,7 +6,6 @@ var assert = require('assert');
 var generators = require('..');
 var helpers = generators.test;
 var events = require('events');
-var eol = require('os').EOL;
 
 var Base = generators.Base;
 var Environment = require('../lib/env');
@@ -176,7 +175,7 @@ describe('Environment', function () {
           return done(err);
         }
 
-        assert.equal(fs.readFileSync(filename, 'utf8'), "var hey = 'hey';" + eol);
+        assert.equal(fs.readFileSync(filename, 'utf8'), "var hey = 'hey';" + '\n');
         done();
       });
     });
