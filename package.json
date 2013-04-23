@@ -34,12 +34,13 @@
     "underscore.string": "~2.3.1",
     "lodash": "~1.1.1",
     "mkdirp": "~0.3.5",
-    "read": "~1.0.4",
     "glob": "~3.1.21",
     "nopt": "~2.1.1",
     "cli-table": "~0.2.0",
     "debug": "~0.7.2",
-    "isbinaryfile": "~0.1.8"
+    "isbinaryfile": "~0.1.8",
+    "prompt": "~0.2.9",
+    "revalidator": "~0.1.5"
   },
   "devDependencies": {
     "mocha": "~1.9.0",
