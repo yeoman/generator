@@ -83,7 +83,7 @@ describe('conflicter', function () {
   describe('conflicter#_ask', function () {
     var promptMock = {
       prompt: function (config, cb) {
-        cb(this.err, { overwrite: this.answer });
+        cb(this.err, { overwrite: { overwrite: this.answer } });
       },
       err: null,
       answer: null
