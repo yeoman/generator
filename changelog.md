@@ -1,5 +1,9 @@
 # Changelog
 
+## master
+
+- `generator.prompt` replaced `read` with `prompt` as backend. If you were relying on specific `read` changes, you may need to adjust your code. [#213](https://github.com/yeoman/generator/pull/213)
+
 ## 0.10.5 - 2013-04-12
 
 - `generator.install` was renamed to `generator.bowerInstall`.
