@@ -235,6 +235,12 @@ describe('yeoman.generators.Base', function () {
     });
 
     describe('generator.installDependencies', function () {
+
+      afterEach(function () {
+        var install = require("../lib/actions/install");
+        this.dummy._.extend(this.dummy, install);
+      });
+
       it('should spawn npm and bower', function () {
         var commandsRun = [];
 
@@ -278,10 +284,12 @@ describe('yeoman.generators.Base', function () {
         }
 
         var install = proxyquire('../lib/actions/install', {
-          child_process: { spawn: spawn }
+          child_process: {spawn: spawn}
         });
 
-        install.npmInstall.call(this.dummy, 'yo', { save: true });
+        var dummy = this.dummy._.extend(this.dummy, install);
+
+        install.npmInstall.call(dummy, 'yo', { save: true });
         assert.deepEqual(commandsRun.length, 1);
 
         emitter.emit('exit');
