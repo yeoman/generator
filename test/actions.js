@@ -205,7 +205,7 @@ describe('yeoman.generators.Base', function () {
         }
 
         var install = proxyquire('../lib/actions/install', {
-          child_process: {spawn: spawn}
+          child_process: { spawn: spawn }
         });
 
         install.emit = function () {};
@@ -218,18 +218,18 @@ describe('yeoman.generators.Base', function () {
 
         function spawn(cmd, args) {
           assert.equal(cmd, win32 ? 'cmd' : 'bower');
-                    assert.deepEqual(args, win32 ? ['/c bower install jquery --save-dev'] : ['install', 'jquery', '--save-dev']);
+          assert.deepEqual(args, win32 ? ['/c bower install jquery --save-dev'] : ['install', 'jquery', '--save-dev']);
           called = true;
 
           return asyncStub;
         }
 
         var install = proxyquire('../lib/actions/install', {
-          child_process: {spawn: spawn}
+          child_process: { spawn: spawn }
         });
 
         install.emit = function () {};
-        install.bowerInstall('jquery', {saveDev: true}, done);
+        install.bowerInstall('jquery', { saveDev: true }, done);
         assert(called);
       });
     });
@@ -250,7 +250,7 @@ describe('yeoman.generators.Base', function () {
         }
 
         var install = proxyquire('../lib/actions/install', {
-          child_process: {spawn: spawn}
+          child_process: { spawn: spawn }
         });
 
         install.emit = function () {};
@@ -267,7 +267,7 @@ describe('yeoman.generators.Base', function () {
         }
 
         var install = proxyquire('../lib/actions/install', {
-          child_process: {spawn: spawn}
+          child_process: { spawn: spawn }
         });
 
         install.installDependencies.call(this.dummy, { skipInstall: true });
@@ -284,7 +284,7 @@ describe('yeoman.generators.Base', function () {
         }
 
         var install = proxyquire('../lib/actions/install', {
-          child_process: {spawn: spawn}
+          child_process: { spawn: spawn }
         });
 
         var dummy = this.dummy._.extend(this.dummy, install);
