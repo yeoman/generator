@@ -1,4 +1,4 @@
-/*global describe, before, it */
+/*global describe, before, it, afterEach, beforeEach */
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -193,109 +193,66 @@ describe('yeoman.generators.Base', function () {
     };
 
     describe('generator.bowerInstall', function () {
-      it('should spawn a bower process', function (done) {
-        var called = false;
 
-        function spawn(cmd, args) {
-          assert.equal(cmd, win32 ? 'cmd' : 'bower');
-          assert.deepEqual(args, win32 ? ['/c bower install'] : ['install']);
-          called = true;
-
+      beforeEach(function () {
+        // Keep track of all commands executed by spawnCommand.
+        this.commandsRun = [];
+        this.dummy.spawnCommand = function spawnCommand(cmd, args) {
+          this.commandsRun.push([cmd, args]);
           return asyncStub;
-        }
+        }.bind(this);
+      });
 
-        var install = proxyquire('../lib/actions/install', {
-          child_process: { spawn: spawn }
-        });
+      afterEach(function () {
+        // Restore the original function.
+        var spawn = require('../lib/actions/spawn_command');
+        this.dummy._.extend(this.dummy, spawn);
+      });
 
-        install.emit = function () {};
-        install.bowerInstall(null, done);
-        assert(called);
+      it('should spawn a bower process', function (done) {
+        this.dummy.bowerInstall(null, done);
+        assert(this.commandsRun.length, 1);
+        assert.deepEqual(this.commandsRun[0], ['bower', ['install']]);
       });
 
       it('should spawn a bower process with formatted options', function (done) {
-        var called = false;
-
-        function spawn(cmd, args) {
-          assert.equal(cmd, win32 ? 'cmd' : 'bower');
-          assert.deepEqual(args, win32 ? ['/c bower install jquery --save-dev'] : ['install', 'jquery', '--save-dev']);
-          called = true;
-
-          return asyncStub;
-        }
-
-        var install = proxyquire('../lib/actions/install', {
-          child_process: { spawn: spawn }
-        });
-
-        install.emit = function () {};
-        install.bowerInstall('jquery', { saveDev: true }, done);
-        assert(called);
+        this.dummy.bowerInstall('jquery', { saveDev: true }, done);
+        assert(this.commandsRun.length, 1);
+        assert.deepEqual(this.commandsRun[0], ['bower', ['install', 'jquery', '--save-dev']]);
       });
     });
 
     describe('generator.installDependencies', function () {
 
+      beforeEach(function () {
+        // Keep track of all commands executed by spawnCommand.
+        this.commandsRun = [];
+        this.dummy.spawnCommand = function spawnCommand(cmd, args) {
+          this.commandsRun.push(cmd);
+          return asyncStub;
+        }.bind(this);
+      });
+
       afterEach(function () {
-        var install = require("../lib/actions/install");
-        this.dummy._.extend(this.dummy, install);
+        // Restore the original function.
+        var spawn = require('../lib/actions/spawn_command');
+        this.dummy._.extend(this.dummy, spawn);
       });
 
       it('should spawn npm and bower', function () {
-        var commandsRun = [];
-
-        function spawn(cmd, args) {
-          commandsRun.push(cmd);
-          return asyncStub;
-        }
-
-        var install = proxyquire('../lib/actions/install', {
-          child_process: { spawn: spawn }
-        });
-
-        install.emit = function () {};
-        install.installDependencies();
-        assert.deepEqual(commandsRun.sort(), win32 ? ['cmd', 'cmd'] : ['bower', 'npm']);
+        this.dummy.installDependencies();
+        assert.deepEqual(this.commandsRun, ['bower', 'npm']);
       });
 
       it('should not spawn anything with skipInstall', function () {
-        var commandsRun = [];
-
-        function spawn(cmd, args) {
-          commandsRun.push(cmd);
-          return asyncStub;
-        }
-
-        var install = proxyquire('../lib/actions/install', {
-          child_process: { spawn: spawn }
-        });
-
-        install.installDependencies.call(this.dummy, { skipInstall: true });
-        assert.deepEqual(commandsRun.length, 0);
+        this.dummy.installDependencies({ skipInstall: true });
+        assert.deepEqual(this.commandsRun.length, 0);
       });
 
       it('npmInstall should run without callback', function () {
-        var commandsRun = [];
-        var emitter = new EventEmitter();
-
-        function spawn(cmd, args) {
-          commandsRun.push(cmd);
-          return emitter;
-        }
-
-        var install = proxyquire('../lib/actions/install', {
-          child_process: { spawn: spawn }
-        });
-
-        var dummy = this.dummy._.extend(this.dummy, install);
-
-        install.npmInstall.call(dummy, 'yo', { save: true });
-        assert.deepEqual(commandsRun.length, 1);
-
-        emitter.emit('exit');
+        this.dummy.npmInstall('yo', { save: true });
+        assert.deepEqual(this.commandsRun.length, 1);
       });
-
-
     });
   });
 });
