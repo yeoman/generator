@@ -61,6 +61,7 @@ describe('yeoman.generators.Base', function () {
     before(function (done) {
       this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       this.dummy.copy('foo.js', 'write/to/foo.js');
+      this.dummy.copy('foo-copy.js');
       this.dummy.copy(path.join(__dirname, 'fixtures/lodash-copy.js'), 'write/to/lodash.js');
       this.dummy.conflicter.resolve(done);
     });
@@ -75,6 +76,10 @@ describe('yeoman.generators.Base', function () {
 
     it('should allow to copy without using the templating (conficting with lodash/underscore)', function (done) {
       fs.stat('write/to/lodash.js', done);
+    });
+
+    it('should default the destination to the source filepath value', function (done) {
+      fs.stat('foo-copy.js', done);
     });
   });
 
