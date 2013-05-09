@@ -94,6 +94,19 @@ describe('yeoman.generators.Base', function () {
 
       assert.deepEqual(this.dummy.bar, ['baz', 'bom']);
     });
+
+    it('should raise an error if required arguments are not provided', function (done) {
+      var dummy = new generators.Base([], {
+        env: this.env,
+        resolved: 'dummy:all'
+      }).on('error', function (ev) {
+        done();
+      });
+
+      dummy.argument('foo', {
+        required: true
+      });
+    });
   });
 
   describe('generator.option(name, config)', function () {
