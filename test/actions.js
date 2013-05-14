@@ -57,7 +57,7 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.copy(source, destination, options)', function () {
+  describe('generator.copy(source, destination)', function () {
     before(function (done) {
       this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       this.dummy.copy('foo.js', 'write/to/foo.js');
@@ -80,6 +80,13 @@ describe('yeoman.generators.Base', function () {
 
     it('should default the destination to the source filepath value', function (done) {
       fs.stat('foo-copy.js', done);
+    });
+
+    it('should retain executable mode on copied files', function (done) {
+      fs.stat('write/to/bar.js', function (err, stats) {
+        assert(stats.mode & 1 === 1, 'File should be executable.');
+        done();
+      });
     });
   });
 
