@@ -10,8 +10,5 @@ Please choose a generator below.
 Extend
   extend:support:scaffold
 
-Generator
-  generator
-
 Simple
   simple

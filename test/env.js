@@ -60,13 +60,13 @@ describe('Environment', function () {
 
     it('registers generators using the .register() method', function () {
       var env = generators();
-      assert.equal(Object.keys(env.generators).length, 1);
+      assert.equal(Object.keys(env.generators).length, 0);
 
       env
         .register('../fixtures/custom-generator-simple', 'fixtures:custom-generator-simple')
         .register('../fixtures/custom-generator-extend', 'scaffold');
 
-      assert.equal(Object.keys(env.generators).length, 3);
+      assert.equal(Object.keys(env.generators).length, 2);
 
       var simple = env.generators['fixtures:custom-generator-simple'];
       assert.ok(simple);
@@ -86,7 +86,7 @@ describe('Environment', function () {
         .register('../fixtures/custom-generator-extend', 'support:scaffold')
         .namespaces();
 
-      assert.deepEqual(namespaces, ['generator', 'simple', 'extend:support:scaffold', 'support:scaffold']);
+      assert.deepEqual(namespaces, ['simple', 'extend:support:scaffold', 'support:scaffold']);
     });
 
     it('output the general help', function () {
