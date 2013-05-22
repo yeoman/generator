@@ -41,7 +41,8 @@
     "isbinaryfile": "~0.1.8",
     "prompt": "~0.2.9",
     "revalidator": "~0.1.5",
-    "dargs": "~0.1.0"
+    "dargs": "~0.1.0",
+    "async": "~0.2.8"
   },
   "devDependencies": {
     "mocha": "~1.9.0",

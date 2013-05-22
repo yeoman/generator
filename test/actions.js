@@ -258,6 +258,26 @@ describe('yeoman.generators.Base', function () {
         this.dummy.npmInstall('yo', { save: true });
         assert.deepEqual(this.commandsRun.length, 1);
       });
+
+      it('should execute a callback after installs', function () {
+        var called = false;
+        this.dummy.installDependencies({
+          callback: function () {
+            called = true;
+          }
+        });
+        assert.deepEqual(this.commandsRun, ['bower', 'npm']);
+        assert(called);
+      });
+
+      it('should accept and execute a function as its only argument', function () {
+        var called = false;
+        this.dummy.installDependencies(function () {
+          called = true;
+        });
+        assert.deepEqual(this.commandsRun, ['bower', 'npm']);
+        assert(called);
+      });
     });
   });
 });
