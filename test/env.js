@@ -142,32 +142,32 @@ describe('Environment', function () {
       mocha.run(done);
     });
 
-    it('can normalize paths to cross-OS regexp', function() {
+    it('can normalize paths to cross-OS regexp', function () {
       var regexizePath = generators().regexizePath;
-      assert.equal(typeof regexizePath, "function");
+      assert.equal(typeof regexizePath, 'function');
 
       // can normalize Unix path
-      var regex = regexizePath("/foo/bar");
-      assert.ok(regex.test("/foo/bar"));
-      assert.ok(regex.test("\\foo\\bar"));
+      var regex = regexizePath('/foo/bar');
+      assert.ok(regex.test('/foo/bar'));
+      assert.ok(regex.test('\\foo\\bar'));
 
       // can normalize Windows path
-      var regex2 = regexizePath("\\foo\\bar");
-      assert.ok(regex2.test("/foo/bar"));
-      assert.ok(regex2.test("\\foo\\bar"));
+      var regex2 = regexizePath('\\foo\\bar');
+      assert.ok(regex2.test('/foo/bar'));
+      assert.ok(regex2.test('\\foo\\bar'));
     });
   });
 
-  describe('Engines', function() {
+  describe('Engines', function () {
 
-    before (function() {
+    before (function () {
       this.generator = new Base([], {
         env: generators(),
         resolved: __filename
       });
     });
 
-    it('allows users to use their prefered engine', function() {
+    it('allows users to use their prefered engine', function () {
       // engine should be able to take a fn, or a named engine (which we
       // provide adapters to, currently only underscore is supported)
       generators().engine('underscore');
@@ -176,17 +176,17 @@ describe('Environment', function () {
     it('throws on wrong engine', function (done) {
       try {
         generators().engine('underscored');
-      } catch(e) {
+      } catch (e) {
         done();
       }
     });
 
-    it('properly compiles and renders template',  function(done) {
+    it('properly compiles and renders template',  function (done) {
       var filename = 'boyah.js';
 
       this.generator.template(path.join(__dirname, 'fixtures/template.jst'), filename, { foo: 'hey' });
-      this.generator.conflicter.resolve(function(err) {
-        if(err) {
+      this.generator.conflicter.resolve(function (err) {
+        if (err) {
           return done(err);
         }
 
@@ -195,7 +195,7 @@ describe('Environment', function () {
       });
     });
 
-    it('lets you use %% and escape opening tags with underscore engine', function() {
+    it('lets you use %% and escape opening tags with underscore engine', function () {
       var tpl = 'prefix/<%%= yeoman.app %>/foo/bar';
       assert.equal(this.generator.engine(tpl), 'prefix/<%= yeoman.app %>/foo/bar');
       assert.equal(this.generator.engine('<%% if(true) { %>'), '<% if(true) { %>');
