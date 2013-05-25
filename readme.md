@@ -1,6 +1,6 @@
 # Generator [![Build Status](https://secure.travis-ci.org/yeoman/generator.png?branch=master)](http://travis-ci.org/yeoman/generator)
 
-Rails-inspired generator system that provides scaffolding for your apps
+A Rails-inspired generator system that provides scaffolding for your apps.
 
 ![Generator output](https://img.skitch.com/20120923-jxbn2njgk5dp7ttk94i1tx9ek2.png)
 
@@ -9,15 +9,15 @@ Rails-inspired generator system that provides scaffolding for your apps
 
 ## Getting Started
 
-If you're interested in writing your own generator we recommend first checking out any of our current generators. There are typically two types of generators - simple boilerplate 'copiers' and more advanced generators which can use custom prompts, remote dependencies and can do a lot more.
+If you're interested in writing your own Yeoman generator we recommend reading the official [documentation](http://yeoman.io/generators.html). 
 
-Read about the capabilities of our generators in our [docs](https://github.com/yeoman/yeoman/wiki/Generators). This guide will also cover how to create a new generator template using the command-line.
+There are typically two types of generators - simple boilerplate 'copiers' and more advanced generators which can use custom prompts, remote dependencies, wiring and much more.
 
+The docs cover how to create generators from scratch as well as recommending command-line generators for making other generators.
 
 ## Testing generators
 
 There is currently no formal infrastructure for testing generators, however you may find our [mocha generator](https://github.com/yeoman/yeoman/wiki/Testing-generators) for custom generators useful.
-
 
 ## Officially maintained generators
 
