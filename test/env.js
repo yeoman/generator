@@ -141,21 +141,6 @@ describe('Environment', function () {
       var mocha = env.create('fixtures:mocha-generator');
       mocha.run(done);
     });
-
-    it('can normalize paths to cross-OS regexp', function () {
-      var regexizePath = generators().regexizePath;
-      assert.equal(typeof regexizePath, 'function');
-
-      // can normalize Unix path
-      var regex = regexizePath('/foo/bar');
-      assert.ok(regex.test('/foo/bar'));
-      assert.ok(regex.test('\\foo\\bar'));
-
-      // can normalize Windows path
-      var regex2 = regexizePath('\\foo\\bar');
-      assert.ok(regex2.test('/foo/bar'));
-      assert.ok(regex2.test('\\foo\\bar'));
-    });
   });
 
   describe('Engines', function () {
