@@ -32,7 +32,9 @@ describe('yeoman.generators.Base', function () {
   });
 
   it('generator.prompt(defaults, prompts, cb)', function (done) {
-    this.dummy.prompt([], done);
+    this.dummy.prompt([], function () {
+      done();
+    });
   });
 
   describe('generator.sourceRoot(root)', function () {

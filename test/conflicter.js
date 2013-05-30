@@ -54,21 +54,21 @@ describe('conflicter', function () {
   describe.skip('conflicter#collision(filepath, content, cb)', function (done) {
     var me = fs.readFileSync(__filename, 'utf8');
     it('identical status', function(done) {
-      conflicter.collision(__filename, me, function (err, status) {
+      conflicter.collision(__filename, me, function (status) {
         assert.equal(status, 'identical');
         done();
       });
     });
 
     it('create status', function (done) {
-      conflicter.collision('foo.js', '', function (err, status) {
+      conflicter.collision('foo.js', '', function (status) {
         assert.equal(status, 'create');
         done();
       });
     });
 
     it('conflict status', function (done) {
-      conflicter.collision(__filename, '', function (err, status) {
+      conflicter.collision(__filename, '', function (status) {
         assert.equal(status, 'force');
         done();
       });
@@ -83,7 +83,7 @@ describe('conflicter', function () {
   describe('conflicter#_ask', function () {
     var promptMock = {
       prompt: function (config, cb) {
-        cb(this.err, { overwrite: this.answer });
+        cb({ overwrite: this.answer });
       },
       err: null,
       answer: null
@@ -95,23 +95,13 @@ describe('conflicter', function () {
       });
     });
 
-    it('skips on "n answer"', function (done) {
-      promptMock.answer = 'n';
-      this.conflicter._ask('/tmp/file', 'my file contents', function (err, result) {
-        assert.strictEqual(err, null);
-        assert(result, 'skip');
+    it('Calls answer related function', function (done) {
+      var callCount = 0;
+      promptMock.answer = function () { callCount++; };
+      this.conflicter._ask('/tmp/file', 'my file contents', function (result) {
+        assert(callCount, 1);
         done();
       });
-    });
-
-    it('enables force on "a" answer', function (done) {
-      promptMock.answer = 'a';
-      this.conflicter._ask('/tmp/file', 'my file contents', function (err, result) {
-        assert.strictEqual(err, null);
-        assert(result, 'force');
-        assert(this.conflicter.force);
-        done();
-      }.bind(this));
     });
   });
 });
