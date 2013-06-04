@@ -17,7 +17,7 @@ The docs cover how to create generators from scratch as well as recommending com
 
 ## Testing generators
 
-There is currently no formal infrastructure for testing generators, however you may find our [mocha generator](https://github.com/yeoman/yeoman/wiki/Testing-generators) for custom generators useful.
+There is currently no formal infrastructure for testing generators, however you may find our [mocha generator](https://github.com/yeoman/generator-mocha) for custom generators useful.
 
 ## Officially maintained generators
 
