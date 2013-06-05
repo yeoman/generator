@@ -39,14 +39,58 @@ describe('conflicter', function () {
       conflicter.resolve(done);
     });
 
-    it('with at least one', function (done) {
+    it('with at least one, without async callback handling', function (done) {
+      var conflicts = 0;
+      var callbackExecuted = false;
+
       conflicter.add(__filename);
       conflicter.add({
         file: 'foo.js',
         content: 'var foo = "foo";\n'
       });
 
-      conflicter.resolve(done);
+      // called.
+      conflicter.once('resolved:' + __filename, function (config) {
+        conflicts++;
+      });
+
+      // not called.
+      conflicter.once('resolved:foo.js', function (config) {
+        conflicts++;
+      });
+
+      conflicter.resolve(function(){
+        callbackExecuted = true;
+      });
+
+      assert(conflicts, 1);
+      assert(!callbackExecuted);
+      done();
+    });
+
+    it('with at least one, with async callback handling', function (done) {
+      var called = 0;
+
+      conflicter.add(__filename);
+      conflicter.add({
+        file: 'foo.js',
+        content: 'var foo = "foo";\n'
+      });
+
+      conflicter.once('resolved:' + __filename, function (config) {
+        called++;
+        config.callback();
+      });
+
+      conflicter.once('resolved:foo.js', function (config) {
+        called++;
+        config.callback();
+      });
+
+      conflicter.resolve(function(){
+        assert(called, 2);
+        done();
+      });
     });
   });
 
