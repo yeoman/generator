@@ -1,3 +1,2 @@
 --globals width
---ignore-leaks
 --timeout 100000
