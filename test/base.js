@@ -1,10 +1,11 @@
-/*global describe, before, it */
+/*global describe, before, beforeEach, it */
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var events = require('events');
 var assert = require('assert');
 var generators = require('..');
+var helpers = require('../lib/test/helpers');
 
 
 describe('yeoman.generators.Base', function () {
@@ -62,6 +63,33 @@ describe('yeoman.generators.Base', function () {
 
     it('should have the _running flag turned on', function () {
       assert.ok(this.dummy._running);
+    });
+  });
+
+  describe('generator.run(args, cb) regression', function () {
+    beforeEach(function () {
+      var Unicorn = function () {
+        generators.Base.apply(this, arguments);
+      };
+
+      util.inherits(Unicorn, generators.Base);
+
+      Unicorn.prototype.test1 = function () {
+        this.async()();
+      };
+
+      Unicorn.prototype.test2 = function () {
+        // Nothing
+      };
+
+      this.unicorn = helpers.createGenerator('unicorn:app', [
+        [Unicorn, 'unicorn:app']
+      ]);
+    });
+
+    it('should call `done` only once', function (done) {
+      // Mocha will fail if done was called more than once.
+      this.unicorn.run({}, done);
     });
   });
 
