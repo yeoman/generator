@@ -1,4 +1,4 @@
-/*global describe, before, beforeEach, it */
+/*global describe, before, beforeEach, after, afterEach, it */
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -67,7 +67,11 @@ describe('yeoman.generators.Base', function () {
   });
 
   describe('generator.run(args, cb) regression', function () {
-    beforeEach(function () {
+    var events = [];
+    var resolveCalled = 0;
+    var resolveExpected = 0;
+
+    before(function () {
       var Unicorn = function () {
         generators.Base.apply(this, arguments);
       };
@@ -82,14 +86,59 @@ describe('yeoman.generators.Base', function () {
         // Nothing
       };
 
+      Unicorn.prototype.test3 = function () {
+        this.async()('mostlyn\'t');
+      };
+
+      Unicorn.prototype.test4 = function () {
+        // Nothing again
+      };
+
       this.unicorn = helpers.createGenerator('unicorn:app', [
         [Unicorn, 'unicorn:app']
       ]);
+
+      helpers.stub(this.unicorn, 'emit', function (type, err) {
+        events.push({
+          type: type,
+          err: err
+        });
+
+        if (type === 'method') {
+          resolveExpected++;
+        }
+      });
+
+      helpers.decorate(this.unicorn.conflicter, 'resolve', function () {
+        resolveCalled++;
+      });
+    });
+
+    after(helpers.restore);
+
+    afterEach(function () {
+      events = [];
+      resolveCalled = 0;
+      resolveExpected = 0;
     });
 
     it('should call `done` only once', function (done) {
       // Mocha will fail if done was called more than once.
       this.unicorn.run({}, done);
+    });
+
+    it('should emit an error from async', function (done) {
+      this.unicorn.run({}, function () {
+        assert.ok(JSON.stringify(events).indexOf('{"type":"error","err":"mostlyn\'t"}') > -1);
+        done();
+      });
+    });
+
+    it('should resolve conflicts after each method is invoked', function (done) {
+      this.unicorn.run({}, function () {
+        assert.equal(resolveCalled, resolveExpected);
+        done();
+      });
     });
   });
 
