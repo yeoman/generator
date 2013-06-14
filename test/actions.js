@@ -43,7 +43,7 @@ describe('yeoman.generators.Base', function () {
       assert.equal(this.dummy._sourceRoot, this.fixtures);
     });
 
-    it('should return the uddated or current value of "_sourceRoot"', function () {
+    it('should return the updated or current value of "_sourceRoot"', function () {
       assert.equal(this.dummy.sourceRoot(), this.fixtures);
     });
   });
@@ -54,17 +54,23 @@ describe('yeoman.generators.Base', function () {
       assert.equal(this.dummy._destinationRoot, process.cwd());
     });
 
-    it('should return the uddated or current value of "_destinationRoot"', function () {
+    it('should return the updated or current value of "_destinationRoot"', function () {
       assert.equal(this.dummy.destinationRoot(), process.cwd());
     });
   });
 
-  describe('generator.copy(source, destination)', function () {
+  describe('generator.copy(source, destination, process)', function () {
     before(function (done) {
       this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       this.dummy.copy('foo.js', 'write/to/foo.js');
       this.dummy.copy('foo-copy.js');
       this.dummy.copy(path.join(__dirname, 'fixtures/lodash-copy.js'), 'write/to/lodash.js');
+      this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents, source, destination, props) {
+        contents = contents.replace('foo', 'bar');
+        contents = contents.replace('\r\n', '\n');
+
+        return contents;
+      });
       this.dummy.conflicter.resolve(done);
     });
 
@@ -87,6 +93,14 @@ describe('yeoman.generators.Base', function () {
     it('should retain executable mode on copied files', function (done) {
       fs.stat('write/to/bar.js', function (err, stats) {
         assert(stats.mode & 1 === 1, 'File should be executable.');
+        done();
+      });
+    });
+
+    it('should process source contents via function', function (done) {
+      fs.readFile('write/to/foo-process.js', function (err, data) {
+        if (err) throw err;
+        assert.equal(data, 'var bar = \'foo\';\n');
         done();
       });
     });
@@ -154,7 +168,7 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.directory(source, destination)', function () {
+  describe('generator.directory(source, destination, process)', function () {
     before(function (done) {
       // avoid hitting conflict state in this configuration for now
       if (fs.existsSync('foo.js')) {
@@ -168,6 +182,14 @@ describe('yeoman.generators.Base', function () {
 
       this.dummy.directory('./', 'directory');
       this.dummy.directory('./');
+      this.dummy.directory('./', 'directory', function (contents, source, destination, props) {
+        if (source.indexOf('foo-process.js') !== -1) {
+          contents = contents.replace('foo', 'bar');
+          contents = contents.replace('\r\n', '\n');
+        }
+
+        return contents;
+      });
       this.dummy.conflicter.resolve(done);
     });
 
@@ -193,6 +215,14 @@ describe('yeoman.generators.Base', function () {
       var body = fs.readFileSync('directory/foo-template.js', 'utf8');
       var foo = this.dummy.foo;
       assert.equal(body, 'var ' + foo + ' = \'' + foo + '\';' + '\n');
+    });
+
+    it('should process source contents via function', function (done) {
+      fs.readFile('directory/foo-process.js', function (err, data) {
+        if (err) throw err;
+        assert.equal(data, 'var bar = \'foo\';\n');
+        done();
+      });
     });
   });
 
