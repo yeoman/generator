@@ -36,6 +36,7 @@ describe('yeoman.generators.Base', function () {
 
     this.Dummy = Dummy;
     this.dummy = new Dummy(['bar', 'baz', 'bom'], {
+      'skip-update': true,
       foo: false,
       something: 'else',
       // mandatory options, created by the env#create() helper
@@ -57,6 +58,17 @@ describe('yeoman.generators.Base', function () {
   });
 
   describe('generator.run(args, cb)', function () {
+    it('should look for available generator updates', function () {
+      var called = false;
+      this.dummy.skipUpdate = false;
+      this.dummy.checkForUpdate = function () {
+        called = true;
+      };
+      this.dummy.run(function () {
+        assert(called);
+      });
+    });
+
     it('should run all methods in the given generator', function () {
       this.dummy.run();
     });
@@ -86,17 +98,11 @@ describe('yeoman.generators.Base', function () {
         // Nothing
       };
 
-      Unicorn.prototype.test3 = function () {
-        this.async()('mostlyn\'t');
-      };
-
-      Unicorn.prototype.test4 = function () {
-        // Nothing again
-      };
-
       this.unicorn = helpers.createGenerator('unicorn:app', [
         [Unicorn, 'unicorn:app']
       ]);
+
+      this.unicorn.chain = this.unicorn.env.generators['unicorn:app'].prototype;
 
       helpers.stub(this.unicorn, 'emit', function (type, err) {
         events.push({
@@ -127,11 +133,16 @@ describe('yeoman.generators.Base', function () {
       this.unicorn.run({}, done);
     });
 
-    it('should emit an error from async', function (done) {
-      this.unicorn.run({}, function () {
-        assert.ok(JSON.stringify(events).indexOf('{"type":"error","err":"mostlyn\'t"}') > -1);
-        done();
-      });
+    it('should emit an error from async', function () {
+      this.unicorn.chain.methodWithError = function () {
+        this.async()('mostlyn\'t');
+      };
+
+      this.unicorn.run();
+
+      assert.ok(JSON.stringify(events).indexOf('{"type":"error","err":"mostlyn\'t"}') > -1);
+
+      delete this.unicorn.chain.methodWithError;
     });
 
     it('should resolve conflicts after each method is invoked', function (done) {

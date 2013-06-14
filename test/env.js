@@ -131,13 +131,13 @@ describe('Environment', function () {
     });
 
     it('invokes using the run() method, from generators handler', function (done) {
-      var env = generators()
+      var env = generators([], { 'skip-update': true })
         .register('../fixtures/mocha-generator-base', 'fixtures:mocha-generator-base')
         .run(['fixtures:mocha-generator-base', 'foo', 'bar'], done);
     });
 
     it('invokes using the run() method, from specific generator', function (done) {
-      var env = generators().register('../fixtures/mocha-generator', 'fixtures:mocha-generator');
+      var env = generators([], { 'skip-update': true }).register('../fixtures/mocha-generator', 'fixtures:mocha-generator');
       var mocha = env.create('fixtures:mocha-generator');
       mocha.run(done);
     });
@@ -262,7 +262,7 @@ describe('Environment', function () {
         };
       }
 
-      generators()
+      generators([], { 'skip-update': true })
         .register(this.Generator)
         // Series of events proxied from the resolved generator
         .on('generators:start', assertEvent('generators:start'))
