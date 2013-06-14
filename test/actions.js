@@ -182,7 +182,7 @@ describe('yeoman.generators.Base', function () {
 
       this.dummy.directory('./', 'directory');
       this.dummy.directory('./');
-      this.dummy.directory('./', 'directory', function (contents, source, destination, props) {
+      this.dummy.directory('./', 'directory-processed', function (contents, source, destination, props) {
         if (source.indexOf('foo-process.js') !== -1) {
           contents = contents.replace('foo', 'bar');
           contents = contents.replace('\r\n', '\n');
@@ -214,15 +214,12 @@ describe('yeoman.generators.Base', function () {
     it('should process underscore templates with the actual generator instance', function () {
       var body = fs.readFileSync('directory/foo-template.js', 'utf8');
       var foo = this.dummy.foo;
-      assert.equal(body, 'var ' + foo + ' = \'' + foo + '\';' + '\n');
+      assert.equal(body, 'var ' + foo + ' = \'' + foo + '\';\n');
     });
 
-    it('should process source contents via function', function (done) {
-      fs.readFile('directory/foo-process.js', function (err, data) {
-        if (err) throw err;
-        assert.equal(data, 'var bar = \'foo\';\n');
-        done();
-      });
+    it('should process source contents via function', function () {
+      var body = fs.readFileSync('directory-processed/foo-process.js', 'utf8');
+      assert.equal(body, 'var bar = \'foo\';\n');
     });
   });
 
