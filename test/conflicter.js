@@ -139,9 +139,9 @@ describe('conflicter', function () {
       });
     });
 
-    it('Calls answer related function', function (done) {
+    it('Calls answer related function and pass a callback', function (done) {
       var callCount = 0;
-      promptMock.answer = function () { callCount++; };
+      promptMock.answer = function (cb) { callCount++; cb(); };
       this.conflicter._ask('/tmp/file', 'my file contents', function (result) {
         assert(callCount, 1);
         done();
