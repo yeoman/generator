@@ -59,7 +59,13 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.copy(source, destination, process)', function () {
+  describe('generator.cacheRoot()', function () {
+    it('should show the cache root, according to current platform, where yeoman stores all temp files', function () {
+      assert.equal(this.dummy.cacheRoot(), path.join(win32 ? process.env.USERPROFILE : process.env.HOME, '.yeoman/cache'));
+    });
+  });
+
+  describe('generator.copy(source, destination)', function () {
     before(function (done) {
       this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       this.dummy.copy('foo.js', 'write/to/foo.js');
