@@ -61,7 +61,11 @@ describe('yeoman.generators.Base', function () {
 
   describe('generator.cacheRoot()', function () {
     it('should show the cache root, according to current platform, where yeoman stores all temp files', function () {
-      assert.equal(this.dummy.cacheRoot(), path.join(win32 ? process.env.USERPROFILE : process.env.HOME, '.yeoman/cache'));
+      if (process.env.XDG_CACHE_HOME) {
+        assert.equal(this.dummy.cacheRoot(), path.join(process.env.XDG_CACHE_HOME, 'yeoman'));
+      } else {
+        assert.equal(this.dummy.cacheRoot(), path.join(process.env[win32 ? 'USERPROFILE' : 'HOME'], '.cache/yeoman'));
+      }
     });
   });
 
