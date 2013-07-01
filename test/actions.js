@@ -65,7 +65,7 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.copy(source, destination)', function () {
+  describe('generator.copy(source, destination, process)', function () {
     before(function (done) {
       this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       this.dummy.copy('foo.js', 'write/to/foo.js');
