@@ -60,12 +60,16 @@ describe('yeoman.generators.Base', function () {
   });
 
   describe('generator.cacheRoot()', function () {
-    it('should show the cache root, according to current platform, where yeoman stores all temp files', function () {
+    it('should show the cache root where yeoman stores all temp files, on a platform that follows XDG', function () {
+      process.env.XDG_CACHE_HOME = '.';
+      assert.equal(this.dummy.cacheRoot(), path.join(process.env.XDG_CACHE_HOME, 'yeoman'));
+    });
+
+    it('should show the cache root where yeoman stores all temp files, on a plateform that doesn\'t follow XDG', function () {
       if (process.env.XDG_CACHE_HOME) {
-        assert.equal(this.dummy.cacheRoot(), path.join(process.env.XDG_CACHE_HOME, 'yeoman'));
-      } else {
-        assert.equal(this.dummy.cacheRoot(), path.join(process.env[win32 ? 'USERPROFILE' : 'HOME'], '.cache/yeoman'));
+        delete process.env.XDG_CACHE_HOME;
       }
+      assert.equal(this.dummy.cacheRoot(), path.join(process.env[win32 ? 'USERPROFILE' : 'HOME'], '.cache/yeoman'));
     });
   });
 
