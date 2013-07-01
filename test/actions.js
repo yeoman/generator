@@ -64,6 +64,7 @@ describe('yeoman.generators.Base', function () {
       this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       this.dummy.copy('foo.js', 'write/to/foo.js');
       this.dummy.copy('foo-copy.js');
+      this.dummy.copy('yeoman-logo.png');
       this.dummy.copy(path.join(__dirname, 'fixtures/lodash-copy.js'), 'write/to/lodash.js');
       this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents, source, destination, props) {
         contents = contents.replace('foo', 'bar');
@@ -103,6 +104,15 @@ describe('yeoman.generators.Base', function () {
         assert.equal(data, 'var bar = \'foo\';\n');
         done();
       });
+    });
+
+    it('should not give a conflict on same binary files', function (done) {
+       this.dummy.conflicter.force = true;
+       this.dummy.conflicter.collision('yeoman-logo.png', fs.readFileSync(path.join(this.fixtures, 'yeoman-logo.png')), function (status) {
+           assert.equal(status, 'identical');
+           this.dummy.conflicter.force = false;
+           done();
+       }.bind(this));
     });
   });
 
@@ -178,6 +188,11 @@ describe('yeoman.generators.Base', function () {
       // avoid hitting conflict state in this configuration for now
       if (fs.existsSync('foo-template.js')) {
         fs.unlinkSync('foo-template.js');
+      }
+
+      // avoid hitting conflict state in this configuration for now
+      if (fs.existsSync('yeoman-logo.png')) {
+        fs.unlinkSync('yeoman-logo.png');
       }
 
       this.dummy.directory('./', 'directory');
