@@ -31,8 +31,6 @@ describe('yeoman.generators.Base', function () {
       resolved: 'test:fetch'
     });
     this.Dummy = Dummy;
-
-    this.homedir = process.platform === 'win32' ? process.env.USERPROFILE : process.env.HOME;
   });
 
   it('generator.bowerInstall(name)', function (done) {
@@ -69,7 +67,7 @@ describe('yeoman.generators.Base', function () {
     });
 
     it('should have the result cached internally into a `_cache` folder', function (done) {
-      fs.stat(path.join(this.homedir, '.yeoman/cache/yeoman/generators/master'), done);
+      fs.stat(path.join(this.dummy.cacheRoot(), 'yeoman/generators/master'), done);
     });
 
     it('should invoke `cb` with a remote object to interract with the downloaded package', function (done) {
