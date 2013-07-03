@@ -35,7 +35,7 @@ describe('yeoman.generators.Base', function () {
 
   it('generator.bowerInstall(name)', function (done) {
     this.dummy.bowerInstall('backbone', function (err) {
-      fs.stat('components/backbone', done);
+      fs.stat('bower_components/backbone', done);
     });
   });
 
