@@ -12,7 +12,7 @@ describe('Generator shell methods API', function () {
 
   it('should extend shelljs module', function () {
     _.each(shelljs, function (method, name) {
-      assert.equal(method, shellModule.shell[name]);
+      assert.equal(method, shellModule[name]);
     });
   });
 
