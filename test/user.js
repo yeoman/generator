@@ -28,11 +28,11 @@ describe('user utility', function () {
     });
 
     beforeEach(function () {
-      this.shell = require('../lib/actions/shell');
+      this.shell = shell;
       sinon.spy(this.shell, 'exec');
 
       this.user = proxyquire('../lib/actions/user', {
-        './shell': this.shell
+        'shelljs': this.shell
       });
     });
 

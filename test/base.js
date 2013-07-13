@@ -6,6 +6,7 @@ var events = require('events');
 var assert = require('assert');
 var generators = require('..');
 var helpers = require('../lib/test/helpers');
+var _ = require('lodash');
 
 
 describe('yeoman.generators.Base', function () {
@@ -269,4 +270,13 @@ describe('yeoman.generators.Base', function () {
       assert.equal(usage, 'yeoman init FOO one two three [options]\n\nA new desc for this generator');
     });
   });
+
+  describe('generator.shell', function () {
+    it('should extend shelljs module', function () {
+      _.each(require('shelljs'), function (method, name) {
+        assert.equal(method, generators.Base.prototype.shell[name]);
+      });
+    });
+  });
+
 });
