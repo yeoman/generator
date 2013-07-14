@@ -43,7 +43,8 @@
     "async": "~0.2.8",
     "inquirer": "~0.2.0",
     "iconv-lite": "~0.2.10",
-    "shelljs": "~0.1.4"
+    "shelljs": "~0.1.4",
+    "findup-sync": "~0.1.2"
   },
   "devDependencies": {
     "mocha": "~1.11.0",
