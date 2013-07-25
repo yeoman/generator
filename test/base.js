@@ -4,6 +4,7 @@ var path = require('path');
 var util = require('util');
 var events = require('events');
 var assert = require('assert');
+var sinon = require('sinon');
 var generators = require('..');
 var helpers = require('../lib/test/helpers');
 var _ = require('lodash');
@@ -276,6 +277,33 @@ describe('yeoman.generators.Base', function () {
       _.each(require('shelljs'), function (method, name) {
         assert.equal(method, generators.Base.prototype.shell[name]);
       });
+    });
+  });
+
+  describe('generator.storage()', function () {
+    it('should provide a storage instance', function () {
+      assert.ok(this.dummy.config instanceof require('../lib/util/storage'));
+    });
+
+    it('should set the CWD where `.yo-rc.json` is found', function () {
+      var projectDir = path.join(__dirname, 'fixtures/dummy-project');
+      process.chdir(path.join(projectDir, 'subdir'));
+      var dummy = new this.Dummy([ 'foo' ], {
+        resolved: 'ember:all',
+        env: this.env
+      });
+      assert.equal(process.cwd(), projectDir);
+    });
+
+    it('should update storage when destinationRoot change', function () {
+      sinon.spy(this.Dummy.prototype, '_setStorage');
+      this.dummy.destinationRoot('foo');
+      assert.equal(this.Dummy.prototype._setStorage.callCount, 1);
+      this.dummy.destinationRoot();
+      assert.equal(this.Dummy.prototype._setStorage.callCount, 1);
+      this.dummy.destinationRoot('foo');
+      assert.equal(this.Dummy.prototype._setStorage.callCount, 2);
+      this.Dummy.prototype._setStorage.restore();
     });
   });
 
