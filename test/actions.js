@@ -345,4 +345,19 @@ describe('yeoman.generators.Base', function () {
       });
     });
   });
+
+  describe('generator.expandFiles', function () {
+    before(function (done) {
+      this.dummy.copy('foo.js', 'write/abc/abc.js');
+      this.dummy.conflicter.resolve(done);
+    });
+    it('should return expand files', function () {
+      var files = this.dummy.expandFiles('write/abc/**');
+      assert.deepEqual(files, ['write/abc/abc.js']);
+    });
+    it('should return expand files', function () {
+      var files = this.dummy.expandFiles('abc/**', {cwd: './write'});
+      assert.deepEqual(files, ['abc/abc.js']);
+    });
+  });
 });
