@@ -35,7 +35,6 @@
     "lodash": "~1.3.0",
     "mkdirp": "~0.3.5",
     "glob": "~3.2.0",
-    "nopt": "~2.1.1",
     "cli-table": "~0.2.0",
     "debug": "~0.7.2",
     "isbinaryfile": "~0.1.8",
