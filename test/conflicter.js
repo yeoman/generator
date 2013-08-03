@@ -20,13 +20,6 @@ describe('conflicter', function () {
     assert.ok(conflicter instanceof events.EventEmitter);
   });
 
-  it('conflicter#colors', function () {
-    assert.deepEqual(conflicter.colors, {
-      'diff added': 42,
-      'diff removed': 41
-    });
-  });
-
   it('conflicter#add(conflict)`', function () {
     conflicter.add(__filename);
     var conflict = conflicter.conflicts.pop();
