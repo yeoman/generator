@@ -114,7 +114,7 @@ describe('conflicter', function () {
 
   it('conflicter#diff(actual, expected)', function () {
     var diff = conflicter.diff('var', 'let');
-    assert.equal(diff, '\n\u001b[41mremoved\u001b[0m \u001b[42madded\u001b[0m\n\n\u001b[42mlet\u001b[0m\u001b[41mvar\u001b[0m\n');
+    assert.equal(diff, '\n\u001b[41mremoved\u001b[49m \u001b[42madded\u001b[49m\n\n\u001b[42mlet\u001b[49m\u001b[41mvar\u001b[49m\n');
   });
 
   describe('conflicter#_ask', function () {
