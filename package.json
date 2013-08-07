@@ -44,7 +44,7 @@
     "iconv-lite": "~0.2.10",
     "shelljs": "~0.1.4",
     "findup-sync": "~0.1.2",
-    "chalk": "~0.1.0"
+    "chalk": "~0.2.0"
   },
   "devDependencies": {
     "mocha": "~1.12.0",
