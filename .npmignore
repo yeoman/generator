@@ -1,8 +1,8 @@
+doc/
 .npmignore
 .editorconfig
 .travis.yml
 .jshintrc
 .gitattributes
 contributing.md
-docs
-Makefile
+doc.js
