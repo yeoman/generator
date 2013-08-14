@@ -23,7 +23,7 @@ There is currently no formal infrastructure for testing generators, however you 
 
 ## Officially maintained generators
 
-* [Web App](https://github.com/yeoman/generator-webapp#readme) *(default)*
+* [Web App](https://github.com/yeoman/generator-webapp#readme)
 * [AngularJS](https://github.com/yeoman/generator-angular#readme)
 * [Backbone](https://github.com/yeoman/generator-backbone#readme)
 * [BBB (Backbone Boilerplate)](https://github.com/yeoman/generator-bbb#readme)
