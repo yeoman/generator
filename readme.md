@@ -9,19 +9,21 @@ A Rails-inspired generator system that provides scaffolding for your apps.
 
 ## Getting Started
 
-If you're interested in writing your own Yeoman generator we recommend reading the official [documentation](http://yeoman.io/generators.html). 
+If you're interested in writing your own Yeoman generator we recommend reading the official [documentation](http://yeoman.io/generators.html).
 
 There are typically two types of generators - simple boilerplate 'copiers' and more advanced generators which can use custom prompts, remote dependencies, wiring and much more.
 
 The docs cover how to create generators from scratch as well as recommending command-line generators for making other generators.
 
+
 ## Testing generators
 
 There is currently no formal infrastructure for testing generators, however you may find our [mocha generator](https://github.com/yeoman/generator-mocha) for custom generators useful.
 
+
 ## Officially maintained generators
 
-* [Web App](https://github.com/yeoman/generator-webapp#readme) *(default)*
+* [Web App](https://github.com/yeoman/generator-webapp#readme)
 * [AngularJS](https://github.com/yeoman/generator-angular#readme)
 * [Backbone](https://github.com/yeoman/generator-backbone#readme)
 * [BBB (Backbone Boilerplate)](https://github.com/yeoman/generator-bbb#readme)
