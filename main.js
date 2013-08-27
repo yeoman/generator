@@ -29,6 +29,9 @@ var generators = module.exports = function createEnv(args, opts) {
   return new Environment(args, opts);
 };
 
+// Reference general dependencies on the top level object
+generators.inquirer = require('inquirer');
+
 // hoist up top level class the generator extend
 generators.Base = require('./lib/base');
 generators.NamedBase = require('./lib/named-base');
