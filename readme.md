@@ -24,7 +24,7 @@ There is currently no formal infrastructure for testing generators, however you 
 
 To debug a generator, you can pass Node.js debug's flags by running it like this:
 
-```
+```bash
 # OS X / Linux
 node --debug `which yo` <generator> [arguments]
 
@@ -37,7 +37,6 @@ node --debug <path to yo binary> <generator> [arguments]
 * [Web App](https://github.com/yeoman/generator-webapp#readme)
 * [AngularJS](https://github.com/yeoman/generator-angular#readme)
 * [Backbone](https://github.com/yeoman/generator-backbone#readme)
-* [BBB (Backbone Boilerplate)](https://github.com/yeoman/generator-bbb#readme)
 * [Chrome Apps Basic Boilerplate](https://github.com/yeoman/generator-chromeapp#readme)
 * [Ember](https://github.com/yeoman/generator-ember#readme)
 * [Jasmine](https://github.com/yeoman/generator-jasmine#readme)
