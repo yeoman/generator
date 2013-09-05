@@ -20,6 +20,17 @@ The docs cover how to create generators from scratch as well as recommending com
 
 There is currently no formal infrastructure for testing generators, however you may find our [mocha generator](https://github.com/yeoman/generator-mocha) for custom generators useful.
 
+### Debugging
+
+To debug a generator, you can pass Node.js debug's flags by running it this way:
+
+```
+# On Mac/Linux
+node --debug $(which yo) <generator> <argument(s)>
+
+# On Windows
+node --debug <path to yo binary> <generator> <argument(s)>
+```
 
 ## Officially maintained generators
 
