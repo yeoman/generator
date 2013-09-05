@@ -22,14 +22,14 @@ There is currently no formal infrastructure for testing generators, however you 
 
 ### Debugging
 
-To debug a generator, you can pass Node.js debug's flags by running it this way:
+To debug a generator, you can pass Node.js debug's flags by running it like this:
 
 ```
-# On Mac/Linux
-node --debug $(which yo) <generator> <argument(s)>
+# OS X / Linux
+node --debug `which yo` <generator> [arguments]
 
-# On Windows
-node --debug <path to yo binary> <generator> <argument(s)>
+# Windows
+node --debug <path to yo binary> <generator> [arguments]
 ```
 
 ## Officially maintained generators
