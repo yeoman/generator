@@ -257,7 +257,7 @@ describe('yeoman.generators.Base', function () {
       var help = this.dummy.help();
 
       assert.ok(help.match('Usage:'));
-      assert.ok(help.match('yeoman init FOO one two three \\[options\\]'));
+      assert.ok(help.match('yo \\[options\\]'));
       assert.ok(help.match('A new desc for this generator'));
       assert.ok(help.match('Options:'));
       assert.ok(help.match('--help   # Print generator\'s options and usage'));
@@ -268,7 +268,7 @@ describe('yeoman.generators.Base', function () {
   describe('generator.usage()', function () {
     it('should return the expected help / usage output', function () {
       var usage = this.dummy.usage();
-      assert.equal(usage, 'yeoman init FOO one two three [options]\n\nA new desc for this generator');
+      assert.equal(usage, 'yo [options]\n\nA new desc for this generator');
     });
   });
 
