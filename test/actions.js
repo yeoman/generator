@@ -15,18 +15,8 @@ describe('yeoman.generators.Base', function () {
   before(generators.test.before(path.join(__dirname, 'temp')));
 
   before(function () {
-    function Dummy() {
-      generators.Base.apply(this, arguments);
-    }
-
-    util.inherits(Dummy, generators.Base);
-
-    Dummy.prototype.test = function () {
-      this.shouldRun = true;
-    };
-
     var env = this.env = generators();
-    env.register(Dummy, 'dummy');
+    env.registerStub(generators.test.createDummyGenerator(), 'dummy');
     this.dummy = env.create('dummy');
 
     this.fixtures = path.join(__dirname, 'fixtures');

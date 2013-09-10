@@ -18,21 +18,13 @@ describe('yeoman.generators.Base', function () {
   before(function () {
     var env = this.env = generators();
 
-    function Dummy() {
-      generators.Base.apply(this, arguments);
-    }
+    var Dummy = generators.test.createDummyGenerator();
 
-    util.inherits(Dummy, generators.Base);
-
-    Dummy.prototype.test = function () {
-      this.shouldRun = true;
-    };
-
-    env.register(Dummy, 'ember:all');
-    env.register(Dummy, 'hook1:ember');
-    env.register(Dummy, 'hook2:ember:all');
-    env.register(Dummy, 'hook3');
-    env.register(function () {
+    env.registerStub(Dummy, 'ember:all');
+    env.registerStub(Dummy, 'hook1:ember');
+    env.registerStub(Dummy, 'hook2:ember:all');
+    env.registerStub(Dummy, 'hook3');
+    env.registerStub(function () {
       this.write('app/scripts/models/application-model.js', '// ...');
     }, 'hook4');
 

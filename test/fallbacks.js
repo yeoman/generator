@@ -8,7 +8,7 @@ var helpers = generators.test;
 describe('generators config', function () {
   describe('when config("generators.test-framework") is set', function () {
     before(function () {
-      this.env = generators().register(function () {}, 'ember:model');
+      this.env = generators().registerStub(function () {}, 'ember:model');
     });
 
     it('I get the appropriate generator.options', function () {
