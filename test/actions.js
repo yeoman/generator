@@ -130,6 +130,37 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
+  describe('generator.bulkCopy(source, destination, process)', function () {
+
+    before(function (done) {
+      this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/foo.js');
+      this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo-template.js'), 'write/to/noProcess.js');
+      done();
+    });
+
+    it('should copy a file', function (done) {
+      fs.readFile('write/to/foo.js', function (err, data) {
+        if (err) throw err;
+        assert.equal(data+'', 'var foo = \'foo\';\n');
+        done();
+      });
+    });
+
+    it('should not run conflicter or template engine', function (done) {
+      var self = this;
+      fs.readFile('write/to/noProcess.js', function (err, data) {
+        if (err) throw err;
+        assert.equal(data+'', 'var <%= foo %> = \'<%= foo %>\';\n');
+        self.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/noProcess.js');
+        fs.readFile('write/to/noProcess.js', function (err, data) {
+          if (err) throw err;
+          assert.equal(data+'', 'var foo = \'foo\';\n');
+          done();
+        });
+      });
+    });
+  });
+
   describe('generator.read(filepath, encoding)', function () {
     it('should read files relative to the "sourceRoot" value', function () {
       var body = this.dummy.read('foo.js');
@@ -249,6 +280,45 @@ describe('yeoman.generators.Base', function () {
     it('should process source contents via function', function () {
       var body = fs.readFileSync('directory-processed/foo-process.js', 'utf8');
       assert.equal(body, 'var bar = \'foo\';\n');
+    });
+
+  });
+
+  describe('generator.bulkDirectory(source, destination, process)', function () {
+    before(function (done) {
+      this.dummy.sourceRoot(this.fixtures);
+      this.dummy.destinationRoot('.');
+      // Create temp bulk operation files
+      // These cannot just be in the repo or the other directory tests fail
+      require('mkdirp').sync(this.fixtures + '/bulk-operation');
+      for (var i = 0; i < 1000; i++) {
+        fs.writeFileSync(this.fixtures + '/bulk-operation/' + i + '.js', i);
+    }
+    // Copy files without processing
+    this.dummy.bulkDirectory('bulk-operation', 'bulk-operation');
+      this.dummy.conflicter.resolve(done);
+    });
+
+    after(function (done) {
+      // Now remove them
+      for (var i = 0; i < 1000; i++) {
+        fs.unlinkSync(this.fixtures + '/bulk-operation/' + i + '.js');
+      }
+      fs.rmdirSync(this.fixtures + '/bulk-operation');
+      done();
+    });
+
+    it('should bulk copy one thousand files', function (done) {
+      fs.readFile('bulk-operation/999.js', function (err, data) {
+        if (err) throw err;
+        assert.equal(data, '999');
+        done();
+      });
+    });
+
+    it('should check for conflict if directory already exists', function (done) {
+      this.dummy.bulkDirectory('bulk-operation', 'bulk-operation');
+      this.dummy.conflicter.resolve(done);
     });
   });
 
