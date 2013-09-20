@@ -4,3 +4,5 @@ node_js:
   - '0.8'
 before_script:
   npm install -g bower
+env:
+  - DEBUG="generators:*"
