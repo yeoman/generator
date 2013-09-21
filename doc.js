@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var chalk = require('chalk');
 var glob = require('glob');
