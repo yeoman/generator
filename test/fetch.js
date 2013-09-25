@@ -41,18 +41,18 @@ describe('yeoman.generators.Base', function () {
 
   describe('generator.tarball(tarball, destination, cb)', function () {
     it('should allow the fecthing / untar of a given tarball, at the given location', function (done) {
-      this.dummy.tarball('https://github.com/yeoman/yeoman.io/tarball/gh-pages', './yeoman.io/', function (err) {
+      this.dummy.tarball('https://github.com/yeoman/generator/archive/master.tar.gz', './yeoman-generator/', function (err) {
         if (err) {
           return done(err);
         }
-        fs.stat('./yeoman.io/index.html', done);
+        fs.stat('./yeoman-generator/readme.md', done);
       });
     });
   });
 
   describe('generator.fetch(url, destination, cb)', function () {
     it('should allow the fething of a single file', function (done) {
-      this.dummy.fetch('https://raw.github.com/yeoman/generators/master/README.md', './some/path/README.md', function (err) {
+      this.dummy.fetch('https://raw.github.com/yeoman/generator/master/readme.md', './some/path/README.md', function (err) {
         if (err) {
           return done(err);
         }
