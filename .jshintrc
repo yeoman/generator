@@ -10,7 +10,7 @@
   "newcap": true,
   "noarg": true,
   "undef": true,
-  "strict": false,
+  "strict": true,
   "trailing": true,
   "smarttabs": true,
   "white": true,
