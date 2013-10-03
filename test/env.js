@@ -97,10 +97,10 @@ describe('Environment', function () {
       var expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8');
       // lazy "update the help fixtures because something changed" statement
       // fs.writeFileSync(path.join(__dirname, 'fixtures/help.txt'), env.help().trim());
-      assert.equal(env.help().trim(), expected.trim());
+      helpers.assertTextEqual(env.help().trim(), expected.trim());
 
       // custom bin name
-      assert.equal(env.help('gg').trim(), expected.replace('Usage: init', 'Usage: gg').trim());
+      helpers.assertTextEqual(env.help('gg').trim(), expected.replace('Usage: init', 'Usage: gg').trim());
     });
 
     it('get() can be used to get a specific generator', function () {
@@ -175,7 +175,7 @@ describe('Environment', function () {
           return done(err);
         }
 
-        assert.equal(fs.readFileSync(filename, 'utf8'), "var hey = 'hey';" + '\n');
+        helpers.assertTextEqual(fs.readFileSync(filename, 'utf8'), "var hey = 'hey';" + '\n');
         done();
       });
     });
