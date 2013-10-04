@@ -20,7 +20,7 @@
     "url": "git://github.com/yeoman/generator.git"
   },
   "scripts": {
-    "test": "mocha test/*.js --reporter list --timeout 100000",
+    "test": "istanbul cover _mocha --report lcovonly -- test/*.js --reporter list --timeout 100000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "legacy": "mocha test/legacy.js --reporter dot --timeout 100000",
     "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000"
   },
@@ -49,6 +49,9 @@
     "mocha": "~1.12.0",
     "proxyquire": "~0.4.0",
     "sinon": "~1.7.3",
-    "markdox": "~0.1.2"
+    "markdox": "~0.1.2",
+    "coveralls": "~2.3.0",
+    "mocha-lcov-reporter": "0.0.1",
+    "istanbul": "~0.1.44"
   }
 }
