@@ -3,6 +3,6 @@ node_js:
   - '0.10'
   - '0.8'
 before_script:
-  npm install -g bower
+  npm install -g bower mocha istanbul
 env:
   - DEBUG="generators:*"
