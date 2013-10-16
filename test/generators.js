@@ -1,7 +1,11 @@
-/*global describe before it */
+/*global describe, before, beforeEach, it */
 var path = require('path');
+var fs = require('fs');
 var events = require('events');
 var assert = require('assert');
+var file = require('file-utils');
+var helpers = require('../lib/test/helpers');
+var sinon = require('sinon');
 
 var generators = require('..');
 var Environment = require('../lib/env');
@@ -36,7 +40,7 @@ describe('Generators', function () {
   });
 
   describe('yeoman.generators.Base', function () {
-    before(function () {
+    beforeEach(function () {
       this.env = generators();
       this.generator = new generators.Base({
         env: this.env,
@@ -50,6 +54,87 @@ describe('Generators', function () {
       assert.ok(typeof this.generator.emit === 'function');
       this.generator.on('yay-o-man', done);
       this.generator.emit('yay-o-man');
+    });
+
+    describe('.src', function () {
+      it('implement the file-utils interface', function () {
+        helpers.assertImplement(this.generator.src, file.constructor.prototype);
+      });
+
+      it('generator.sourcePath() update its source base', function () {
+        this.generator.sourceRoot('foo/src');
+        assert.ok(this.generator.src.fromBase('bar'), 'foo/src/bar');
+      });
+
+      it('generator.destinationPath() update its destination base', function () {
+        this.generator.destinationRoot('foo/src');
+        assert.ok(this.generator.src.fromDestBase('bar'), 'foo/src/bar');
+      });
+    });
+
+    describe('.dest', function () {
+      it('implement the file-utils interface', function () {
+        helpers.assertImplement(this.generator.dest, file.constructor.prototype);
+      });
+
+      it('generator.sourcePath() update its destination base', function () {
+        this.generator.sourceRoot('foo/src');
+        assert.ok(this.generator.src.fromDestBase('bar'), 'foo/src/bar');
+      });
+
+      it('generator.destinationPath() update its source base', function () {
+        this.generator.destinationRoot('foo/src');
+        assert.ok(this.generator.src.fromBase('bar'), 'foo/src/bar');
+      });
+
+      describe('conflict handler', function () {
+        var destRoot = path.join(__dirname, 'fixtures');
+        var target = path.join(destRoot, 'file-conflict.txt');
+        var initialFileContent = fs.readFileSync(target).toString();
+
+        beforeEach(function () {
+          this.generator.destinationRoot(destRoot);
+          assert.ok(file.exists(target));
+          helpers.assertTextEqual(initialFileContent, 'initial content\n');
+        });
+
+        it('aborting', function () {
+          // make sure the file exist
+          var fileContent = this.generator.dest.read('file-conflict.txt');
+          var checkForCollision = sinon.stub(this.generator, 'checkForCollision');
+
+          this.generator.dest.write('file-conflict.txt', 'some conficting content');
+
+          var cb = checkForCollision.args[0][2];
+          cb(null, {
+            status: 'abort',
+            callback: function () {}
+          });
+
+          assert.ok(checkForCollision.calledOnce);
+          assert.ok(fileContent, this.generator.dest.read('file-conflict.txt'));
+        });
+
+        it('allowing', function () {
+          // make sure the file exist
+          var fileContent = this.generator.dest.read('file-conflict.txt');
+          var checkForCollision = sinon.stub(this.generator, 'checkForCollision');
+
+          this.generator.dest.write('file-conflict.txt', 'some conficting content');
+
+          var cb = checkForCollision.args[0][2];
+          cb(null, {
+            status: 'create',
+            callback: function () {}
+          });
+
+          assert.ok(checkForCollision.calledOnce);
+          assert.ok('some conflicting content', this.generator.dest.read('file-conflict.txt'));
+
+          // reset content
+          fs.writeFileSync(target, initialFileContent);
+        });
+      });
     });
   });
 

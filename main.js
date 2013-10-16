@@ -32,6 +32,9 @@ var generators = module.exports = function createEnv(args, opts) {
 // Reference general dependencies on the top level object
 generators.inquirer = require('inquirer');
 
+// Set global file utility
+generators.file = require('file-utils');
+
 // hoist up top level class the generator extend
 generators.Base = require('./lib/base');
 generators.NamedBase = require('./lib/named-base');
