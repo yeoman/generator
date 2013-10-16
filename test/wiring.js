@@ -58,4 +58,62 @@ describe('yeoman.generator.lib.actions.wiring', function () {
 
     assert.equal(res, res2);
   });
+
+  it('should append content in the right place', function () {
+    var html = '<html><body><section><span></span></section></body></html>';
+    var expected = '<html><body><section><span></span>TEST</section></body></html>';
+    assert.equal(wiring.append(html, 'section', 'TEST'), expected);
+    assert.equal(wiring.domUpdate(html, 'section', 'TEST', 'a'), expected);
+  });
+
+  it('should prepend content in the right place', function () {
+    var html = '<html><body><section><span></span></section></body></html>';
+    var expected = '<html><body><section>TEST<span></span></section></body></html>';
+    assert.equal(wiring.prepend(html, 'section', 'TEST'), expected);
+    assert.equal(wiring.domUpdate(html, 'section', 'TEST', 'p'), expected);
+  });
+
+  it('should replace content correctly', function () {
+    var html = '<html><body><section><span></span></section></body></html>';
+    var expected = '<html><body><section>TEST</section></body></html>';
+    assert.equal(wiring.domUpdate(html, 'section', 'TEST', 'r'), expected);
+  });
+
+  it('should delete content correctly', function () {
+    var html = '<html><body><section><span></span></section></body></html>';
+    var expected = '<html><body></body></html>';
+    assert.equal(wiring.domUpdate(html, 'section', 'TEST', 'd'), expected);
+  });
+
+  it('should append to files in the right place', function () {
+    var html = '<html><body><section><span></span></section></body></html>';
+    var expected = '<html><body><section><span></span>TEST</section></body></html>';
+    var filepath = path.join(this.fixtures, 'append-prepend-to-file.html');
+
+    fs.writeFileSync(filepath, html, 'utf-8');
+
+    wiring.appendToFile(filepath, 'section', 'TEST');
+
+    var actual = fs.readFileSync(filepath, 'utf-8').trim();
+
+    assert.equal(actual, expected);
+
+    fs.writeFileSync(filepath, html, 'utf-8');
+  });
+
+  it('should prepend to files in the right place', function () {
+    var html = '<html><body><section><span></span></section></body></html>';
+    var expected = '<html><body><section>TEST<span></span></section></body></html>';
+    var filepath = path.join(this.fixtures, 'append-prepend-to-file.html');
+
+    fs.writeFileSync(filepath, html, 'utf-8');
+
+    wiring.prependToFile(filepath, 'section', 'TEST');
+
+    var actual = fs.readFileSync(filepath, 'utf-8').trim();
+
+    assert.equal(actual, expected);
+
+    fs.writeFileSync(filepath, html, 'utf-8');
+  });
 });
