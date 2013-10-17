@@ -1,4 +1,4 @@
-/*global it, describe, before */
+/*global it, describe, before, beforeEach */
 
 var util = require('util');
 var assert = require('assert');
@@ -9,32 +9,33 @@ describe('yeoman.generators.test', function () {
   'use strict';
   var Unicorn;
 
-  before(function () {
-    Unicorn = function () {
+  beforeEach(function () {
+    var self = this;
+    Unicorn = function (args, options) {
+      self.args = args;
+      self.options = options;
       generators.Base.apply(this, arguments);
     };
 
     util.inherits(Unicorn, generators.Base);
 
-  });
-
-  describe('helpers.createGenerator', function () {
-    it('with default params', function () {
-      assert.ok(helpers.createGenerator('unicorn:app', [
-        [Unicorn, 'unicorn:app']
-      ]));
     });
 
+  describe('helpers.createGenerator', function () {
+
     it('with args params', function () {
-      assert.ok(helpers.createGenerator('unicorn:app', [
+      helpers.createGenerator('unicorn:app', [
         [Unicorn, 'unicorn:app']
-      ], ['temp']));
+      ], ['temp']);
+      // assert.ok();
+      assert.deepEqual(this.args, ['temp']);
     });
 
     it('with options param', function () {
-      assert.ok(helpers.createGenerator('unicorn:app', [
+      helpers.createGenerator('unicorn:app', [
         [Unicorn, 'unicorn:app']
-      ], ['temp'], {ui: 'tdd'}));
+      ], ['temp'], {ui: 'tdd'});
+      assert.equal(this.options.ui, 'tdd');
     });
   });
 });
