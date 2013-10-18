@@ -270,6 +270,11 @@ describe('yeoman.generators.Base', function () {
       var usage = this.dummy.usage();
       assert.equal(usage, 'yo [options]\n\nA new desc for this generator');
     });
+
+    it('should use the provided generatorName', function() {
+      this.dummy.generatorName = 'dummy';
+      assert.ok(this.dummy.usage().match('yo dummy'));
+    });
   });
 
   describe('generator.shell', function () {
