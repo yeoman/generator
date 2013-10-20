@@ -12,10 +12,14 @@
 // It works with simple generator, if you need to do a bit more complex
 // stuff, extends from Generator.Base and defines your generator steps
 // in several methods.
+var util = require('util');
+var generators = require('../../../main');
 
 module.exports = function(args, options) {
+  generators.Base.apply(this, arguments);
   console.log('Executing generator with', args, options);
 };
+util.inherits(module.exports, generators.Base);
 
 module.exports.name = 'You can name your generator';
 module.exports.description = 'Ana add a custom description by adding a `description` property to your function.';

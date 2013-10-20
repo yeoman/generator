@@ -77,6 +77,21 @@ describe('Environment', function () {
       assert.ok(extend);
       assert.ok(typeof extend === 'function');
       assert.ok(extend.namespace, 'scaffold');
+
+      // should only accept String as first parameter
+      assert.throws(function () { env.register(function () {}, 'blop'); });
+      assert.throws(function () { env.register([], 'blop'); });
+      assert.throws(function () { env.register(false, 'blop'); });
+    });
+
+    // Make sure we don't break the generators hash using `Object.defineProperty`
+    it('should keep internal generators object writable', function () {
+      var env = generators();
+      env.register('../fixtures/custom-generator-simple', 'foo');
+      env.generators.foo = 'bar';
+      assert.equal(env.generators.foo, 'bar');
+      env.generators.foo = 'yo';
+      assert.equal(env.generators.foo, 'yo');
     });
 
     it('get the list of namespaces', function () {
@@ -263,7 +278,7 @@ describe('Environment', function () {
       }
 
       generators()
-        .register(this.Generator)
+        .registerStub(this.Generator, 'angular:all')
         // Series of events proxied from the resolved generator
         .on('generators:start', assertEvent('generators:start'))
         .on('generators:end', assertEvent('generators:end'))
