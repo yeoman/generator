@@ -13,6 +13,25 @@ describe('yeoman.remote', function () {
     this.dummy = env.create('dummy');
   });
 
+  describe('remote.copy(source, destination)', function () {
+
+    before(function (done) {
+      this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
+        this.dummy.foo = 'foo';
+        remote.copy('test/fixtures/template.jst', 'remote/template.js');
+        this.dummy.conflicter.resolve(done);
+      }.bind(this), true);
+    });
+
+    it('should copy a file from a remote resource', function (done) {
+      fs.readFile('remote/template.js', function (err, data) {
+        if (err) throw err;
+        assert.equal(data+'', 'var foo = \'foo\';\n');
+        done();
+      });
+    });
+  });
+
   describe('remote.bulkCopy(source, destination)', function () {
 
     before(function (done) {
@@ -35,7 +54,22 @@ describe('yeoman.remote', function () {
     });
   });
 
-  describe('remote.bulkCopy(source, destination)', function () {
+  describe('remote.directory(source, destination)', function () {
+
+    before(function (done) {
+      this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
+        remote.directory('test/generators', 'remote/generators');
+        this.dummy.conflicter.resolve(done);
+      }.bind(this), true);
+    });
+
+    it('should copy a directory from a remote resource', function (done) {
+      fs.stat('remote/generators/test-angular.js', done);
+    });
+
+  });
+
+  describe('remote.bulkDirectory(source, destination)', function () {
 
     before(function (done) {
       this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
