@@ -284,9 +284,9 @@ describe('yeoman.generators.Base', function () {
       require('mkdirp').sync(this.fixtures + '/bulk-operation');
       for (var i = 0; i < 1000; i++) {
         fs.writeFileSync(this.fixtures + '/bulk-operation/' + i + '.js', i);
-    }
-    // Copy files without processing
-    this.dummy.bulkDirectory('bulk-operation', 'bulk-operation');
+      }
+      // Copy files without processing
+      this.dummy.bulkDirectory('bulk-operation', 'bulk-operation');
       this.dummy.conflicter.resolve(done);
     });
 
