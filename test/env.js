@@ -7,7 +7,7 @@ var sinon = require('sinon');
 var generators = require('..');
 var helpers = generators.test;
 var events = require('events');
-
+var TerminalAdapter = require('../lib/env/adapter');
 var Base = generators.Base;
 var Environment = require('../lib/env');
 var Store = require('../lib/env/store');
@@ -64,6 +64,16 @@ describe('Environment', function () {
       this.expected = this.expected.replace('Usage: init', 'Usage: gg');
       helpers.assertTextEqual(this.env.help('gg').trim(), this.expected);
     });
+    it('instantiates a TerminalAdapter if none provided', function () {
+      assert.ok(this.env.adapter instanceof TerminalAdapter, 'Not a TerminalAdapter');
+    });
+
+    it('uses the provided object as adapter if any', function () {
+      var dummyAdapter = {};
+      var env = new Environment(null, null, dummyAdapter);
+      assert.equal(env.adapter, dummyAdapter, 'Not the adapter provided');
+    });
+
   });
 
   describe('#create', function () {
