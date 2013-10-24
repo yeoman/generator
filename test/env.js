@@ -12,10 +12,10 @@ var Base = generators.Base;
 var Environment = require('../lib/env');
 
 describe('Environment', function () {
-  before(generators.test.before(path.join(__dirname, 'temp')));
 
   beforeEach(function () {
     this.env = new Environment();
+    process.chdir(__dirname);
   });
 
   afterEach(function () {
@@ -46,8 +46,8 @@ describe('Environment', function () {
   describe('#help', function () {
     beforeEach(function () {
       this.env
-        .register('../fixtures/custom-generator-simple')
-        .register('../fixtures/custom-generator-extend');
+        .register('./fixtures/custom-generator-simple')
+        .register('./fixtures/custom-generator-extend');
 
       this.expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8').trim();
 
@@ -221,8 +221,8 @@ describe('Environment', function () {
 
   describe('#register', function () {
     beforeEach(function () {
-      this.simplePath = '../fixtures/custom-generator-simple';
-      this.extendPath = '../fixtures/custom-generator-extend';
+      this.simplePath = './fixtures/custom-generator-simple';
+      this.extendPath = './fixtures/custom-generator-extend';
       assert.equal(Object.keys(this.env.generators).length, 0, 'env should be empty');
       this.env
         .register(this.simplePath, 'fixtures:custom-generator-simple')
@@ -293,9 +293,9 @@ describe('Environment', function () {
   describe('#namespace', function () {
     beforeEach(function () {
       this.env
-        .register('../fixtures/custom-generator-simple')
-        .register('../fixtures/custom-generator-extend')
-        .register('../fixtures/custom-generator-extend', 'support:scaffold');
+        .register('./fixtures/custom-generator-simple')
+        .register('./fixtures/custom-generator-extend')
+        .register('./fixtures/custom-generator-extend', 'support:scaffold');
     });
 
     it('get the list of namespaces', function () {
@@ -307,8 +307,8 @@ describe('Environment', function () {
     beforeEach(function () {
       this.generator = require('./fixtures/mocha-generator');
       this.env
-        .register('../fixtures/mocha-generator', 'fixtures:mocha-generator')
-        .register('../fixtures/mocha-generator', 'mocha:generator');
+        .register('./fixtures/mocha-generator', 'fixtures:mocha-generator')
+        .register('./fixtures/mocha-generator', 'mocha:generator');
     });
 
     it('get a specific generator', function () {
@@ -328,7 +328,9 @@ describe('Environment', function () {
 
   describe('Engines', function () {
 
-    before(function () {
+    before(generators.test.before(path.join(__dirname, 'temp')));
+
+    beforeEach(function () {
       this.generator = new Base([], {
         env: generators(),
         resolved: __filename
@@ -350,7 +352,7 @@ describe('Environment', function () {
     });
 
     it('properly compiles and renders template',  function (done) {
-      var filename = 'boyah.js';
+      var filename = 'temp/boyah.js';
 
       this.generator.template(path.join(__dirname, 'fixtures/template.jst'), filename, { foo: 'hey' });
       this.generator.conflicter.resolve(function (err) {
