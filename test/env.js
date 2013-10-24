@@ -11,82 +11,131 @@ var events = require('events');
 var Base = generators.Base;
 var Environment = require('../lib/env');
 
-// https://gist.github.com/87550fd10b7440a37df4
 describe('Environment', function () {
   before(generators.test.before(path.join(__dirname, 'temp')));
 
   beforeEach(function () {
-    this.env = generators();
+    this.env = new Environment();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     this.env.removeAllListeners();
   });
 
-  describe('Environment', function () {
-    it('to init the system, you need to create a new handler', function () {
-      var env = generators();
-      assert.ok(env instanceof Environment);
-      assert.ok(env instanceof events.EventEmitter);
+  it('is an instance of EventEmitter', function () {
+    assert.ok(new Environment() instanceof events.EventEmitter);
+  });
+
+  describe('constructor', function () {
+    it('take arguments option', function () {
+      var args = ['foo'];
+      assert.equal(new Environment(args).arguments, args);
     });
 
-    it('generators.Base is the Base generator class', function () {
-      assert.equal(generators.Base.prototype.__proto__.constructor, events.EventEmitter, 'Not an EventEmitter');
+    it('take arguments parameter option as string', function () {
+      var args = 'foo bar';
+      assert.deepEqual(new Environment(args).arguments, args.split(' '));
     });
 
-    it('generators.NamedBase is inheriting from Base generator class', function () {
-      assert.equal(generators.NamedBase.prototype.__proto__.constructor, generators.Base, 'Not a Base class');
+    it('take options parameter', function () {
+      var opts = { foo : 'bar' };
+      assert.equal(new Environment(null, opts).options, opts);
     });
+  });
 
-    it('init the system using your own args / options', function () {
-      // using a list of space-separated arguments as String
-      var env = generators('model Post', { help: true });
-      assert.deepEqual(env.arguments, ['model', 'Post']);
-      assert.deepEqual(env.options, {
-        help: true
-      });
-
-      // using a list of arguments as Array
-      env = generators(['model', 'Post']);
-      assert.deepEqual(env.arguments, ['model', 'Post']);
-      assert.deepEqual(env.options, {});
-    });
-
-    it('output the general help', function () {
-      var env = generators()
+  describe('#help', function () {
+    beforeEach(function () {
+      this.env
         .register('../fixtures/custom-generator-simple')
         .register('../fixtures/custom-generator-extend');
 
-      var expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8');
+      this.expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8').trim();
+
       // lazy "update the help fixtures because something changed" statement
       // fs.writeFileSync(path.join(__dirname, 'fixtures/help.txt'), env.help().trim());
-      helpers.assertTextEqual(env.help().trim(), expected.trim());
-
-      // custom bin name
-      helpers.assertTextEqual(env.help('gg').trim(), expected.replace('Usage: init', 'Usage: gg').trim());
     });
 
-    it('create() can be used to get and instantiate a specific generator', function () {
-      var env = generators().register('../fixtures/mocha-generator', 'mocha:generator');
-
-      var mocha = env.create('mocha:generator');
-      assert.deepEqual(mocha.arguments, []);
-
-      mocha = env.create('mocha:generator', {
-        arguments: ['another', 'set', 'of', 'arguments'],
-        options: {
-          'assertion-framework': 'chai'
-        }
-      });
-
-      assert.deepEqual(mocha.arguments, ['another', 'set', 'of', 'arguments']);
-      assert.equal(mocha.options['assertion-framework'], 'chai');
+    it('output the general help', function () {
+      helpers.assertTextEqual(this.env.help().trim(), this.expected);
     });
 
-    it('invokes using the run() method, from specific generator', function (done) {
-      var env = generators().register('../fixtures/mocha-generator', 'fixtures:mocha-generator');
-      var mocha = env.create('fixtures:mocha-generator');
-      mocha.run(done);
+    it('output the help with a custom bin name', function () {
+      this.expected = this.expected.replace('Usage: init', 'Usage: gg');
+      helpers.assertTextEqual(this.env.help('gg').trim(), this.expected);
+    });
+  });
+
+  describe('#create', function () {
+    beforeEach(function () {
+      this.Generator = helpers.createDummyGenerator();
+      this.env.registerStub(this.Generator, 'stub');
+      this.env.registerStub(this.Generator, 'stub:foo:bar');
+    });
+
+    it('instantiate a generator', function () {
+      assert.ok(this.env.create('stub') instanceof this.Generator);
+    });
+
+    it('pass options.arguments', function () {
+      var args = ['foo', 'bar'];
+      var generator = this.env.create('stub', { arguments: args });
+      assert.equal(generator.arguments, args);
+    });
+
+    it('pass options.arguments as string', function () {
+      var args = 'foo bar';
+      var generator = this.env.create('stub', { arguments: args });
+      assert.deepEqual(generator.arguments, args.split(' '));
+    });
+
+    it('pass options.args (as `arguments` alias)', function () {
+      var args = ['foo', 'bar'];
+      var generator = this.env.create('stub', { args: args });
+      assert.equal(generator.arguments, args);
+    });
+
+    it('prefer options.arguments over options.args', function () {
+      var arguments = ['yo', 'unicorn'];
+      var args = ['foo', 'bar'];
+      var generator = this.env.create('stub', { arguments: arguments, args: args });
+      assert.equal(generator.arguments, arguments);
+      assert.notEqual(generator.arguments, args);
+    });
+
+    it('default arguments to `env.arguments`', function () {
+      var args = ['foo', 'bar'];
+      this.env.arguments = args;
+      var generator = this.env.create('stub');
+      assert.notEqual(generator.arguments, args, 'not passed by reference');
+      assert.deepEqual(generator.arguments, args);
+    });
+
+    it('pass options.options', function () {
+      var opts = { 'foo' : 'bar' };
+      var generator = this.env.create('stub', { options: opts });
+      assert.equal(generator.options, opts);
+    });
+
+    it('default options to `env.options` content', function () {
+      this.env.options = { 'foo' : 'bar' };
+      assert.equal(this.env.create('stub').options.foo, 'bar');
+    });
+
+    it('throws if Generator is not registered', function () {
+      assert.throws(this.env.create.bind(this.end, 'i:do:not:exist'));
+    });
+
+    it('add a name property on the options', function () {
+      assert.equal(this.env.create('stub').options.name, 'stub');
+      assert.equal(this.env.create('stub:foo:bar').options.name, 'bar');
+    });
+
+    it('add the env as property on the options', function () {
+      assert.equal(this.env.create('stub').options.env, this.env);
+    });
+
+    it('add the Generator resolved path on the options', function() {
+      assert.equal(this.env.create('stub').options.resolved, this.env.get('stub').resolved);
     });
   });
 
@@ -322,6 +371,56 @@ describe('Environment', function () {
 
   });
 
+  describe('#registerStub', function () {
+    beforeEach(function () {
+      this.simpleDummy = sinon.spy();
+      this.completeDummy = function () {};
+      util.inherits(this.completeDummy, Base);
+      this.env
+        .registerStub(this.simpleDummy, 'dummy:simple')
+        .registerStub(this.completeDummy, 'dummy:complete');
+    });
+
+    it('register a function under a namespace', function () {
+      assert.equal(this.completeDummy, this.env.get('dummy:complete'));
+    });
+
+    it('extend simple function with Base', function () {
+      assert.ok(this.env.get('dummy:simple').super_ === Base);
+      this.env.run('dummy:simple');
+      assert.ok(this.simpleDummy.calledOnce);
+    });
+
+    it('throws if invalid generator', function () {
+      assert.throws(this.env.registerStub.bind(this.env, [], 'dummy'), /stub\sfunction/);
+    });
+
+    it('throws if invalid namespace', function () {
+      assert.throws(this.env.registerStub.bind(this.env, this.simpleDummy), /namespace/);
+    });
+  });
+
+  describe('#error', function () {
+    it('delegate error handling to the listener', function (done) {
+      var error = new Error('foo bar');
+      this.env.on('error', function (err) {
+        assert.equal(error, err);
+        done();
+      });
+      this.env.error(error);
+    });
+
+    it('throws error if no listener is set', function () {
+      assert.throws(this.env.error.bind(this.env, new Error()));
+    });
+
+    it('returns the error', function () {
+      var error = new Error('foo bar');
+      this.env.on('error', function () {});
+      assert.equal(this.env.error(error), error);
+    });
+  });
+
   // Events
   // ------
 
@@ -418,87 +517,6 @@ describe('Environment', function () {
 
         // actual run
         .run('angular:all myapp');
-    });
-  });
-
-  // Underscore String
-
-  // > http://epeli.github.com/underscore.string/
-  // > https://github.com/epeli/underscore.string#string-functions
-  //
-  // Underscore String set of utilities are very handy, especially in the
-  // context of Generators. We often want to humanize, dasherize or underscore
-  // a given variable.
-  //
-  // Since templates are invoked in the context of the Generator that render
-  // them, all these String helpers are then available directly from templates.
-  describe('Underscore String', function () {
-    before(function () {
-      this.dummy = new generators.Base([], {
-        env: generators(),
-        resolved: __filename
-      });
-    });
-
-    it('has the whole Underscore String API available as prototype method', function () {
-      var str = require('underscore.string').exports();
-
-      Object.keys(str).forEach(function (prop) {
-        if (typeof str[prop] !== 'function') {
-          return;
-        }
-        assert.equal(typeof this.dummy._[prop], 'function');
-      }, this);
-    });
-  });
-
-  describe('#registerStub', function () {
-    beforeEach(function () {
-      this.simpleDummy = sinon.spy();
-      this.completeDummy = function () {};
-      util.inherits(this.completeDummy, Base);
-      this.env
-        .registerStub(this.simpleDummy, 'dummy:simple')
-        .registerStub(this.completeDummy, 'dummy:complete');
-    });
-
-    it('register a function under a namespace', function () {
-      assert.equal(this.completeDummy, this.env.get('dummy:complete'));
-    });
-
-    it('extend simple function with Base', function () {
-      assert.ok(this.env.get('dummy:simple').super_ === Base);
-      this.env.run('dummy:simple');
-      assert.ok(this.simpleDummy.calledOnce);
-    });
-
-    it('throws if invalid generator', function () {
-      assert.throws(this.env.registerStub.bind(this.env, [], 'dummy'), /stub\sfunction/);
-    });
-
-    it('throws if invalid namespace', function () {
-      assert.throws(this.env.registerStub.bind(this.env, this.simpleDummy), /namespace/);
-    });
-  });
-
-  describe('#error', function () {
-    it('delegate error handling to the listener', function (done) {
-      var error = new Error('foo bar');
-      this.env.on('error', function (err) {
-        assert.equal(error, err);
-        done();
-      });
-      this.env.error(error);
-    });
-
-    it('throws error if no listener is set', function () {
-      assert.throws(this.env.error.bind(this.env, new Error()));
-    });
-
-    it('returns the error', function () {
-      var error = new Error('foo bar');
-      this.env.on('error', function () {});
-      assert.equal(this.env.error(error), error);
     });
   });
 });

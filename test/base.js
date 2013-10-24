@@ -60,6 +60,34 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
+  // Underscore String
+
+  // > http://epeli.github.com/underscore.string/
+  // > https://github.com/epeli/underscore.string#string-functions
+  //
+  // Underscore String set of utilities are very handy, especially in the
+  // context of Generators. We often want to humanize, dasherize or underscore
+  // a given variable.
+  //
+  // Since templates are invoked in the context of the Generator that render
+  // them, all these String helpers are then available directly from templates.
+  describe('Underscore String', function () {
+    it('has the whole Underscore String API available as prototype method', function () {
+      var dummy = new generators.Base([], {
+        env: generators(),
+        resolved: __filename
+      });
+      var str = require('underscore.string').exports();
+
+      Object.keys(str).forEach(function (prop) {
+        if (typeof str[prop] !== 'function') {
+          return;
+        }
+        assert.equal(typeof dummy._[prop], 'function');
+      }, this);
+    });
+  });
+
   describe('generator.run(args, cb) regression', function () {
     var events = [];
     var resolveCalled = 0;

@@ -2,11 +2,28 @@
 var path = require('path');
 var events = require('events');
 var assert = require('assert');
+
 var generators = require('..');
+var Environment = require('../lib/env');
 
 
 describe('Generators', function () {
   before(generators.test.before(path.join(__dirname, 'temp')));
+
+  describe('module', function () {
+    it('initialize new Environments', function () {
+      assert.ok(generators() instanceof Environment);
+      assert.notEqual(generators(), generators());
+    });
+
+    it('pass arguments to the Environment constructor', function() {
+      var args = ['model', 'Post'];
+      var opts = { help: true };
+      var env = generators(args, opts);
+      assert.equal(env.arguments, args);
+      assert.equal(env.options, opts);
+    });
+  });
 
   describe('yeoman.generators', function () {
     it('should have a Base object to extend from', function () {
