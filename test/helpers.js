@@ -19,7 +19,6 @@ describe('yeoman.test', function () {
   });
 
   describe('#createGenerator', function () {
-
     it('create a new generator', function () {
       var generator = helpers.createGenerator('unicorn:app', [
         [this.StubGenerator, 'unicorn:app']
