@@ -83,12 +83,6 @@ describe('Environment', function () {
       assert.equal(mocha.options['assertion-framework'], 'chai');
     });
 
-    it('invokes using the run() method, from generators handler', function (done) {
-      var env = generators()
-        .register('../fixtures/mocha-generator-base', 'fixtures:mocha-generator-base')
-        .run(['fixtures:mocha-generator-base', 'foo', 'bar'], done);
-    });
-
     it('invokes using the run() method, from specific generator', function (done) {
       var env = generators().register('../fixtures/mocha-generator', 'fixtures:mocha-generator');
       var mocha = env.create('fixtures:mocha-generator');
@@ -499,6 +493,12 @@ describe('Environment', function () {
 
     it('throws error if no listener is set', function () {
       assert.throws(this.env.error.bind(this.env, new Error()));
+    });
+
+    it('returns the error', function () {
+      var error = new Error('foo bar');
+      this.env.on('error', function () {});
+      assert.equal(this.env.error(error), error);
     });
   });
 });
