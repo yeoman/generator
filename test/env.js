@@ -10,6 +10,7 @@ var events = require('events');
 
 var Base = generators.Base;
 var Environment = require('../lib/env');
+var Store = require('../lib/env/store');
 
 describe('Environment', function () {
 
@@ -217,20 +218,24 @@ describe('Environment', function () {
       });
       this.env.run('some:unknown:generator');
     });
+
+    it('returns the generator', function () {
+      assert.ok(this.env.run('stub:run') instanceof Base);
+    });
   });
 
   describe('#register', function () {
     beforeEach(function () {
       this.simplePath = './fixtures/custom-generator-simple';
       this.extendPath = './fixtures/custom-generator-extend';
-      assert.equal(Object.keys(this.env.generators).length, 0, 'env should be empty');
+      assert.equal(this.env.namespaces().length, 0, 'env should be empty');
       this.env
         .register(this.simplePath, 'fixtures:custom-generator-simple')
         .register(this.extendPath, 'scaffold');
     });
 
     it('store registered generators', function () {
-      assert.equal(Object.keys(this.env.generators).length, 2);
+      assert.equal(this.env.namespaces().length, 2);
     });
 
     it('determine registered Generator namespace and resolved path', function () {
@@ -249,14 +254,6 @@ describe('Environment', function () {
       assert.throws(function () { this.env.register(function () {}, 'blop'); });
       assert.throws(function () { this.env.register([], 'blop'); });
       assert.throws(function () { this.env.register(false, 'blop'); });
-    });
-
-    // Make sure we don't break the generators hash using `Object.defineProperty`
-    it('keep `.generators` store object writable', function () {
-      this.env.generators.foo = 'bar';
-      assert.equal(this.env.generators.foo, 'bar');
-      this.env.generators.foo = 'yo';
-      assert.equal(this.env.generators.foo, 'yo');
     });
   });
 
@@ -324,53 +321,6 @@ describe('Environment', function () {
       assert.equal(this.env.get('not:there'), undefined);
       assert.equal(this.env.get(), undefined);
     });
-  });
-
-  describe('Engines', function () {
-
-    before(generators.test.before(path.join(__dirname, 'temp')));
-
-    beforeEach(function () {
-      this.generator = new Base([], {
-        env: generators(),
-        resolved: __filename
-      });
-    });
-
-    it('allows users to use their prefered engine', function () {
-      // engine should be able to take a fn, or a named engine (which we
-      // provide adapters to, currently only underscore is supported)
-      generators().engine('underscore');
-    });
-
-    it('throws on wrong engine', function (done) {
-      try {
-        generators().engine('underscored');
-      } catch (e) {
-        done();
-      }
-    });
-
-    it('properly compiles and renders template',  function (done) {
-      var filename = 'temp/boyah.js';
-
-      this.generator.template(path.join(__dirname, 'fixtures/template.jst'), filename, { foo: 'hey' });
-      this.generator.conflicter.resolve(function (err) {
-        if (err) {
-          return done(err);
-        }
-
-        helpers.assertTextEqual(fs.readFileSync(filename, 'utf8'), "var hey = 'hey';" + '\n');
-        done();
-      });
-    });
-
-    it('lets you use %% and escape opening tags with underscore engine', function () {
-      var tpl = 'prefix/<%%= yeoman.app %>/foo/bar';
-      assert.equal(this.generator.engine(tpl), 'prefix/<%= yeoman.app %>/foo/bar');
-      assert.equal(this.generator.engine('<%% if(true) { %>'), '<% if(true) { %>');
-    });
-
   });
 
   describe('#registerStub', function () {
@@ -520,5 +470,112 @@ describe('Environment', function () {
         // actual run
         .run('angular:all myapp');
     });
+  });
+
+  describe('Store', function() {
+    beforeEach(function() {
+      this.store = new Store();
+    });
+
+    describe('#add / #get', function() {
+      beforeEach(function() {
+        this.module = function () {};
+        this.modulePath = path.join(__dirname, "fixtures/dummy-package");
+      });
+
+      describe('storing as module', function() {
+        beforeEach(function() {
+          this.store.add('foo:module', this.module);
+          this.outcome = this.store.get('foo:module');
+        });
+
+        it('store and return the module', function() {
+          assert.equal(this.outcome, this.module);
+        });
+
+        it('assign meta data to the module', function() {
+          assert.equal(this.outcome.namespace, 'foo:module');
+        });
+
+        it('assign dummy resolved value (can\'t determine the path of an instantiated)', function() {
+          assert.ok(this.outcome.resolved.length > 0);
+        });
+      });
+
+      describe('storing as module path', function() {
+        beforeEach(function() {
+          this.store.add('foo:path', this.modulePath);
+          this.outcome = this.store.get('foo:path');
+        });
+
+        it('store and returns the required module', function() {
+          assert.notEqual(this.outcome, this.modulePath);
+          assert.equal(this.outcome.yeoman, 'Yo!');
+        });
+
+        it('assign meta data to the module', function() {
+          assert.equal(this.outcome.resolved, this.modulePath);
+          assert.equal(this.outcome.namespace, 'foo:path');
+        });
+      });
+    });
+
+    describe('#namespaces', function() {
+      beforeEach(function() {
+        this.store.add('foo', {});
+        this.store.add('lab', {});
+      });
+
+      it('return stored module namespaces', function() {
+        assert.deepEqual(this.store.namespaces(), [ 'foo', 'lab' ]);
+      });
+    });
+  });
+
+  describe('Engines', function () {
+
+    before(generators.test.before(path.join(__dirname, 'temp')));
+
+    beforeEach(function () {
+      this.generator = new Base([], {
+        env: generators(),
+        resolved: __filename
+      });
+    });
+
+    it('allows users to use their prefered engine', function () {
+      // engine should be able to take a fn, or a named engine (which we
+      // provide adapters to, currently only underscore is supported)
+      generators().engine('underscore');
+    });
+
+    it('throws on wrong engine', function (done) {
+      try {
+        generators().engine('underscored');
+      } catch (e) {
+        done();
+      }
+    });
+
+    it('properly compiles and renders template',  function (done) {
+      var filename = 'temp/boyah.js';
+
+      this.generator.template(path.join(__dirname, 'fixtures/template.jst'), filename, { foo: 'hey' });
+      this.generator.conflicter.resolve(function (err) {
+        if (err) {
+          return done(err);
+        }
+
+        helpers.assertTextEqual(fs.readFileSync(filename, 'utf8'), "var hey = 'hey';" + '\n');
+        done();
+      });
+    });
+
+    it('lets you use %% and escape opening tags with underscore engine', function () {
+      var tpl = 'prefix/<%%= yeoman.app %>/foo/bar';
+      assert.equal(this.generator.engine(tpl), 'prefix/<%= yeoman.app %>/foo/bar');
+      assert.equal(this.generator.engine('<%% if(true) { %>'), '<% if(true) { %>');
+    });
+
   });
 });
