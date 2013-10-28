@@ -43,7 +43,8 @@
     "findup-sync": "~0.1.2",
     "chalk": "~0.2.0",
     "text-table": "~0.2.0",
-    "download": "~0.1.6"
+    "download": "~0.1.6",
+    "request": "~2.27.0"
   },
   "devDependencies": {
     "mocha": "~1.13.0",
