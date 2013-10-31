@@ -41,7 +41,7 @@
     "iconv-lite": "~0.2.10",
     "shelljs": "~0.2.6",
     "findup-sync": "~0.1.2",
-    "chalk": "~0.2.0",
+    "chalk": "~0.3.0",
     "text-table": "~0.2.0",
     "download": "~0.1.6",
     "request": "~2.27.0"
