@@ -50,6 +50,7 @@ describe('Environment Resolver', function () {
 
     it('register global generators', function () {
       this.env.lookup();
+      console.log(this.env.namespaces());
       assert.ok(this.env.get('angular:app'));
       assert.ok(this.env.get('angular:controller'));
     });
