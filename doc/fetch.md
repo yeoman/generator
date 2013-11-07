@@ -4,27 +4,32 @@
 
 ## fetch(url, destination, cb)
 
-Download a single file to a given destination.
+Download a string or an array of files to a given destination.
 
 ### Params: 
 
-* **String** *url* 
+* **String|Array** *url* 
 
 * **String** *destination* 
 
 * **Function** *cb* 
 
-## tarball(tarball, target, cb)
+## extract(archive, destination, cb)
 
-Fetch a tarball and extract it to a given destination.
+Fetch a string or an array of archives and extract it/them to a given
+destination.
 
 ### Params: 
 
-* **String** *tarball* 
+* **String|Array** *archive* 
 
-* **String** *target* 
+* **String** *destination* 
 
 * **Function** *cb* 
+
+## request
+
+Expose the request module set up with a proxy
 
 <!-- End lib/actions/fetch.js -->
 

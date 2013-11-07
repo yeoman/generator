@@ -43,6 +43,23 @@ Make some of the file API aware of our source/destination root paths.
 
 * **Function** *process* 
 
+## bulkCopy(source, destination, process)
+
+Bulk copy
+https://github.com/yeoman/generator/pull/359
+https://github.com/yeoman/generator/issues/350
+
+An optimized copy method for larger file trees.  Does not do
+full conflicter checks, only check ir root directory is not empty.
+
+### Params: 
+
+* **String** *source* 
+
+* **String** *destination* 
+
+* **Function** *process* 
+
 ## read(filepath, encoding)
 
 A simple method to read the content of the a file borrowed from Grunt:
@@ -131,6 +148,18 @@ template with the provided `data`.
 * **Object** *data* 
 
 ## directory(source, destination, process)
+
+Copies recursively the files from source directory to root directory.
+
+### Params: 
+
+* **String** *source* 
+
+* **String** *destination* 
+
+* **Function** *process* 
+
+## bulkDirectory(source, destination, process)
 
 Copies recursively the files from source directory to root directory.
 

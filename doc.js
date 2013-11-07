@@ -9,7 +9,7 @@ var path = require('path');
 var markdox = require('markdox');
 
 // exclude lib/util and lib/test until they're documented
-var pattern = 'lib/{*.js,/!(util|test)/*.js}';
+var pattern = 'lib/**/*.js';
 
 glob(pattern, { cwd: __dirname }, function (err, files) {
   files.forEach(function (file) {
