@@ -7,38 +7,40 @@ var shell = require('shelljs');
 var sinon = require('sinon');
 var Storage = require('../lib/util/storage');
 
-describe('Generator storage', function () {
-  before(function () {
-    this.storePath = path.join(__dirname, './fixtures/config.json');
+describe('Storage', function () {
+  beforeEach(function () {
+    this.beforeDir = process.cwd();
+    this.storePath = path.join(shell.tempdir(), 'new-config.json');
+    this.store = new Storage('test', this.storePath);
+    this.store.set('foo', 'bar');
+    this.saveSpy = sinon.spy(this.store, 'save');
   });
 
-  it('should require a name parameter', function () {
-    assert.throws(function () { new Storage(); });
+  afterEach(function() {
+    shell.rm('-f', this.storePath);
+    process.chdir(this.beforeDir);
+    this.saveSpy.restore();
   });
 
-  it('constructor should take a path parameter', function () {
-    var store = new Storage('test', this.storePath);
-    assert.equal(store.get('testFramework'), 'mocha');
-    assert.ok(store.existed);
+  describe('constructor', function() {
+    it('require a name parameter', function () {
+      assert.throws(function () { new Storage(); });
+    });
+
+    it('take a path parameter', function () {
+      var store = new Storage('test', path.join(__dirname, './fixtures/config.json'));
+      assert.equal(store.get('testFramework'), 'mocha');
+      assert.ok(store.existed);
+    });
   });
 
-  it('should create a new config file on `set`', function (done) {
-    var storePath = path.join(shell.tempdir(), 'new-config.json');
-    var store = new Storage('test', storePath);
-
-    store.once('save', function () {
-      var fileContent = JSON.parse(fs.readFileSync(storePath));
-      shell.rm('-f', storePath);
-      assert.equal(fileContent.test.foo, 'bar');
-      assert.ok(!store.existed);
-      done();
-    }.bind(this));
-
-    store.set('foo', 'bar');
+  it('namespace each store sharing the same store file', function () {
+    var store = new Storage('foobar', this.storePath);
+    store.set('foo', 'something else');
+    assert.ok(this.store.get('foo') == 'bar');
   });
 
-  it('should default to `.yo-rc.json` file', function () {
-    var cwd = process.cwd();
+  it('defaults store path to `.yo-rc.json`', function (done) {
     var tmp = shell.tempdir();
     process.chdir(tmp);
     var store = new Storage('yo');
@@ -46,116 +48,133 @@ describe('Generator storage', function () {
     store.on('save', function () {
       var fileContent = JSON.parse(fs.readFileSync(path.join(tmp, '.yo-rc.json')));
       assert.equal(fileContent.yo.foo, 'bar');
-      process.chdir(cwd);
+      done();
     });
 
     store.set('foo', 'bar');
   });
 
-  describe('instance methods', function () {
-
-    beforeEach(function () {
-      this.store = new Storage('test', this.storePath);
-      this.initialState = _.cloneDeep(this.store._fullStore);
+  describe('#get', function () {
+    beforeEach(function() {
+      this.store.set('testFramework', 'mocha');
+      this.store.set('name', 'test');
     });
 
-    afterEach(function (done) {
-      this.store._fullStore = this.initialState;
-      this.store.on('save', done);
-      this.store.save();
-    });
-
-    it('should get values', function () {
+    it('get values', function () {
       assert.equal(this.store.get('testFramework'), 'mocha');
       assert.equal(this.store.get('name'), 'test');
     });
+  });
 
-    it('should set values', function () {
+  describe('#set', function () {
+    it('set values', function () {
       this.store.set('name', 'Yeoman!');
       assert.equal(this.store.get('name'), 'Yeoman!');
     });
 
-    it('should set multipe values at once', function () {
-      this.store.set({
-        foo: 'bar',
-        john: 'doe'
-      });
+    it('set multipe values at once', function () {
+      this.store.set({ foo: 'bar', john: 'doe' });
       assert.equal(this.store.get('foo'), 'bar');
       assert.equal(this.store.get('john'), 'doe');
     });
 
-    it('should get all values', function () {
-      var val = this.store.getAll();
-      assert.notEqual(val, this.store._store); // must not return the reference
-      _.each(this.store._store, function (method, name) {
-        assert(method === val[name]);
-      });
+    it('throws when invalid JSON values are passed', function () {
+      assert.throws(this.store.set.bind(this, 'foo', function () {}));
     });
 
-    it('should delete value', function () {
-      assert.equal(this.store.get('name'), 'test');
+    it('save on each changes', function () {
+      this.store.set('foo', 'bar');
+      assert.equal(this.saveSpy.callCount, 1);
+      this.store.set('foo', 'oo');
+      assert.equal(this.saveSpy.callCount, 2);
+    });
+  });
+
+  describe('#getAll', function () {
+    beforeEach(function () {
+      this.store.set({ foo: 'bar', john: 'doe' });
+    });
+
+    it('get all values', function () {
+      assert.deepEqual(this.store.getAll(), this.store._store);
+    });
+
+    it('does not return a reference to the inner store', function () {
+      assert.notEqual(this.store.getAll(), this.store._store);
+    });
+  });
+
+  describe('#delete', function () {
+    beforeEach(function() {
+      this.store.set('name', 'test');
+    });
+
+    it('delete value', function () {
       this.store.delete('name');
       assert.equal(this.store.get('name'), undefined);
     });
+  });
 
-    it('should prevent saving `function` value', function () {
-      assert.throws(function () {
-        this.store.set('foo', function () {});
-      }.bind(this));
+  describe('#save', function () {
+    beforeEach(function () {
+      this.forceSaveSpy = sinon.spy(Storage.prototype, 'forceSave');
+      this.storePath = path.join(shell.tempdir(), 'save.json');
+      this.store = new Storage('test', this.storePath);
+      this.store.set('foo', 'bar');
+      this.saveSpy = sinon.spy(this.store, 'save');
     });
 
-    it('should init new name config', function () {
-      var store = new Storage('foobar', this.storePath);
-      store.set('foo', 'bar');
-      assert.equal(store.get('foo'), 'bar');
-      assert.ok(this.store.get('foo') == null);
+    afterEach(function () {
+      shell.rm('-f', this.storePath);
+      this.forceSaveSpy.restore();
+      this.saveSpy.restore();
     });
 
-    it('should initialize storage file on `save`', function (done) {
-      var storePath = path.join(shell.tempdir(), 'save.json');
-      var store = new Storage('test', storePath);
-
-      store.once('save', function () {
-        var fileContent = JSON.parse(fs.readFileSync(storePath));
-        assert.ok(fileContent);
-        assert.ok(!store.existed);
-        shell.rm('-f', storePath);
-        done()
-      });
-
-      store.save();
-    });
-
-    it('should debounce save method', function (done) {
-      var spy = sinon.spy(Storage.prototype, 'forceSave');
-      var store = new Storage('name', path.join(shell.tempdir(), 'foo.json'));
-      var saveSpy = sinon.spy(store, 'save');
-
-      store.once('save', function () {
-        assert.equal(spy.callCount, 1);
-        assert.equal(saveSpy.callCount, 3);
-        spy.restore();
+    it('create storage file if none existed', function (done) {
+      this.store.once('save', function () {
+        var fileContent = JSON.parse(fs.readFileSync(this.storePath));
+        assert.equal(fileContent.test.foo, 'bar');
+        assert.ok(!this.store.existed);
         done();
-      });
+      }.bind(this));
 
-      store.save();
-      store.save();
-      store.save();
+      this.store.save();
     });
 
-    it('should allow setting defaults', function () {
+    it('debounce multiple calls', function (done) {
+      this.store.once('save', function () {
+        assert.equal(this.forceSaveSpy.callCount, 1);
+        assert.equal(this.saveSpy.callCount, 3);
+        done();
+      }.bind(this));
+
+      this.store.save(); this.store.save(); this.store.save();
+    });
+  });
+
+  describe('#forceSave', function () {
+    it('save file immediatly', function () {
+      this.store.forceSave();
+      var fileContent = JSON.parse(fs.readFileSync(this.storePath));
+      assert.equal(fileContent.test.foo, 'bar');
+    });
+  });
+
+  describe('#defaults', function () {
+    beforeEach(function () {
       this.store.set('val1', 1);
-      this.store.defaults({
-        'val1': 3,
-        'val2': 4
-      });
+    });
+
+    it('set defaults values if not predefined', function () {
+      this.store.defaults({ val1: 3, val2: 4 });
 
       assert.equal(this.store.get('val1'), 1);
       assert.equal(this.store.get('val2'), 4);
+    });
 
-      assert.throws(function () {
-        this.store.defaults('foo');
-      }.bind(this));
+    it('require an Object as argument', function() {
+      assert.throws(this.store.defaults.bind(this.store, 'foo'));
     });
   });
+
 });
