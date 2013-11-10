@@ -34,6 +34,7 @@ describe('yeoman.generators.Base', function () {
       something: 'else',
       // mandatory options, created by the env#create() helper
       resolved: 'ember:all',
+      namespace: 'dummy',
       env: env,
     });
 
@@ -206,6 +207,21 @@ describe('yeoman.generators.Base', function () {
         required: true
       });
     });
+
+    it('should not raise an error if required arguments are not provided, but the help option has been specified', function () {
+      var dummy = new generators.Base([], {
+        env: this.env,
+        resolved: 'dummy:all'
+      });
+
+      dummy.options.help = true;
+
+      assert.equal(dummy._arguments.length, 0);
+
+      assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', {required: true}));
+
+      assert.equal(dummy._arguments.length, 1);
+    });
   });
 
   describe('generator.option(name, config)', function () {
@@ -274,26 +290,42 @@ describe('yeoman.generators.Base', function () {
   describe('generator.help()', function () {
     it('should return the expected help / usage output', function () {
       this.dummy.option('ooOoo');
+      this.dummy.argument('baz', {
+        type: Number,
+        required: false
+      });
       var help = this.dummy.help();
 
       assert.ok(help.match('Usage:'));
-      assert.ok(help.match('yo \\[options\\]'));
+      assert.ok(help.match('yo dummy \\[options\\] <foo> <bar> \\[<baz>\\]'));
       assert.ok(help.match('A new desc for this generator'));
       assert.ok(help.match('Options:'));
       assert.ok(help.match('--help   # Print generator\'s options and usage'));
       assert.ok(help.match('--ooOoo  # Description for ooOoo'));
+      assert.ok(help.match('Arguments:'));
+      assert.ok(help.match('foo  # Type: String  Required: true'));
+      assert.ok(help.match('bar  # Type: Array   Required: true'));
+      assert.ok(help.match('baz  # Type: Number  Required: false'));
     });
   });
 
   describe('generator.usage()', function () {
-    it('should return the expected help / usage output', function () {
+    it('should return the expected help / usage output with arguments', function () {
       var usage = this.dummy.usage();
-      assert.equal(usage, 'yo [options]\n\nA new desc for this generator');
+      assert.equal(usage, 'yo dummy [options] <foo> <bar> [<baz>]\n\nA new desc for this generator');
     });
 
-    it('should use the provided generatorName', function() {
-      this.dummy.generatorName = 'dummy';
-      assert.ok(this.dummy.usage().match('yo dummy'));
+    it('should return the expected help / usage output without arguments', function () {
+      this.dummy._arguments.length = 0;
+      var usage = this.dummy.usage();
+      assert.equal(usage, 'yo dummy [options] \n\nA new desc for this generator');
+    });
+
+    it('should return the expected help / usage output without options', function () {
+      this.dummy._arguments.length = 0;
+      this.dummy._options.length = 0;
+      var usage = this.dummy.usage();
+      assert.equal(usage, 'yo dummy  \n\nA new desc for this generator');
     });
   });
 

@@ -138,6 +138,37 @@ describe('Environment', function () {
     it('add the Generator resolved path on the options', function() {
       assert.equal(this.env.create('stub').options.resolved, this.env.get('stub').resolved);
     });
+
+    it('adds the namespace on the options', function() {
+      assert.equal(this.env.create('stub').options.namespace, 'stub');
+    });
+
+    it('adds the namespace as called on the options', function() {
+      assert.equal(this.env.create('stub:foo:bar').options.namespace, 'stub:foo:bar');
+    });
+
+    describe('NamedBase', function () {
+      beforeEach(function () {
+        this.env.register('./fixtures/custom-generator-extend', 'scaffold');
+
+        this.NamedGenerator = this.env.get('scaffold');
+      });
+
+      it('does not raise an error when the help option is provided but the required name parameter is not', function () {
+        assert.doesNotThrow(this.env.create.bind(this.env, 'scaffold', { options: { help: true } }));
+      });
+
+      it('calls the named base generator with the help option and provides the required name parameter', function () {
+        var generator = this.env.create('scaffold', { args: [ 'foo' ], options: { help: true } });
+
+        assert.equal(generator.options.help, true);
+        assert.equal(generator.name, 'foo');
+      });
+
+      it('throws an error when the required name parameter is not provided', function () {
+        assert.throws(this.env.create.bind(this.env, 'scaffold'));
+      });
+    });
   });
 
   describe('#run', function () {
