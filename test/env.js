@@ -501,6 +501,38 @@ describe('Environment', function () {
         // actual run
         .run('angular:all myapp');
     });
+
+    it('only call the end event once (bug #402)', function (done) {
+      function GeneratorOnce() {
+        generators.Base.apply(this, arguments);
+        this.sourceRoot(path.join(__dirname, 'fixtures'));
+        this.destinationRoot(path.join(__dirname, 'temp'));
+      }
+
+      util.inherits(GeneratorOnce, generators.Base);
+
+      GeneratorOnce.prototype.createDuplicate = function () {
+        this.copy('foo-copy.js');
+        this.copy('foo-copy.js');
+      };
+
+      var generatorOnce = new GeneratorOnce([], {
+        env: generators(),
+        resolved: __filename
+      });
+
+      var isFirstEndEvent = true;
+
+      generatorOnce.on('end', function () {
+        assert.ok(isFirstEndEvent);
+        if (isFirstEndEvent) {
+          done();
+        }
+        isFirstEndEvent = false;
+      });
+
+      generatorOnce.run();
+    });
   });
 
   describe('Store', function() {
