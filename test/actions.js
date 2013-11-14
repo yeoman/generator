@@ -77,11 +77,20 @@ describe('yeoman.generators.Base', function () {
 
         return contents;
       });
+
+      var oldDestRoot = this.dummy.destinationRoot();
+      this.dummy.destinationRoot('write/to');
+      this.dummy.copy('foo.js', 'foo-destRoot.js');
+      this.dummy.destinationRoot(oldDestRoot);
       this.dummy.conflicter.resolve(done);
     });
 
     it('should copy source files relative to the "sourceRoot" value', function (done) {
       fs.stat('write/to/foo.js', done);
+    });
+
+    it('should copy to destination files relative to the "destinationRoot" value', function (done) {
+      fs.stat('write/to/foo-destRoot.js', done);
     });
 
     it('should allow absolute path, and prevent the relative paths join', function (done) {
