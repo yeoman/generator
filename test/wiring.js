@@ -19,6 +19,15 @@ describe('yeoman.generator.lib.actions.wiring', function () {
     assert.equal(res.trim(), '<!-- build:js main.js -->\npath/file1.js,path/file2.js        <!-- endbuild -->');
   });
 
+  it('should generate a simple block with custom indentation', function () {
+    var res = wiring.generateBlock('js', 'main.js', [
+      'path/file1.js',
+      'path/file2.js'
+    ], false, 2);
+
+    assert.equal(res.trim(), '<!-- build:js main.js -->\npath/file1.js,path/file2.js    <!-- endbuild -->');
+  });
+
   it('should generate a simple block with search path', function () {
     var res = wiring.generateBlock('js', 'main.js', [
       'path/file1.js',
@@ -40,8 +49,27 @@ describe('yeoman.generator.lib.actions.wiring', function () {
   it('should append js files to an html string', function () {
     var html = '<html><body></body></html>';
     var res = wiring.appendFiles(html, 'js', 'out/file.js', ['in/file1.js', 'in/file2.js']);
-    var fixture = fs.readFileSync(path.join(this.fixtures, 'js_block.html'),
-                                  'utf-8').trim();
+    var fixture = fs.readFileSync(
+      path.join(this.fixtures, 'js_block.html'),
+      'utf-8'
+    ).trim();
+
+    assert.equal(res, fixture);
+  });
+
+  it('should append js files to an html string with indentation', function () {
+    var html = '<html><body></body></html>';
+    var res = wiring.appendFiles({
+      html: html,
+      fileType: 'js',
+      optimizedPath: 'out/file.js',
+      sourceFileList: ['in/file1.js', 'in/file2.js'],
+      indent: '2'
+    });
+    var fixture = fs.readFileSync(
+      path.join(this.fixtures, 'js_block_indented.html'),
+      'utf-8'
+    ).trim();
 
     assert.equal(res, fixture);
   });
