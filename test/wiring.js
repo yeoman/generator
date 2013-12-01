@@ -4,6 +4,7 @@ var fs = require('fs');
 var events = require('events');
 var assert = require('assert');
 var wiring = require('../lib/actions/wiring');
+var helpers = require('../lib/test/helpers');
 
 describe('yeoman.generator.lib.actions.wiring', function () {
   before(function () {
@@ -43,7 +44,7 @@ describe('yeoman.generator.lib.actions.wiring', function () {
     var fixture = fs.readFileSync(path.join(this.fixtures, 'js_block.html'),
                                   'utf-8').trim();
 
-    assert.equal(res, fixture);
+    helpers.assertTextEqual(res, fixture);
   });
 
   it('appendFiles should work the same using the object syntax', function () {
