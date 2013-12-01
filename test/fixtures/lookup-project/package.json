@@ -1,0 +1,7 @@
+{
+  "name": "lookup-dummy-env",
+  "dependencies": {
+    "generator-commonjs": "*",
+    "generator-dummy": "~0.1.0"
+  }
+}
