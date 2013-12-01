@@ -53,7 +53,7 @@ describe('Environment', function () {
       this.expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8').trim();
 
       // lazy "update the help fixtures because something changed" statement
-      // fs.writeFileSync(path.join(__dirname, 'fixtures/help.txt'), env.help().trim());
+      // fs.writeFileSync(path.join(__dirname, 'fixtures/help.txt'), this.env.help().trim());
     });
 
     it('output the general help', function () {
@@ -288,37 +288,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#appendLookup', function () {
-    it('have default lookups', function () {
-      assert.equal(this.env.lookups.slice(-1)[0], 'lib/generators');
-    });
-
-    it('adds new filepath to the lookup\'s paths', function () {
-      this.env.appendLookup('support/scaffold');
-      assert.equal(this.env.lookups.slice(-1)[0], 'support/scaffold');
-    });
-
-    it('must receive a filepath', function () {
-      assert.throws(this.env.appendLookup.bind(this.env));
-    });
-  });
-
-  describe('#appendPath', function () {
-    it('have default paths', function () {
-      assert.equal(this.env.paths[0], '.');
-    });
-
-    it('adds new filepath to the load paths', function () {
-      this.env.appendPath('support/scaffold');
-      assert.equal(this.env.paths.slice(-1)[0], 'support/scaffold');
-    });
-
-    it('must receive a filepath', function () {
-      assert.throws(this.env.appendPath.bind(this.env));
-    });
-  });
-
-  describe('#namespace', function () {
+  describe('#namespaces', function () {
     beforeEach(function () {
       this.env
         .register('./fixtures/custom-generator-simple')
@@ -327,7 +297,47 @@ describe('Environment', function () {
     });
 
     it('get the list of namespaces', function () {
-      assert.deepEqual(this.env.namespaces(), ['simple', 'extend:support:scaffold', 'support:scaffold']);
+      assert.deepEqual(this.env.namespaces(), ['simple', 'extend', 'support:scaffold']);
+    });
+  });
+
+  describe('#namespace', function () {
+    it('create namespace from path', function () {
+      assert.equal(this.env.namespace('backbone/all/index.js'), 'backbone:all');
+      assert.equal(this.env.namespace('backbone/all/main.js'), 'backbone:all');
+      assert.equal(this.env.namespace('backbone/all'), 'backbone:all');
+      assert.equal(this.env.namespace('backbone/all.js'), 'backbone:all');
+      assert.equal(this.env.namespace('backbone.js'), 'backbone');
+
+      assert.equal(this.env.namespace('generator-backbone/all.js'), 'backbone:all');
+      assert.equal(this.env.namespace('generator-mocha/backbone/model/index.js'), 'mocha:backbone:model');
+      assert.equal(this.env.namespace('generator-mocha/backbone/model.js'), 'mocha:backbone:model');
+      assert.equal(this.env.namespace('node_modules/generator-mocha/backbone/model.js'), 'mocha:backbone:model');
+    });
+
+    it('handle relative paths', function () {
+      assert.equal(this.env.namespace('../local/stuff'), 'local:stuff');
+      assert.equal(this.env.namespace('./local/stuff'), 'local:stuff');
+      assert.equal(this.env.namespace('././local/stuff'), 'local:stuff');
+      assert.equal(this.env.namespace('../../local/stuff'), 'local:stuff');
+    });
+
+    it('handles weird paths', function () {
+      assert.equal(this.env.namespace('////gen/all'), 'gen:all');
+      assert.equal(this.env.namespace('generator-backbone///all.js'), 'backbone:all');
+      assert.equal(this.env.namespace('generator-backbone/././all.js'), 'backbone:all');
+      assert.equal(this.env.namespace('generator-backbone/generator-backbone/all.js'), 'backbone:all');
+    });
+
+    it('works with Windows\' paths', function () {
+      assert.equal(this.env.namespace('backbone\\all\\main.js'), 'backbone:all');
+      assert.equal(this.env.namespace('backbone\\all'), 'backbone:all');
+      assert.equal(this.env.namespace('backbone\\all.js'), 'backbone:all');
+    });
+
+    it('remove lookups from namespace', function () {
+      assert.equal(this.env.namespace('backbone/generators/all/index.js'), 'backbone:all');
+      assert.equal(this.env.namespace('backbone/lib/generators/all/index.js'), 'backbone:all');
     });
   });
 

@@ -8,7 +8,7 @@ Please choose a generator below.
 
 
 Extend
-  extend:support:scaffold
+  extend
 
 Simple
   simple
