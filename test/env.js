@@ -330,16 +330,57 @@ describe('Environment', function () {
 
   describe('#appendPath', function () {
     it('have default paths', function () {
-      assert.equal(this.env.paths[0], '.');
+      assert.equal(this.env.paths[0], path.resolve('.'));
     });
 
     it('adds new filepath to the load paths', function () {
       this.env.appendPath('support/scaffold');
-      assert.equal(this.env.paths.slice(-1)[0], 'support/scaffold');
+      assert.equal(this.env.paths.slice(-1)[0], path.resolve('support/scaffold'));
     });
 
     it('must receive a filepath', function () {
       assert.throws(this.env.appendPath.bind(this.env));
+    });
+  });
+
+  describe('#appendDefaultPaths', function () {
+    // This method is automatically called in the Environment constructor
+    beforeEach(function() {
+      this.NODE_PATH = process.env.NODE_PATH;
+      this.bestBet = path.join(__dirname, '../../../..');
+      this.bestBet2 = path.join(path.dirname(process.argv[1]), '../..');
+      this.env = new Environment();
+    });
+
+    afterEach(function() {
+      process.env.NODE_PATH = this.NODE_PATH;
+    });
+
+    it('append the CWD', function() {
+      assert(this.env.paths.indexOf(process.cwd()) >= 0);
+    });
+
+    it('append NODE_PATH', function() {
+      process.env.NODE_PATH = '/some/dummy/path';
+      this.env.paths = [];
+      this.env.appendDefaultPaths();
+      assert(this.env.paths.indexOf(path.resolve(process.env.NODE_PATH)) >= 0);
+    });
+
+    it('append best bet if NODE_PATH is unset', function() {
+      delete process.env.NODE_PATH;
+      this.env.paths = [];
+      this.env.appendDefaultPaths();
+      assert(this.env.paths.indexOf(this.bestBet) >= 0);
+      assert(this.env.paths.indexOf(this.bestBet2) >= 0);
+    });
+
+    it('append default NPM dir depending on your OS', function() {
+      if (process.platform === 'win32') {
+        assert(this.env.paths.indexOf(path.join(process.env.APPDATA, 'npm/node_modules')) >= 0);
+      } else {
+        assert(this.env.paths.indexOf('/usr/lib/node_modules'));
+      }
     });
   });
 

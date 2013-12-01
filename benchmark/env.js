@@ -7,7 +7,7 @@ var suite = new Benchmark.Suite();
 
 suite
   .add('Env#lookup', function () {
-    generators().lookup('*:*');
+    generators().lookup();
   });
 
 suite.on('complete', function (e) {

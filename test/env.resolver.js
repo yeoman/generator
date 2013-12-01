@@ -10,6 +10,8 @@ var shell = require('shelljs');
 
 var Environment = require('../lib/env');
 
+var globalLookupTest = process.env.NODE_PATH ? it : xit;
+
 describe('Environment Resolver', function () {
 
   before(function () {
@@ -33,32 +35,32 @@ describe('Environment Resolver', function () {
   beforeEach(function () {
     this.env = new Environment();
     assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
+    this.env.lookup();
   });
 
   describe('#lookup', function () {
-
     it('register local generators', function () {
-      this.env.lookup('*/*');
       assert.ok(this.env.get('dummy:app'));
       assert.ok(this.env.get('dummy:yo'));
     });
 
     it('register non-dependency local generator', function () {
-      this.env.lookup('*/*');
       assert.ok(this.env.get('jquery:app'));
     });
 
-    it('register global generators', function () {
-      this.env.lookup('*/*');
+    if (!process.env.NODE_PATH) {
+      console.log("Skipping tests for global generators. Please setup `NODE_PATH` " +
+        "environment variable to run it.");
+    }
+
+    globalLookupTest('register global generators', function () {
       assert.ok(this.env.get('angular:app'));
       assert.ok(this.env.get('angular:controller'));
     });
 
-    xit('register symlinked generators', function() {
-      this.env.lookup('*/*');
-      assert.ok(this.env.get('extend:support'));
+    it('register symlinked generators', function() {
+      assert.ok(this.env.get('extend:support:scaffold'));
     });
-
   });
 
 });
