@@ -53,7 +53,7 @@ describe('Environment', function () {
       this.expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8').trim();
 
       // lazy "update the help fixtures because something changed" statement
-      // fs.writeFileSync(path.join(__dirname, 'fixtures/help.txt'), env.help().trim());
+      // fs.writeFileSync(path.join(__dirname, 'fixtures/help.txt'), this.env.help().trim());
     });
 
     it('output the general help', function () {
@@ -288,22 +288,6 @@ describe('Environment', function () {
     });
   });
 
-
-  describe('#appendPath', function () {
-    it('have default paths', function () {
-      assert.equal(this.env.paths[0], '.');
-    });
-
-    it('adds new filepath to the load paths', function () {
-      this.env.appendPath('support/scaffold');
-      assert.equal(this.env.paths.slice(-1)[0], 'support/scaffold');
-    });
-
-    it('must receive a filepath', function () {
-      assert.throws(this.env.appendPath.bind(this.env));
-    });
-  });
-
   describe('#namespaces', function () {
     beforeEach(function () {
       this.env
@@ -313,7 +297,7 @@ describe('Environment', function () {
     });
 
     it('get the list of namespaces', function () {
-      assert.deepEqual(this.env.namespaces(), ['simple', 'extend:support:scaffold', 'support:scaffold']);
+      assert.deepEqual(this.env.namespaces(), ['simple', 'extend', 'support:scaffold']);
     });
   });
 
