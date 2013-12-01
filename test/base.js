@@ -15,7 +15,7 @@ describe('yeoman.generators.Base', function () {
 
   before(generators.test.before(path.join(__dirname, 'temp.dev')));
 
-  before(function () {
+  beforeEach(function () {
     var env = this.env = generators();
 
     var Dummy = generators.test.createDummyGenerator();
@@ -25,7 +25,7 @@ describe('yeoman.generators.Base', function () {
     env.registerStub(Dummy, 'hook2:ember:all');
     env.registerStub(Dummy, 'hook3');
     env.registerStub(function () {
-      this.write('app/scripts/models/application-model.js', '// ...');
+      this.write(path.join(__dirname, 'temp.dev/app/scripts/models/application-model.js'), '// ...');
     }, 'hook4');
 
     this.Dummy = Dummy;
@@ -47,7 +47,8 @@ describe('yeoman.generators.Base', function () {
 
   describe('generator.appname', function () {
     it('should be set with the project directory name without non-alphanums', function () {
-      assert.equal(this.dummy.appname, "temp dev");
+      process.chdir(path.join(__dirname, 'temp.dev'));
+      assert.equal(this.dummy.appname, 'temp dev');
     });
   });
 
@@ -187,6 +188,7 @@ describe('yeoman.generators.Base', function () {
 
   describe('generator.runHooks(cb)', function () {
     it('should go through all registered hooks, and invoke them in series', function (done) {
+      process.chdir(path.join(__dirname, 'temp.dev'));
       this.dummy.runHooks(function (err) {
         if (err) {
           return err;
@@ -204,6 +206,7 @@ describe('yeoman.generators.Base', function () {
     });
 
     it('should create the property specified with value from positional args', function () {
+      this.dummy.argument('foo');
       assert.equal(this.dummy.foo, 'bar');
     });
 
@@ -212,7 +215,7 @@ describe('yeoman.generators.Base', function () {
         type: Array
       });
 
-      assert.deepEqual(this.dummy.bar, ['baz', 'bom']);
+      assert.deepEqual(this.dummy.bar, ['bar', 'baz', 'bom']);
     });
 
     it('should raise an error if required arguments are not provided', function (done) {
@@ -287,9 +290,8 @@ describe('yeoman.generators.Base', function () {
     });
 
     it('should update the internal hooks holder', function () {
-      assert.deepEqual(this.dummy._hooks.pop(), {
-        name: 'something'
-      });
+      this.dummy.hookFor('something');
+      assert.deepEqual(this.dummy._hooks.pop(), { name: 'something' });
     });
   });
 
@@ -314,38 +316,41 @@ describe('yeoman.generators.Base', function () {
         type: Number,
         required: false
       });
+      this.dummy.desc('A new desc for this generator');
       var help = this.dummy.help();
 
       assert.ok(help.match('Usage:'));
-      assert.ok(help.match('yo dummy \\[options\\] <foo> <bar> \\[<baz>\\]'));
+      assert.ok(help.match('yo dummy \\[options\\] \\[<baz>\\]'));
       assert.ok(help.match('A new desc for this generator'));
       assert.ok(help.match('Options:'));
       assert.ok(help.match('--help   # Print generator\'s options and usage'));
       assert.ok(help.match('--ooOoo  # Description for ooOoo'));
       assert.ok(help.match('Arguments:'));
-      assert.ok(help.match('foo  # Type: String  Required: true'));
-      assert.ok(help.match('bar  # Type: Array   Required: true'));
       assert.ok(help.match('baz  # Type: Number  Required: false'));
     });
   });
 
   describe('generator.usage()', function () {
     it('should return the expected help / usage output with arguments', function () {
+      this.dummy.argument('baz', {
+        type: Number,
+        required: false
+      });
       var usage = this.dummy.usage();
-      assert.equal(usage, 'yo dummy [options] <foo> <bar> [<baz>]\n\nA new desc for this generator');
+      assert.equal(usage.trim(), 'yo dummy [options] [<baz>]');
     });
 
     it('should return the expected help / usage output without arguments', function () {
       this.dummy._arguments.length = 0;
       var usage = this.dummy.usage();
-      assert.equal(usage, 'yo dummy [options] \n\nA new desc for this generator');
+      assert.equal(usage.trim(), 'yo dummy [options]');
     });
 
     it('should return the expected help / usage output without options', function () {
       this.dummy._arguments.length = 0;
       this.dummy._options.length = 0;
       var usage = this.dummy.usage();
-      assert.equal(usage, 'yo dummy  \n\nA new desc for this generator');
+      assert.equal(usage.trim(), 'yo dummy');
     });
   });
 
