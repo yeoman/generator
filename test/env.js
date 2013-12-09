@@ -331,6 +331,19 @@ describe('Environment', function () {
     });
   });
 
+  describe('#getGeneratorsMeta', function () {
+    beforeEach(function () {
+      this.generatorPath = './fixtures/custom-generator-simple';
+      this.env.register('./fixtures/custom-generator-simple');
+    });
+
+    it('get the registered Generators metadatas', function () {
+      var meta = this.env.getGeneratorsMeta().simple
+      assert.deepEqual(meta.resolved, require.resolve(this.generatorPath));
+      assert.deepEqual(meta.namespace, 'simple');
+    });
+  });
+
   describe('#get', function () {
     beforeEach(function () {
       this.generator = require('./fixtures/mocha-generator');
