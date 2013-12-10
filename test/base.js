@@ -51,14 +51,34 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.run(args, cb)', function () {
-    it('should run all methods in the given generator', function () {
-      this.dummy.run();
+  describe('#run', function () {
+    beforeEach(function () {
+      this.TestGenerator = generators.test.createDummyGenerator();
+      this.TestGenerator.prototype.foo = sinon.spy();
+      this.testGen = new this.TestGenerator([], {
+        resolved: 'ember:all',
+        namespace: 'dummy',
+        env: this.env
+      });
+      this.testGen.foo = sinon.spy();
     });
 
-    it('should have the _running flag turned on', function () {
-      assert.ok(this.dummy._running);
+    it('run all methods in the given generator', function (done) {
+      this.testGen.run(done);
     });
+
+    it('turn on _running flag', function () {
+      this.testGen.run();
+      assert.ok(this.testGen._running);
+    });
+
+    it('run prototype methods', function (done) {
+      this.testGen.run(function() {
+        assert.ok(this.TestGenerator.prototype.foo.calledOnce);
+        assert.equal(this.testGen.foo.callCount, 0);
+        done();
+      }.bind(this));
+    })
   });
 
   // Underscore String
