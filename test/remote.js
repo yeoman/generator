@@ -4,7 +4,7 @@ var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
 
-describe('yeoman.remote', function () {
+describe('yeoman.base#remote', function () {
   before(generators.test.before(path.join(__dirname, 'temp')));
 
   before(function () {
@@ -13,7 +13,7 @@ describe('yeoman.remote', function () {
     this.dummy = env.create('dummy');
   });
 
-  describe('remote.copy(source, destination)', function () {
+  describe('callback argument remote#copy', function () {
 
     before(function (done) {
       this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
@@ -23,16 +23,15 @@ describe('yeoman.remote', function () {
       }.bind(this), true);
     });
 
-    it('should copy a file from a remote resource', function (done) {
+    it('copy a file from a remote resource', function (done) {
       fs.readFile('remote/template.js', function (err, data) {
-        if (err) throw err;
         assert.equal(data+'', 'var foo = \'foo\';\n');
         done();
       });
     });
   });
 
-  describe('remote.bulkCopy(source, destination)', function () {
+  describe('callback argument remote#bulkCopy', function () {
 
     before(function (done) {
       this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
@@ -41,20 +40,19 @@ describe('yeoman.remote', function () {
       }.bind(this), true);
     });
 
-    it('should copy a file from a remote resource', function (done) {
+    it('copy a file from a remote resource', function (done) {
       fs.stat('remote/foo-template.js', done);
     });
 
-    it('should not process templates on bulkCopy', function (done) {
+    it('doesn\'t process templates on bulkCopy', function (done) {
       fs.readFile('remote/foo-template.js', function (err, data) {
-        if (err) throw err;
         assert.equal(data+'', 'var <%= foo %> = \'<%= foo %>\';\n');
         done();
       });
     });
   });
 
-  describe('remote.directory(source, destination)', function () {
+  describe('callback argument remote#directory', function () {
 
     before(function (done) {
       this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
@@ -63,13 +61,13 @@ describe('yeoman.remote', function () {
       }.bind(this), true);
     });
 
-    it('should copy a directory from a remote resource', function (done) {
+    it('copy a directory from a remote resource', function (done) {
       fs.stat('remote/generators/test-angular.js', done);
     });
 
   });
 
-  describe('remote.bulkDirectory(source, destination)', function () {
+  describe('callback argument remote#bulkDirectory', function () {
 
     before(function (done) {
       this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
@@ -78,18 +76,37 @@ describe('yeoman.remote', function () {
       }.bind(this), true);
     });
 
-    it('should copy a directory from a remote resource', function (done) {
+    it('copy a directory from a remote resource', function (done) {
       fs.stat('remote/fixtures/foo.js', done);
     });
 
-    it('should not process templates on bulkDirectory', function (done) {
+    it('doesn\'t process templates on bulkDirectory', function (done) {
       fs.readFile('remote/fixtures/foo-template.js', function (err, data) {
-        if (err) throw err;
         assert.equal(data+'', 'var <%= foo %> = \'<%= foo %>\';\n');
         done();
       });
     });
 
+  });
+
+  describe('callback argument remote fileUtils Environment instances', function () {
+    before(function (done) {
+      this.cachePath = path.join(this.dummy.cacheRoot(), 'yeoman/generator/master');
+      this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
+        this.remoteArg = remote;
+        done();
+      }.bind(this));
+    });
+
+    it('.src is scoped to cachePath', function () {
+      assert.equal(this.remoteArg.src.fromBase('.'), this.cachePath);
+      assert.equal(this.remoteArg.src.fromDestBase('.'), this.dummy.destinationRoot());
+    });
+
+    it('.dest is scoped to destinationRoot', function () {
+      assert.equal(this.remoteArg.dest.fromBase('.'), this.dummy.destinationRoot());
+      assert.equal(this.remoteArg.dest.fromDestBase('.'), this.cachePath);
+    });
   });
 
   describe.skip('remote package', function () {
