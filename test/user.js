@@ -23,7 +23,7 @@ describe('Generator.user', function () {
         shell.exec.bind(shell, 'git init --quiet'),
         shell.exec.bind(shell, 'git config --local user.name Yeoman'),
         shell.exec.bind(shell, 'git config --local user.email yo@yeoman.io'),
-      ], done);
+      ], function() { done(); });
     });
 
     after(function () {
