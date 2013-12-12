@@ -56,6 +56,7 @@
     "markdox": "~0.1.2",
     "coveralls": "~2.6.0",
     "mocha-lcov-reporter": "0.0.1",
-    "istanbul": "~0.1.44"
+    "istanbul": "~0.1.44",
+    "benchmark": "~1.0.0"
   }
 }
