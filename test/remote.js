@@ -3,6 +3,7 @@ var generators = require('..');
 var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
+var sinon = require('sinon');
 
 describe('yeoman.remote', function () {
   before(generators.test.before(path.join(__dirname, 'temp')));
@@ -90,6 +91,35 @@ describe('yeoman.remote', function () {
       });
     });
 
+  });
+
+  describe('remote.src', function () {
+    it('should expose a src environment', function (done) {
+      this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
+        if (err) done(err);
+
+        var result = remote.src.read('package.json');
+        assert.ok(result.indexOf('yeoman-generator') > -1,
+                  'should contain the string package.json');
+        done();
+      });
+    });
+  });
+
+  describe('remote.dest', function () {
+    it('should expose a dest environment', function (done) {
+      var spy = sinon.stub(this.dummy, 'getCollisionFilter').returns(
+        function fakeValidator() { return true }
+      );
+      this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
+        if (err) done(err);
+
+        remote.dest.write('dest.tmp', 'UNICORNS AHEAD');
+        assert.ok(fs.readFileSync(path.join(__dirname, 'temp', 'dest.tmp'), 'utf-8'),
+                  'UNICORNS AHEAD');
+        done();
+      });
+    });
   });
 
   describe.skip('remote package', function () {
