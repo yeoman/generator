@@ -1,5 +1,3 @@
-process.logging = process.logging || require('./lib/util/log');
-
 // The generator system is a framework for node to author reusable and
 // composable Generators, for a vast majority of use-case.
 //
@@ -24,9 +22,8 @@ process.logging = process.logging || require('./lib/util/log');
 // node_modules/yeoman-backbone/lib/generators)
 
 var Environment = require('./lib/env');
-
-var generators = module.exports = function createEnv(args, opts) {
-  return new Environment(args, opts);
+var generators = module.exports = function createEnv(args, opts, adapter) {
+  return new Environment(args, opts, adapter);
 };
 
 // Reference general dependencies on the top level object

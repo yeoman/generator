@@ -1,58 +1,61 @@
-/*global describe, before, it */
+/*global describe, before, after, it, beforeEach, afterEach */
 var fs = require('fs');
 var events = require('events');
 var assert = require('assert');
 var proxyquire = require('proxyquire');
-var conflicter = require('../lib/util/conflicter');
+var Conflicter = require('../lib/util/conflicter');
+var log = require('../lib/util/log')();
+
+describe('Conflicter', function () {
+  'use strict';
 
 
-describe('conflicter', function () {
-  beforeEach(conflicter.reset.bind(conflicter));
-
-  conflicter.on('conflict', function () {
-    process.nextTick(function () {
-      process.stdin.write('Y\n');
-      process.stdin.emit('data', 'Y\n');
-    });
+  beforeEach(function () {
+    var mockAdapter = {
+      prompt: function () {},
+      diff: function () {},
+      log: log
+    };
+    this.conflicter = new Conflicter(mockAdapter);
   });
 
   it('is an event emitter', function () {
-    assert.ok(conflicter instanceof events.EventEmitter);
+    assert.ok(this.conflicter instanceof events.EventEmitter);
   });
 
-  it('conflicter#add(conflict)`', function () {
-    conflicter.add(__filename);
-    var conflict = conflicter.conflicts.pop();
+  it('#add', function () {
+    this.conflicter.add(__filename);
+    var conflict = this.conflicter.conflicts.pop();
     assert.deepEqual(conflict.file, __filename);
     assert.deepEqual(conflict.content, fs.readFileSync(__filename, 'utf8'));
   });
 
   describe('conflicter#resolve(cb)', function (done) {
     it('wihout conflict', function (done) {
-      conflicter.resolve(done);
+      this.conflicter.resolve(done);
     });
 
     it('with at least one, without async callback handling', function (done) {
       var conflicts = 0;
       var callbackExecuted = false;
 
-      conflicter.add(__filename);
-      conflicter.add({
+      this.conflicter.add(__filename);
+      this.conflicter.add({
         file: 'foo.js',
         content: 'var foo = "foo";\n'
       });
 
       // called.
-      conflicter.once('resolved:' + __filename, function (config) {
+      this.conflicter.once('resolved:' + __filename, function (config) {
         conflicts++;
       });
 
       // not called.
-      conflicter.once('resolved:foo.js', function (config) {
+      this.conflicter.once('resolved:foo.js', function (config) {
         conflicts++;
       });
 
-      conflicter.resolve(function(){
+      this.conflicter.resolve(function () {
         callbackExecuted = true;
       });
 
@@ -64,23 +67,23 @@ describe('conflicter', function () {
     it('with at least one, with async callback handling', function (done) {
       var called = 0;
 
-      conflicter.add(__filename);
-      conflicter.add({
+      this.conflicter.add(__filename);
+      this.conflicter.add({
         file: 'foo.js',
         content: 'var foo = "foo";\n'
       });
 
-      conflicter.once('resolved:' + __filename, function (config) {
+      this.conflicter.once('resolved:' + __filename, function (config) {
         called++;
         config.callback();
       });
 
-      conflicter.once('resolved:foo.js', function (config) {
+      this.conflicter.once('resolved:foo.js', function (config) {
         called++;
         config.callback();
       });
 
-      conflicter.resolve(function(){
+      this.conflicter.resolve(function () {
         assert(called, 2);
         done();
       });
@@ -90,55 +93,87 @@ describe('conflicter', function () {
 
   describe.skip('conflicter#collision(filepath, content, cb)', function (done) {
     var me = fs.readFileSync(__filename, 'utf8');
-    it('identical status', function(done) {
-      conflicter.collision(__filename, me, function (status) {
+    it('identical status', function (done) {
+      this.conflicter.collision(__filename, me, function (status) {
         assert.equal(status, 'identical');
         done();
       });
     });
 
     it('create status', function (done) {
-      conflicter.collision('foo.js', '', function (status) {
+      this.conflicter.collision('foo.js', '', function (status) {
         assert.equal(status, 'create');
         done();
       });
     });
 
     it('conflict status', function (done) {
-      conflicter.collision(__filename, '', function (status) {
+      this.conflicter.collision(__filename, '', function (status) {
         assert.equal(status, 'force');
         done();
       });
     });
   });
 
-  it('conflicter#diff(actual, expected)', function () {
-    var diff = conflicter.diff('var', 'let');
-    assert.equal(diff, '\n\u001b[41mremoved\u001b[49m \u001b[42m\u001b[30madded\u001b[39m\u001b[49m\n\n\u001b[42m\u001b[30mlet\u001b[39m\u001b[49m\u001b[41mvar\u001b[49m\n');
+  describe('#diff', function () {
+
+    beforeEach(function () {
+      this.oldConflicter = this.conflicter;
+      this.adapterMock = {
+        diff: null,
+        log: function () {}
+      };
+      this.conflicter = new Conflicter(this.adapterMock);
+    });
+
+    afterEach(function () {
+      this.conflicter = this.oldConflicter;
+    });
+
+    it('Calls adapter diff function', function () {
+      var callCount = 0;
+      this.adapterMock.diff = function () {
+        callCount++;
+      };
+      this.conflicter.diff('actual', 'expected');
+      assert(callCount, 1);
+    });
+
+
   });
 
-  describe('conflicter#_ask', function () {
-    var promptMock = {
-      prompt: function (config, cb) {
-        cb({ overwrite: this.answer });
-      },
-      err: null,
-      answer: null
-    };
+  describe('#_ask', function () {
 
-    before(function () {
-      this.conflicter = proxyquire('../lib/util/conflicter', {
-        '../actions/prompt': promptMock.prompt.bind(promptMock)
-      });
+    beforeEach(function () {
+      this.oldConflicter = this.conflicter;
+      this.adapterMock = {
+        prompt: function (config, cb) {
+          cb({
+            overwrite: this.answer
+          });
+        },
+        err: null,
+        answer: null
+      };
+      this.conflicter = new Conflicter(this.adapterMock);
+    });
+
+    afterEach(function () {
+      this.conflicter = this.oldConflicter;
     });
 
     it('Calls answer related function and pass a callback', function (done) {
       var callCount = 0;
-      promptMock.answer = function (cb) { callCount++; cb(); };
+      this.adapterMock.answer = function (cb) {
+        callCount++;
+        cb();
+      };
       this.conflicter._ask('/tmp/file', 'my file contents', function (result) {
         assert(callCount, 1);
         done();
       });
     });
+
+
   });
 });

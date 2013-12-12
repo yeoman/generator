@@ -1,4 +1,4 @@
-/*global describe, before, it, afterEach, beforeEach */
+/*global describe, before, after, it, afterEach, beforeEach */
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -6,8 +6,10 @@ var events = require('events');
 var assert = require('assert');
 var proxyquire = require('proxyquire');
 var generators = require('../');
+var log = require('../lib/util/log')();
 var helpers = generators.test;
 var EventEmitter = require('events').EventEmitter;
+var Conflicter = require('../lib/util/conflicter');
 var win32 = process.platform === 'win32';
 
 
@@ -324,8 +326,25 @@ describe('yeoman.generators.Base', function () {
       });
     });
 
-    xit('should check for conflict if directory already exists', function (done) {
-      // FIXME: This is not actually checking anything, and the `diff` option fails.
+    it('should check for conflict if directory already exists', function (done) {
+      var oldConflicter = this.dummy.conflicter;
+      var callCount = 0;
+      var adapterMock = {
+        prompt: function (config, cb) {
+          cb({ overwrite: this.answer });
+        },
+        log: log,
+        answer: null
+      };
+
+      adapterMock.answer = function (cb) {
+        callCount++;
+        assert(callCount, 1);
+        this.dummy.conflicter = oldConflicter;
+        cb();
+      }.bind(this);
+      this.dummy.conflicter = new Conflicter(adapterMock);
+
       this.dummy.bulkDirectory('bulk-operation', 'bulk-operation');
       this.dummy.conflicter.resolve(done);
     });

@@ -49,7 +49,11 @@ describe('generators.Base fetch utilities', function () {
       this.events = new events.EventEmitter();
       this.download = sinon.stub().returns(this.events);
       this.fetch = proxyquire('../lib/actions/fetch', { download: this.download });
-      this.fetch.log = { write: noop, info: noop, ok: noop };
+      this.fetch.log = {
+        write: noop,
+        info: noop,
+        ok: noop
+      };
     });
 
     it('download and untar via the NPM download package', function (done) {
