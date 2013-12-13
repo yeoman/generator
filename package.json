@@ -31,11 +31,11 @@
     "diff": "~1.0.4",
     "mime": "~1.2.9",
     "underscore.string": "~2.3.1",
-    "lodash": "~2.2.1",
+    "lodash": "~2.4.1",
     "mkdirp": "~0.3.5",
     "glob": "~3.2.0",
     "debug": "~0.7.2",
-    "isbinaryfile": "~0.1.8",
+    "isbinaryfile": "~1.0.0",
     "dargs": "~0.1.0",
     "async": "~0.2.8",
     "inquirer": "~0.3.1",
@@ -45,15 +45,15 @@
     "chalk": "~0.3.0",
     "text-table": "~0.2.0",
     "download": "~0.1.6",
-    "request": "~2.27.0",
+    "request": "~2.29.0",
     "file-utils": "~0.1.1"
   },
   "devDependencies": {
-    "mocha": "~1.13.0",
+    "mocha": "~1.15.1",
     "proxyquire": "~0.5.1",
     "sinon": "~1.7.3",
     "markdox": "~0.1.2",
-    "coveralls": "~2.3.0",
+    "coveralls": "~2.6.0",
     "mocha-lcov-reporter": "0.0.1",
     "istanbul": "~0.1.44"
   }
