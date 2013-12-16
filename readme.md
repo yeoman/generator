@@ -52,3 +52,9 @@ set DEBUG=generators/*
 * [Jasmine](https://github.com/yeoman/generator-jasmine#readme)
 * [Mocha](https://github.com/yeoman/generator-mocha#readme)
 * [Karma](https://github.com/yeoman/generator-karma#readme)
+
+
+## License
+
+[BSD license](http://opensource.org/licenses/bsd-license.php)
+Copyright (c) Google
