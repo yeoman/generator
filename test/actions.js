@@ -240,7 +240,7 @@ describe('yeoman.generators.Base', function () {
       this.dummy.foo = 'fooooooo';
       this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml',null,templateSettings);
       
-      this.dummy.template('foo-template-maven-vars.xml',null,null,templateSettings););
+      this.dummy.template('foo-template-maven-vars.xml',null,null,templateSettings);
       this.dummy.template('foo-foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml.js', {
         foo: 'bar'
       },templateSettings);
