@@ -228,6 +228,45 @@ describe('yeoman.generators.Base', function () {
       assert.textEqual(body, 'var fooooooo = \'fooooooo\';' + '\n');
     });
   });
+  
+   describe('generator.template(source, destination, data,options)', function () {
+    before(function (done) {
+      
+      var templateSettings = {
+              evaluate    : /<%([\s\S]+?)%>/g,
+              interpolate : /<%=([\s\S]+?)%>/g,
+              escape      : /<%-([\s\S]+?)%>/g
+      };
+      this.dummy.foo = 'fooooooo';
+      this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml',null,templateSettings);
+      
+      this.dummy.template('foo-template-maven-vars.xml',null,null,templateSettings););
+      this.dummy.template('foo-foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml.js', {
+        foo: 'bar'
+      },templateSettings);
+      this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml',null,templateSettings);
+      this.dummy.conflicter.resolve(done);
+    });
+
+    it('should copy and process (using -default- underscore template settings) source file to destination', function (done) {
+      fs.stat('write/to/from-foo-template-maven-vars.xml', done);
+    });
+
+    it('should defaults the destination to the source filepath value, relative to "destinationRoot" value', function () {
+      var body = fs.readFileSync('foo-template-maven-vars.xml', 'utf8');
+      helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var fooooooo = \'fooooooo\';' + '\n');
+    });
+
+    it('should process underscore -default- templates with the passed-in data', function () {
+      var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
+      helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var bar = \'bar\';' + '\n');
+    });
+
+    it('should process underscore -default- templates with the actual generator instance, when no data is given', function () {
+      var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
+      helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var fooooooo = \'fooooooo\';' + '\n');
+    });
+  });
 
   describe('generator.directory(source, destination, process)', function () {
     before(function (done) {
