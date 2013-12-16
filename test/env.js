@@ -298,6 +298,35 @@ describe('Environment', function () {
     });
   });
 
+  describe('#registerStub', function () {
+    beforeEach(function () {
+      this.simpleDummy = sinon.spy();
+      this.completeDummy = function () {};
+      util.inherits(this.completeDummy, Base);
+      this.env
+        .registerStub(this.simpleDummy, 'dummy:simple')
+        .registerStub(this.completeDummy, 'dummy:complete');
+    });
+
+    it('register a function under a namespace', function () {
+      assert.equal(this.completeDummy, this.env.get('dummy:complete'));
+    });
+
+    it('extend simple function with Base', function () {
+      assert.ok(this.env.get('dummy:simple').super_ === Base);
+      this.env.run('dummy:simple');
+      assert.ok(this.simpleDummy.calledOnce);
+    });
+
+    it('throws if invalid generator', function () {
+      assert.throws(this.env.registerStub.bind(this.env, [], 'dummy'), /stub\sfunction/);
+    });
+
+    it('throws if invalid namespace', function () {
+      assert.throws(this.env.registerStub.bind(this.env, this.simpleDummy), /namespace/);
+    });
+  });
+
   describe('#appendLookup', function () {
     it('have default lookups', function () {
       assert.equal(this.env.lookups.slice(-1)[0], 'lib/generators');
@@ -374,35 +403,6 @@ describe('Environment', function () {
     it('returns undefined if namespace is not found', function () {
       assert.equal(this.env.get('not:there'), undefined);
       assert.equal(this.env.get(), undefined);
-    });
-  });
-
-  describe('#registerStub', function () {
-    beforeEach(function () {
-      this.simpleDummy = sinon.spy();
-      this.completeDummy = function () {};
-      util.inherits(this.completeDummy, Base);
-      this.env
-        .registerStub(this.simpleDummy, 'dummy:simple')
-        .registerStub(this.completeDummy, 'dummy:complete');
-    });
-
-    it('register a function under a namespace', function () {
-      assert.equal(this.completeDummy, this.env.get('dummy:complete'));
-    });
-
-    it('extend simple function with Base', function () {
-      assert.ok(this.env.get('dummy:simple').super_ === Base);
-      this.env.run('dummy:simple');
-      assert.ok(this.simpleDummy.calledOnce);
-    });
-
-    it('throws if invalid generator', function () {
-      assert.throws(this.env.registerStub.bind(this.env, [], 'dummy'), /stub\sfunction/);
-    });
-
-    it('throws if invalid namespace', function () {
-      assert.throws(this.env.registerStub.bind(this.env, this.simpleDummy), /namespace/);
     });
   });
 
@@ -565,8 +565,8 @@ describe('Environment', function () {
 
     describe('#add / #get', function() {
       beforeEach(function() {
-        this.module = function () {};
-        this.modulePath = path.join(__dirname, "fixtures/dummy-package");
+        this.modulePath = path.join(__dirname, "fixtures/mocha-generator");
+        this.module = require(this.modulePath);
       });
 
       describe('storing as module', function() {
@@ -596,13 +596,22 @@ describe('Environment', function () {
 
         it('store and returns the required module', function() {
           assert.notEqual(this.outcome, this.modulePath);
-          assert.equal(this.outcome.yeoman, 'Yo!');
+          assert.equal(this.outcome.usage, 'Usage can be used to customize the help output');
         });
 
         it('assign meta data to the module', function() {
           assert.equal(this.outcome.resolved, this.modulePath);
           assert.equal(this.outcome.namespace, 'foo:path');
         });
+      });
+
+      it('normalize Generators', function() {
+        var method = function() {};
+        this.store.add('foo', method);
+        var Generator = this.store.get('foo');
+
+        helpers.assertImplement(Generator.prototype, Base.prototype);
+        assert.equal(Generator.prototype.exec, method);
       });
     });
 
