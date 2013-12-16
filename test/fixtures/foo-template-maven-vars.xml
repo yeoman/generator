@@ -1,0 +1,1 @@
+<version>${spring.core.version}</version>var <%= foo %> = '<%= foo %>';
