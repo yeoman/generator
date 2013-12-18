@@ -205,11 +205,10 @@ describe('yeoman.generators.Base', function () {
       this.dummy.template('foo-template.js', 'write/to/from-template-bar.js', {
         foo: 'bar'
       });
-      // this.dummy.template('foo-template.js', 'write/to/from-template.js');
       this.dummy.conflicter.resolve(done);
     });
 
-     it('should copy and process source file to destination', function (done) {
+    it('should copy and process source file to destination', function (done) {
       fs.stat('write/to/from-template.js', done);
     });
 
@@ -229,59 +228,58 @@ describe('yeoman.generators.Base', function () {
     });
   });
   
-   describe('#template', function () {
+  describe('#template', function () {
     before(function (done) {
-      
-	  this.dummy.templateSettings = {
-              evaluate    : /<%([\s\S]+?)%>/g,
-              interpolate : /<%=([\s\S]+?)%>/g,
-              escape      : /<%-([\s\S]+?)%>/g
+      this.dummy.templateSettings = {
+	evaluate    : /<%([\s\S]+?)%>/g,
+	interpolate : /<%=([\s\S]+?)%>/g,
+	escape      : /<%-([\s\S]+?)%>/g
       };
+      
       this.dummy.foo = 'fooooooo';
-	  //force overwrite on every conflict
-	  this.dummy.conflicter.force = true;
-	  this.dummy.conflicter.resolve(done);
-	  done(); 
+	//force overwrite on every conflict
+	this.dummy.conflicter.force = true;
+	this.dummy.conflicter.resolve(done);
+	done(); 
     });
 
     it('throw if using yeoman default template on maven vars', function(){
-	 	assert.throws(this.dummy.template.bind(null,'foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml'));
-	 
-	});
+      assert.throws(this.dummy.template.bind(null,'foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml'));
+    });
 	
     it('true if file created  using -default- underscore template settings) source file to destination', function (done) {
-		this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml', { foo: 'bar'},this.dummy.templateSettings);
-		 this.dummy.conflicter.resolve(function(){
-			fs.stat('write/to/from-foo-template-maven-vars.xml', function(err,stats){
-			console.log(err);
-					assert.equal(stats.isFile(),true);
-						done();
-			});
-		});
+      this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml', { foo: 'bar'},this.dummy.templateSettings);
+      this.dummy.conflicter.resolve(function(){
+        fs.stat('write/to/from-foo-template-maven-vars.xml', function(err,stats){
+        console.log(err);
+        assert.equal(stats.isFile(),true);
+        done();
+        });
+      });
     });
 
     it('true if template doesnt parse maven var', function () {
-		this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml',null,this.dummy.templateSettings);
-		this.dummy.conflicter.resolve(function(){
-			var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
-			helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var fooooooo = \'fooooooo\';' + '\n');
-		});
+     this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml',null,this.dummy.templateSettings);
+     this.dummy.conflicter.resolve(function(){
+       var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
+       helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var fooooooo = \'fooooooo\';' + '\n');
+      });
     });
 
     it('process underscore -default- templates with the passed-in data AND skip maven vars', function () {
-		this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml', { foo: 'bar'},this.dummy.templateSettings);
-			this.dummy.conflicter.resolve(function(){
-				var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
-				helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var bar = \'bar\';' + '\n');
-				});
+      this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml', { foo: 'bar'},this.dummy.templateSettings);
+      this.dummy.conflicter.resolve(function(){
+        var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
+        helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var bar = \'bar\';' + '\n');
+      });
     });
 
     it('process underscore -default- templates with the actual generator instance, when no data is given AND skip maven vars', function () {
-		this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml',null,this.dummy.templateSettings);
-			this.dummy.conflicter.resolve(function(){
-				var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
-				helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var fooooooo = \'fooooooo\';' + '\n');
-		});
+      this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml',null,this.dummy.templateSettings);
+      this.dummy.conflicter.resolve(function(){
+        var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
+        helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var fooooooo = \'fooooooo\';' + '\n');
+      });
     });
   });
 
