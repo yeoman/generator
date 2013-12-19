@@ -448,6 +448,11 @@ describe('Environment', function () {
       assert.equal(this.env.namespace('backbone/generators/all/index.js'), 'backbone:all');
       assert.equal(this.env.namespace('backbone/lib/generators/all/index.js'), 'backbone:all');
     });
+
+    it('remove path before the generator name', function () {
+      assert.equal(this.env.namespace('/Users/yeoman/.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
+      assert.equal(this.env.namespace('/usr/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
+    });
   });
 
   describe('#get', function () {
