@@ -499,6 +499,15 @@ describe('Environment', function () {
     });
   });
 
+  describe('.enforceUpdate', function () {
+    it('add an adapter', function () {
+      var env = new Environment();
+      delete env.adapter;
+      Environment.enforceUpdate(env);
+      assert(env.adapter);
+    });
+  });
+
   // Events
   // ------
 
