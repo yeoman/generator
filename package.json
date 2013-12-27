@@ -22,9 +22,15 @@
   },
   "scripts": {
     "test": "istanbul cover _mocha --report lcovonly -- test/*.js --reporter list --timeout 100000 && cat ./coverage/lcov.info",
-    "travis": "istanbul cover _mocha --report lcovonly -- test/*.js --reporter list --timeout 100000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "travis": "grunt --force",
     "legacy": "mocha test/legacy.js --reporter dot --timeout 100000",
-    "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000"
+    "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000",
+    "blanket": {
+      "pattern": [
+        "lib",
+        "main.js"
+      ]
+    }
   },
   "dependencies": {
     "cheerio": "~0.12.0",
@@ -55,9 +61,11 @@
     "proxyquire": "~0.5.1",
     "sinon": "~1.7.3",
     "markdox": "~0.1.2",
-    "coveralls": "~2.6.0",
-    "mocha-lcov-reporter": "0.0.1",
-    "istanbul": "~0.1.44",
-    "benchmark": "~1.0.0"
+    "benchmark": "~1.0.0",
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-mocha-test": "~0.8.1",
+    "grunt-jscs-checker": "~0.3.0",
+    "grunt-mocha-cov": "~0.1.1"
   }
 }

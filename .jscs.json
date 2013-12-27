@@ -4,12 +4,11 @@
 	"requireSpacesInFunctionExpression": {
 		"beforeOpeningCurlyBrace": true
 	},
-	"disallowMultipleVarDecl": true,
-	"disallowSpacesInsideObjectBrackets": true,
-	"disallowSpacesInsideArrayBrackets": true,
+  "disallowMultipleVarDecl": true,
+	"requireSpacesInsideObjectBrackets": "allButNested",
+	"requireSpacesInsideArrayBrackets": "allButNested",
 	"disallowSpacesInsideParentheses": true,
 	"disallowQuotedKeysInObjects": true,
-	"disallowSpaceAfterObjectKeys": true,
 	"disallowLeftStickedOperators": ["?", "+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
 	"requireRightStickedOperators": ["!"],
 	"disallowRightStickedOperators": ["?", "+", "/", "*", ":", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
@@ -24,5 +23,6 @@
 	"validateLineBreaks": "LF",
 	"disallowKeywordsOnNewLine": ["else"],
 	"requireLineFeedAtFileEnd": true,
+  "safeContextKeyword": "self",
 	"excludeFiles": ["node_modules/**", "bower_components/**"]
 }
