@@ -4,7 +4,7 @@ node_js:
   - '0.8'
 script: "npm run-script travis"
 before_script:
-  - npm install -g bower mocha istanbul generator-angular
+  - npm install -g bower grunt-cli
   - export NODE_PATH="$NVM_PATH/../node_modules"
 env:
   - DEBUG="generators:*"
