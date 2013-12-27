@@ -21,8 +21,7 @@
     "url": "git://github.com/yeoman/generator.git"
   },
   "scripts": {
-    "test": "istanbul cover _mocha --report lcovonly -- test/*.js --reporter list --timeout 100000 && cat ./coverage/lcov.info",
-    "travis": "istanbul cover _mocha --report lcovonly -- test/*.js --reporter list --timeout 100000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test": "gulp",
     "legacy": "mocha test/legacy.js --reporter dot --timeout 100000",
     "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000"
   },
@@ -51,13 +50,16 @@
     "class-extend": "~0.1.0"
   },
   "devDependencies": {
-    "mocha": "~1.15.1",
     "proxyquire": "~0.5.1",
     "sinon": "~1.7.3",
     "markdox": "~0.1.2",
     "coveralls": "~2.6.0",
-    "mocha-lcov-reporter": "0.0.1",
-    "istanbul": "~0.1.44",
-    "benchmark": "~1.0.0"
+    "benchmark": "~1.0.0",
+    "gulp": "~3.2.1",
+    "gulp-mocha": "~0.1.1",
+    "gulp-jshint": "~1.3.2",
+    "jshint-stylish": "~0.1.4",
+    "gulp-jscs": "~0.1.1",
+    "gulp-istanbul": "~0.1.0"
   }
 }
