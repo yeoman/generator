@@ -9,6 +9,8 @@ var generators = require('..');
 var helpers = require('../lib/test/helpers');
 var _ = require('lodash');
 
+var Base = generators.generators.Base;
+
 
 describe('yeoman.generators.Base', function () {
   // TODO(mklabs): generate generator about to be tested, or add it in fixtures.
@@ -49,6 +51,29 @@ describe('yeoman.generators.Base', function () {
     it('should be set with the project directory name without non-alphanums', function () {
       process.chdir(path.join(__dirname, 'temp.dev'));
       assert.equal(this.dummy.appname, 'temp dev');
+    });
+  });
+
+  describe('.extend', function () {
+    it('create a new object inheriting the Generator', function () {
+      assert.equal(Base.extend().prototype.constructor, Base);
+    });
+
+    it('pass the extend method along', function () {
+      var Sub = Base.extend();
+      assert.ok(Sub.extend);
+    });
+
+    it('assign prototype methods', function () {
+      var proto = { foo: function () {} };
+      var Sub = Base.extend(proto);
+      assert.equal(Sub.prototype.foo, proto.foo)
+    });
+
+    it('assign static methods', function () {
+      var staticProps = { foo: function () {} };
+      var Sub = Base.extend({}, staticProps);
+      assert.equal(Sub.foo, staticProps.foo)
     });
   });
 
