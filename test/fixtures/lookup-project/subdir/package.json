@@ -1,0 +1,6 @@
+{
+  "name": "lookup-subdir-dummy-env",
+  "dependencies": {
+    "generator-dummy": "~0.1.0"
+  }
+}
