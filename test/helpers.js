@@ -36,7 +36,7 @@ describe('yeoman.test', function () {
     it('pass options param to the generator', function () {
       helpers.createGenerator('unicorn:app', [
         [this.StubGenerator, 'unicorn:app']
-      ], ['temp'], {ui: 'tdd'});
+      ], ['temp'], { ui: 'tdd' });
       assert.equal(this.options.ui, 'tdd');
     });
   });

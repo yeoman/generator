@@ -1,4 +1,5 @@
-/*global describe it */
+/*global describe, it, before */
+'use strict';
 var generators = require('..');
 var path = require('path');
 var fs = require('fs');
@@ -25,7 +26,7 @@ describe('yeoman.base#remote', function () {
 
     it('copy a file from a remote resource', function (done) {
       fs.readFile('remote/template.js', function (err, data) {
-        assert.equal(data+'', 'var foo = \'foo\';\n');
+        assert.equal(data.toString(), 'var foo = \'foo\';\n');
         done();
       });
     });
@@ -46,7 +47,7 @@ describe('yeoman.base#remote', function () {
 
     it('doesn\'t process templates on bulkCopy', function (done) {
       fs.readFile('remote/foo-template.js', function (err, data) {
-        assert.equal(data+'', 'var <%= foo %> = \'<%= foo %>\';\n');
+        assert.equal(data.toString(), 'var <%= foo %> = \'<%= foo %>\';\n');
         done();
       });
     });
@@ -82,7 +83,7 @@ describe('yeoman.base#remote', function () {
 
     it('doesn\'t process templates on bulkDirectory', function (done) {
       fs.readFile('remote/fixtures/foo-template.js', function (err, data) {
-        assert.equal(data+'', 'var <%= foo %> = \'<%= foo %>\';\n');
+        assert.equal(data.toString(), 'var <%= foo %> = \'<%= foo %>\';\n');
         done();
       });
     });

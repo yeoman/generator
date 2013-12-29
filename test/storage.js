@@ -1,4 +1,5 @@
 /*global describe, it, before, after, beforeEach, afterEach */
+'use strict';
 var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
@@ -16,13 +17,13 @@ describe('Storage', function () {
     this.saveSpy = sinon.spy(this.store, 'save');
   });
 
-  afterEach(function() {
+  afterEach(function () {
     shell.rm('-f', this.storePath);
     process.chdir(this.beforeDir);
     this.saveSpy.restore();
   });
 
-  describe('constructor', function() {
+  describe('constructor', function () {
     it('require a name parameter', function () {
       assert.throws(function () { new Storage(); });
     });
@@ -37,7 +38,7 @@ describe('Storage', function () {
   it('namespace each store sharing the same store file', function () {
     var store = new Storage('foobar', this.storePath);
     store.set('foo', 'something else');
-    assert.ok(this.store.get('foo') == 'bar');
+    assert.ok(this.store.get('foo') === 'bar');
   });
 
   it('defaults store path to `.yo-rc.json`', function (done) {
@@ -55,7 +56,7 @@ describe('Storage', function () {
   });
 
   describe('#get', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.store.set('testFramework', 'mocha');
       this.store.set('name', 'test');
     });
@@ -105,7 +106,7 @@ describe('Storage', function () {
   });
 
   describe('#delete', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.store.set('name', 'test');
     });
 
@@ -148,7 +149,9 @@ describe('Storage', function () {
         done();
       }.bind(this));
 
-      this.store.save(); this.store.save(); this.store.save();
+      this.store.save();
+      this.store.save();
+      this.store.save();
     });
   });
 
@@ -172,7 +175,7 @@ describe('Storage', function () {
       assert.equal(this.store.get('val2'), 4);
     });
 
-    it('require an Object as argument', function() {
+    it('require an Object as argument', function () {
       assert.throws(this.store.defaults.bind(this.store, 'foo'));
     });
   });

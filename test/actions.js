@@ -1,4 +1,5 @@
 /*global describe, before, after, it, afterEach, beforeEach */
+'use strict';
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -11,7 +12,6 @@ var helpers = generators.test;
 var EventEmitter = require('events').EventEmitter;
 var Conflicter = require('../lib/util/conflicter');
 var win32 = process.platform === 'win32';
-
 
 describe('yeoman.generators.Base', function () {
   before(generators.test.before(path.join(__dirname, 'temp')));
@@ -454,7 +454,7 @@ describe('yeoman.generators.Base', function () {
       assert.deepEqual(files, ['write/abc/abc.js']);
     });
     it('should return expand files', function () {
-      var files = this.dummy.expandFiles('abc/**', {cwd: './write'});
+      var files = this.dummy.expandFiles('abc/**', { cwd: './write' });
       assert.deepEqual(files, ['abc/abc.js']);
     });
   });

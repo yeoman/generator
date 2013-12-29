@@ -1,4 +1,5 @@
-/*global it, describe, before, beforeEach */
+/*global it, xit, describe, before, after, beforeEach, afterEach */
+'use strict';
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -50,8 +51,8 @@ describe('Environment Resolver', function () {
     });
 
     if (!process.env.NODE_PATH) {
-      console.log("Skipping tests for global generators. Please setup `NODE_PATH` " +
-        "environment variable to run it.");
+      console.log('Skipping tests for global generators. Please setup `NODE_PATH` ' +
+        'environment variable to run it.');
     }
 
     it('local generators prioritized over global', function () {
@@ -63,11 +64,11 @@ describe('Environment Resolver', function () {
       assert.ok(this.env.get('angular:controller'));
     });
 
-    it('register symlinked generators', function() {
+    it('register symlinked generators', function () {
       assert.ok(this.env.get('extend:support:scaffold'));
     });
 
-    describe('when there\'s ancestor node_modules/ folder', function() {
+    describe('when there\'s ancestor node_modules/ folder', function () {
 
       before(function () {
         this.projectSubRoot = path.join(this.projectRoot, 'subdir');

@@ -1,4 +1,6 @@
 /*global describe, before, it, after, before, beforeEach, afterEach */
+/*jshint expr: true */
+'use strict';
 var shell = require('shelljs');
 var assert = require('assert');
 var sinon = require('sinon');
@@ -23,7 +25,7 @@ describe('Generator.user', function () {
         shell.exec.bind(shell, 'git init --quiet'),
         shell.exec.bind(shell, 'git config --local user.name Yeoman'),
         shell.exec.bind(shell, 'git config --local user.email yo@yeoman.io'),
-      ], function() { done(); });
+      ], function () { done(); });
     });
 
     after(function () {
@@ -37,7 +39,7 @@ describe('Generator.user', function () {
       sinon.spy(this.shell, 'exec');
 
       this.user = proxyquire('../lib/actions/user', {
-        'shelljs': this.shell
+        shelljs: this.shell
       });
     });
 
@@ -61,7 +63,7 @@ describe('Generator.user', function () {
         assert.equal(this.shell.exec.callCount, 1);
       });
 
-      it('cache is linked to the CWD', function() {
+      it('cache is linked to the CWD', function () {
         this.user.git.username;
         shell.cd('subdir');
         this.user.git.username;
@@ -85,7 +87,7 @@ describe('Generator.user', function () {
         assert.equal(this.shell.exec.callCount, 1);
       });
 
-      it('cache is linked to the CWD', function() {
+      it('cache is linked to the CWD', function () {
         this.user.git.email;
         shell.cd('subdir');
         this.user.git.email;

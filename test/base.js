@@ -1,4 +1,5 @@
 /*global describe, before, beforeEach, after, afterEach, it */
+'use strict';
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -10,7 +11,6 @@ var helpers = require('../lib/test/helpers');
 var _ = require('lodash');
 
 var Base = generators.generators.Base;
-
 
 describe('yeoman.generators.Base', function () {
   // TODO(mklabs): generate generator about to be tested, or add it in fixtures.
@@ -65,15 +65,15 @@ describe('yeoman.generators.Base', function () {
     });
 
     it('assign prototype methods', function () {
-      var proto = { foo: function () {} };
+      var proto = { foo: function () {}};
       var Sub = Base.extend(proto);
-      assert.equal(Sub.prototype.foo, proto.foo)
+      assert.equal(Sub.prototype.foo, proto.foo);
     });
 
     it('assign static methods', function () {
-      var staticProps = { foo: function () {} };
+      var staticProps = { foo: function () {}};
       var Sub = Base.extend({}, staticProps);
-      assert.equal(Sub.foo, staticProps.foo)
+      assert.equal(Sub.foo, staticProps.foo);
     });
   });
 
@@ -99,12 +99,12 @@ describe('yeoman.generators.Base', function () {
     });
 
     it('run prototype methods', function (done) {
-      this.testGen.run(function() {
+      this.testGen.run(function () {
         assert.ok(this.TestGenerator.prototype.foo.calledOnce);
         assert.equal(this.testGen.foo.callCount, 0);
         done();
       }.bind(this));
-    })
+    });
   });
 
   // Underscore String
@@ -266,7 +266,7 @@ describe('yeoman.generators.Base', function () {
 
       assert.equal(dummy._arguments.length, 0);
 
-      assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', {required: true}));
+      assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', { required: true }));
 
       assert.equal(dummy._arguments.length, 1);
     });
@@ -395,7 +395,7 @@ describe('yeoman.generators.Base', function () {
     it('should set the CWD where `.yo-rc.json` is found', function () {
       var projectDir = path.join(__dirname, 'fixtures/dummy-project');
       process.chdir(path.join(projectDir, 'subdir'));
-      var dummy = new this.Dummy([ 'foo' ], {
+      var dummy = new this.Dummy(['foo'], {
         resolved: 'ember:all',
         env: this.env
       });

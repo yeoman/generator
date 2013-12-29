@@ -1,4 +1,5 @@
 /*global describe, before, after, it, beforeEach, afterEach */
+'use strict';
 var fs = require('fs');
 var events = require('events');
 var assert = require('assert');
@@ -7,9 +8,6 @@ var Conflicter = require('../lib/util/conflicter');
 var log = require('../lib/util/log')();
 
 describe('Conflicter', function () {
-  'use strict';
-
-
   beforeEach(function () {
     var mockAdapter = {
       prompt: function () {},
@@ -90,7 +88,6 @@ describe('Conflicter', function () {
     });
   });
 
-
   describe.skip('conflicter#collision(filepath, content, cb)', function (done) {
     var me = fs.readFileSync(__filename, 'utf8');
     it('identical status', function (done) {
@@ -139,7 +136,6 @@ describe('Conflicter', function () {
       assert(callCount, 1);
     });
 
-
   });
 
   describe('#_ask', function () {
@@ -173,7 +169,6 @@ describe('Conflicter', function () {
         done();
       });
     });
-
 
   });
 });

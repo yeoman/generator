@@ -1,3 +1,4 @@
+'use strict';
 // The generator system is a framework for node to author reusable and
 // composable Generators, for a vast majority of use-case.
 //

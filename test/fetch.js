@@ -1,4 +1,5 @@
 /*global describe, before, beforeEach, it */
+'use strict';
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -10,7 +11,6 @@ var generators = require('..');
 var fetch = require('../lib/actions/fetch');
 
 var noop = function () { return this; };
-
 
 describe('generators.Base fetch utilities', function () {
   // increase timeout to 15s for this suite (slow connections like mine needs that)

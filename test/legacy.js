@@ -1,4 +1,5 @@
-/*global describe before it */
+/*global describe, before, it */
+'use strict';
 var spawn = require('child_process').spawn;
 var assert = require('assert');
 var generators = require('..');
@@ -26,7 +27,7 @@ function install() {
 }
 
 function expects(lookup, ln) {
-  return function() {
+  return function () {
     var env = generators();
     env.prefix('yeoman-');
     assert.equal(env.namespaces().length, 0);

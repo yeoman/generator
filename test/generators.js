@@ -1,4 +1,5 @@
 /*global describe, before, beforeEach, it */
+'use strict';
 var path = require('path');
 var fs = require('fs');
 var events = require('events');
@@ -10,7 +11,6 @@ var sinon = require('sinon');
 var generators = require('..');
 var Environment = require('../lib/env');
 
-
 describe('Generators', function () {
   before(generators.test.before(path.join(__dirname, 'temp')));
 
@@ -20,7 +20,7 @@ describe('Generators', function () {
       assert.notEqual(generators(), generators());
     });
 
-    it('pass arguments to the Environment constructor', function() {
+    it('pass arguments to the Environment constructor', function () {
       var args = ['model', 'Post'];
       var opts = { help: true };
       var env = generators(args, opts);

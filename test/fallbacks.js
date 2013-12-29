@@ -1,9 +1,9 @@
 /*global describe, before, it */
+'use strict';
 var path = require('path');
 var assert = require('assert');
 var generators = require('..');
 var helpers = generators.test;
-
 
 describe('generators config', function () {
   describe('when config("generators.test-framework") is set', function () {

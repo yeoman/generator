@@ -1,3 +1,4 @@
+'use strict';
 var generators = require('..');
 var Benchmark = require('benchmark');
 var chalk = require('chalk');
@@ -12,12 +13,12 @@ suite
 
 suite.on('complete', function (e) {
   var tests = e.currentTarget;
-  var nbr = tests.length
+  var nbr = tests.length;
   var t = [
-    [ 'test', 'ops/sec' ]
+    ['test', 'ops/sec']
   ];
-  while( nbr-- ) {
-    t.push([ tests[nbr].name, tests[nbr].hz ]);
+  while (nbr--) {
+    t.push([tests[nbr].name, tests[nbr].hz]);
   }
   console.log(table(t));
 });

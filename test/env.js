@@ -1,4 +1,6 @@
-/*global it, describe, before, beforeEach */
+/*global it, describe, before, beforeEach, afterEach */
+/*jshint scripturl: true */
+'use strict';
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -39,7 +41,7 @@ describe('Environment', function () {
     });
 
     it('take options parameter', function () {
-      var opts = { foo : 'bar' };
+      var opts = { foo: 'bar' };
       assert.equal(new Environment(null, opts).options, opts);
     });
   });
@@ -106,10 +108,10 @@ describe('Environment', function () {
     });
 
     it('prefer options.arguments over options.args', function () {
-      var arguments = ['yo', 'unicorn'];
+      var args1 = ['yo', 'unicorn'];
       var args = ['foo', 'bar'];
-      var generator = this.env.create('stub', { arguments: arguments, args: args });
-      assert.equal(generator.arguments, arguments);
+      var generator = this.env.create('stub', { arguments: args1, args: args });
+      assert.equal(generator.arguments, args1);
       assert.notEqual(generator.arguments, args);
     });
 
@@ -122,13 +124,13 @@ describe('Environment', function () {
     });
 
     it('pass options.options', function () {
-      var opts = { 'foo' : 'bar' };
+      var opts = { foo: 'bar' };
       var generator = this.env.create('stub', { options: opts });
       assert.equal(generator.options, opts);
     });
 
     it('default options to `env.options` content', function () {
-      this.env.options = { 'foo' : 'bar' };
+      this.env.options = { foo: 'bar' };
       assert.equal(this.env.create('stub').options.foo, 'bar');
     });
 
@@ -145,15 +147,15 @@ describe('Environment', function () {
       assert.equal(this.env.create('stub').options.env, this.env);
     });
 
-    it('add the Generator resolved path on the options', function() {
+    it('add the Generator resolved path on the options', function () {
       assert.equal(this.env.create('stub').options.resolved, this.env.get('stub').resolved);
     });
 
-    it('adds the namespace on the options', function() {
+    it('adds the namespace on the options', function () {
       assert.equal(this.env.create('stub').options.namespace, 'stub');
     });
 
-    it('adds the namespace as called on the options', function() {
+    it('adds the namespace as called on the options', function () {
       assert.equal(this.env.create('stub:foo:bar').options.namespace, 'stub:foo:bar');
     });
 
@@ -165,11 +167,11 @@ describe('Environment', function () {
       });
 
       it('does not raise an error when the help option is provided but the required name parameter is not', function () {
-        assert.doesNotThrow(this.env.create.bind(this.env, 'scaffold', { options: { help: true } }));
+        assert.doesNotThrow(this.env.create.bind(this.env, 'scaffold', { options: { help: true }}));
       });
 
       it('calls the named base generator with the help option and provides the required name parameter', function () {
-        var generator = this.env.create('scaffold', { args: [ 'foo' ], options: { help: true } });
+        var generator = this.env.create('scaffold', { args: ['foo'], options: { help: true }});
 
         assert.equal(generator.options.help, true);
         assert.equal(generator.name, 'foo');
@@ -193,12 +195,12 @@ describe('Environment', function () {
       this.env.registerStub(this.stub, 'stub:run');
     });
 
-    afterEach(function() {
+    afterEach(function () {
       this.runMethod.restore();
     });
 
     it('runs a registered generator', function (done) {
-      this.env.run(['stub:run'], function() {
+      this.env.run(['stub:run'], function () {
         assert.ok(this.runMethod.calledOnce);
         done();
       }.bind(this));
@@ -254,7 +256,7 @@ describe('Environment', function () {
 
     it('launch error if generator is not found', function (done) {
       this.env.on('error', function (err) {
-        assert.ok(err.message.indexOf('some:unknown:generator') >= 0)
+        assert.ok(err.message.indexOf('some:unknown:generator') >= 0);
         done();
       });
       this.env.run('some:unknown:generator');
@@ -327,7 +329,6 @@ describe('Environment', function () {
     });
   });
 
-
   describe('#appendPath', function () {
     it('have default paths', function () {
       assert.equal(this.env.paths[0], path.resolve('.'));
@@ -345,29 +346,29 @@ describe('Environment', function () {
 
   describe('#appendDefaultPaths', function () {
     // This method is automatically called in the Environment constructor
-    beforeEach(function() {
+    beforeEach(function () {
       this.NODE_PATH = process.env.NODE_PATH;
       this.bestBet = path.join(__dirname, '../../../..');
       this.bestBet2 = path.join(path.dirname(process.argv[1]), '../..');
       this.env = new Environment();
     });
 
-    afterEach(function() {
+    afterEach(function () {
       process.env.NODE_PATH = this.NODE_PATH;
     });
 
-    it('append the CWD', function() {
+    it('append the CWD', function () {
       assert(this.env.paths.indexOf(process.cwd()) >= 0);
     });
 
-    it('append NODE_PATH', function() {
+    it('append NODE_PATH', function () {
       process.env.NODE_PATH = '/some/dummy/path';
       this.env.paths = [];
       this.env.appendDefaultPaths();
       assert(this.env.paths.indexOf(path.resolve(process.env.NODE_PATH)) >= 0);
     });
 
-    it('append best bet if NODE_PATH is unset', function() {
+    it('append best bet if NODE_PATH is unset', function () {
       delete process.env.NODE_PATH;
       this.env.paths = [];
       this.env.appendDefaultPaths();
@@ -375,7 +376,7 @@ describe('Environment', function () {
       assert(this.env.paths.indexOf(this.bestBet2) >= 0);
     });
 
-    it('append default NPM dir depending on your OS', function() {
+    it('append default NPM dir depending on your OS', function () {
       if (process.platform === 'win32') {
         assert(this.env.paths.indexOf(path.join(process.env.APPDATA, 'npm/node_modules')) >= 0);
       } else {
@@ -404,7 +405,7 @@ describe('Environment', function () {
     });
 
     it('get the registered Generators metadatas', function () {
-      var meta = this.env.getGeneratorsMeta().simple
+      var meta = this.env.getGeneratorsMeta().simple;
       assert.deepEqual(meta.resolved, require.resolve(this.generatorPath));
       assert.deepEqual(meta.namespace, 'simple');
     });
@@ -537,7 +538,7 @@ describe('Environment', function () {
       var lifecycle = ['start', 'createSomething', 'createSomethingElse', 'end'];
 
       function assertEvent(e) {
-        return function() {
+        return function () {
           assert.equal(e, lifecycle.shift());
           if (e === 'end') {
             done();
@@ -639,55 +640,55 @@ describe('Environment', function () {
     });
   });
 
-  describe('Store', function() {
-    beforeEach(function() {
+  describe('Store', function () {
+    beforeEach(function () {
       this.store = new Store();
     });
 
-    describe('#add / #get', function() {
-      beforeEach(function() {
-        this.modulePath = path.join(__dirname, "fixtures/mocha-generator");
+    describe('#add / #get', function () {
+      beforeEach(function () {
+        this.modulePath = path.join(__dirname, 'fixtures/mocha-generator');
         this.module = require(this.modulePath);
       });
 
-      describe('storing as module', function() {
-        beforeEach(function() {
+      describe('storing as module', function () {
+        beforeEach(function () {
           this.store.add('foo:module', this.module);
           this.outcome = this.store.get('foo:module');
         });
 
-        it('store and return the module', function() {
+        it('store and return the module', function () {
           assert.equal(this.outcome, this.module);
         });
 
-        it('assign meta data to the module', function() {
+        it('assign meta data to the module', function () {
           assert.equal(this.outcome.namespace, 'foo:module');
         });
 
-        it('assign dummy resolved value (can\'t determine the path of an instantiated)', function() {
+        it('assign dummy resolved value (can\'t determine the path of an instantiated)', function () {
           assert.ok(this.outcome.resolved.length > 0);
         });
       });
 
-      describe('storing as module path', function() {
-        beforeEach(function() {
+      describe('storing as module path', function () {
+        beforeEach(function () {
           this.store.add('foo:path', this.modulePath);
           this.outcome = this.store.get('foo:path');
         });
 
-        it('store and returns the required module', function() {
+        it('store and returns the required module', function () {
           assert.notEqual(this.outcome, this.modulePath);
           assert.equal(this.outcome.usage, 'Usage can be used to customize the help output');
         });
 
-        it('assign meta data to the module', function() {
+        it('assign meta data to the module', function () {
           assert.equal(this.outcome.resolved, this.modulePath);
           assert.equal(this.outcome.namespace, 'foo:path');
         });
       });
 
-      it('normalize Generators', function() {
-        var method = function() {};
+      it('normalize Generators', function () {
+        var method = function () {};
         this.store.add('foo', method);
         var Generator = this.store.get('foo');
 
@@ -696,14 +697,14 @@ describe('Environment', function () {
       });
     });
 
-    describe('#namespaces', function() {
-      beforeEach(function() {
+    describe('#namespaces', function () {
+      beforeEach(function () {
         this.store.add('foo', {});
         this.store.add('lab', {});
       });
 
-      it('return stored module namespaces', function() {
-        assert.deepEqual(this.store.namespaces(), [ 'foo', 'lab' ]);
+      it('return stored module namespaces', function () {
+        assert.deepEqual(this.store.namespaces(), ['foo', 'lab']);
       });
     });
   });
