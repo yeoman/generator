@@ -53,8 +53,9 @@ describe('Generator.user', function () {
       });
 
       it('is read-only', function () {
-        this.user.git.username = 'bar';
-        assert.notEqual(this.user.git.username, 'bar');
+        assert.throws(function () {
+          this.user.git.username = 'bar';
+        });
       });
 
       it('cache the value', function () {
@@ -77,8 +78,9 @@ describe('Generator.user', function () {
       });
 
       it('is read-only', function () {
-        this.user.git.email = 'bar';
-        assert.notEqual(this.user.git.email, 'bar');
+        assert.throws(function () {
+          this.user.git.email = 'bar';
+        });
       });
 
       it('handle cache', function () {
