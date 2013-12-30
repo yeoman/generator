@@ -3,6 +3,7 @@
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+var rimraf = require('rimraf');
 var events = require('events');
 var assert = require('assert');
 var proxyquire = require('proxyquire');
@@ -22,6 +23,7 @@ describe('yeoman.generators.Base', function () {
     this.dummy = env.create('dummy');
 
     this.fixtures = path.join(__dirname, 'fixtures');
+    this.dummy.sourceRoot(this.fixtures);
   });
 
   it('generator.prompt(defaults, prompts, cb)', function (done) {
@@ -137,10 +139,9 @@ describe('yeoman.generators.Base', function () {
 
   describe('generator.bulkCopy(source, destination, process)', function () {
 
-    before(function (done) {
+    before(function () {
       this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/foo.js');
       this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo-template.js'), 'write/to/noProcess.js');
-      done();
     });
 
     it('should copy a file', function (done) {
@@ -230,29 +231,9 @@ describe('yeoman.generators.Base', function () {
 
   describe('generator.directory(source, destination, process)', function () {
     before(function (done) {
-      try {
-        fs.rmdirSync(path.join(__dirname, './fixtures/lookup-project/node_modules'));
-        fs.rmdirSync(path.join(__dirname, './fixtures/temp'));
-      } catch (e) {}
-
-      // avoid hitting conflict state in this configuration for now
-      if (fs.existsSync('foo.js')) {
-        fs.unlinkSync('foo.js');
-      }
-
-      // avoid hitting conflict state in this configuration for now
-      if (fs.existsSync('foo-template.js')) {
-        fs.unlinkSync('foo-template.js');
-      }
-
-      // avoid hitting conflict state in this configuration for now
-      if (fs.existsSync('yeoman-logo.png')) {
-        fs.unlinkSync('yeoman-logo.png');
-      }
-
-      this.dummy.directory('./', 'directory');
-      this.dummy.directory('./');
-      this.dummy.directory('./', 'directory-processed', function (contents, source, destination, props) {
+      this.dummy.directory('./dir-fixtures', 'directory');
+      this.dummy.directory('./dir-fixtures');
+      this.dummy.directory('./dir-fixtures', 'directory-processed', function (contents, source, destination, props) {
         if (source.indexOf('foo-process.js') !== -1) {
           contents = contents.replace('foo', 'bar');
           contents = contents.replace('\r\n', '\n');
@@ -273,11 +254,11 @@ describe('yeoman.generators.Base', function () {
     });
 
     it('should defaults the destination to the source filepath value, relative to "destinationRoot" value', function (done) {
-      fs.stat('foo-template.js', function (err) {
+      fs.stat('dir-fixtures/foo-template.js', function (err) {
         if (err) {
           return done(err);
         }
-        fs.stat('foo.js', done);
+        fs.stat('dir-fixtures/foo.js', done);
       });
     });
 
