@@ -1,3 +1,4 @@
+/*global suite, bench */
 'use strict';
 var generators = require('..');
 
