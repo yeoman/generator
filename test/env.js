@@ -7,10 +7,10 @@ var util = require('util');
 var assert = require('assert');
 var sinon = require('sinon');
 var generators = require('..');
+var Base = generators.Base;
 var helpers = generators.test;
 var events = require('events');
 var TerminalAdapter = require('../lib/env/adapter');
-var Base = generators.Base;
 var Environment = require('../lib/env');
 var Store = require('../lib/env/store');
 
@@ -315,7 +315,7 @@ describe('Environment', function () {
     });
 
     it('extend simple function with Base', function () {
-      assert.ok(this.env.get('dummy:simple').super_ === Base);
+      helpers.assertImplement(this.env.get('dummy:simple'), Base);
       this.env.run('dummy:simple');
       assert.ok(this.simpleDummy.calledOnce);
     });
