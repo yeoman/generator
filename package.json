@@ -26,7 +26,7 @@
     "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000"
   },
   "dependencies": {
-    "cheerio": "~0.12.0",
+    "cheerio": "~0.13.0",
     "rimraf": "~2.2.0",
     "diff": "~1.0.4",
     "mime": "~1.2.9",
@@ -38,14 +38,14 @@
     "isbinaryfile": "~2.0.0",
     "dargs": "~0.1.0",
     "async": "~0.2.8",
-    "inquirer": "~0.3.1",
+    "inquirer": "~0.4.0",
     "iconv-lite": "~0.2.10",
     "shelljs": "~0.2.6",
     "findup-sync": "~0.1.2",
-    "chalk": "~0.3.0",
+    "chalk": "~0.4.0",
     "text-table": "~0.2.0",
     "download": "~0.1.6",
-    "request": "~2.29.0",
+    "request": "~2.30.0",
     "file-utils": "~0.1.1",
     "class-extend": "~0.1.0"
   },

@@ -56,7 +56,7 @@ describe('yeoman.generators.Base', function () {
 
   describe('.extend', function () {
     it('create a new object inheriting the Generator', function () {
-      assert.equal(Base.extend().prototype.constructor, Base);
+      assert.ok(new (Base.extend())([], { resolved: 'path/', env: this.env }) instanceof Base);
     });
 
     it('pass the extend method along', function () {
