@@ -361,28 +361,39 @@ describe('Environment', function () {
       assert(this.env.paths.indexOf(process.cwd()) >= 0);
     });
 
-    it('append NODE_PATH', function () {
-      process.env.NODE_PATH = '/some/dummy/path';
-      this.env.paths = [];
-      this.env.appendDefaultPaths();
-      assert(this.env.paths.indexOf(path.resolve(process.env.NODE_PATH)) >= 0);
+    describe('with NODE_PATH', function () {
+      beforeEach(function () {
+        process.env.NODE_PATH = '/some/dummy/path';
+        this.env.paths = [];
+        this.env.appendDefaultPaths();
+      });
+
+      it('append NODE_PATH', function () {
+        assert(this.env.paths.indexOf(path.resolve(process.env.NODE_PATH)) >= 0);
+      });
     });
 
-    it('append best bet if NODE_PATH is unset', function () {
-      delete process.env.NODE_PATH;
-      this.env.paths = [];
-      this.env.appendDefaultPaths();
-      assert(this.env.paths.indexOf(this.bestBet) >= 0);
-      assert(this.env.paths.indexOf(this.bestBet2) >= 0);
+    describe('without NODE_PATH', function () {
+      beforeEach(function () {
+        delete process.env.NODE_PATH;
+        this.env.paths = [];
+        this.env.appendDefaultPaths();
+      });
+
+      it('append best bet if NODE_PATH is unset', function () {
+        assert(this.env.paths.indexOf(this.bestBet) >= 0);
+        assert(this.env.paths.indexOf(this.bestBet2) >= 0);
+      });
+
+      it('append default NPM dir depending on your OS', function () {
+        if (process.platform === 'win32') {
+          assert(this.env.paths.indexOf(path.join(process.env.APPDATA, 'npm/node_modules')) >= 0);
+        } else {
+          assert(this.env.paths.indexOf('/usr/lib/node_modules'));
+        }
+      });
     });
 
-    it('append default NPM dir depending on your OS', function () {
-      if (process.platform === 'win32') {
-        assert(this.env.paths.indexOf(path.join(process.env.APPDATA, 'npm/node_modules')) >= 0);
-      } else {
-        assert(this.env.paths.indexOf('/usr/lib/node_modules'));
-      }
-    });
   });
 
   describe('#namespaces', function () {
