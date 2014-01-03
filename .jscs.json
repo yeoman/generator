@@ -21,7 +21,6 @@
   "disallowImplicitTypeConversion": ["numeric", "binary", "string"],
   "disallowKeywords": ["with", "eval"],
   "disallowMultipleLineBreaks": true,
-  "validateLineBreaks": "LF",
   "disallowKeywordsOnNewLine": ["else"],
   "requireLineFeedAtFileEnd": true,
   "safeContextKeyword": "self",
