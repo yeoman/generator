@@ -39,6 +39,7 @@ generators.NamedBase = require('./lib/named-base');
 
 // expose test helpers for generators.
 generators.test = require('./lib/test/helpers');
+generators.assert = require('./lib/test/assert');
 
 // backward compat, make them available as generators.generators.Base &
 // NamedBase (as most of generators use yeoman.generators.Stuff)
