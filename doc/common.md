@@ -2,7 +2,9 @@
 
 <!-- Start lib/util/common.js -->
 
-## chalk
+## common.yeoman
+
+&quot;Welcome to Yeoman&quot; logo
 
 <!-- End lib/util/common.js -->
 

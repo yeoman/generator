@@ -14,11 +14,16 @@ An environment is created using a list of `arguments` and a Hash of
 `options`. Usually, this is the list of arguments you get back from your CLI
 options parser.
 
+An optional adapter can be passed to provide interaction in non-CLI environment
+(e.g. IDE plugins), otherwise a `TerminalAdapter` is instantiated by default
+
 ### Params: 
 
 * **String|Array** *args* 
 
 * **Object** *opts* 
+
+* **Adapter** *adaper* 
 
 ## error(err)
 
@@ -43,15 +48,9 @@ Appends a `filepath` to the list of loadpaths.
 
 * **String** *filepath* 
 
-## appendLookup(filepath)
+## appendDefaultPaths()
 
-Appends a new `filepath` to the list of lookups path. This should be a
-relative filepath, like `support/scaffold`. Environments are created with
-`lib/generators` as a lookup path by default.
-
-### Params: 
-
-* **String** *filepath* 
+Appends the defaults node modules paths to the Environment load paths.
 
 ## help(name)
 
@@ -96,6 +95,18 @@ to extend the Base generator automatically.
 ## namespaces()
 
 Returns the list of registered namespace.
+
+### Return:
+
+* **Array** 
+
+## getGeneratorsMeta()
+
+Returns stored generators meta
+
+### Return:
+
+* **Object** 
 
 ## get(namespace)
 
@@ -175,6 +186,19 @@ Resolve a module path
 ### Return:
 
 * **String** - The resolved path leading to the module
+
+## enforceUpdate(env)
+
+Make sure the Environment present expected methods if an old version is
+passed to a Generator.
+
+### Params: 
+
+* **Environment** *env* 
+
+### Return:
+
+* **Environment** The updated env
 
 <!-- End lib/env/index.js -->
 

@@ -103,13 +103,23 @@ a generator &quot;step&quot; - top-level methods).
 
   - `as` The context value to use when runing the hooked generator
   - `args` The array of positional arguments to init and run the generator with
-  - `options` The hash of options to use to init and run the generator with
+  - `options` An object containing a nested `options` property with the hash of options to use to init and run the generator with
 
 ### Examples:
 
     // $ yo webapp --test-framework jasmine
     this.hookFor('test-framework');
     // =&gt; registers the `jasmine` hook
+
+    // $ yo mygen:subgen --myargument
+    this.hookFor('mygen', {
+      as: 'subgen',
+      options: {
+        options: {
+          'myargument': true
+        }
+      }
+    }
 
 ### Params: 
 
@@ -174,12 +184,50 @@ Setup a storage instance.
 
 ## destinationRoot(rootPath)
 
-Façace `actions.destinationRoot` on Base generator so it update the storage
-path when the path change.
+Change the generator destination root directory.
+This path is used to find storage, when using `this.dest` and `this.src` and for
+multiple file actions (like `this.write` and `this.copy`)
 
 ### Params: 
 
-* **String** *rootPath* 
+* **String** *rootPath* new destination root path
+
+### Return:
+
+* **String** destination root path
+
+## sourceRoot(rootPath)
+
+Change the generator source root directory.
+This path is used by `this.dest` and `this.src` and multiples file actions like
+(`this.read` and `this.copy`)
+
+### Params: 
+
+* **String** *rootPath* new source root path
+
+### Return:
+
+* **String** source root path
+
+## getCollisionFilter()
+
+Return a file Env validation filter checking for collision
+
+## extend
+
+Extend this Class to create a new one inherithing this one.
+Also add a helper __super__ object poiting to the parent prototypes methods
+
+### Params: 
+
+* **Object** *protoProps* Prototype properties (available on the instances)
+
+* **Object** *staticProps* Static properties (available on the contructor)
+
+### Return:
+
+* **Object** New sub class
 
 <!-- End lib/base.js -->
 

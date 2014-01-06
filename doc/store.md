@@ -38,5 +38,38 @@ Returns the list of registered namespace.
 
 * **Array** Namespaces array
 
+## getGeneratorsMeta()
+
+Get the stored generators meta data
+
+### Return:
+
+* **Object** Generators metadata
+
+## normalizeGenerator(Generator)
+
+Normalize a Generator, extending it with related metadata and allowing simple
+function to be registered as generators
+
+### Params: 
+
+* **Generator** *Generator* 
+
+### Return:
+
+* **Generator** 
+
+## isRaw(generator)
+
+Check if a Generator implement base Generator prototype.
+
+### Params: 
+
+* **Generator|Function** *generator* 
+
+### Return:
+
+* **Boolean** 
+
 <!-- End lib/env/store.js -->
 

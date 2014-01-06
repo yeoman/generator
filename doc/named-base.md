@@ -2,7 +2,7 @@
 
 <!-- Start lib/named-base.js -->
 
-## NamedBase(args, options)
+## exports
 
 The `NamedBase` object is only dealing with one argument: `name`.
 

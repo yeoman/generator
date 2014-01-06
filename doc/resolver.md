@@ -2,34 +2,49 @@
 
 <!-- Start lib/env/resolver.js -->
 
-## lookup(namespaces, lookupdir)
+## lookup()
 
-Receives namespaces in an array and tries to find matching generators in the
-load paths.
+Search for generators and their sub generators.
 
-We lookup namespaces in several places, namely `this.lookups`
-list of relatives directory path. A `generator-` prefix is added if a
-namespace wasn't `require()`-able directly, matching `generator-*` kind of
-pattern in npm installed package.
+A generator is a `:lookup/:name/index.js` file placed inside an NPM module.
 
-You can also lookup using glob-like star pattern, eg. `angular:*` gets
-expanded to `angular\*\index.js`.
+Defaults lookups are:
+  - ./
+  - generators/
+  - lib/generators/
 
-The default alias `generator-$1` lookup is added automatically.
+So this index file `node_modules/generator-dummy/lib/generators/yo/index.js` would be
+registered as `dummy:yo` generator.
 
-### Examples:
+## _getNpmGenerators()
 
-    // search for all angular generators in the load path
-    env.lookup('angular:*');
+index.js');
+    });
+  });
 
-    // register any valid set of generator in the load paths
-    env.lookup('*:*');
+  patterns.forEach(function (pattern) {
+    glob.sync(pattern).forEach(function (filename) {
+      this._tryRegistering(filename);
+    }, this);
+  }, this);
+};
+
+/**
+Search NPM for every available generators.
+Generators are NPM modules who's name start with `generator-` and who're placed in the
+top level `node_module` path. They can be installed globally or locally.
+
+### Return:
+
+* **Array** List of the generators path
+
+## _tryRegistering(generatorReference)
+
+Try registering a Generator to this environment.
 
 ### Params: 
 
-* **String|Array** *namespaces* 
-
-* **String** *lookupdir* 
+* **String** *generatorReference* A generator reference, usually a file path.
 
 ## alias(match, value)
 
@@ -63,47 +78,6 @@ based on .match().
 * **String|RegExp** *match* 
 
 * **String** *value* 
-
-## prefix(prefix)
-
-Adds the namespace prefix to this environment, such as `generator-*`,
-used when resolving namespace, replacing the leading `*` in the
-namespace by the configured prefix(es).
-
-### Examples:
-
-    this.prefix('generator-');
-
-### Params: 
-
-* **String** *prefix* 
-
-## suffix(suffix)
-
-Get or set the namespace suffix to this environment, such as `*\index.js`,
-used when resolving namespace, replacing the last `*` in the
-namespace by the configured suffix.
-
-### Examples:
-
-    this.suffix('*\index.js');
-    this.suffix();
-    // =&gt; '*\index.js'
-
-### Params: 
-
-* **String** *suffix* 
-
-## plugins(filename, basedir)
-
-Walk up the filesystem looking for a `node_modules` folder, and add it if
-found to the load path.
-
-### Params: 
-
-* **String** *filename* 
-
-* **String** *basedir* 
 
 <!-- End lib/env/resolver.js -->
 

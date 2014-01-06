@@ -2,28 +2,6 @@
 
 <!-- Start lib/actions/actions.js -->
 
-## sourceRoot(root)
-
-Stores and return the source root for this class. The source root is used to
-prefix filepath with `.read()` or `.template()`.
-
-### Params: 
-
-* **String** *root* 
-
-## destinationRoot(root)
-
-Sets the destination root for this class, the working directory. Relative
-path are added to the directory where the script was invoked and
-expanded.
-
-This automatically creates the working directory if it doensn't exists and
-`cd` into it.
-
-### Params: 
-
-* **String** *root* 
-
 ## cacheRoot()
 
 Stores and return the cache root for this class. The cache root is used to
