@@ -7,7 +7,7 @@ var events = require('events');
 var assert = require('assert');
 var sinon = require('sinon');
 var generators = require('..');
-var helpers = require('../lib/test/helpers');
+var helpers = generators.test;
 var _ = require('lodash');
 
 var Base = generators.generators.Base;
@@ -15,12 +15,12 @@ var Base = generators.generators.Base;
 describe('yeoman.generators.Base', function () {
   // TODO(mklabs): generate generator about to be tested, or add it in fixtures.
 
-  before(generators.test.before(path.join(__dirname, 'temp.dev')));
+  before(helpers.setUpTestDirectory(path.join(__dirname, 'temp.dev')));
 
   beforeEach(function () {
     var env = this.env = generators();
 
-    var Dummy = generators.test.createDummyGenerator();
+    var Dummy = helpers.createDummyGenerator();
 
     env.registerStub(Dummy, 'ember:all');
     env.registerStub(Dummy, 'hook1:ember');
@@ -79,7 +79,7 @@ describe('yeoman.generators.Base', function () {
 
   describe('#run', function () {
     beforeEach(function () {
-      this.TestGenerator = generators.test.createDummyGenerator();
+      this.TestGenerator = helpers.createDummyGenerator();
       this.TestGenerator.prototype.foo = sinon.spy();
       this.testGen = new this.TestGenerator([], {
         resolved: 'ember:all',

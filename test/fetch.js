@@ -16,7 +16,7 @@ describe('generators.Base fetch utilities', function () {
   // increase timeout to 15s for this suite (slow connections like mine needs that)
   this.timeout(50000);
 
-  before(generators.test.before(path.join(__dirname, 'temp')));
+  before(generators.test.setUpTestDirectory(path.join(__dirname, 'temp')));
 
   beforeEach(function () {
     function Dummy() {
