@@ -1,0 +1,12 @@
+{
+  "source": {
+    "include": ["main.js", "lib"],
+    "includePattern": ".+\\.js(doc)?$"
+  },
+  "opts": {
+    "recurse": true
+  },
+  "plugins": [
+    "plugins/markdown"
+  ]
+}

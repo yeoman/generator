@@ -1,48 +1,85 @@
+/**
+ * @module yeoman-generator
+ */
+
 'use strict';
-// The generator system is a framework for node to author reusable and
-// composable Generators, for a vast majority of use-case.
-//
-// Inspired and based off the work done on Thor and Rails 3 Generators, we try
-// to provide the same kind of infrastructure.
-//
-//    var generators = require('yeoman-generators');
-//
-//    var env = generators('angular:model')
-//      .run(function(err) {
-//        console.log('done!');
-//      });
-//
-// Generators are registered by namespace, where namespaces are mapping the
-// structure of the file system with `:` being simply converted to `/`.
-//
-// Generators are standard node modules, they are simply required as usual, and
-// they can be shipped into reusable npm packages.
-//
-// The lookup is done depending on the configured load path, which is by
-// default `lib/generators` in every generators package installed (ie.
-// node_modules/yeoman-backbone/lib/generators)
 
 var Environment = require('./lib/env');
-var generators = module.exports = function createEnv(args, opts, adapter) {
+
+/**
+ * The generator system is a framework for node to author reusable and
+ * composable Generators, for a vast majority of use-case.
+ *
+ * Inspired and based off the work done on Thor and Rails 3 Generators, we try
+ * to provide the same kind of infrastructure.
+ *
+ * Generators are registered by namespace, where namespaces are mapping the
+ * structure of the file system with `:` being simply converted to `/`.
+ *
+ * Generators are standard node modules, they are simply required as usual, and
+ * they can be shipped into reusable npm packages.
+ *
+ * The lookup is done depending on the configured load path, which is by
+ * default `lib/generators` in every generators package installed (ie.
+ * `node_modules/yeoman-backbone/lib/generators`)
+ *
+ * @example
+ *    var yeoman = require('yeoman-generators');
+ *
+ *    var env = yeoman('angular:model')
+ *      .run(function(err) {
+ *        console.log('done!');
+ *      });
+ *
+ */
+
+var yeoman = module.exports = function createEnv(args, opts, adapter) {
   return new Environment(args, opts, adapter);
 };
 
-// Reference general dependencies on the top level object
-generators.inquirer = require('inquirer');
+/**
+ * Reference to the inquirer module
+ * @deprecated Require your own copy of the module, this one will be removed after 1.0
+ */
+exports.inquirer = require('inquirer');
 
-// Set global file utility
-generators.file = require('file-utils');
+/**
+ * Global file helpers methods
+ * {@link https://github.com/SBoudrias/file-utils}
+ */
+exports.file = require('file-utils');
 
 // hoist up top level class the generator extend
-generators.Base = require('./lib/base');
-generators.NamedBase = require('./lib/named-base');
+exports.Base = require('./lib/base');
+exports.NamedBase = require('./lib/named-base');
 
-// expose test helpers for generators.
-generators.test = require('./lib/test/helpers');
-generators.assert = require('./lib/test/assert');
+/**
+ * Test helpers
+ * {@link module:test/helpers}
+ */
+exports.test = require('./lib/test/helpers');
 
-// backward compat, make them available as generators.generators.Base &
-// NamedBase (as most of generators use yeoman.generators.Stuff)
-generators.generators = {};
-generators.generators.Base = generators.Base;
-generators.generators.NamedBase = generators.NamedBase;
+/**
+ * Test assertions helpers
+ * {@link module:test/assert}
+ */
+exports.assert = require('./lib/test/assert');
+
+/**
+ * Yeoman base's generators
+ * @enum generators
+ */
+exports.generators = {
+
+  /**
+   * Base Generator
+   * {@link Base}
+   */
+  Base: exports.Base,
+
+  /**
+   * Named Base Generator
+   * {@link NamedBase}
+   */
+  NamedBase: exports.NamedBase
+};
