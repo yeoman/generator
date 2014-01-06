@@ -4,7 +4,8 @@
     "includePattern": ".+\\.js(doc)?$"
   },
   "opts": {
-    "recurse": true
+    "recurse": true,
+    "destination": "../yeoman-generator-doc/"
   },
   "plugins": [
     "plugins/markdown"

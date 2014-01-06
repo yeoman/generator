@@ -22,6 +22,7 @@
   },
   "scripts": {
     "test": "gulp",
+    "doc": "jsdoc -c ./jsdoc.json",
     "legacy": "mocha test/legacy.js --reporter dot --timeout 100000",
     "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000"
   },
@@ -52,7 +53,6 @@
   "devDependencies": {
     "proxyquire": "~0.5.1",
     "sinon": "~1.7.3",
-    "markdox": "~0.1.2",
     "coveralls": "~2.6.0",
     "gulp": "~3.2.1",
     "gulp-mocha": "~0.1.1",
