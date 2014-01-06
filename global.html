@@ -196,62 +196,6 @@ layer that defines the I/O interactions.</p>
     
 </dd>
 
-        
-            
-<dt>
-    <h4 class="name" id="usernameCache"><span class="type-signature"></span>usernameCache<span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Git related method</p>
-<p>The value will come from the global scope or the project scope (it'll take
-what git will use in the current context)</p>
-    </div>
-    
-    
-    
-
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="user.js.html">lib/actions/user.js</a>, <a href="user.js.html#line14">line 14</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-</dd>
-
         </dl>
     
     
@@ -259,376 +203,6 @@ what git will use in the current context)</p>
         <h3 class="subsection-title">Methods</h3>
         
         <dl>
-            
-<dt>
-    <h4 class="name" id="_getNpmGenerators"><span class="type-signature"></span>_getNpmGenerators<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Search NPM for every available generators.
-Generators are NPM modules who's name start with <code>generator-</code> and who're placed in the
-top level <code>node_module</code> path. They can be installed globally or locally.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="resolver.js.html">lib/env/resolver.js</a>, <a href="resolver.js.html#line48">line 48</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>List of the generators path</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">Array</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="_tryRegistering"><span class="type-signature"></span>_tryRegistering<span class="signature">(generatorReference)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Try registering a Generator to this environment.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>generatorReference</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"><p>A generator reference, usually a file path.</p></td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="resolver.js.html">lib/env/resolver.js</a>, <a href="resolver.js.html#line76">line 76</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="alias"><span class="type-signature"></span>alias<span class="signature">(match, value)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Get or create an alias.</p>
-<p>Alias allows the <code>get()</code> and <code>lookup()</code> methods to search in alternate
-filepath for a given namespaces. It's used for example to map <code>generator-*</code>
-npm package to their namespace equivalent (without the generator- prefix),
-or to default a single namespace like <code>angular</code> to <code>angular:app</code> or
-<code>angular:all</code>.</p>
-<p>Given a single argument, this method acts as a getter. When both name and
-value are provided, acts as a setter and registers that new alias.</p>
-<p>If multiple alias are defined, then the replacement is recursive, replacing
-each alias in reverse order.</p>
-<p>An alias can be a single String or a Regular Expression. The finding is done
-based on .match().</p>
-<h3 id="examples-">Examples:</h3>
-<pre><code>env.alias(/^([a-zA-Z0-9:\*]+)$/, 'generator-$1');
-env.alias(/^([^:]+)$/, '$1:app');
-env.alias(/^([^:]+)$/, '$1:all');
-env.alias('foo');
-// =&gt; generator-foo:all</code></pre>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>match</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">RegExp</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="resolver.js.html">lib/env/resolver.js</a>, <a href="resolver.js.html#line115">line 115</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
             
 <dt>
     <h4 class="name" id="isRaw"><span class="type-signature"></span>isRaw<span class="signature">(generator)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
@@ -769,7 +343,7 @@ env.alias('foo');
         
             
 <dt>
-    <h4 class="name" id="lookup"><span class="type-signature"></span>lookup<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="module:actions/invoke"><span class="type-signature"></span>require("actions/invoke")<span class="signature">(namespace, options, cb)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -777,16 +351,173 @@ env.alias('foo');
     
     
     <div class="description">
-        <p>Search for generators and their sub generators.</p>
-<p>A generator is a <code>:lookup/:name/index.js</code> file placed inside an NPM module.</p>
-<p>Defaults lookups are:</p>
-<ul>
-<li>./</li>
-<li>generators/</li>
-<li>lib/generators/</li>
-</ul>
-<p>So this index file <code>node_modules/generator-dummy/lib/generators/yo/index.js</code> would be
-registered as <code>dummy:yo</code> generator.</p>
+        <p>Receives a <code>namespace</code>, and an Hash of <code>options</code> to invoke a given
+generator. The usual list of arguments can be set with <code>options.args</code>
+(ex. nopt's argv.remain array)</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>namespace</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="invoke.js.html">lib/actions/invoke.js</a>, <a href="invoke.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="module:actions/prompt"><span class="type-signature"></span>require("actions/prompt")<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Prompt for user input based on the given Array of <code>prompts</code> to perform in
+series, and call <code>done</code> callback on completion.</p>
     </div>
     
 
@@ -819,7 +550,147 @@ registered as <code>dummy:yo</code> generator.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="resolver.js.html">lib/env/resolver.js</a>, <a href="resolver.js.html#line23">line 23</a>
+        <a href="prompt.js.html">lib/actions/prompt.js</a>, <a href="prompt.js.html#line14">line 14</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="module:actions/spawn_command"><span class="type-signature"></span>require("actions/spawn_command")<span class="signature">(command, args)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Normalize a command across OS and spawn it.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>command</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="spawn_command.js.html">lib/actions/spawn_command.js</a>, <a href="spawn_command.js.html#line14">line 14</a>
     </li></ul></dd>
     
     
@@ -860,13 +731,13 @@ registered as <code>dummy:yo</code> generator.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Store.html">Store</a></li></ul><h3>Mixins</h3><ul><li><a href="common_.html">util/common</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_getNpmGenerators">_getNpmGenerators</a></li><li><a href="global.html#_tryRegistering">_tryRegistering</a></li><li><a href="global.html#alias">alias</a></li><li><a href="global.html#isRaw">isRaw</a></li><li><a href="global.html#lookup">lookup</a></li><li><a href="global.html#Storage">Storage</a></li><li><a href="global.html#TerminalAdapter">TerminalAdapter</a></li><li><a href="global.html#usernameCache">usernameCache</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Store.html">Store</a></li></ul><h3>Mixins</h3><ul><li><a href="resolver.html">env/resolver</a></li><li><a href="common_.html">util/common</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isRaw">isRaw</a></li><li><a href="global.html#Storage">Storage</a></li><li><a href="global.html#TerminalAdapter">TerminalAdapter</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 17:05:15 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 17:58:40 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>

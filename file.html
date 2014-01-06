@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Store</title>
+    <title>JSDoc: Module: actions/file</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Store</h1>
+    <h1 class="page-title">Module: actions/file</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    Store
+    actions/file
     </h2>
     
 </header>  
@@ -38,28 +38,8 @@
     
     
         
-<dt>
-    <h4 class="name" id="Store"><span class="type-signature"></span>new Store<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>The Generator store
-This is used to store generator (NPM modules) reference and instantiate them when
-requested.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
+        
+        
 <dl class="details">
     
         
@@ -82,7 +62,7 @@ requested.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="store.js.html">lib/env/store.js</a>, <a href="store.js.html#line13">line 13</a>
+        <a href="file.js.html">lib/actions/file.js</a>, <a href="file.js.html#line1">line 1</a>
     </li></ul></dd>
     
     
@@ -93,20 +73,8 @@ requested.</p>
     
 </dl>
 
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
+        
+        
     
     </div>
     
@@ -128,7 +96,7 @@ requested.</p>
         <dl>
             
 <dt>
-    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(namespace, generator)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="expand"><span class="type-signature">&lt;static> </span>expand<span class="signature">(pattern, options)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -136,7 +104,9 @@ requested.</p>
     
     
     <div class="description">
-        <p>Store a module under the namespace key</p>
+        <p>Performs a glob search with the provided pattern and optional Hash of
+options. Options can be any option supported by
+<a href="https://github.com/isaacs/node-glob#options">glob</a></p>
     </div>
     
 
@@ -170,150 +140,7 @@ requested.</p>
 	
         <tr>
             
-                <td class="name"><code>namespace</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"><p>The key under which the generator can be retrieved</p></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>generator</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">function</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"><p>A generator module or a module path</p></td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="store.js.html">lib/env/store.js</a>, <a href="store.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(namespace)</span><span class="type-signature"> &rarr; {Module}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Get the module registered under the given namespace</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>namespace</code></td>
+                <td class="name"><code>pattern</code></td>
             
             
             <td class="type">
@@ -333,186 +160,31 @@ requested.</p>
         </tr>
 	
 	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="store.js.html">lib/env/store.js</a>, <a href="store.js.html#line61">line 61</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
+	
+        <tr>
             
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">Module</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
+                <td class="name"><code>options</code></td>
             
-<dt>
-    <h4 class="name" id="getGeneratorsMeta"><span class="type-signature"></span>getGeneratorsMeta<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Get the stored generators meta data</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="store.js.html">lib/env/store.js</a>, <a href="store.js.html#line81">line 81</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
             
-<div class="param-desc">
-    <p>Generators metadata</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+            <td class="type">
+            
+                
 <span class="param-type">Object</span>
 
 
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
             
-<dt>
-    <h4 class="name" id="namespaces"><span class="type-signature"></span>namespaces<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Returns the list of registered namespace.</p>
-    </div>
-    
-
-    
-    
-    
-    
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
     
     
     
@@ -538,7 +210,7 @@ requested.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="store.js.html">lib/env/store.js</a>, <a href="store.js.html#line72">line 72</a>
+        <a href="file.js.html">lib/actions/file.js</a>, <a href="file.js.html#line17">line 17</a>
     </li></ul></dd>
     
     
@@ -559,28 +231,6 @@ requested.</p>
     
     
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Namespaces array</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">Array</span>
-
-
-	</dd>
-</dl>
-
-        
     
     
 </dd>
@@ -588,7 +238,7 @@ requested.</p>
         
             
 <dt>
-    <h4 class="name" id="normalizeGenerator"><span class="type-signature"></span>normalizeGenerator<span class="signature">(Generator)</span><span class="type-signature"> &rarr; {Generator}</span></h4>
+    <h4 class="name" id="expandFiles"><span class="type-signature">&lt;static> </span>expandFiles<span class="signature">(pattern, options)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -596,8 +246,10 @@ requested.</p>
     
     
     <div class="description">
-        <p>Normalize a Generator, extending it with related metadata and allowing simple
-function to be registered as generators</p>
+        <p>Performs a glob search with the provided pattern and optional Hash of
+options, filtering results to only return files (not directories). Options
+can be any option supported by
+<a href="https://github.com/isaacs/node-glob#options">glob</a></p>
     </div>
     
 
@@ -631,13 +283,36 @@ function to be registered as generators</p>
 	
         <tr>
             
-                <td class="name"><code>Generator</code></td>
+                <td class="name"><code>pattern</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Generator</span>
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
 
 
             
@@ -678,7 +353,7 @@ function to be registered as generators</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="store.js.html">lib/env/store.js</a>, <a href="store.js.html#line92">line 92</a>
+        <a href="file.js.html">lib/actions/file.js</a>, <a href="file.js.html#line31">line 31</a>
     </li></ul></dd>
     
     
@@ -699,24 +374,76 @@ function to be registered as generators</p>
     
     
     
-    <h5>Returns:</h5>
     
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">Generator</span>
-
-
-	</dd>
-</dl>
+    
+</dd>
 
         
+            
+<dt>
+    <h4 class="name" id="isPathAbsolute"><span class="type-signature">&lt;static> </span>isPathAbsolute<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Checks a given file path being absolute or not.
+Borrowed from grunt's file API.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="file.js.html">lib/actions/file.js</a>, <a href="file.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
     
     
 </dd>
@@ -743,7 +470,7 @@ function to be registered as generators</p>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 18:01:40 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 18:01:39 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>

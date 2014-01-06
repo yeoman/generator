@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: lib/actions/file.js</title>
+    <title>JSDoc: Source: lib/actions/string.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: lib/actions/file.js</h1>
+    <h1 class="page-title">Source: lib/actions/string.js</h1>
     
     
 
@@ -25,55 +25,24 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @module actions/file */
+            <pre class="prettyprint source linenums"><code>/** @module actions/string */
 'use strict';
-var fs = require('fs');
-var path = require('path');
-var glob = require('glob');
-var mkdirp = require('mkdirp');
+var _ = require('lodash');
+_.str = require('underscore.string');
+_.mixin(_.str.exports());
 
 /**
- * Performs a glob search with the provided pattern and optional Hash of
- * options. Options can be any option supported by
- * [glob](https://github.com/isaacs/node-glob#options)
+ * Mix in non-conflicting functions to underscore namespace and generators.
  *
- * @param {String} pattern
- * @param {Object} options
- */
-
-exports.expand = function expand(pattern, options) {
-  return glob.sync(pattern, options);
-};
-
-/**
- * Performs a glob search with the provided pattern and optional Hash of
- * options, filtering results to only return files (not directories). Options
- * can be any option supported by
- * [glob](https://github.com/isaacs/node-glob#options)
+ * @mixes lodash
+ * @mixes underscore.string
+ * @example
  *
- * @param {String} pattern
- * @param {Object} options
+ *     this._.humanize('stuff-dash');
+ *     this._.classify('hello-model');
  */
 
-exports.expandFiles = function expandFiles(pattern, options) {
-  options = options || {};
-  var cwd = options.cwd || process.cwd();
-  return this.expand(pattern, options).filter(function (filepath) {
-    return fs.statSync(path.join(cwd, filepath)).isFile();
-  });
-};
-
-/**
- * Checks a given file path being absolute or not.
- * Borrowed from grunt's file API.
- */
-
-exports.isPathAbsolute = function () {
-  var filepath = path.join.apply(path, arguments);
-  return path.resolve(filepath) === filepath;
-};
-
-exports.mkdir = mkdirp.sync.bind(mkdirp);
+exports._ = _;
 </code></pre>
         </article>
     </section>

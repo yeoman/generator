@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: lib/actions/file.js</title>
+    <title>JSDoc: Module: actions/string</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,66 +17,150 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: lib/actions/file.js</h1>
+    <h1 class="page-title">Module: actions/string</h1>
     
     
 
 
+
+<section>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/** @module actions/file */
-'use strict';
-var fs = require('fs');
-var path = require('path');
-var glob = require('glob');
-var mkdirp = require('mkdirp');
+<header>
+    <h2>
+    actions/string
+    </h2>
+    
+</header>  
 
-/**
- * Performs a glob search with the provided pattern and optional Hash of
- * options. Options can be any option supported by
- * [glob](https://github.com/isaacs/node-glob#options)
- *
- * @param {String} pattern
- * @param {Object} options
- */
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
+    
 
-exports.expand = function expand(pattern, options) {
-  return glob.sync(pattern, options);
-};
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="string.js.html">lib/actions/string.js</a>, <a href="string.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
-/**
- * Performs a glob search with the provided pattern and optional Hash of
- * options, filtering results to only return files (not directories). Options
- * can be any option supported by
- * [glob](https://github.com/isaacs/node-glob#options)
- *
- * @param {String} pattern
- * @param {Object} options
- */
+        
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="_"><span class="type-signature">&lt;static> </span>_<span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Mix in non-conflicting functions to underscore namespace and generators.</p>
+    </div>
+    
+    
+    
 
-exports.expandFiles = function expandFiles(pattern, options) {
-  options = options || {};
-  var cwd = options.cwd || process.cwd();
-  return this.expand(pattern, options).filter(function (filepath) {
-    return fs.statSync(path.join(cwd, filepath)).isFile();
-  });
-};
+    
+<dl class="details">
+    
+        
+    
+    
+    
 
-/**
- * Checks a given file path being absolute or not.
- * Borrowed from grunt's file API.
- */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="string.js.html">lib/actions/string.js</a>, <a href="string.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
-exports.isPathAbsolute = function () {
-  var filepath = path.join.apply(path, arguments);
-  return path.resolve(filepath) === filepath;
-};
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>this._.humanize('stuff-dash');this._.classify('hello-model');</code></pre>
 
-exports.mkdir = mkdirp.sync.bind(mkdirp);
-</code></pre>
-        </article>
-    </section>
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+    
+    
+</article>
+
+</section>  
 
 
 

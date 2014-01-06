@@ -111,128 +111,6 @@ drop-in replacement.</p></div>
         <dl>
             
 <dt>
-    <h4 class="name" id="file"><span class="type-signature">&lt;static> </span>file<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Assert that each of an array of files exists</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>pairs</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"><p>an array of paths to files</p></td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line43">line 43</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>assert.file(['templates/user.hbs', 'templates/user/edit.hbs']);</code></pre>
-
-    
-</dd>
-
-        
-            
-<dt>
     <h4 class="name" id="file"><span class="type-signature">&lt;static> </span>file<span class="signature">(file, reg)</span><span class="type-signature"></span></h4>
     
     
@@ -373,6 +251,128 @@ drop-in replacement.</p></div>
         <h5>Example</h5>
         
     <pre class="prettyprint"><code>assert.file('models/user.js', /App\.User = DS\.Model\.extend/);</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="file"><span class="type-signature">&lt;static> </span>file<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Assert that each of an array of files exists</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>pairs</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>an array of paths to files</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line43">line 43</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>assert.file(['templates/user.hbs', 'templates/user/edit.hbs']);</code></pre>
 
     
 </dd>
@@ -1040,128 +1040,6 @@ that the file content matches the regex</p>
         
             
 <dt>
-    <h4 class="name" id="noFile"><span class="type-signature">&lt;static> </span>noFile<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Assert that each of an array of files doesn't exist</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>pairs</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"><p>an array of paths to files</p></td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line73">line 73</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>assert.noFile(['templates/user.hbs', 'templates/user/edit.hbs']);</code></pre>
-
-    
-</dd>
-
-        
-            
-<dt>
     <h4 class="name" id="noFile"><span class="type-signature">&lt;static> </span>noFile<span class="signature">(file)</span><span class="type-signature"></span></h4>
     
     
@@ -1284,7 +1162,7 @@ that the file content matches the regex</p>
         
             
 <dt>
-    <h4 class="name" id="noFileContent"><span class="type-signature">&lt;static> </span>noFileContent<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="noFile"><span class="type-signature">&lt;static> </span>noFile<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1292,7 +1170,7 @@ that the file content matches the regex</p>
     
     
     <div class="description">
-        <p>Assert that each file in an array of file-regex pairs does not match its corresponding regex</p>
+        <p>Assert that each of an array of files doesn't exist</p>
     </div>
     
 
@@ -1342,12 +1220,7 @@ that the file content matches the regex</p>
             
             
             
-            <td class="description last"><p>an array of arrays, where each subarray is a [String, RegExp] pair
-var arg = [
-  [ 'models/user.js', /App.User \ DS.Model.extend/ ],
-  [ 'controllers/user.js', /App.UserController = Ember.ObjectController.extend/ ]
-]
-assert.noFileContent(arg);</p></td>
+            <td class="description last"><p>an array of paths to files</p></td>
         </tr>
 	
 	
@@ -1378,7 +1251,7 @@ assert.noFileContent(arg);</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line161">line 161</a>
+        <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line73">line 73</a>
     </li></ul></dd>
     
     
@@ -1400,6 +1273,11 @@ assert.noFileContent(arg);</p></td>
     
     
     
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>assert.noFile(['templates/user.hbs', 'templates/user/edit.hbs']);</code></pre>
+
     
 </dd>
 
@@ -1545,6 +1423,128 @@ assert.noFileContent(arg);</p></td>
         
     <pre class="prettyprint"><code>assert.noFileContent('models/user.js', /App\.User = DS\.Model\.extend/);</code></pre>
 
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="noFileContent"><span class="type-signature">&lt;static> </span>noFileContent<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Assert that each file in an array of file-regex pairs does not match its corresponding regex</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>pairs</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>an array of arrays, where each subarray is a [String, RegExp] pair
+var arg = [
+  [ 'models/user.js', /App.User \ DS.Model.extend/ ],
+  [ 'controllers/user.js', /App.UserController = Ember.ObjectController.extend/ ]
+]
+assert.noFileContent(arg);</p></td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line161">line 161</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
     
 </dd>
 
@@ -1709,13 +1709,13 @@ assert.noFileContent(arg);</p></td>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Store.html">Store</a></li></ul><h3>Mixins</h3><ul><li><a href="common_.html">util/common</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_getNpmGenerators">_getNpmGenerators</a></li><li><a href="global.html#_tryRegistering">_tryRegistering</a></li><li><a href="global.html#alias">alias</a></li><li><a href="global.html#isRaw">isRaw</a></li><li><a href="global.html#lookup">lookup</a></li><li><a href="global.html#Storage">Storage</a></li><li><a href="global.html#TerminalAdapter">TerminalAdapter</a></li><li><a href="global.html#usernameCache">usernameCache</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Store.html">Store</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 17:05:15 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 18:01:40 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>
