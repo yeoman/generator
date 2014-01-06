@@ -3,16 +3,16 @@
 var path = require('path');
 var fs = require('fs');
 var events = require('events');
-var assert = require('assert');
 var file = require('file-utils');
-var helpers = require('../lib/test/helpers');
+var generators = require('..');
+var assert = generators.assert;
+var helpers = generators.test;
 var sinon = require('sinon');
 
-var generators = require('..');
 var Environment = require('../lib/env');
 
 describe('Generators', function () {
-  before(generators.test.before(path.join(__dirname, 'temp')));
+  before(helpers.setUpTestDirectory(path.join(__dirname, 'temp')));
 
   describe('module', function () {
     it('initialize new Environments', function () {
@@ -58,7 +58,7 @@ describe('Generators', function () {
 
     describe('.src', function () {
       it('implement the file-utils interface', function () {
-        helpers.assertImplement(this.generator.src, file.constructor.prototype);
+        assert.implement(this.generator.src, file.constructor.prototype);
       });
 
       it('generator.sourcePath() update its source base', function () {
@@ -74,7 +74,7 @@ describe('Generators', function () {
 
     describe('.dest', function () {
       it('implement the file-utils interface', function () {
-        helpers.assertImplement(this.generator.dest, file.constructor.prototype);
+        assert.implement(this.generator.dest, file.constructor.prototype);
       });
 
       it('generator.sourcePath() update its destination base', function () {
@@ -95,7 +95,7 @@ describe('Generators', function () {
         beforeEach(function () {
           this.generator.destinationRoot(destRoot);
           assert.ok(file.exists(target));
-          helpers.assertTextEqual(initialFileContent, 'initial content\n');
+          assert.textEqual(initialFileContent, 'initial content\n');
         });
 
         it('aborting', function () {

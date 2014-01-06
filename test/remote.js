@@ -6,7 +6,7 @@ var fs = require('fs');
 var assert = require('assert');
 
 describe('yeoman.base#remote', function () {
-  before(generators.test.before(path.join(__dirname, 'temp')));
+  before(generators.test.setUpTestDirectory(path.join(__dirname, 'temp')));
 
   before(function () {
     var env = this.env = generators();

@@ -1,9 +1,10 @@
 /*global describe, before, beforeEach, afterEach, it */
 var TerminalAdapter = require('../lib/env/adapter');
-var assert = require('assert');
 var sinon = require('sinon');
 var inquirer = require('inquirer');
-var helpers = require('..').test;
+var yeoman = require('..');
+var assert = yeoman.assert;
+var helpers = yeoman.test;
 
 describe('TerminalAdapter', function () {
   'use strict';
@@ -32,7 +33,7 @@ describe('TerminalAdapter', function () {
   describe('#diff', function () {
     it('returns properly colored diffs', function () {
       var diff = this.adapter.diff('var', 'let');
-      helpers.assertTextEqual(diff, '\n\u001b[41mremoved\u001b[49m \u001b[42m\u001b[30madded\u001b[39m\u001b[49m\n\n\u001b[42m\u001b[30mlet\u001b[39m\u001b[49m\u001b[41mvar\u001b[49m\n');
+      assert.textEqual(diff, '\n\u001b[41mremoved\u001b[49m \u001b[42m\u001b[30madded\u001b[39m\u001b[49m\n\n\u001b[42m\u001b[30mlet\u001b[39m\u001b[49m\u001b[41mvar\u001b[49m\n');
     });
   });
 

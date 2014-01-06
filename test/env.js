@@ -4,11 +4,11 @@
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
-var assert = require('assert');
 var sinon = require('sinon');
 var generators = require('..');
 var Base = generators.Base;
 var helpers = generators.test;
+var assert = generators.assert;
 var events = require('events');
 var TerminalAdapter = require('../lib/env/adapter');
 var Environment = require('../lib/env');
@@ -59,12 +59,12 @@ describe('Environment', function () {
     });
 
     it('output the general help', function () {
-      helpers.assertTextEqual(this.env.help().trim(), this.expected);
+      assert.textEqual(this.env.help().trim(), this.expected);
     });
 
     it('output the help with a custom bin name', function () {
       this.expected = this.expected.replace('Usage: init', 'Usage: gg');
-      helpers.assertTextEqual(this.env.help('gg').trim(), this.expected);
+      assert.textEqual(this.env.help('gg').trim(), this.expected);
     });
     it('instantiates a TerminalAdapter if none provided', function () {
       assert.ok(this.env.adapter instanceof TerminalAdapter, 'Not a TerminalAdapter');
@@ -315,7 +315,7 @@ describe('Environment', function () {
     });
 
     it('extend simple function with Base', function () {
-      helpers.assertImplement(this.env.get('dummy:simple'), Base);
+      assert.implement(this.env.get('dummy:simple'), Base);
       this.env.run('dummy:simple');
       assert.ok(this.simpleDummy.calledOnce);
     });
@@ -703,7 +703,7 @@ describe('Environment', function () {
         this.store.add('foo', method);
         var Generator = this.store.get('foo');
 
-        helpers.assertImplement(Generator.prototype, Base.prototype);
+        assert.implement(Generator.prototype, Base.prototype);
         assert.equal(Generator.prototype.exec, method);
       });
     });
