@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/actions/install.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: lib/actions/install.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+var _ = require('lodash');
+var dargs = require('dargs');
+var async = require('async');
+var chalk = require('chalk');
+
+var install = module.exports;
+
+/**
+ * Combine package manager cmd line arguments and run the `install` command.
+ *
+ * @param {String} installer Which package manager to use
+ * @param {String|Array} paths Packages to install, empty string for `npm install`
+ * @param {Object} options Options to invoke `install` with
+ * @param {Function} cb
+ */
+
+install.runInstall = function (installer, paths, options, cb) {
+  if (!cb &amp;&amp; _.isFunction(options)) {
+    cb = options;
+    options = {};
+  }
+
+  options = options || {};
+  cb = cb || function () {};
+  paths = Array.isArray(paths) ? paths : (paths &amp;&amp; paths.split(' ') || []);
+
+  this.emit(installer + 'Install', paths);
+  var args = ['install'].concat(paths).concat(dargs(options));
+
+  this.spawnCommand(installer, args, cb)
+    .on('error', cb)
+    .on('exit', this.emit.bind(this, installer + 'Install:end', paths))
+    .on('exit', function (err) {
+      if (err === 127) {
+        this.log.error('Could not find ' + installer + '. Please install with ' +
+                            '`npm install -g ' + installer + '`.');
+      }
+      cb(err);
+    }.bind(this));
+
+  return this;
+};
+
+/**
+ * Runs `npm` and `bower` in the generated directory concurrently and prints a
+ * message to let the user know.
+ *
+ * ### Options:
+ *
+ *   - `npm` Boolean whether to run `npm install` (`true`)
+ *   - `bower` Boolean whether to run `bower install` (`true`)
+ *   - `skipInstall` Boolean whether to skip automatic installation (`false`)
+ *   - `skipMessage` Boolean whether to show the used bower/npm commands (`false`)
+ *
+ * ### Examples:
+ *
+ *     this.installDependencies({
+ *       bower: true,
+ *       npm: true,
+ *       skipInstall: false,
+ *       callback: function () {
+ *         console.log('Everything is ready!');
+ *       }
+ *     });
+ *
+ * @param {Object} options
+ */
+
+install.installDependencies = function (options) {
+  var msg = {
+    commands: [],
+    template: _.template('\n\nI\'m all done. ' +
+    '&lt;%= skipInstall ? "Just run" : "Running" %> &lt;%= commands %> ' +
+    '&lt;%= skipInstall ? "" : "for you " %>to install the required dependencies.' +
+    '&lt;% if (!skipInstall) { %> If this fails, try running the command yourself.&lt;% } %>\n\n')
+  };
+
+  var commands = [];
+
+  if (_.isFunction(options)) {
+    options = {
+      callback: options
+    };
+  }
+
+  options = _.defaults(options || {}, {
+    bower: true,
+    npm: true,
+    skipInstall: false,
+    skipMessage: false,
+    callback: function () {}
+  });
+
+  if (options.bower) {
+    msg.commands.push('bower install');
+    commands.push(function (cb) {
+      this.bowerInstall(null, null, cb);
+    }.bind(this));
+  }
+
+  if (options.npm) {
+    msg.commands.push('npm install');
+    commands.push(function (cb) {
+      this.npmInstall(null, null, cb);
+    }.bind(this));
+  }
+
+  if (msg.commands.length === 0) {
+    throw new Error('installDependencies needs at least one of npm or bower to run.');
+  }
+
+  if (!options.skipMessage) {
+    console.log(msg.template(_.extend(options, { commands: chalk.yellow.bold(msg.commands.join(' &amp; ')) })));
+  }
+
+  if (!options.skipInstall) {
+    async.parallel(commands, options.callback);
+  }
+};
+
+/**
+ * Receives a list of `paths`, and an Hash of `options` to install through bower.
+ *
+ * @param {String|Array} paths Packages to install
+ * @param {Object} options Options to invoke `bower install` with, see `bower help install`
+ * @param {Function} cb
+ */
+
+install.bowerInstall = function install(paths, options, cb) {
+  return this.runInstall('bower', paths, options, cb);
+};
+
+/**
+ * Receives a list of `paths`, and an Hash of `options` to install through npm.
+ *
+ * @param {String|Array} paths Packages to install
+ * @param {Object} options Options to invoke `npm install` with, see `npm help install`
+ * @param {Function} cb
+ */
+
+install.npmInstall = function install(paths, options, cb) {
+  return this.runInstall('npm', paths, options, cb);
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Store.html">Store</a></li></ul><h3>Mixins</h3><ul><li><a href="common_.html">util/common</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_getNpmGenerators">_getNpmGenerators</a></li><li><a href="global.html#_tryRegistering">_tryRegistering</a></li><li><a href="global.html#alias">alias</a></li><li><a href="global.html#isRaw">isRaw</a></li><li><a href="global.html#lookup">lookup</a></li><li><a href="global.html#Storage">Storage</a></li><li><a href="global.html#TerminalAdapter">TerminalAdapter</a></li><li><a href="global.html#usernameCache">usernameCache</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 17:05:15 GMT-0500 (Est)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/actions/wiring.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: lib/actions/wiring.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+var util = require('util');
+var fs = require('fs');
+var path = require('path');
+var cheerio = require('cheerio');
+
+var wiring = module.exports;
+
+/**
+ * Update a file containing HTML markup with new content, either
+ * appending, prepending or replacing content matching a particular
+ * selector.
+ *
+ * The following modes are available:
+ *
+ *   - `a` Append
+ *   - `p` Prepend
+ *   - `r` Replace
+ *   - `d` Delete
+ *
+ * @param {String} html
+ * @param {String} tagName
+ * @param {String} content
+ * @param {String} mode
+ */
+
+wiring.domUpdate = function domUpdate(html, tagName, content, mode) {
+  var $ = cheerio.load(html);
+
+  if (content !== undefined) {
+    if (mode === 'a') {
+      $(tagName).append(content);
+    } else if (mode === 'p') {
+      $(tagName).prepend(content);
+    } else if (mode === 'r') {
+      $(tagName).html(content);
+    } else if (mode === 'd') {
+      $(tagName).remove();
+    }
+    return $.html();
+  } else {
+    console.error('Please supply valid content to be updated.');
+  }
+};
+
+/**
+ * Insert specific content as the last child of each element matched
+ * by the `tagName` selector.
+ *
+ * @param {String} html
+ * @param {String} tagName
+ * @param {String} content
+ */
+
+wiring.append = function append(html, tagName, content) {
+  return this.domUpdate(html, tagName, content, 'a');
+};
+
+/**
+ * Insert specific content as the first child of each element matched
+ * by the `tagName` selector.
+ *
+ * @param {String} html
+ * @param {String} tagName
+ * @param {String} content
+ */
+
+wiring.prepend = function prepend(html, tagName, content) {
+  return this.domUpdate(html, tagName, content, 'p');
+};
+
+/**
+ * Insert specific content as the last child of each element matched
+ * by the `tagName` selector. Writes to file.
+ *
+ * @param {String} path
+ * @param {String} tagName
+ * @param {String} content
+ */
+
+wiring.appendToFile = function appendToFile(path, tagName, content) {
+  var html = this.readFileAsString(path);
+  var updatedContent = this.append(html, tagName, content);
+  this.writeFileFromString(updatedContent, path);
+};
+
+/**
+ * Insert specific content as the first child of each element matched
+ * by the `tagName` selector. Writes to file.
+ *
+ * @param {String} path
+ * @param {String} tagName
+ * @param {String} content
+ */
+
+wiring.prependToFile = function prependToFile(path, tagName, content) {
+  var html = this.readFileAsString(path);
+  var updatedContent = this.prepend(html, tagName, content);
+  this.writeFileFromString(updatedContent, path);
+};
+
+/**
+ * Generate a usemin-handler block.
+ *
+ * @param {String} blockType
+ * @param {String} optimizedPath
+ * @param {String} filesBlock
+ * @param {String|Array} searchPath
+ */
+
+wiring.generateBlock = function generateBlock(blockType, optimizedPath, filesBlock, searchPath) {
+  var blockStart;
+  var blockEnd;
+  var blockSearchPath = '';
+
+  if (searchPath !== undefined) {
+    if (util.isArray(searchPath)) {
+      searchPath = '{' + searchPath.join(',') + '}';
+    }
+    blockSearchPath = '(' + searchPath +  ')';
+  }
+
+  blockStart = '\n        &lt;!-- build:' + blockType + blockSearchPath + ' ' + optimizedPath + ' -->\n';
+  blockEnd = '        &lt;!-- endbuild -->\n';
+  return blockStart + filesBlock + blockEnd;
+};
+
+/**
+ * Append files, specifying the optimized path and generating the necessary
+ * usemin blocks to be used for the build process. In the case of scripts and
+ * styles, boilerplate script/stylesheet tags are written for you.
+ *
+ * @param {String|Object} htmlOrOptions
+ * @param {String} fileType
+ * @param {String} optimizedPath
+ * @param {Array} sourceFileList
+ * @param {Object} attrs
+ * @param {String} searchPath
+ */
+
+wiring.appendFiles = function appendFiles(htmlOrOptions, fileType, optimizedPath, sourceFileList, attrs, searchPath) {
+  var blocks;
+  var updatedContent;
+  var html = htmlOrOptions;
+  var files = '';
+
+  if (typeof htmlOrOptions === 'object') {
+    html = htmlOrOptions.html;
+    fileType = htmlOrOptions.fileType;
+    optimizedPath = htmlOrOptions.optimizedPath;
+    sourceFileList = htmlOrOptions.sourceFileList;
+    attrs = htmlOrOptions.attrs;
+    searchPath = htmlOrOptions.searchPath;
+  }
+
+  attrs = this.attributes(attrs);
+
+  if (fileType === 'js') {
+    sourceFileList.forEach(function (el) {
+      files += '        &lt;script ' + attrs + ' src="' + el + '">&lt;/script>\n';
+    });
+    blocks = this.generateBlock('js', optimizedPath, files, searchPath);
+    updatedContent = this.append(html, 'body', blocks);
+  } else if (fileType === 'css') {
+    sourceFileList.forEach(function (el) {
+      files += '        &lt;link ' + attrs + ' rel="stylesheet" href="' + el  + '">\n';
+    });
+    blocks = this.generateBlock('css', optimizedPath, files, searchPath);
+    updatedContent = this.append(html, 'head', blocks);
+  }
+
+  // cleanup trailing whitespace
+  return updatedContent.replace(/[\t ]+$/gm, '');
+};
+
+/**
+ * Computes a given Hash object of attributes into its HTML representation.
+ *
+ * @param {Object} attrs
+ */
+
+wiring.attributes = function attributes(attrs) {
+  return Object.keys(attrs || {}).map(function (key) {
+    return key + '="' + attrs[key] + '"';
+  }).join(' ');
+};
+
+/**
+ * Scripts alias to `appendFiles`.
+ *
+ * @param {String} html
+ * @param {String} optimizedPath
+ * @param {Array} sourceFileList
+ * @param {Object} attrs
+ */
+
+wiring.appendScripts = function appendScripts(html, optimizedPath, sourceFileList, attrs) {
+  return this.appendFiles(html, 'js', optimizedPath, sourceFileList, attrs);
+};
+
+/**
+ * Simple script removal.
+ *
+ * @param {String} html
+ * @param {String} scriptPath
+ */
+
+wiring.removeScript = function removeScript(html, scriptPath) {
+  return this.domUpdate(html, 'script[src$="' + scriptPath + '"]', '', 'd');
+};
+
+/**
+ * Style alias to `appendFiles`.
+ *
+ * @param {String} html
+ * @param {String} optimizedPath
+ * @param {Array} sourceFileList
+ * @param {Object} attrs
+ */
+
+wiring.appendStyles = function appendStyles(html, optimizedPath, sourceFileList, attrs) {
+  return this.appendFiles(html, 'css', optimizedPath, sourceFileList, attrs);
+};
+
+/**
+ * Simple style removal.
+ *
+ * @param {String} html
+ * @param {String} path
+ */
+
+wiring.removeStyle = function removeStyle(html, path) {
+  return this.domUpdate(html, 'link[href$="' + path + '"]', '', 'd');
+};
+
+/**
+ * Append a directory of scripts.
+ *
+ * @param {String} html
+ * @param {String} optimizedPath
+ * @param {String} sourceScriptDir
+ * @param {Object} attrs
+ */
+
+wiring.appendScriptsDir = function appendScriptsDir(html, optimizedPath, sourceScriptDir, attrs) {
+  var sourceScriptList = fs.readdirSync(path.resolve(sourceScriptDir));
+  return this.appendFiles(html, 'js', optimizedPath, sourceScriptList, attrs);
+};
+
+/**
+ * Append a directory of stylesheets.
+ *
+ * @param {String} html
+ * @param {String} optimizedPath
+ * @param {String} sourceStyleDir
+ * @param {Object} attrs
+ */
+
+wiring.appendStylesDir = function appendStylesDir(html, optimizedPath, sourceStyleDir, attrs) {
+  var sourceStyleList = fs.readdirSync(path.resolve(sourceStyleDir));
+  return this.appendFiles(html, 'css', optimizedPath, sourceStyleList, attrs);
+};
+
+/**
+ * Read in the contents of a resolved file path as a string.
+ *
+ * @param {String} filePath
+ */
+
+wiring.readFileAsString = function readFileAsString(filePath) {
+  return fs.readFileSync(path.resolve(filePath), 'utf8');
+};
+
+/**
+ * Write the content of a string to a resolved file path.
+ *
+ * @param {String} html
+ * @param {String} filePath
+ */
+
+wiring.writeFileFromString = function writeFileFromString(html, filePath) {
+  fs.writeFileSync(path.resolve(filePath), html, 'utf8');
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Store.html">Store</a></li></ul><h3>Mixins</h3><ul><li><a href="common_.html">util/common</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_getNpmGenerators">_getNpmGenerators</a></li><li><a href="global.html#_tryRegistering">_tryRegistering</a></li><li><a href="global.html#alias">alias</a></li><li><a href="global.html#isRaw">isRaw</a></li><li><a href="global.html#lookup">lookup</a></li><li><a href="global.html#Storage">Storage</a></li><li><a href="global.html#TerminalAdapter">TerminalAdapter</a></li><li><a href="global.html#usernameCache">usernameCache</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 17:05:15 GMT-0500 (Est)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

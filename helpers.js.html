@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/test/helpers.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: lib/test/helpers.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Collection of unit test helpers. (mostly related to Mocha syntax)
+ * @module test/helpers
+ */
+
+'use strict';
+var fs = require('fs');
+var path = require('path');
+var rimraf = require('rimraf');
+var mkdirp = require('mkdirp');
+var util = require('util');
+var assert = require('./assert');
+var _ = require('lodash');
+var generators = require('../..');
+
+exports.decorated = [];
+
+/**
+ * Create a function that will clean up the test directory,
+ * cd into it, and create a dummy gruntfile inside. Intended for use
+ * as a callback for the mocha `before` hook.
+ *
+ * @param {String} dir - path to the test directory
+ * @returns {Function} mocha callback
+ */
+
+exports.setUpTestDirectory = function before(dir) {
+  return function (done) {
+    exports.testDirectory(dir, function () {
+      exports.gruntfile({ dummy: true }, done);
+    });
+  };
+};
+
+/**
+ * Create a function that will clean up the test directory,
+ * cd into it, and create a dummy gruntfile inside. Intended for use
+ * as a callback for the mocha `before` hook.
+ *
+ * @deprecated use helpers.setUpDirectory instead
+ * @param {String} dir - path to the test directory
+ * @returns {Function} mocha callback
+ */
+
+exports.before = function (dir) {
+  console.log('before is deprecated. Use setUpTestDirectory instead');
+  return exports.setUpTestDirectory(dir);
+};
+
+/**
+ * Wrap a method with custom functionality.
+ *
+ * @param {Object} context - context to find the original method
+ * @param {String} method  - name of the method to wrap
+ * @param {Function} replacement - executes before the original method
+ * @param {Object} options - config settings
+ */
+
+exports.decorate = function decorate(context, method, replacement, options) {
+  options = options || {};
+  replacement = replacement || function () {};
+
+  var naturalMethod = context[method];
+
+  exports.decorated.push({
+    context: context,
+    method: method,
+    naturalMethod: naturalMethod
+  });
+
+  context[method] = function () {
+    var rep = replacement.apply(context, arguments);
+
+    if (!options.stub) {
+      naturalMethod.apply(context, arguments);
+    }
+
+    return rep;
+  };
+};
+
+/**
+ * Override a method with custom functionality.
+ * @param {Object} context - context to find the original method
+ * @param {String} method  - name of the method to wrap
+ * @param {Function} replacement - executes before the original method
+ */
+exports.stub = function stub(context, method, replacement) {
+  exports.decorate(context, method, replacement, { stub: true });
+};
+
+/**
+ * Restore the original behavior of all decorated and stubbed methods
+ */
+exports.restore = function restore() {
+  exports.decorated.forEach(function (dec) {
+    dec.context[dec.method] = dec.naturalMethod;
+  });
+};
+
+/**
+ *
+ * Generates a new Gruntfile.js in the current working directory based on
+ * options hash passed in.
+ *
+ * @param {Object} options - Grunt configuration
+ * @param {Function} done  - callback to call on completion
+ * @example
+ * before(helpers.gruntfile({
+ *   foo: {
+ *     bar: '&lt;config.baz>'
+ *   }
+ * }));
+ *
+ */
+
+exports.gruntfile = function (options, done) {
+  var config = 'grunt.initConfig(' + JSON.stringify(options, null, 2) + ');';
+  config = config.split('\n').map(function (line) {
+    return '  ' + line;
+  }).join('\n');
+
+  var out = [
+    'module.exports = function (grunt) {',
+    config,
+    '};'
+  ];
+
+  fs.writeFile('Gruntfile.js', out.join('\n'), done);
+};
+
+// Façade assert module for backward compatibility
+exports.assertFile = assert.file;
+exports.assertNoFile = assert.noFile;
+exports.assertFiles = assert.files;
+exports.assertFileContent = assert.fileContent;
+exports.assertNoFileContent = assert.noFileContent;
+exports.assertTextEqual = assert.textEqual;
+exports.assertImplement = assert.implement;
+
+/**
+ * Clean-up the test directory and cd into it.
+ * Call given callback after entering the test directory.
+ * @param {String} dir - path to the test directory
+ * @param {Function} cb - callback executed after setting working directory to dir
+ * @example
+ * testDirectory(path.join(__dirname, './temp'), function () {
+ *   fs.writeFileSync('testfile', 'Roses are red.');
+ * );
+ */
+
+exports.testDirectory = function (dir, cb) {
+  if (!dir) {
+    throw new Error('Missing directory');
+  }
+
+  dir = path.resolve(dir);
+
+  // Make sure we're not deleting CWD by moving to top level folder. As we `cd` in the
+  // test dir after cleaning up, this shouldn't be perceivable.
+  process.chdir('/');
+
+  rimraf(dir, function (err) {
+    if (err) {
+      return cb(err);
+    }
+    mkdirp.sync(dir);
+    process.chdir(dir);
+    cb();
+  });
+};
+
+/**
+ * Answer prompt questions for the passed-in generator
+ * @param {Generator} generator - a Yeoman generator
+ * @param {Object} answers - an object where keys are the
+ *   generators prompt names and values are the answers to
+ *   the prompt questions
+ * @example
+ * mockPrompt(angular, {'bootstrap': 'Y', 'compassBoostrap': 'Y'});
+ */
+
+exports.mockPrompt = function (generator, answers) {
+  var origPrompt = generator.prompt;
+  generator.prompt = function (prompts, done) {
+    done(answers);
+  };
+  generator.origPrompt = origPrompt;
+};
+
+/**
+ * Create a simple, dummy generator
+ */
+
+exports.createDummyGenerator = function () {
+  return generators.Base.extend({
+    test: function () {
+      this.shouldRun = true;
+    }
+  });
+};
+
+/**
+ * Create a generator, using the given dependencies and controller arguments
+ * Dependecies can be path (autodiscovery) or an array [&lt;generator>, &lt;name>]
+ *
+ * @param {String} name - the name of the generator
+ * @param {Array} dependencies - paths to the generators dependencies
+ * @param {Array|String} args - arguments to the generator;
+ *   if String, will be split on spaces to create an Array
+ * @param {Object} options - configuration for the generator
+ * @example
+ *  var deps = ['../../app',
+ *              '../../common',
+ *              '../../controller',
+ *              '../../main',
+ *              [createDummyGenerator(), 'testacular:app']
+ *            ];
+ * var angular = createGenerator('angular:app', deps);
+ */
+
+exports.createGenerator = function (name, dependencies, args, options) {
+  var env = generators();
+  dependencies.forEach(function (d) {
+    if (d instanceof Array) {
+      env.registerStub(d[0], d[1]);
+    } else {
+      env.register(d);
+    }
+  });
+
+  var generator = env.create(name, { arguments: args, options: options });
+
+  generator.on('start', env.emit.bind(this, 'generators:start'));
+  generator.on('start', env.emit.bind(this, name + ':start'));
+
+  generator.on('method', function (method) {
+    env.emit(name + ':' + method);
+  });
+
+  generator.on('end', env.emit.bind(this, name + ':end'));
+  generator.on('end', env.emit.bind(this, 'generators:end'));
+
+  return generator;
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Store.html">Store</a></li></ul><h3>Mixins</h3><ul><li><a href="common_.html">util/common</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_getNpmGenerators">_getNpmGenerators</a></li><li><a href="global.html#_tryRegistering">_tryRegistering</a></li><li><a href="global.html#alias">alias</a></li><li><a href="global.html#isRaw">isRaw</a></li><li><a href="global.html#lookup">lookup</a></li><li><a href="global.html#Storage">Storage</a></li><li><a href="global.html#TerminalAdapter">TerminalAdapter</a></li><li><a href="global.html#usernameCache">usernameCache</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 17:05:15 GMT-0500 (Est)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

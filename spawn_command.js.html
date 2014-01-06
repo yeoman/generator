@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Index</title>
+    <title>JSDoc: Source: lib/actions/spawn_command.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,30 +17,36 @@
 
 <div id="main">
     
-    <h1 class="page-title">Index</h1>
+    <h1 class="page-title">Source: lib/actions/spawn_command.js</h1>
     
     
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+var _ = require('lodash');
+var spawn = require('child_process').spawn;
+var win32 = process.platform === 'win32';
 
+/**
+ * Normalize a command across OS and spawn it.
+ *
+ * @param {String} command
+ * @param {Array} args
+ */
 
-    <h3> </h3>
+module.exports = function spawnCommand(command, args, opt) {
+  var winCommand = win32 ? 'cmd' : command;
+  var winArgs = win32 ? ['/c'].concat(command, args) : args;
+  opt = opt || {};
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+  return spawn(winCommand, winArgs, _.defaults({ stdio: 'inherit' }, opt));
+};
+</code></pre>
+        </article>
+    </section>
 
 
 
