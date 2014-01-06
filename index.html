@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Generator by yeoman</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Generator</h1>
+        <p>Rails-inspired generator system that provides scaffolding for your apps</p>
+
+        <p class="view"><a href="https://github.com/yeoman/generator">View the Project on GitHub <small>yeoman/generator</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/yeoman/generator/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/yeoman/generator/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/yeoman/generator">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="generator--" class="anchor" href="#generator--"><span class="octicon octicon-link"></span></a>Generator <a href="http://travis-ci.org/yeoman/generator"><img src="https://secure.travis-ci.org/yeoman/generator.png?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/r/yeoman/generator"><img src="https://coveralls.io/repos/yeoman/generator/badge.png" alt="Coverage Status"></a>
+</h1>
+
+<p>A Rails-inspired generator system that provides scaffolding for your apps.</p>
+
+<p><img src="https://img.skitch.com/20120923-jxbn2njgk5dp7ttk94i1tx9ek2.png" alt="Generator output"></p>
+
+<p><img src="https://img.skitch.com/20120922-kpjs68bgkshtsru4cwnb64fn82.png" alt="Generator diff"></p>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>If you're interested in writing your own Yeoman generator we recommend reading the official <a href="http://yeoman.io/generators.html">documentation</a>.</p>
+
+<p>There are typically two types of generators - simple boilerplate 'copiers' and more advanced generators which can use custom prompts, remote dependencies, wiring and much more.</p>
+
+<p>The docs cover how to create generators from scratch as well as recommending command-line generators for making other generators.</p>
+
+<h2>
+<a name="testing-generators" class="anchor" href="#testing-generators"><span class="octicon octicon-link"></span></a>Testing generators</h2>
+
+<p>There is currently no formal infrastructure for testing generators, however you may find our <a href="https://github.com/yeoman/generator-mocha">mocha generator</a> for custom generators useful.</p>
+
+<h3>
+<a name="debugging" class="anchor" href="#debugging"><span class="octicon octicon-link"></span></a>Debugging</h3>
+
+<p>To debug a generator, you can pass Node.js debug's flags by running it like this:</p>
+
+<div class="highlight highlight-bash"><pre><span class="c"># OS X / Linux</span>
+node --debug <span class="sb">`</span>which yo<span class="sb">`</span> &lt;generator&gt; <span class="o">[</span>arguments<span class="o">]</span>
+
+<span class="c"># Windows</span>
+node --debug &lt;path to yo binary&gt; &lt;generator&gt; <span class="o">[</span>arguments<span class="o">]</span>
+</pre></div>
+
+<p>Yeoman generators also use a debug mode to log relevant informations. You can activate it by setting the <code>DEBUG</code> environment variable to the desired scope (for the generator system scope is <code>generators:*</code>).</p>
+
+<div class="highlight highlight-bash"><pre><span class="c"># OS X / Linux</span>
+<span class="nv">DEBUG</span><span class="o">=</span>generators/*
+
+<span class="c"># Windows</span>
+<span class="nb">set </span><span class="nv">DEBUG</span><span class="o">=</span>generators/*
+</pre></div>
+
+<h2>
+<a name="officially-maintained-generators" class="anchor" href="#officially-maintained-generators"><span class="octicon octicon-link"></span></a>Officially maintained generators</h2>
+
+<ul>
+<li><a href="https://github.com/yeoman/generator-webapp#readme">Web App</a></li>
+<li><a href="https://github.com/yeoman/generator-angular#readme">AngularJS</a></li>
+<li><a href="https://github.com/yeoman/generator-backbone#readme">Backbone</a></li>
+<li><a href="https://github.com/yeoman/generator-chromeapp#readme">Chrome Apps Basic Boilerplate</a></li>
+<li><a href="https://github.com/yeoman/generator-ember#readme">Ember</a></li>
+<li><a href="https://github.com/yeoman/generator-jasmine#readme">Jasmine</a></li>
+<li><a href="https://github.com/yeoman/generator-mocha#readme">Mocha</a></li>
+<li><a href="https://github.com/yeoman/generator-karma#readme">Karma</a></li>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p><a href="http://opensource.org/licenses/bsd-license.php">BSD license</a>
+Copyright (c) Google</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/yeoman">yeoman</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
