@@ -8,7 +8,7 @@ var proxyquire = require('proxyquire');
 var file = require('../lib/actions/file');
 var async = require('async');
 
-describe('Generator.user', function () {
+describe('Generator#user', function () {
 
   it('is exposed on the Base generator', function () {
     assert.equal(require('../lib/actions/user'), require('../lib/base').prototype.user);
@@ -16,16 +16,14 @@ describe('Generator.user', function () {
 
   describe('.git', function () {
 
-    before(function (done) {
+    before(function () {
       this.cwd = process.cwd();
       this.tmp = shell.tempdir();
       shell.cd(this.tmp);
       file.mkdir('subdir');
-      async.parallel([
-        shell.exec.bind(shell, 'git init --quiet'),
-        shell.exec.bind(shell, 'git config --local user.name Yeoman'),
-        shell.exec.bind(shell, 'git config --local user.email yo@yeoman.io'),
-      ], function () { done(); });
+      shell.exec('git init --quiet');
+      shell.exec('git config --local user.name Yeoman');
+      shell.exec('git config --local user.email yo@yeoman.io');
     });
 
     after(function () {
