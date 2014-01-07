@@ -1,5 +1,6 @@
 /**
- * @module yeoman-generator
+ * @module
+ * @alias yeoman-generator
  */
 
 'use strict';
@@ -41,45 +42,45 @@ var yeoman = module.exports = function createEnv(args, opts, adapter) {
  * Reference to the inquirer module
  * @deprecated Require your own copy of the module, this one will be removed after 1.0
  */
-exports.inquirer = require('inquirer');
+yeoman.inquirer = require('inquirer');
 
 /**
  * Global file helpers methods
  * {@link https://github.com/SBoudrias/file-utils}
  */
-exports.file = require('file-utils');
+yeoman.file = require('file-utils');
 
 // hoist up top level class the generator extend
-exports.Base = require('./lib/base');
-exports.NamedBase = require('./lib/named-base');
+yeoman.Base = require('./lib/base');
+yeoman.NamedBase = require('./lib/named-base');
 
 /**
  * Test helpers
  * {@link module:test/helpers}
  */
-exports.test = require('./lib/test/helpers');
+yeoman.test = require('./lib/test/helpers');
 
 /**
  * Test assertions helpers
  * {@link module:test/assert}
  */
-exports.assert = require('./lib/test/assert');
+yeoman.assert = require('./lib/test/assert');
 
 /**
  * Yeoman base's generators
  * @enum generators
  */
-exports.generators = {
+yeoman.generators = {
 
   /**
    * Base Generator
    * {@link Base}
    */
-  Base: exports.Base,
+  Base: yeoman.Base,
 
   /**
    * Named Base Generator
    * {@link NamedBase}
    */
-  NamedBase: exports.NamedBase
+  NamedBase: yeoman.NamedBase
 };
