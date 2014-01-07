@@ -25,9 +25,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @module actions/actions */
-
-'use strict';
+            <pre class="prettyprint source linenums"><code>'use strict';
 var fs = require('fs');
 var path = require('path');
 var events = require('events');
@@ -40,11 +38,17 @@ var chalk = require('chalk');
 var file = require('file-utils');
 
 /**
+ * @mixin
+ * @alias actions/actions
+ */
+var actions = module.exports;
+
+/**
  * Stores and return the cache root for this class. The cache root is used to
  * `git clone` repositories from github by `.remote()` for example.
  */
 
-exports.cacheRoot = function cacheRoot() {
+actions.cacheRoot = function cacheRoot() {
   // we follow XDG specs if possible:
   // http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
   if (process.env.XDG_CACHE_HOME) {
@@ -57,7 +61,7 @@ exports.cacheRoot = function cacheRoot() {
 };
 
 // Copy helper for two versions of copy action
-exports._prepCopy = function _prepCopy(source, destination, process) {
+actions._prepCopy = function _prepCopy(source, destination, process) {
   var body;
   destination = destination || source;
 
@@ -101,7 +105,7 @@ exports._prepCopy = function _prepCopy(source, destination, process) {
  * @param {Function} process
  */
 
-exports.copy = function copy(source, destination, process) {
+actions.copy = function copy(source, destination, process) {
 
   var file = this._prepCopy(source, destination, process);
 
@@ -157,7 +161,7 @@ exports.copy = function copy(source, destination, process) {
  * @param {Function} process
  */
 
-exports.bulkCopy = function bulkCopy(source, destination, process) {
+actions.bulkCopy = function bulkCopy(source, destination, process) {
 
   var file = this._prepCopy(source, destination, process);
 
@@ -191,7 +195,7 @@ exports.bulkCopy = function bulkCopy(source, destination, process) {
  * @param {String} encoding
  */
 
-exports.read = function read(filepath, encoding) {
+actions.read = function read(filepath, encoding) {
   var contents;
 
   if (!this.isPathAbsolute(filepath)) {
@@ -226,7 +230,7 @@ exports.read = function read(filepath, encoding) {
  * @param {String} content
  */
 
-exports.write = function write(filepath, content) {
+actions.write = function write(filepath, content) {
   this.checkForCollision(filepath, content, function (err, config) {
     if (err) {
       config.callback(err);
@@ -269,7 +273,7 @@ exports.write = function write(filepath, content) {
  * @param {Function} cb
  */
 
-exports.checkForCollision = function checkForCollision(filepath, content, cb) {
+actions.checkForCollision = function checkForCollision(filepath, content, cb) {
   this.conflicter.add({
     file: filepath,
     content: content
@@ -296,7 +300,7 @@ exports.checkForCollision = function checkForCollision(filepath, content, cb) {
  * @param {Object} data
  */
 
-exports.template = function template(source, destination, data) {
+actions.template = function template(source, destination, data) {
   data = data || this;
   destination = destination || source;
 
@@ -317,7 +321,7 @@ exports.template = function template(source, destination, data) {
  * @param {Object} data
  */
 
-exports.engine = function engine(body, data) {
+actions.engine = function engine(body, data) {
   if (!this._engine) {
     throw new Error('Trying to render template without valid engine.');
   }
@@ -328,7 +332,7 @@ exports.engine = function engine(body, data) {
 };
 
 // Shared directory method
-exports._directory = function _directory(source, destination, process, bulk) {
+actions._directory = function _directory(source, destination, process, bulk) {
   // Only add sourceRoot if the path is not absolute
   var root = this.isPathAbsolute(source) ? source : path.join(this.sourceRoot(), source);
   var files = this.expandFiles('**', { dot: true, cwd: root });
@@ -362,7 +366,7 @@ exports._directory = function _directory(source, destination, process, bulk) {
  * @param {Function} process
  */
 
-exports.directory = function directory(source, destination, process) {
+actions.directory = function directory(source, destination, process) {
   return this._directory(source, destination, process);
 };
 
@@ -374,7 +378,7 @@ exports.directory = function directory(source, destination, process) {
  * @param {Function} process
  */
 
-exports.bulkDirectory = function directory(source, destination, process) {
+actions.bulkDirectory = function directory(source, destination, process) {
   var self = this;
   // Join the source here because the conflicter will not run
   // until next tick, which resets the source root on remote
@@ -412,7 +416,7 @@ exports.bulkDirectory = function directory(source, destination, process) {
  * @param {Boolean} refresh
  */
 
-exports.remote = function (username, repo, branch, cb, refresh) {
+actions.remote = function (username, repo, branch, cb, refresh) {
   if (!cb) {
     cb = branch;
     branch = 'master';
@@ -527,13 +531,13 @@ exports.remote = function (username, repo, branch, cb, refresh) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Store.html">Store</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Store.html">Store</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 18:01:39 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Tue Jan 07 2014 13:37:27 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>

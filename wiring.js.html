@@ -25,12 +25,17 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @module actions/wiring */
-'use strict';
+            <pre class="prettyprint source linenums"><code>'use strict';
 var util = require('util');
 var fs = require('fs');
 var path = require('path');
 var cheerio = require('cheerio');
+
+/**
+ * @mixin
+ * @alias actions/wiring
+ */
+var wiring = module.exports;
 
 /**
  * Update a file containing HTML markup with new content, either
@@ -50,7 +55,7 @@ var cheerio = require('cheerio');
  * @param {String} mode
  */
 
-exports.domUpdate = function domUpdate(html, tagName, content, mode) {
+wiring.domUpdate = function domUpdate(html, tagName, content, mode) {
   var $ = cheerio.load(html);
 
   if (content !== undefined) {
@@ -78,7 +83,7 @@ exports.domUpdate = function domUpdate(html, tagName, content, mode) {
  * @param {String} content
  */
 
-exports.append = function append(html, tagName, content) {
+wiring.append = function append(html, tagName, content) {
   return this.domUpdate(html, tagName, content, 'a');
 };
 
@@ -91,7 +96,7 @@ exports.append = function append(html, tagName, content) {
  * @param {String} content
  */
 
-exports.prepend = function prepend(html, tagName, content) {
+wiring.prepend = function prepend(html, tagName, content) {
   return this.domUpdate(html, tagName, content, 'p');
 };
 
@@ -104,7 +109,7 @@ exports.prepend = function prepend(html, tagName, content) {
  * @param {String} content
  */
 
-exports.appendToFile = function appendToFile(path, tagName, content) {
+wiring.appendToFile = function appendToFile(path, tagName, content) {
   var html = this.readFileAsString(path);
   var updatedContent = this.append(html, tagName, content);
   this.writeFileFromString(updatedContent, path);
@@ -119,7 +124,7 @@ exports.appendToFile = function appendToFile(path, tagName, content) {
  * @param {String} content
  */
 
-exports.prependToFile = function prependToFile(path, tagName, content) {
+wiring.prependToFile = function prependToFile(path, tagName, content) {
   var html = this.readFileAsString(path);
   var updatedContent = this.prepend(html, tagName, content);
   this.writeFileFromString(updatedContent, path);
@@ -134,7 +139,7 @@ exports.prependToFile = function prependToFile(path, tagName, content) {
  * @param {String|Array} searchPath
  */
 
-exports.generateBlock = function generateBlock(blockType, optimizedPath, filesBlock, searchPath) {
+wiring.generateBlock = function generateBlock(blockType, optimizedPath, filesBlock, searchPath) {
   var blockStart;
   var blockEnd;
   var blockSearchPath = '';
@@ -164,7 +169,7 @@ exports.generateBlock = function generateBlock(blockType, optimizedPath, filesBl
  * @param {String} searchPath
  */
 
-exports.appendFiles = function appendFiles(htmlOrOptions, fileType, optimizedPath, sourceFileList, attrs, searchPath) {
+wiring.appendFiles = function appendFiles(htmlOrOptions, fileType, optimizedPath, sourceFileList, attrs, searchPath) {
   var blocks;
   var updatedContent;
   var html = htmlOrOptions;
@@ -205,7 +210,7 @@ exports.appendFiles = function appendFiles(htmlOrOptions, fileType, optimizedPat
  * @param {Object} attrs
  */
 
-exports.attributes = function attributes(attrs) {
+wiring.attributes = function attributes(attrs) {
   return Object.keys(attrs || {}).map(function (key) {
     return key + '="' + attrs[key] + '"';
   }).join(' ');
@@ -220,7 +225,7 @@ exports.attributes = function attributes(attrs) {
  * @param {Object} attrs
  */
 
-exports.appendScripts = function appendScripts(html, optimizedPath, sourceFileList, attrs) {
+wiring.appendScripts = function appendScripts(html, optimizedPath, sourceFileList, attrs) {
   return this.appendFiles(html, 'js', optimizedPath, sourceFileList, attrs);
 };
 
@@ -231,7 +236,7 @@ exports.appendScripts = function appendScripts(html, optimizedPath, sourceFileLi
  * @param {String} scriptPath
  */
 
-exports.removeScript = function removeScript(html, scriptPath) {
+wiring.removeScript = function removeScript(html, scriptPath) {
   return this.domUpdate(html, 'script[src$="' + scriptPath + '"]', '', 'd');
 };
 
@@ -244,7 +249,7 @@ exports.removeScript = function removeScript(html, scriptPath) {
  * @param {Object} attrs
  */
 
-exports.appendStyles = function appendStyles(html, optimizedPath, sourceFileList, attrs) {
+wiring.appendStyles = function appendStyles(html, optimizedPath, sourceFileList, attrs) {
   return this.appendFiles(html, 'css', optimizedPath, sourceFileList, attrs);
 };
 
@@ -255,7 +260,7 @@ exports.appendStyles = function appendStyles(html, optimizedPath, sourceFileList
  * @param {String} path
  */
 
-exports.removeStyle = function removeStyle(html, path) {
+wiring.removeStyle = function removeStyle(html, path) {
   return this.domUpdate(html, 'link[href$="' + path + '"]', '', 'd');
 };
 
@@ -268,7 +273,7 @@ exports.removeStyle = function removeStyle(html, path) {
  * @param {Object} attrs
  */
 
-exports.appendScriptsDir = function appendScriptsDir(html, optimizedPath, sourceScriptDir, attrs) {
+wiring.appendScriptsDir = function appendScriptsDir(html, optimizedPath, sourceScriptDir, attrs) {
   var sourceScriptList = fs.readdirSync(path.resolve(sourceScriptDir));
   return this.appendFiles(html, 'js', optimizedPath, sourceScriptList, attrs);
 };
@@ -282,7 +287,7 @@ exports.appendScriptsDir = function appendScriptsDir(html, optimizedPath, source
  * @param {Object} attrs
  */
 
-exports.appendStylesDir = function appendStylesDir(html, optimizedPath, sourceStyleDir, attrs) {
+wiring.appendStylesDir = function appendStylesDir(html, optimizedPath, sourceStyleDir, attrs) {
   var sourceStyleList = fs.readdirSync(path.resolve(sourceStyleDir));
   return this.appendFiles(html, 'css', optimizedPath, sourceStyleList, attrs);
 };
@@ -293,7 +298,7 @@ exports.appendStylesDir = function appendStylesDir(html, optimizedPath, sourceSt
  * @param {String} filePath
  */
 
-exports.readFileAsString = function readFileAsString(filePath) {
+wiring.readFileAsString = function readFileAsString(filePath) {
   return fs.readFileSync(path.resolve(filePath), 'utf8');
 };
 
@@ -304,7 +309,7 @@ exports.readFileAsString = function readFileAsString(filePath) {
  * @param {String} filePath
  */
 
-exports.writeFileFromString = function writeFileFromString(html, filePath) {
+wiring.writeFileFromString = function writeFileFromString(html, filePath) {
   fs.writeFileSync(path.resolve(filePath), html, 'utf8');
 };
 </code></pre>
@@ -317,13 +322,13 @@ exports.writeFileFromString = function writeFileFromString(html, filePath) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Store.html">Store</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Store.html">Store</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Mon Jan 06 2014 18:01:39 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Tue Jan 07 2014 13:37:27 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>
