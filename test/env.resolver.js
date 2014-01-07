@@ -8,6 +8,7 @@ var sinon = require('sinon');
 var helpers = require('../lib/test/helpers');
 var spawn = require('../lib/actions/spawn_command');
 var shell = require('shelljs');
+var _ = require('lodash');
 
 var Environment = require('../lib/env');
 
@@ -15,31 +16,30 @@ var globalLookupTest = process.env.NODE_PATH ? it : xit;
 
 describe('Environment Resolver', function () {
 
-  before(function () {
-    this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
-    process.chdir(this.projectRoot);
-    shell.exec('npm install', { silent: true });
-    shell.exec('npm install generator-jquery', { silent: true });
-    shell.exec('npm install -g generator-angular generator-dummy', { silent: true });
+  describe('#lookup()', function () {
+    before(function () {
+      this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
+      process.chdir(this.projectRoot);
+      shell.exec('npm install', { silent: true });
+      shell.exec('npm install generator-jquery', { silent: true });
+      shell.exec('npm install -g generator-angular generator-dummy', { silent: true });
 
-    fs.symlinkSync(
-      path.resolve('../custom-generator-extend'),
-      path.resolve('./node_modules/generator-extend'),
-      'dir'
-    );
-  });
+      fs.symlinkSync(
+        path.resolve('../custom-generator-extend'),
+        path.resolve('./node_modules/generator-extend'),
+        'dir'
+      );
+    });
 
-  after(function () {
-    fs.unlinkSync(path.join(this.projectRoot, './node_modules/generator-extend'));
-  });
+    after(function () {
+      fs.unlinkSync(path.join(this.projectRoot, './node_modules/generator-extend'));
+    });
 
-  beforeEach(function () {
-    this.env = new Environment();
-    assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-    this.env.lookup();
-  });
-
-  describe('#lookup', function () {
+    beforeEach(function () {
+      this.env = new Environment();
+      assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
+      this.env.lookup();
+    });
 
     it('register local generators', function () {
       assert.ok(this.env.get('dummy:app'));
@@ -69,12 +69,10 @@ describe('Environment Resolver', function () {
     });
 
     describe('when there\'s ancestor node_modules/ folder', function () {
-
       before(function () {
         this.projectSubRoot = path.join(this.projectRoot, 'subdir');
         process.chdir(this.projectSubRoot);
         shell.exec('npm install', { silent: true });
-
       });
 
       beforeEach(function () {
@@ -90,8 +88,55 @@ describe('Environment Resolver', function () {
       it('local generators are prioritized over ancestor', function () {
         assert.ok(this.env.get('dummy:app').resolved.indexOf('subdir') !== -1);
       });
+    });
+  });
 
+  describe('#getNpmPaths()', function () {
+    beforeEach(function () {
+      this.NODE_PATH = process.env.NODE_PATH;
+      this.bestBet = path.join(__dirname, '../../../..');
+      this.bestBet2 = path.join(path.dirname(process.argv[1]), '../..');
+      this.env = new Environment();
     });
 
+    afterEach(function () {
+      process.env.NODE_PATH = this.NODE_PATH;
+    });
+
+    it('walk up the CWD lookups dir', function () {
+      var paths = this.env.getNpmPaths();
+      assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
+      var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
+      assert.equal(paths[1], path.join(prevdir, 'node_modules'));
+    });
+
+    describe('with NODE_PATH', function () {
+      beforeEach(function () {
+        process.env.NODE_PATH = '/some/dummy/path';
+      });
+
+      it('append NODE_PATH', function () {
+        assert(this.env.getNpmPaths().indexOf(process.env.NODE_PATH) >= 0);
+      });
+    });
+
+    describe('without NODE_PATH', function () {
+      beforeEach(function () {
+        delete process.env.NODE_PATH;
+      });
+
+      it('append best bet if NODE_PATH is unset', function () {
+        assert(this.env.getNpmPaths().indexOf(this.bestBet) >= 0);
+        assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
+      });
+
+      it('append default NPM dir depending on your OS', function () {
+        if (process.platform === 'win32') {
+          assert(this.env.getNpmPaths().indexOf(path.join(process.env.APPDATA, 'npm/node_modules')) >= 0);
+        } else {
+          assert(this.env.getNpmPaths().indexOf('/usr/lib/node_modules') >= 0);
+        }
+      });
+    });
   });
 });
