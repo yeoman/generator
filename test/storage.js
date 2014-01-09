@@ -23,7 +23,7 @@ describe('Storage', function () {
     this.saveSpy.restore();
   });
 
-  describe('constructor', function () {
+  describe('.constructor()', function () {
     it('require a name parameter', function () {
       assert.throws(function () { new Storage(); });
     });
@@ -55,7 +55,7 @@ describe('Storage', function () {
     store.set('foo', 'bar');
   });
 
-  describe('#get', function () {
+  describe('#get()', function () {
     beforeEach(function () {
       this.store.set('testFramework', 'mocha');
       this.store.set('name', 'test');
@@ -67,7 +67,7 @@ describe('Storage', function () {
     });
   });
 
-  describe('#set', function () {
+  describe('#set()', function () {
     it('set values', function () {
       this.store.set('name', 'Yeoman!');
       assert.equal(this.store.get('name'), 'Yeoman!');
@@ -91,7 +91,7 @@ describe('Storage', function () {
     });
   });
 
-  describe('#getAll', function () {
+  describe('#getAll()', function () {
     beforeEach(function () {
       this.store.set({ foo: 'bar', john: 'doe' });
     });
@@ -105,7 +105,7 @@ describe('Storage', function () {
     });
   });
 
-  describe('#delete', function () {
+  describe('#delete()', function () {
     beforeEach(function () {
       this.store.set('name', 'test');
     });
@@ -116,7 +116,7 @@ describe('Storage', function () {
     });
   });
 
-  describe('#save', function () {
+  describe('#save()', function () {
     beforeEach(function () {
       this.forceSaveSpy = sinon.spy(Storage.prototype, 'forceSave');
       this.storePath = path.join(shell.tempdir(), 'save.json');
@@ -155,7 +155,7 @@ describe('Storage', function () {
     });
   });
 
-  describe('#forceSave', function () {
+  describe('#forceSave()', function () {
     it('save file immediatly', function () {
       this.store.forceSave();
       var fileContent = JSON.parse(fs.readFileSync(this.storePath));
@@ -163,7 +163,7 @@ describe('Storage', function () {
     });
   });
 
-  describe('#defaults', function () {
+  describe('#defaults()', function () {
     beforeEach(function () {
       this.store.set('val1', 1);
     });

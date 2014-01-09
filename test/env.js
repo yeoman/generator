@@ -29,7 +29,7 @@ describe('Environment', function () {
     assert.ok(new Environment() instanceof events.EventEmitter);
   });
 
-  describe('constructor', function () {
+  describe('.constructor()', function () {
     it('take arguments option', function () {
       var args = ['foo'];
       assert.equal(new Environment(args).arguments, args);
@@ -46,7 +46,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#help', function () {
+  describe('#help()', function () {
     beforeEach(function () {
       this.env
         .register('./fixtures/custom-generator-simple')
@@ -78,7 +78,7 @@ describe('Environment', function () {
 
   });
 
-  describe('#create', function () {
+  describe('#create()', function () {
     beforeEach(function () {
       this.Generator = helpers.createDummyGenerator();
       this.env.registerStub(this.Generator, 'stub');
@@ -183,7 +183,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#run', function () {
+  describe('#run()', function () {
     beforeEach(function () {
       var self = this;
       this.stub = function () {
@@ -267,7 +267,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#register', function () {
+  describe('#register()', function () {
     beforeEach(function () {
       this.simplePath = './fixtures/custom-generator-simple';
       this.extendPath = './fixtures/custom-generator-extend';
@@ -300,7 +300,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#registerStub', function () {
+  describe('#registerStub()', function () {
     beforeEach(function () {
       this.simpleDummy = sinon.spy();
       this.completeDummy = function () {};
@@ -329,7 +329,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#namespaces', function () {
+  describe('#namespaces()', function () {
     beforeEach(function () {
       this.env
         .register('./fixtures/custom-generator-simple')
@@ -342,7 +342,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#getGeneratorsMeta', function () {
+  describe('#getGeneratorsMeta()', function () {
     beforeEach(function () {
       this.generatorPath = './fixtures/custom-generator-simple';
       this.env.register('./fixtures/custom-generator-simple');
@@ -355,7 +355,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#namespace', function () {
+  describe('#namespace()', function () {
     it('create namespace from path', function () {
       assert.equal(this.env.namespace('backbone/all/index.js'), 'backbone:all');
       assert.equal(this.env.namespace('backbone/all/main.js'), 'backbone:all');
@@ -400,7 +400,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#get', function () {
+  describe('#get()', function () {
     beforeEach(function () {
       this.generator = require('./fixtures/mocha-generator');
       this.env
@@ -423,7 +423,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#error', function () {
+  describe('#error()', function () {
     it('delegate error handling to the listener', function (done) {
       var error = new Error('foo bar');
       this.env.on('error', function (err) {
@@ -444,7 +444,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('.enforceUpdate', function () {
+  describe('.enforceUpdate()', function () {
     it('add an adapter', function () {
       var env = new Environment();
       delete env.adapter;
@@ -589,7 +589,7 @@ describe('Environment', function () {
       this.store = new Store();
     });
 
-    describe('#add / #get', function () {
+    describe('#add() / #get()', function () {
       beforeEach(function () {
         this.modulePath = path.join(__dirname, 'fixtures/mocha-generator');
         this.module = require(this.modulePath);
@@ -641,7 +641,7 @@ describe('Environment', function () {
       });
     });
 
-    describe('#namespaces', function () {
+    describe('#namespaces()', function () {
       beforeEach(function () {
         this.store.add('foo', {});
         this.store.add('lab', {});

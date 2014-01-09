@@ -36,7 +36,7 @@ describe('generators.Base fetch utilities', function () {
     this.Dummy = Dummy;
   });
 
-  describe('#bowerInstall', function () {
+  describe('#bowerInstall()', function () {
     it('fetch remote from Bower', function (done) {
       this.dummy.bowerInstall('backbone', function (err) {
         fs.stat('bower_components/backbone', done);
@@ -44,7 +44,7 @@ describe('generators.Base fetch utilities', function () {
     });
   });
 
-  describe('#tarball', function () {
+  describe('#tarball()', function () {
     beforeEach(function () {
       this.events = new events.EventEmitter();
       this.download = sinon.stub().returns(this.events);
@@ -73,12 +73,12 @@ describe('generators.Base fetch utilities', function () {
       this.events.emit('close');
     });
 
-    it('aliases #extract', function () {
+    it('aliases #extract()', function () {
       assert.equal(fetch.tarball, fetch.extract);
     });
   });
 
-  describe('#fetch', function () {
+  describe('#fetch()', function () {
     it('should allow the fething of a single file', function (done) {
       this.dummy.fetch('https://raw.github.com/yeoman/generator/master/readme.md', './some/path/README.md', function (err) {
         if (err) {
@@ -89,7 +89,7 @@ describe('generators.Base fetch utilities', function () {
     });
   });
 
-  describe('#remote', function () {
+  describe('#remote()', function () {
     it('should remotely fetch a package on github', function (done) {
       this.dummy.remote('yeoman', 'generators', done);
     });

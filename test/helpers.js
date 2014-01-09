@@ -20,7 +20,7 @@ describe('yeoman.test', function () {
     util.inherits(this.StubGenerator, yeoman.Base);
   });
 
-  describe('#createGenerator', function () {
+  describe('#createGenerator()', function () {
     it('create a new generator', function () {
       var generator = helpers.createGenerator('unicorn:app', [
         [this.StubGenerator, 'unicorn:app']

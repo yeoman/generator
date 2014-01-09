@@ -21,14 +21,14 @@ describe('Conflicter', function () {
     assert.ok(this.conflicter instanceof events.EventEmitter);
   });
 
-  it('#add', function () {
+  it('#add()', function () {
     this.conflicter.add(__filename);
     var conflict = this.conflicter.conflicts.pop();
     assert.deepEqual(conflict.file, __filename);
     assert.deepEqual(conflict.content, fs.readFileSync(__filename, 'utf8'));
   });
 
-  describe('conflicter#resolve(cb)', function (done) {
+  describe('#resolve()', function (done) {
     it('wihout conflict', function (done) {
       this.conflicter.resolve(done);
     });
@@ -88,7 +88,7 @@ describe('Conflicter', function () {
     });
   });
 
-  describe.skip('conflicter#collision(filepath, content, cb)', function (done) {
+  describe.skip('#collision()', function (done) {
     var me = fs.readFileSync(__filename, 'utf8');
     it('identical status', function (done) {
       this.conflicter.collision(__filename, me, function (status) {
@@ -112,7 +112,7 @@ describe('Conflicter', function () {
     });
   });
 
-  describe('#diff', function () {
+  describe('#diff()', function () {
 
     beforeEach(function () {
       this.oldConflicter = this.conflicter;
@@ -138,7 +138,7 @@ describe('Conflicter', function () {
 
   });
 
-  describe('#_ask', function () {
+  describe('#_ask()', function () {
 
     beforeEach(function () {
       this.oldConflicter = this.conflicter;
