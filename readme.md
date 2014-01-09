@@ -47,11 +47,13 @@ set DEBUG=generators/*
 * [Web App](https://github.com/yeoman/generator-webapp#readme)
 * [AngularJS](https://github.com/yeoman/generator-angular#readme)
 * [Backbone](https://github.com/yeoman/generator-backbone#readme)
-* [Chrome Apps Basic Boilerplate](https://github.com/yeoman/generator-chromeapp#readme)
 * [Ember](https://github.com/yeoman/generator-ember#readme)
+* [Polymer](https://github.com/yeoman/generator-polymer#readme)
 * [Jasmine](https://github.com/yeoman/generator-jasmine#readme)
 * [Mocha](https://github.com/yeoman/generator-mocha#readme)
 * [Karma](https://github.com/yeoman/generator-karma#readme)
+* [Chrome Apps Basic Boilerplate](https://github.com/yeoman/generator-chromeapp#readme)
+* [Chrome Extension Boilerplate](https://github.com/yeoman/generator-chrome-extension#readme)
 
 
 ## License
