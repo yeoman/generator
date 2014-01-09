@@ -197,89 +197,62 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.template(source, destination, data)', function () {
-    before(function (done) {
-      this.dummy.foo = 'fooooooo';
-      this.dummy.template('foo-template.js', 'write/to/from-template.js');
-      this.dummy.template('foo-template.js');
-      this.dummy.template('foo-template.js', 'write/to/from-template-bar.js', {
-        foo: 'bar'
-      });
-      this.dummy.conflicter.resolve(done);
-    });
-
-    it('should copy and process source file to destination', function (done) {
-      fs.stat('write/to/from-template.js', done);
-    });
-
-    it('should defaults the destination to the source filepath value, relative to "destinationRoot" value', function () {
-      var body = fs.readFileSync('foo-template.js', 'utf8');
-      assert.textEqual(body, 'var fooooooo = \'fooooooo\';' + '\n');
-    });
-
-    it('should process underscore templates with the passed-in data', function () {
-      var body = fs.readFileSync('write/to/from-template-bar.js', 'utf8');
-      assert.textEqual(body, 'var bar = \'bar\';' + '\n');
-    });
-
-    it('should process underscore templates with the actual generator instance, when no data is given', function () {
-      var body = fs.readFileSync('write/to/from-template.js', 'utf8');
-      assert.textEqual(body, 'var fooooooo = \'fooooooo\';' + '\n');
-    });
-  });
-  
-  describe('#template', function () {
-    before(function (done) {
-        this.dummy.templateSettings = {
-          evaluate: /<%([\s\S]+?)%>/g,
-          interpolate: /<%=([\s\S]+?)%>/g,
-          escape: /<%-([\s\S]+?)%>/g
-        };
-      
+  describe('#template()', function () {
+    describe('without options', function () {
+      before(function (done) {
         this.dummy.foo = 'fooooooo';
-	/* force overwrite on every conflict */
-        this.dummy.conflicter.force = true;
-        this.dummy.conflicter.resolve(done);
-        done();
-      });
-
-    it('throw if using yeoman default template on maven vars', function () {
-      assert.throws(this.dummy.template.bind(null,'foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml'));
-    });
-	 
-	
-    it('true if file created  using -default- underscore template settings) source file to destination', function (done) {
-      this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml', { foo: 'bar' },this.dummy.templateSettings);
-      this.dummy.conflicter.resolve(function () {
-        fs.stat('write/to/from-foo-template-maven-vars.xml', function (err,stats) {
-          console.log(err);
-          assert.equal(stats.isFile(),true);
-          done();
+        this.dummy.template('foo-template.js', 'write/to/from-template.js');
+        this.dummy.template('foo-template.js');
+        this.dummy.template('foo-template.js', 'write/to/from-template-bar.js', {
+          foo: 'bar'
         });
+        this.dummy.template('template-tags.jst', 'write/to/template-tags.js', {
+          foo: 'bar',
+          bar: 'foo'
+        });
+        this.dummy.conflicter.resolve(done);
+      });
+
+      it('copy and process source file to destination', function (done) {
+        fs.stat('write/to/from-template.js', done);
+      });
+
+      it('defaults the destination to the source filepath value, relative to "destinationRoot" value', function () {
+        var body = fs.readFileSync('foo-template.js', 'utf8');
+        assert.textEqual(body, 'var fooooooo = \'fooooooo\';' + '\n');
+      });
+
+      it('process underscore templates with the passed-in data', function () {
+        var body = fs.readFileSync('write/to/from-template-bar.js', 'utf8');
+        assert.textEqual(body, 'var bar = \'bar\';' + '\n');
+      });
+
+      it('process underscore templates with the actual generator instance, when no data is given', function () {
+        var body = fs.readFileSync('write/to/from-template.js', 'utf8');
+        assert.textEqual(body, 'var fooooooo = \'fooooooo\';' + '\n');
+      });
+
+      it('parses `${}` tags', function () {
+        var body = fs.readFileSync('write/to/template-tags.js', 'utf8');
+        assert.textEqual(body, 'foo = bar\n');
       });
     });
 
-    it('true if template doesnt parse maven var', function () {
-      this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml', null, this.dummy.templateSettings);
-      this.dummy.conflicter.resolve(function () {
-        var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
-        helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var fooooooo = \'fooooooo\';' + '\n');
+    describe('with options', function () {
+      beforeEach(function (done) {
+        this.src = 'template-setting.xml';
+        this.dest = 'write/to/template-setting.xml';
+        this.dummy.template(this.src, this.dest, { foo: 'bar' }, {
+          evaluate: /\{\{([\s\S]+?)\}\}/g,
+          interpolate: /\{\{=([\s\S]+?)\}\}/g,
+          escape: /\{\{-([\s\S]+?)\}\}/g
+        });
+        this.dummy.conflicter.resolve(done);
       });
-    });
 
-    it('process underscore -default- templates with the passed-in data AND skip maven vars', function () {
-      this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml', { foo: 'bar' }, this.dummy.templateSettings);
-      this.dummy.conflicter.resolve(function () {
-        var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
-        helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var bar = \'bar\';' + '\n');
-      });
-    });
-
-    it('process underscore -default- templates with the actual generator instance, when no data is given AND skip maven vars', function () {
-      this.dummy.template('foo-template-maven-vars.xml', 'write/to/from-foo-template-maven-vars.xml', null, this.dummy.templateSettings);
-      this.dummy.conflicter.resolve(function () {
-        var body = fs.readFileSync('write/to/from-foo-template-maven-vars.xml', 'utf8');
-        helpers.assertTextEqual(body, '<version>${spring.core.version}</version>var fooooooo = \'fooooooo\';' + '\n');
+      it('uses tags specified in option', function () {
+        var body = fs.readFileSync(this.dest, 'utf8');
+        assert.textEqual(body, '<version>bar</version> <%= foo %>;\n');
       });
     });
   });
