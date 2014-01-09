@@ -39,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="Environment"><span class="type-signature"></span>new Environment<span class="signature">(args, opts, adaper)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Environment"><span class="type-signature"></span>new Environment<span class="signature">(args, opts, <span class="optional">adaper</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -77,6 +77,8 @@ options parser.</p>
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
+		
 		
 		
 		
@@ -105,6 +107,14 @@ options parser.</p>
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
             
             
             
@@ -128,6 +138,14 @@ options parser.</p>
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
             
             
             
@@ -144,17 +162,29 @@ options parser.</p>
             <td class="type">
             
                 
-<span class="param-type">Adapter</span>
+<span class="param-type"><a href="TerminalAdapter.html">TerminalAdapter</a></span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last"></td>
+            
+            <td class="description last"><p>A TerminalAdapter instance or another object
+                                    implementing this adapter interface. This is how
+                                    you'd interface Yeoman with a GUI or an editor.</p></td>
         </tr>
 	
 	
@@ -185,7 +215,7 @@ options parser.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line40">line 40</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line42">line 42</a>
     </li></ul></dd>
     
     
@@ -327,7 +357,7 @@ passed to a Generator.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line439">line 439</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line394">line 394</a>
     </li></ul></dd>
     
     
@@ -370,192 +400,6 @@ passed to a Generator.</p>
 </dl>
 
         
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="appendDefaultPaths"><span class="type-signature"></span>appendDefaultPaths<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Appends the defaults node modules paths to the Environment load paths.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line98">line 98</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="appendPath"><span class="type-signature"></span>appendPath<span class="signature">(filepath)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Appends a <code>filepath</code> to the list of loadpaths.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>filepath</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line85">line 85</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
     
     
 </dd>
@@ -678,7 +522,7 @@ instantiate the generator with.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line271">line 271</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line226">line 226</a>
     </li></ul></dd>
     
     
@@ -797,7 +641,7 @@ is registered, then we throw the error.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line70">line 70</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line69">line 69</a>
     </li></ul></dd>
     
     
@@ -940,7 +784,7 @@ an <code>angular:common:all</code> generator is registered).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line251">line 251</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line206">line 206</a>
     </li></ul></dd>
     
     
@@ -1033,7 +877,7 @@ an <code>angular:common:all</code> generator is registered).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line236">line 236</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line191">line 191</a>
     </li></ul></dd>
     
     
@@ -1169,7 +1013,7 @@ registered, the list of available generators is also displayed.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line130">line 130</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line85">line 85</a>
     </li></ul></dd>
     
     
@@ -1298,7 +1142,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line385">line 385</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line340">line 340</a>
     </li></ul></dd>
     
     
@@ -1367,7 +1211,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line227">line 227</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line182">line 182</a>
     </li></ul></dd>
     
     
@@ -1526,7 +1370,7 @@ provided namespace, or a default namespace format if none if available.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line181">line 181</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line136">line 136</a>
     </li></ul></dd>
     
     
@@ -1686,7 +1530,7 @@ to extend the Base generator automatically.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line209">line 209</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line164">line 164</a>
     </li></ul></dd>
     
     
@@ -1821,7 +1665,7 @@ to extend the Base generator automatically.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line420">line 420</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line375">line 375</a>
     </li></ul></dd>
     
     
@@ -2013,7 +1857,7 @@ on the provided arguments, options and the list of registered generators.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line313">line 313</a>
+        <a href="index.js.html">lib/env/index.js</a>, <a href="index.js.html#line268">line 268</a>
     </li></ul></dd>
     
     
@@ -2054,13 +1898,13 @@ on the provided arguments, options and the list of registered generators.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Store.html">Store</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Tue Jan 07 2014 13:37:27 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Thu Jan 09 2014 16:00:58 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>

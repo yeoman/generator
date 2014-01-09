@@ -33,6 +33,8 @@ var glob = require('glob');
 var findup = require('findup-sync');
 var debug = require('debug')('generators:environment');
 
+var win32 = process.platform === 'win32';
+
 /**
  * @mixin
  * @alias env/resolver
@@ -54,7 +56,7 @@ var resolver = module.exports;
  */
 
 resolver.lookup = function () {
-  var generatorsModules = this._getNpmGenerators();
+  var generatorsModules = this.findGeneratorsIn(this.getNpmPaths());
   var patterns = [];
 
   this.lookups.forEach(function (lookup) {
@@ -75,22 +77,14 @@ resolver.lookup = function () {
  * Generators are NPM modules who's name start with `generator-` and who're placed in the
  * top level `node_module` path. They can be installed globally or locally.
  *
- * @return {Array} List of the generators path
+ * @param {Array}  List of search paths
+ * @return {Array} List of the generator modules path
  */
 
-resolver._getNpmGenerators = function () {
+resolver.findGeneratorsIn = function (searchPaths) {
   var modules = [];
-  var nodeModules = [];
 
-  this.paths.forEach(function (root) {
-    var found = findup('node_modules/', { cwd: root });
-    while (found &amp;&amp; found !== path.dirname(found)) {
-      nodeModules.push(found);
-      found = findup('node_modules/', { cwd: path.dirname(path.dirname(found)) });
-    }
-  });
-
-  nodeModules.forEach(function (root) {
+  searchPaths.forEach(function (root) {
     if (!root) return;
     var found = glob.sync('generator-*', { cwd: root, stat: true }).map(function (match) {
       return fs.realpathSync(path.join(root, match));
@@ -113,6 +107,46 @@ resolver._tryRegistering = function (generatorReference) {
   } catch (e) {
     console.error('Unable to register %s (Error: %s)', generatorReference, e.message);
   }
+};
+
+/**
+ * Get the NPM lookup directories (`node_modules/`)
+ * @return {Array} lookup paths
+ */
+resolver.getNpmPaths = function () {
+  var paths = [];
+
+  // Walk up the CWD and add `node_modules/` folder lookup on each level
+  process.cwd().split(path.sep).forEach(function (part, i, parts) {
+    var lookup = path.join.apply(path, parts.slice(0, i + 1).concat(['node_modules']));
+    if (!win32) {
+      lookup = '/' + lookup;
+    }
+    paths.push(lookup);
+  });
+
+  // Adding global NPM directories
+  // We tried using NPM to get the global modules path, but it haven't work out
+  // because of bugs in the parseable implementation of `ls` command and mostly
+  // performance issues. So, we go with our best bet for now.
+  if (process.env.NODE_PATH) {
+    paths = _.compact(process.env.NODE_PATH.split(path.delimiter)).concat(paths);
+  } else {
+    // global node_modules should be 5 directory up this one (most of the time)
+    paths.push(path.join(__dirname, '../../../../..'));
+
+    // adds support for generator resolving when yeoman-generator has been linked
+    paths.push(path.join(path.dirname(process.argv[1]), '../..'));
+
+    // Default paths for each system
+    if (win32) {
+      paths.push(path.join(process.env.APPDATA, 'npm/node_modules'));
+    } else {
+      paths.push('/usr/lib/node_modules');
+    }
+  }
+
+  return paths.reverse();
 };
 
 /**
@@ -178,13 +212,13 @@ resolver.alias = function alias(match, value) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Store.html">Store</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Tue Jan 07 2014 13:37:27 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Thu Jan 09 2014 16:00:58 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>

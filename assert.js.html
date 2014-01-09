@@ -42,7 +42,8 @@ var fs = require('fs');
 var _ = require('lodash');
 
 // Extend the native assert module
-module.exports = require('assert');
+/** @alias module:test/assert */
+var assert = module.exports = require('assert');
 
 /**
  * Assert that a file exists
@@ -67,18 +68,18 @@ module.exports = require('assert');
  * assert.file('models/user.js', /App\.User = DS\.Model\.extend/);
  */
 
-exports.file = function () {
+assert.file = function () {
   var args = _.toArray(arguments);
   if (_.last(args) instanceof RegExp) {  // DEPRECATED CASE
     var depMsg = 'assert.file(String, RegExp) DEPRECATED; use ';
     depMsg += 'assert.fileContent(String, RegExp) instead.';
     console.log(depMsg);
-    exports.fileContent(args[0], args[1]);
+    assert.fileContent(args[0], args[1]);
   } else {
     args = _.isString(args[0]) ? args : args[0];
     args.forEach(function (file) {
       var here = fs.existsSync(file);
-      exports.ok(here, file + ', no such file or directory');
+      assert.ok(here, file + ', no such file or directory');
     });
   }
 };
@@ -97,12 +98,12 @@ exports.file = function () {
  * assert.noFile(['templates/user.hbs', 'templates/user/edit.hbs']);
  */
 
-exports.noFile = function () {
+assert.noFile = function () {
   var args = _.toArray(arguments);
   args = _.isString(args[0]) ? args : args[0];
   args.forEach(function (file) {
     var here = fs.existsSync(file);
-    exports.ok(!here, file + ' exists');
+    assert.ok(!here, file + ' exists');
   });
 };
 
@@ -118,7 +119,7 @@ exports.noFile = function () {
  * files(['foo.js', 'bar.js', ['baz.js', /function baz/]]);
  */
 
-exports.files = function (files) {
+assert.files = function (files) {
   var depMsg = 'assert.files deprecated. Use ';
   depMsg += 'assert.file([String, String, ...]) or ';
   depMsg += 'assert.file([[String, RegExp], [String, RegExp]...]) instead.';
@@ -129,9 +130,9 @@ exports.files = function (files) {
     if (item instanceof Array) {
       file = item[0];
       rx = item[1];
-      exports.fileContent(file, rx);
+      assert.fileContent(file, rx);
     } else {
-      exports.file(file);
+      assert.file(file);
     }
   });
 };
@@ -155,15 +156,15 @@ exports.files = function (files) {
  * assert.fileContent(arg);
  */
 
-exports.fileContent = function () {
+assert.fileContent = function () {
   var args = _.toArray(arguments);
   var pairs = _.isString(args[0]) ? [args] : args[0];
   pairs.forEach(function (pair) {
     var file = pair[0];
     var regex = pair[1];
-    exports.file(file);
+    assert.file(file);
     var body = fs.readFileSync(file, 'utf8');
-    exports.ok(regex.test(body), file + ' did not match \'' + regex + '\'.');
+    assert.ok(regex.test(body), file + ' did not match \'' + regex + '\'.');
   });
 };
 
@@ -185,15 +186,15 @@ exports.fileContent = function () {
  * assert.noFileContent(arg);
  */
 
-exports.noFileContent = function (file, reg) {
+assert.noFileContent = function (file, reg) {
   var args = _.toArray(arguments);
   var pairs = _.isString(args[0]) ? [args] : args[0];
   pairs.forEach(function (pair) {
     var file = pair[0];
     var regex = pair[1];
-    exports.file(file);
+    assert.file(file);
     var body = fs.readFileSync(file, 'utf8');
-    exports.ok(!regex.test(body), file + ' did not match \'' + regex + '\'.');
+    assert.ok(!regex.test(body), file + ' did not match \'' + regex + '\'.');
   });
 };
 
@@ -205,12 +206,12 @@ exports.noFileContent = function (file, reg) {
  * assert.textEqual('I have a yellow cat', 'I have a yellow cat');
  */
 
-exports.textEqual = function (value, expected) {
+assert.textEqual = function (value, expected) {
   function eol(str) {
     return str.replace(/\r\n/g, '\n');
   }
 
-  exports.equal(eol(value), eol(expected));
+  assert.equal(eol(value), eol(expected));
 };
 
 /**
@@ -219,7 +220,7 @@ exports.textEqual = function (value, expected) {
  * @param  {Object|Array} methods - a façace, hash or array of keys to be implemented
  */
 
-exports.implement = function (subject, methods) {
+assert.implement = function (subject, methods) {
   methods = _.isArray(methods) ? methods : Object.keys(methods).filter(function (method) {
     return _.isFunction(methods[method]);
   });
@@ -228,7 +229,7 @@ exports.implement = function (subject, methods) {
     return !_.isFunction(subject[method]);
   });
 
-  exports.ok(pass.length === 0, 'expected object to implement the complete interface');
+  assert.ok(pass.length === 0, 'expected object to implement the complete interface');
 };
 </code></pre>
         </article>
@@ -240,13 +241,13 @@ exports.implement = function (subject, methods) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Store.html">Store</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Tue Jan 07 2014 13:37:27 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Thu Jan 09 2014 16:00:58 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>

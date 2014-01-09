@@ -40,6 +40,46 @@
 
 
 
+    <section>
+        <article><h1 id="generator-build-status-https-secure-travis-ci-org-yeoman-generator-png-branch-master-http-travis-ci-org-yeoman-generator-coverage-status-https-coveralls-io-repos-yeoman-generator-badge-png-https-coveralls-io-r-yeoman-generator-">Generator <a href="http://travis-ci.org/yeoman/generator"><img src="https://secure.travis-ci.org/yeoman/generator.png?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/r/yeoman/generator"><img src="https://coveralls.io/repos/yeoman/generator/badge.png" alt="Coverage Status"></a></h1>
+<p>A Rails-inspired generator system that provides scaffolding for your apps.</p>
+<p><img src="https://img.skitch.com/20120923-jxbn2njgk5dp7ttk94i1tx9ek2.png" alt="Generator output"></p>
+<p><img src="https://img.skitch.com/20120922-kpjs68bgkshtsru4cwnb64fn82.png" alt="Generator diff"></p>
+<h2 id="getting-started">Getting Started</h2>
+<p>If you're interested in writing your own Yeoman generator we recommend reading the official <a href="http://yeoman.io/generators.html">documentation</a>.</p>
+<p>There are typically two types of generators - simple boilerplate 'copiers' and more advanced generators which can use custom prompts, remote dependencies, wiring and much more.</p>
+<p>The docs cover how to create generators from scratch as well as recommending command-line generators for making other generators.</p>
+<h2 id="testing-generators">Testing generators</h2>
+<p>There is currently no formal infrastructure for testing generators, however you may find our <a href="https://github.com/yeoman/generator-mocha">mocha generator</a> for custom generators useful.</p>
+<h3 id="debugging">Debugging</h3>
+<p>To debug a generator, you can pass Node.js debug's flags by running it like this:</p>
+<pre><code class="lang-bash"># OS X / Linux
+node --debug `which yo` &lt;generator&gt; [arguments]
+
+# Windows
+node --debug &lt;path to yo binary&gt; &lt;generator&gt; [arguments]</code></pre>
+<p>Yeoman generators also use a debug mode to log relevant informations. You can activate it by setting the <code>DEBUG</code> environment variable to the desired scope (for the generator system scope is <code>generators:*</code>).</p>
+<pre><code class="lang-bash"># OS X / Linux
+DEBUG=generators/*
+
+# Windows
+set DEBUG=generators/*</code></pre>
+<h2 id="officially-maintained-generators">Officially maintained generators</h2>
+<ul>
+<li><a href="https://github.com/yeoman/generator-webapp#readme">Web App</a></li>
+<li><a href="https://github.com/yeoman/generator-angular#readme">AngularJS</a></li>
+<li><a href="https://github.com/yeoman/generator-backbone#readme">Backbone</a></li>
+<li><a href="https://github.com/yeoman/generator-chromeapp#readme">Chrome Apps Basic Boilerplate</a></li>
+<li><a href="https://github.com/yeoman/generator-ember#readme">Ember</a></li>
+<li><a href="https://github.com/yeoman/generator-jasmine#readme">Jasmine</a></li>
+<li><a href="https://github.com/yeoman/generator-mocha#readme">Mocha</a></li>
+<li><a href="https://github.com/yeoman/generator-karma#readme">Karma</a></li>
+</ul>
+<h2 id="license">License</h2>
+<p><a href="http://opensource.org/licenses/bsd-license.php">BSD license</a>
+Copyright (c) Google</p></article>
+    </section>
+
 
 
 
@@ -48,13 +88,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="invoke.html">actions/invoke</a></li><li><a href="prompt.html">actions/prompt</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="Store.html">Store</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Tue Jan 07 2014 13:37:27 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Thu Jan 09 2014 16:00:58 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>
