@@ -1,6 +1,5 @@
 /**
- * @module
- * @alias yeoman-generator
+ * @module yeoman-generator
  */
 
 'use strict';
@@ -34,6 +33,7 @@ var Environment = require('./lib/env');
  *
  */
 
+/** @alias module:yeoman-generator */
 var yeoman = module.exports = function createEnv(args, opts, adapter) {
   return new Environment(args, opts, adapter);
 };

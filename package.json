@@ -22,7 +22,7 @@
   },
   "scripts": {
     "test": "gulp",
-    "doc": "jsdoc -c ./jsdoc.json",
+    "doc": "jsdoc -c ./jsdoc.json ./readme.md",
     "legacy": "mocha test/legacy.js --reporter dot --timeout 100000",
     "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000"
   },
