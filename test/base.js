@@ -37,7 +37,7 @@ describe('yeoman.generators.Base', function () {
       // mandatory options, created by the env#create() helper
       resolved: 'ember:all',
       namespace: 'dummy',
-      env: env,
+      env: env
     });
 
     this.dummy
@@ -51,6 +51,37 @@ describe('yeoman.generators.Base', function () {
     it('should be set with the project directory name without non-alphanums', function () {
       process.chdir(path.join(__dirname, 'temp.dev'));
       assert.equal(this.dummy.appname, 'temp dev');
+    });
+  });
+
+  describe('#determineAppname', function () {
+    before(function () {
+      process.chdir(path.join(__dirname, 'temp.dev'));
+    });
+
+    afterEach(function () {
+      if (fs.existsSync('bower.json')) {
+        fs.unlinkSync('bower.json');
+        delete require.cache[path.join(process.cwd(), 'bower.json')];
+      }
+      if (fs.existsSync('package.json')) {
+        fs.unlinkSync('package.json');
+        delete require.cache[path.join(process.cwd(), 'package.json')];
+      }
+    });
+
+    it('returns appname from bower.json', function () {
+      fs.writeFileSync('bower.json', '{ "name": "app-name" }');
+      assert.equal(this.dummy.determineAppname(), 'app name');
+    });
+
+    it('returns appname from package.json', function () {
+      fs.writeFileSync('package.json', '{ "name": "package_app-name" }');
+      assert.equal(this.dummy.determineAppname(), 'package_app name');
+    });
+
+    it('returns appname from the current directory', function () {
+      assert.equal(this.dummy.determineAppname(), 'temp dev');
     });
   });
 
