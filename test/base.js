@@ -54,7 +54,7 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('.extend', function () {
+  describe('.extend()', function () {
     it('create a new object inheriting the Generator', function () {
       assert.ok(new (Base.extend())([], { resolved: 'path/', env: this.env }) instanceof Base);
     });
@@ -77,16 +77,15 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('#run', function () {
+  describe('#run()', function () {
     beforeEach(function () {
       this.TestGenerator = helpers.createDummyGenerator();
-      this.TestGenerator.prototype.foo = sinon.spy();
+      this.execSpy = this.TestGenerator.prototype.exec = sinon.spy();
       this.testGen = new this.TestGenerator([], {
-        resolved: 'ember:all',
+        resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
         env: this.env
       });
-      this.testGen.foo = sinon.spy();
     });
 
     it('run all methods in the given generator', function (done) {
@@ -98,10 +97,38 @@ describe('yeoman.generators.Base', function () {
       assert.ok(this.testGen._running);
     });
 
-    it('run prototype methods', function (done) {
+    it('run prototype methods (not instances one)', function (done) {
+      this.testGen.exec = sinon.spy();
       this.testGen.run(function () {
-        assert.ok(this.TestGenerator.prototype.foo.calledOnce);
-        assert.equal(this.testGen.foo.callCount, 0);
+        assert.ok(this.execSpy.calledOnce);
+        assert.equal(this.testGen.exec.callCount, 0);
+        done();
+      }.bind(this));
+    });
+
+    it('don\'t try running prototype attributes', function (done) {
+      this.TestGenerator.prototype.prop = 'something';
+      this.testGen.run(done);
+    });
+
+    it('pass an array of arguments to the called methods', function (done) {
+      this.testGen.run(['some', 'args'], function () {
+        assert(this.execSpy.withArgs('some', 'args').calledOnce);
+        done();
+      }.bind(this));
+    });
+
+    it('pass string of arguments to the called methods', function (done) {
+      this.testGen.run('some args', function () {
+        assert(this.execSpy.withArgs('some', 'args').calledOnce);
+        done();
+      }.bind(this));
+    });
+
+    it('pass instance .args property to the called methods', function (done) {
+      this.testGen.args = ['2', 'args'];
+      this.testGen.run(function () {
+        assert(this.execSpy.withArgs('2', 'args').calledOnce);
         done();
       }.bind(this));
     });
