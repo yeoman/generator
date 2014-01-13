@@ -195,7 +195,7 @@ describe('yeoman.generators.Base', function () {
       this.TestGenerator.prototype.async1 = function () {
         async1Running = true;
         var done = this.async();
-        setTimeout(function() {
+        setTimeout(function () {
           async1Running = false;
           async1Runned = true;
           done();
@@ -207,6 +207,15 @@ describe('yeoman.generators.Base', function () {
         done();
       };
       this.testGen.run();
+    });
+
+    it('throws if no method is available', function () {
+      var gen = new (yo.generators.Base.extend())([], {
+        resolved: 'generator-ember/all/index.js',
+        namespace: 'dummy',
+        env: this.env
+      });
+      assert.throws(gen.run.bind(gen));
     });
   });
 
