@@ -4,17 +4,16 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var events = require('events');
-var assert = require('assert');
 var sinon = require('sinon');
 var generators = require('..');
+var yo = generators;
 var helpers = generators.test;
+var assert = generators.assert;
 var _ = require('lodash');
 
 var Base = generators.generators.Base;
 
 describe('yeoman.generators.Base', function () {
-  // TODO(mklabs): generate generator about to be tested, or add it in fixtures.
-
   before(helpers.setUpTestDirectory(path.join(__dirname, 'temp.dev')));
 
   beforeEach(function () {
@@ -47,27 +46,32 @@ describe('yeoman.generators.Base', function () {
       .hookFor('hook4');
   });
 
-  describe('generator.appname', function () {
-    it('should be set with the project directory name without non-alphanums', function () {
-      process.chdir(path.join(__dirname, 'temp.dev'));
-      assert.equal(this.dummy.appname, 'temp dev');
+  it('set the CWD where `.yo-rc.json` is found', function () {
+    var projectDir = path.join(__dirname, 'fixtures/dummy-project');
+    process.chdir(path.join(projectDir, 'subdir'));
+    var dummy = new this.Dummy(['foo'], {
+      resolved: 'ember/all',
+      env: this.env
+    });
+    assert.equal(process.cwd(), projectDir);
+  });
+
+  describe('#appname', function () {
+    it('is set to the `determineAppname()` return value', function () {
+      assert.equal(this.dummy.appname, this.dummy.determineAppname());
     });
   });
 
-  describe('#determineAppname', function () {
+  describe('#determineAppname()', function () {
     before(function () {
       process.chdir(path.join(__dirname, 'temp.dev'));
     });
 
     afterEach(function () {
-      if (fs.existsSync('bower.json')) {
-        fs.unlinkSync('bower.json');
-        delete require.cache[path.join(process.cwd(), 'bower.json')];
-      }
-      if (fs.existsSync('package.json')) {
-        fs.unlinkSync('package.json');
-        delete require.cache[path.join(process.cwd(), 'package.json')];
-      }
+      yo.file.delete('bower.json');
+      yo.file.delete('package.json');
+      delete require.cache[path.join(process.cwd(), 'bower.json')];
+      delete require.cache[path.join(process.cwd(), 'package.json')];
     });
 
     it('returns appname from bower.json', function () {
@@ -112,11 +116,14 @@ describe('yeoman.generators.Base', function () {
     beforeEach(function () {
       this.TestGenerator = helpers.createDummyGenerator();
       this.execSpy = this.TestGenerator.prototype.exec = sinon.spy();
+      this.TestGenerator.prototype.exec2 = sinon.spy();
+      this.TestGenerator.prototype.exec3 = sinon.spy();
       this.testGen = new this.TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
         env: this.env
       });
+      this.resolveSpy = sinon.spy(this.testGen.conflicter, 'resolve');
     });
 
     it('run all methods in the given generator', function (done) {
@@ -163,158 +170,61 @@ describe('yeoman.generators.Base', function () {
         done();
       }.bind(this));
     });
-  });
 
-  // Underscore String
-
-  // > http://epeli.github.com/underscore.string/
-  // > https://github.com/epeli/underscore.string#string-functions
-  //
-  // Underscore String set of utilities are very handy, especially in the
-  // context of Generators. We often want to humanize, dasherize or underscore
-  // a given variable.
-  //
-  // Since templates are invoked in the context of the Generator that render
-  // them, all these String helpers are then available directly from templates.
-  describe('Underscore String', function () {
-    it('has the whole Underscore String API available as prototype method', function () {
-      var dummy = new generators.Base([], {
-        env: generators(),
-        resolved: __filename
-      });
-      var str = require('underscore.string').exports();
-
-      Object.keys(str).forEach(function (prop) {
-        if (typeof str[prop] !== 'function') {
-          return;
-        }
-        assert.equal(typeof dummy._[prop], 'function');
-      }, this);
-    });
-  });
-
-  describe('generator.run(args, cb) regression', function () {
-    var events = [];
-    var resolveCalled = 0;
-    var resolveExpected = 0;
-
-    before(function () {
-      var Unicorn = function () {
-        generators.Base.apply(this, arguments);
-      };
-
-      util.inherits(Unicorn, generators.Base);
-
-      Unicorn.prototype.test1 = function () {
-        this.async()();
-      };
-
-      Unicorn.prototype.test2 = function () {
-        // Nothing
-      };
-
-      Unicorn.prototype.test3 = function () {
-        this.async()('mostlyn\'t');
-      };
-
-      Unicorn.prototype.test4 = function () {
-        // Nothing again
-      };
-
-      this.unicorn = helpers.createGenerator('unicorn:app', [
-        [Unicorn, 'unicorn:app']
-      ]);
-
-      helpers.stub(this.unicorn, 'emit', function (type, err) {
-        events.push({
-          type: type,
-          err: err
-        });
-
-        if (type === 'method') {
-          resolveExpected++;
-        }
-      });
-
-      helpers.decorate(this.unicorn.conflicter, 'resolve', function () {
-        resolveCalled++;
-      });
+    it('resolve conflicts after each method is invoked', function (done) {
+      this.testGen.run({}, function () {
+        assert.equal(this.resolveSpy.callCount, 4);
+        done();
+      }.bind(this));
     });
 
-    after(helpers.restore);
-
-    afterEach(function () {
-      events = [];
-      resolveCalled = 0;
-      resolveExpected = 0;
-    });
-
-    it('should call `done` only once', function (done) {
-      // Mocha will fail if done was called more than once.
-      this.unicorn.run({}, done);
-    });
-
-    it('should emit an error from async', function (done) {
-      this.unicorn.run({}, function () {
-        assert.ok(JSON.stringify(events).indexOf('{"type":"error","err":"mostlyn\'t"}') > -1);
+    it('can emit error from async methods', function (done) {
+      this.TestGenerator.prototype.throwing = function () {
+        this.async()('some error');
+      };
+      this.testGen.on('error', function (err) {
+        assert.equal(err, 'some error');
         done();
       });
-    });
-
-    it('should resolve conflicts after each method is invoked', function (done) {
-      this.unicorn.run({}, function () {
-        assert.equal(resolveCalled, resolveExpected);
-        done();
-      });
+      this.testGen.run();
     });
   });
 
-  describe('generator.runHooks(cb)', function () {
-    it('should go through all registered hooks, and invoke them in series', function (done) {
-      process.chdir(path.join(__dirname, 'temp.dev'));
-      this.dummy.runHooks(function (err) {
-        if (err) {
-          return err;
-        }
-        fs.stat('app/scripts/models/application-model.js', done);
-      });
+  describe('#_', function () {
+    it('expose the Underscore String API', function () {
+      assert.implement(this.dummy._, require('underscore.string').exports());
     });
   });
 
-  describe('generator.argument(name, config)', function () {
-    it('should add a new argument to the generator instance', function () {
+  describe('#argument()', function () {
+    it('add a new argument to the generator instance', function () {
       assert.equal(this.dummy._arguments.length, 0);
       this.dummy.argument('foo');
       assert.equal(this.dummy._arguments.length, 1);
     });
 
-    it('should create the property specified with value from positional args', function () {
+    it('create the property specified with value from positional args', function () {
       this.dummy.argument('foo');
       assert.equal(this.dummy.foo, 'bar');
     });
 
-    it('should slice positional arguments when config.type is Array', function () {
-      this.dummy.argument('bar', {
-        type: Array
-      });
-
+    it('slice positional arguments when config.type is Array', function () {
+      this.dummy.argument('bar', { type: Array });
       assert.deepEqual(this.dummy.bar, ['bar', 'baz', 'bom']);
     });
 
-    it('should raise an error if required arguments are not provided', function (done) {
+    it('raise an error if required arguments are not provided', function (done) {
       var dummy = new generators.Base([], {
         env: this.env,
-        resolved: 'dummy:all'
-      }).on('error', function (ev) {
+        resolved: 'dummy/all'
+      }).on('error', function () {
         done();
       });
 
-      dummy.argument('foo', {
-        required: true
-      });
+      dummy.argument('foo', { required: true });
     });
 
-    it('should not raise an error if required arguments are not provided, but the help option has been specified', function () {
+    it('doesn\'t raise an error if required arguments are not provided, but the help option has been specified', function () {
       var dummy = new generators.Base([], {
         env: this.env,
         resolved: 'dummy:all'
@@ -323,15 +233,13 @@ describe('yeoman.generators.Base', function () {
       dummy.options.help = true;
 
       assert.equal(dummy._arguments.length, 0);
-
       assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', { required: true }));
-
       assert.equal(dummy._arguments.length, 1);
     });
   });
 
-  describe('generator.option(name, config)', function () {
-    it('should add a new option to the set of generator expected options', function () {
+  describe('#option()', function () {
+    it('add a new option to the set of generator expected options', function () {
       // every generator have the --help options
       var generator = new this.Dummy([], {
         env: this.env,
@@ -351,8 +259,16 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.hookFor(name, config)', function () {
-    it('should emit errors if called when running', function () {
+  describe('#runHooks()', function () {
+    it('go through all registered hooks, and invoke them in series', function (done) {
+      this.dummy.runHooks(function (err) {
+        fs.stat('app/scripts/models/application-model.js', done);
+      });
+    });
+  });
+
+  describe('#hookFor()', function () {
+    it('emit errors if called when running', function () {
       try {
         this.dummy.hookFor('maoow');
       } catch (err) {
@@ -360,7 +276,7 @@ describe('yeoman.generators.Base', function () {
       }
     });
 
-    it('should create the macthing option', function () {
+    it('create the matching option', function () {
       this.dummy._running = false;
       this.dummy.hookFor('something');
       assert.deepEqual(this.dummy._options.pop(), {
@@ -372,28 +288,28 @@ describe('yeoman.generators.Base', function () {
       });
     });
 
-    it('should update the internal hooks holder', function () {
+    it('update the internal hooks holder', function () {
       this.dummy.hookFor('something');
       assert.deepEqual(this.dummy._hooks.pop(), { name: 'something' });
     });
   });
 
-  describe('generator.defaultFor(config)', function () {
-    it('should return the value for the option name, doing lookup in options and Grunt config', function () {
+  describe('#defaultFor()', function () {
+    it('return the value for the option name, doing lookup in options and Grunt config', function () {
       var name = this.dummy.defaultFor('something');
       assert.equal(name, 'else');
     });
   });
 
-  describe('generator.desc(decription)', function () {
-    it('should update the internal description', function () {
+  describe('#desc()', function () {
+    it('update the internal description', function () {
       this.dummy.desc('A new desc for this generator');
       assert.equal(this.dummy.description, 'A new desc for this generator');
     });
   });
 
-  describe('generator.help()', function () {
-    it('should return the expected help / usage output', function () {
+  describe('#help()', function () {
+    it('return the expected help output', function () {
       this.dummy.option('ooOoo');
       this.dummy.argument('baz', {
         type: Number,
@@ -413,8 +329,8 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.usage()', function () {
-    it('should return the expected help / usage output with arguments', function () {
+  describe('#usage()', function () {
+    it('returns the expected usage output with arguments', function () {
       this.dummy.argument('baz', {
         type: Number,
         required: false
@@ -423,13 +339,13 @@ describe('yeoman.generators.Base', function () {
       assert.equal(usage.trim(), 'yo dummy [options] [<baz>]');
     });
 
-    it('should return the expected help / usage output without arguments', function () {
+    it('returns the expected usage output without arguments', function () {
       this.dummy._arguments.length = 0;
       var usage = this.dummy.usage();
       assert.equal(usage.trim(), 'yo dummy [options]');
     });
 
-    it('should return the expected help / usage output without options', function () {
+    it('returns the expected usage output without options', function () {
       this.dummy._arguments.length = 0;
       this.dummy._options.length = 0;
       var usage = this.dummy.usage();
@@ -437,30 +353,18 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.shell', function () {
-    it('should extend shelljs module', function () {
-      _.each(require('shelljs'), function (method, name) {
-        assert.equal(method, generators.Base.prototype.shell[name]);
-      });
+  describe('#shell', function () {
+    it('extend shelljs module', function () {
+      assert.implement(this.dummy.shell, require('shelljs'));
     });
   });
 
-  describe('generator.storage()', function () {
-    it('should provide a storage instance', function () {
+  describe('#config', function () {
+    it('provide a storage instance', function () {
       assert.ok(this.dummy.config instanceof require('../lib/util/storage'));
     });
 
-    it('should set the CWD where `.yo-rc.json` is found', function () {
-      var projectDir = path.join(__dirname, 'fixtures/dummy-project');
-      process.chdir(path.join(projectDir, 'subdir'));
-      var dummy = new this.Dummy(['foo'], {
-        resolved: 'ember:all',
-        env: this.env
-      });
-      assert.equal(process.cwd(), projectDir);
-    });
-
-    it('should update storage when destinationRoot change', function () {
+    it('is updated when destinationRoot change', function () {
       sinon.spy(this.Dummy.prototype, '_setStorage');
       this.dummy.destinationRoot('foo');
       assert.equal(this.Dummy.prototype._setStorage.callCount, 1);
