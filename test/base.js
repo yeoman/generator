@@ -188,6 +188,26 @@ describe('yeoman.generators.Base', function () {
       });
       this.testGen.run();
     });
+
+    it('run methods in series', function (done) {
+      var async1Running = false;
+      var async1Runned = false;
+      this.TestGenerator.prototype.async1 = function () {
+        async1Running = true;
+        var done = this.async();
+        setTimeout(function() {
+          async1Running = false;
+          async1Runned = true;
+          done();
+        }, 10);
+      };
+      this.TestGenerator.prototype.async2 = function () {
+        assert(!async1Running);
+        assert(async1Runned);
+        done();
+      };
+      this.testGen.run();
+    });
   });
 
   describe('#_', function () {
