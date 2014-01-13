@@ -195,7 +195,7 @@ describe('yeoman.generators.Base', function () {
       this.TestGenerator.prototype.async1 = function () {
         async1Running = true;
         var done = this.async();
-        setTimeout(function() {
+        setTimeout(function () {
           async1Running = false;
           async1Runned = true;
           done();
