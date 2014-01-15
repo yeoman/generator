@@ -40,20 +40,41 @@ describe('yeoman.generators.Base', function () {
     });
 
     this.dummy
-      .hookFor('hook1')
-      .hookFor('hook2')
+      .hookFor('hook1', { as: 'ember' })
+      .hookFor('hook2', { as: 'ember:all' })
       .hookFor('hook3')
       .hookFor('hook4');
   });
 
-  it('set the CWD where `.yo-rc.json` is found', function () {
-    var projectDir = path.join(__dirname, 'fixtures/dummy-project');
-    process.chdir(path.join(projectDir, 'subdir'));
-    var dummy = new this.Dummy(['foo'], {
-      resolved: 'ember/all',
-      env: this.env
+  describe('constructor', function () {
+    it('set the CWD where `.yo-rc.json` is found', function () {
+      var projectDir = path.join(__dirname, 'fixtures/dummy-project');
+      process.chdir(path.join(projectDir, 'subdir'));
+      var dummy = new this.Dummy(['foo'], {
+        resolved: 'ember/all',
+        env: this.env
+      });
+      assert.equal(process.cwd(), projectDir);
     });
-    assert.equal(process.cwd(), projectDir);
+
+    it('use the environment options', function () {
+      this.env.registerStub(function () {}, 'ember:model');
+      var generator = this.env.create('ember:model', {
+        options: {
+          'test-framework': 'jasmine'
+        }
+      });
+      assert.equal(generator.options['test-framework'], 'jasmine');
+    });
+
+    it('set generator.options from constructor options', function () {
+      var generator = new generators.Base({
+        env: this.env,
+        resolved: 'test',
+        'test-framework': 'mocha'
+      });
+      assert.equal(generator.options['test-framework'], 'mocha');
+    });
   });
 
   describe('#appname', function () {
