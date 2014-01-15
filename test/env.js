@@ -186,13 +186,15 @@ describe('Environment', function () {
   describe('#run()', function () {
     beforeEach(function () {
       var self = this;
-      this.stub = function () {
-        self.args = arguments;
-        Base.apply(this, arguments);
-      };
+      this.Stub = Base.extend({
+        constructor: function () {
+          self.args = arguments;
+          Base.apply(this, arguments);
+        },
+        exec: function () {}
+      });
       this.runMethod = sinon.spy(Base.prototype, 'run');
-      util.inherits(this.stub, Base);
-      this.env.registerStub(this.stub, 'stub:run');
+      this.env.registerStub(this.Stub, 'stub:run');
     });
 
     afterEach(function () {
@@ -314,10 +316,12 @@ describe('Environment', function () {
       assert.equal(this.completeDummy, this.env.get('dummy:complete'));
     });
 
-    it('extend simple function with Base', function () {
+    it('extend simple function with Base', function (done) {
       assert.implement(this.env.get('dummy:simple'), Base);
-      this.env.run('dummy:simple');
-      assert.ok(this.simpleDummy.calledOnce);
+      this.env.run('dummy:simple', function () {
+        assert.ok(this.simpleDummy.calledOnce);
+        done();
+      }.bind(this));
     });
 
     it('throws if invalid generator', function () {
