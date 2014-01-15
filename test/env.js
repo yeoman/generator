@@ -449,11 +449,21 @@ describe('Environment', function () {
   });
 
   describe('.enforceUpdate()', function () {
+    beforeEach(function () {
+      this.env = new Environment();
+      delete this.env.adapter;
+      delete this.env.runLoop;
+
+    });
+
     it('add an adapter', function () {
-      var env = new Environment();
-      delete env.adapter;
-      Environment.enforceUpdate(env);
-      assert(env.adapter);
+      Environment.enforceUpdate(this.env);
+      assert(this.env.adapter);
+    });
+
+    it('add a runLoop', function () {
+      Environment.enforceUpdate(this.env);
+      assert(this.env.runLoop);
     });
   });
 
