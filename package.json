@@ -49,7 +49,7 @@
     "text-table": "~0.2.0",
     "download": "~0.1.6",
     "request": "~2.33.0",
-    "file-utils": "~0.1.1",
+    "file-utils": "~0.2.0",
     "class-extend": "~0.1.0",
     "grouped-queue": "~0.1.2"
   },
