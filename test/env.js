@@ -448,6 +448,29 @@ describe('Environment', function () {
     });
   });
 
+  describe('#alias()', function () {
+    it('apply regex and replace with alternative value', function () {
+      this.env.alias(/^([^:]+)$/, '$1:app');
+      assert.equal(this.env.alias('foo'), 'foo:app');
+    });
+
+    it('apply multiple regex', function () {
+      this.env.alias(/^([a-zA-Z0-9:\*]+)$/, 'generator-$1');
+      this.env.alias(/^([^:]+)$/, '$1:app');
+      assert.equal(this.env.alias('foo'), 'generator-foo:app');
+    });
+
+    it('apply latest aliases first', function () {
+      this.env.alias(/^([^:]+)$/, '$1:all');
+      this.env.alias(/^([^:]+)$/, '$1:app');
+      assert.equal(this.env.alias('foo'), 'foo:app');
+    });
+
+    it('alias empty namespace to `:app` by default', function () {
+      assert.equal(this.env.alias('foo'), 'foo:app');
+    });
+  });
+
   describe('.enforceUpdate()', function () {
     beforeEach(function () {
       this.env = new Environment();
