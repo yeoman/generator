@@ -48,7 +48,7 @@
     "chalk": "~0.4.0",
     "text-table": "~0.2.0",
     "download": "~0.1.6",
-    "request": "~2.30.0",
+    "request": "~2.33.0",
     "file-utils": "~0.1.1",
     "class-extend": "~0.1.0",
     "grouped-queue": "~0.1.2"
@@ -57,11 +57,11 @@
     "proxyquire": "~0.5.1",
     "sinon": "~1.7.3",
     "coveralls": "~2.6.0",
-    "gulp": "~3.2.1",
-    "gulp-mocha": "~0.1.1",
+    "gulp": "~3.3.4",
+    "gulp-mocha": "~0.3.0",
     "gulp-jshint": "~1.3.2",
     "jshint-stylish": "~0.1.4",
-    "gulp-jscs": "~0.1.1",
+    "gulp-jscs": "~0.2.1",
     "gulp-istanbul": "~0.1.0"
   }
 }
