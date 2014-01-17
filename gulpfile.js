@@ -9,7 +9,7 @@ var fs = require('fs');
 var path = require('path');
 
 gulp.task('test', function (cb) {
-  var coverage = gulp.src(['lib/**/*.js', 'main.js'])
+  gulp.src(['lib/**/*.js', 'main.js'])
     .pipe(istanbul())
     .on('end', function () {
       gulp.src(['test/*.js'])
@@ -19,8 +19,8 @@ gulp.task('test', function (cb) {
     });
 });
 
-gulp.task('default', function () {
-  gulp.src([
+gulp.task('static', function () {
+  return gulp.src([
     'test/*.js',
     'lib/**/*.js',
     'benchmark/**/*.js',
@@ -30,6 +30,10 @@ gulp.task('default', function () {
   ]).pipe(jshint('.jshintrc'))
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(jscs());
+});
+
+gulp.task('default', function () {
+  gulp.run('static');
 
   gulp.run('test', function () {
     var fileContents = fs.readFileSync(path.join(__dirname, 'coverage/lcov.info'), 'utf8');
