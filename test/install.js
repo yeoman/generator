@@ -1,3 +1,4 @@
+/*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
 var sinon = require('sinon');
 var generators = require('..');
@@ -49,9 +50,11 @@ describe('Base Generator (actions/install mixin)', function () {
   });
 
   describe('#installDependencies()', function () {
-    it('spawn npm and bower', function () {
-      this.dummy.installDependencies();
-      assert.deepEqual(this.commandsRun, [['bower', ['install']], ['npm', ['install']]]);
+    it('spawn npm and bower', function (done) {
+      this.dummy.installDependencies(function() {
+        assert.deepEqual(this.commandsRun, [['bower', ['install']], ['npm', ['install']]]);
+        done();
+      }.bind(this));
     });
 
     it('doesn\'t spawn anything with skipInstall', function () {

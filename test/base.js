@@ -14,7 +14,7 @@ describe('yeoman.generators.Base', function () {
   before(helpers.setUpTestDirectory(path.join(__dirname, 'temp.dev')));
 
   beforeEach(function () {
-    var env = this.env = generators();
+    var env = this.env = generators([], { 'skip-install': true });
 
     var Dummy = helpers.createDummyGenerator();
 
@@ -33,7 +33,8 @@ describe('yeoman.generators.Base', function () {
       // mandatory options, created by the env#create() helper
       resolved: 'ember:all',
       namespace: 'dummy',
-      env: env
+      env: env,
+      'skip-install': true
     });
 
     this.dummy
@@ -139,7 +140,8 @@ describe('yeoman.generators.Base', function () {
       this.testGen = new this.TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
-        env: this.env
+        env: this.env,
+        'skip-install': true
       });
       this.resolveSpy = sinon.spy(this.testGen.conflicter, 'resolve');
     });
@@ -189,9 +191,9 @@ describe('yeoman.generators.Base', function () {
       }.bind(this));
     });
 
-    it('resolve conflicts after each method is invoked', function (done) {
+    it('resolve conflicts after it ran', function (done) {
       this.testGen.run({}, function () {
-        assert.equal(this.resolveSpy.callCount, 4);
+        assert.equal(this.resolveSpy.callCount, 1);
         done();
       }.bind(this));
     });
