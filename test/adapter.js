@@ -4,7 +4,6 @@ var sinon = require('sinon');
 var inquirer = require('inquirer');
 var yeoman = require('..');
 var assert = yeoman.assert;
-var helpers = yeoman.test;
 
 describe('TerminalAdapter', function () {
   'use strict';

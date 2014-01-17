@@ -2,11 +2,9 @@
 'use strict';
 var path = require('path');
 var fs = require('fs');
-var events = require('events');
 var wiring = require('../lib/actions/wiring');
 var yeoman = require('..');
 var assert = yeoman.assert;
-var helpers = yeoman.test;
 
 describe('yeoman.generator.lib.actions.wiring', function () {
   before(function () {

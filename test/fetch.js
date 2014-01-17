@@ -38,7 +38,7 @@ describe('generators.Base fetch utilities', function () {
 
   describe('#bowerInstall()', function () {
     it('fetch remote from Bower', function (done) {
-      this.dummy.bowerInstall('backbone', function (err) {
+      this.dummy.bowerInstall('backbone', function () {
         fs.stat('bower_components/backbone', done);
       });
     });

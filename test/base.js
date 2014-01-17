@@ -2,14 +2,11 @@
 'use strict';
 var fs = require('fs');
 var path = require('path');
-var util = require('util');
-var events = require('events');
 var sinon = require('sinon');
 var generators = require('..');
 var yo = generators;
 var helpers = generators.test;
 var assert = generators.assert;
-var _ = require('lodash');
 
 var Base = generators.generators.Base;
 
@@ -50,7 +47,7 @@ describe('yeoman.generators.Base', function () {
     it('set the CWD where `.yo-rc.json` is found', function () {
       var projectDir = path.join(__dirname, 'fixtures/dummy-project');
       process.chdir(path.join(projectDir, 'subdir'));
-      var dummy = new this.Dummy(['foo'], {
+      new this.Dummy(['foo'], {
         resolved: 'ember/all',
         env: this.env
       });
@@ -311,7 +308,7 @@ describe('yeoman.generators.Base', function () {
 
   describe('#runHooks()', function () {
     it('go through all registered hooks, and invoke them in series', function (done) {
-      this.dummy.runHooks(function (err) {
+      this.dummy.runHooks(function () {
         fs.stat('app/scripts/models/application-model.js', done);
       });
     });

@@ -1,8 +1,6 @@
 /*global it, describe, before, beforeEach */
-
 var util = require('util');
 var path = require('path');
-var fs = require('fs');
 var assert = require('assert');
 var yeoman = require('..');
 var helpers = yeoman.test;

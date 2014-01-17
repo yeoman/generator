@@ -3,7 +3,6 @@
 var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
-var _ = require('lodash');
 var shell = require('shelljs');
 var sinon = require('sinon');
 var Storage = require('../lib/util/storage');

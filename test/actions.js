@@ -2,15 +2,10 @@
 'use strict';
 var fs = require('fs');
 var path = require('path');
-var util = require('util');
-var rimraf = require('rimraf');
-var events = require('events');
-var proxyquire = require('proxyquire');
 var generators = require('..');
 var log = require('../lib/util/log')();
 var helpers = generators.test;
 var assert = generators.assert;
-var EventEmitter = require('events').EventEmitter;
 var Conflicter = require('../lib/util/conflicter');
 var win32 = process.platform === 'win32';
 
@@ -75,7 +70,7 @@ describe('yeoman.generators.Base', function () {
       this.dummy.copy('foo-copy.js');
       this.dummy.copy('yeoman-logo.png');
       this.dummy.copy(path.join(__dirname, 'fixtures/lodash-copy.js'), 'write/to/lodash.js');
-      this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents, source, destination, props) {
+      this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents) {
         contents = contents.replace('foo', 'bar');
         contents = contents.replace('\r\n', '\n');
 
@@ -261,7 +256,7 @@ describe('yeoman.generators.Base', function () {
     before(function (done) {
       this.dummy.directory('./dir-fixtures', 'directory');
       this.dummy.directory('./dir-fixtures');
-      this.dummy.directory('./dir-fixtures', 'directory-processed', function (contents, source, destination, props) {
+      this.dummy.directory('./dir-fixtures', 'directory-processed', function (contents, source) {
         if (source.indexOf('foo-process.js') !== -1) {
           contents = contents.replace('foo', 'bar');
           contents = contents.replace('\r\n', '\n');
@@ -404,7 +399,7 @@ describe('yeoman.generators.Base', function () {
       beforeEach(function () {
         // Keep track of all commands executed by spawnCommand.
         this.commandsRun = [];
-        this.dummy.spawnCommand = function spawnCommand(cmd, args) {
+        this.dummy.spawnCommand = function spawnCommand(cmd) {
           this.commandsRun.push(cmd);
           return asyncStub;
         }.bind(this);

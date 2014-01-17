@@ -2,13 +2,8 @@
 'use strict';
 var fs = require('fs');
 var path = require('path');
-var util = require('util');
 var assert = require('assert');
-var sinon = require('sinon');
-var helpers = require('../lib/test/helpers');
-var spawn = require('../lib/actions/spawn_command');
 var shell = require('shelljs');
-var _ = require('lodash');
 
 var Environment = require('../lib/env');
 

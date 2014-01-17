@@ -3,7 +3,6 @@
 var fs = require('fs');
 var events = require('events');
 var assert = require('assert');
-var proxyquire = require('proxyquire');
 var Conflicter = require('../lib/util/conflicter');
 var log = require('../lib/util/log')();
 
@@ -28,7 +27,7 @@ describe('Conflicter', function () {
     assert.deepEqual(conflict.content, fs.readFileSync(__filename, 'utf8'));
   });
 
-  describe('#resolve()', function (done) {
+  describe('#resolve()', function () {
     it('wihout conflict', function (done) {
       this.conflicter.resolve(done);
     });
@@ -44,12 +43,12 @@ describe('Conflicter', function () {
       });
 
       // called.
-      this.conflicter.once('resolved:' + __filename, function (config) {
+      this.conflicter.once('resolved:' + __filename, function () {
         conflicts++;
       });
 
       // not called.
-      this.conflicter.once('resolved:foo.js', function (config) {
+      this.conflicter.once('resolved:foo.js', function () {
         conflicts++;
       });
 
@@ -88,7 +87,7 @@ describe('Conflicter', function () {
     });
   });
 
-  describe.skip('#collision()', function (done) {
+  describe.skip('#collision()', function () {
     var me = fs.readFileSync(__filename, 'utf8');
     it('identical status', function (done) {
       this.conflicter.collision(__filename, me, function (status) {
@@ -164,7 +163,7 @@ describe('Conflicter', function () {
         callCount++;
         cb();
       };
-      this.conflicter._ask('/tmp/file', 'my file contents', function (result) {
+      this.conflicter._ask('/tmp/file', 'my file contents', function () {
         assert(callCount, 1);
         done();
       });

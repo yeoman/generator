@@ -6,7 +6,6 @@ var assert = require('assert');
 var sinon = require('sinon');
 var proxyquire = require('proxyquire');
 var file = require('../lib/actions/file');
-var async = require('async');
 
 describe('Generator#user', function () {
 

@@ -129,7 +129,7 @@ describe('Generators', function () {
           });
 
           assert.ok(checkForCollision.calledOnce);
-          assert.ok('some conflicting content', this.generator.dest.read('file-conflict.txt'));
+          assert.ok('some conflicting content', fileContent);
 
           // reset content
           fs.writeFileSync(target, initialFileContent);
