@@ -416,6 +416,11 @@ describe('yeoman.generators.Base', function () {
         assert.deepEqual(this.commandsRun, ['bower', 'npm']);
       });
 
+      it('should spawn composer', function () {
+        this.dummy.installDependencies({ composer: true });
+        assert.deepEqual(this.commandsRun, ['bower', 'npm', 'composer']);
+      });
+      
       it('should not spawn anything with skipInstall', function () {
         this.dummy.installDependencies({ skipInstall: true });
         assert.deepEqual(this.commandsRun.length, 0);
