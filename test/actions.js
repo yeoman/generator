@@ -194,8 +194,14 @@ describe('yeoman.generators.Base', function () {
 
   describe('#template()', function () {
     describe('without options', function () {
+
       before(function (done) {
+        // Create file with weird permission for testing
+        var permFileName = this.fixtures + '/perm-test.js';
+        fs.writeFileSync(permFileName, 'var foo;', { mode: parseInt(733, 8) });
+
         this.dummy.foo = 'fooooooo';
+        this.dummy.template('perm-test.js', 'write/to/perm-test.js');
         this.dummy.template('foo-template.js', 'write/to/from-template.js');
         this.dummy.template('foo-template.js');
         this.dummy.template('foo-template.js', 'write/to/from-template-bar.js', {
@@ -206,6 +212,10 @@ describe('yeoman.generators.Base', function () {
           bar: 'foo'
         });
         this.dummy.conflicter.resolve(done);
+      });
+
+      after(function () {
+        fs.unlinkSync(this.fixtures + '/perm-test.js');
       });
 
       it('copy and process source file to destination', function (done) {
@@ -231,6 +241,13 @@ describe('yeoman.generators.Base', function () {
         var body = fs.readFileSync('write/to/template-tags.js', 'utf8');
         assert.textEqual(body, 'foo = bar\n');
       });
+
+      it('should keep file mode', function () {
+        var originFileStat = fs.statSync(this.fixtures + '/perm-test.js');
+        var bodyStat = fs.statSync('write/to/perm-test.js');
+        assert.equal(originFileStat.mode, bodyStat.mode);
+      });
+
     });
 
     describe('with options', function () {
