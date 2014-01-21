@@ -51,7 +51,7 @@
     "request": "~2.33.0",
     "file-utils": "~0.2.0",
     "class-extend": "~0.1.0",
-    "grouped-queue": "~0.2.0"
+    "grouped-queue": "~0.2.1"
   },
   "devDependencies": {
     "proxyquire": "~0.5.1",

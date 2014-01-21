@@ -137,6 +137,13 @@ describe('yeoman.generators.Base', function () {
       this.execSpy = this.TestGenerator.prototype.exec = sinon.spy();
       this.TestGenerator.prototype.exec2 = sinon.spy();
       this.TestGenerator.prototype.exec3 = sinon.spy();
+      this.TestGenerator.prototype._private = sinon.spy();
+      this.TestGenerator.prototype.prompt = {
+        m1: sinon.spy(),
+        m2: sinon.spy(),
+        prop: 'foo'
+      };
+      this.TestGenerator.prototype.initialize = sinon.spy();
       this.testGen = new this.TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
@@ -236,6 +243,39 @@ describe('yeoman.generators.Base', function () {
         env: this.env
       });
       assert.throws(gen.run.bind(gen));
+    });
+
+    it('ignore underscore prefixed method', function (done) {
+      this.testGen.run(function () {
+        assert(this.TestGenerator.prototype._private.notCalled);
+        done();
+      }.bind(this));
+    });
+
+    it('run methods in a queue hash', function (done) {
+      this.testGen.run(function () {
+        assert(this.TestGenerator.prototype.prompt.m1.calledOnce);
+        assert(this.TestGenerator.prototype.prompt.m2.calledOnce);
+        done();
+      }.bind(this));
+    });
+
+    it('run named queued methods in order', function (done) {
+      var initSpy = this.TestGenerator.prototype.initialize;
+      var promptSpy = this.TestGenerator.prototype.prompt.m1;
+      this.testGen.run(function () {
+        assert(initSpy.calledBefore(promptSpy));
+        done();
+      }.bind(this));
+    });
+
+    it('run queued methods in order even if not in order in prototype', function (done) {
+      var initSpy = this.TestGenerator.prototype.initialize;
+      var execSpy = this.TestGenerator.prototype.exec;
+      this.testGen.run(function () {
+        assert(initSpy.calledBefore(execSpy));
+        done();
+      }.bind(this));
     });
   });
 
