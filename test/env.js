@@ -17,7 +17,7 @@ var Store = require('../lib/env/store');
 describe('Environment', function () {
 
   beforeEach(function () {
-    this.env = new Environment();
+    this.env = new Environment([], { 'skip-install': true });
     process.chdir(__dirname);
   });
 
@@ -29,7 +29,7 @@ describe('Environment', function () {
     assert.ok(new Environment() instanceof events.EventEmitter);
   });
 
-  describe('.constructor()', function () {
+  describe('constructor', function () {
     it('take arguments option', function () {
       var args = ['foo'];
       assert.equal(new Environment(args).arguments, args);
@@ -210,7 +210,7 @@ describe('Environment', function () {
 
     it('pass args and options to the runned generator', function (done) {
       var args = ['stub:run', 'module'];
-      var options = {};
+      var options = { 'skip-install': true };
       this.env.run(args, options, function () {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
@@ -221,7 +221,7 @@ describe('Environment', function () {
 
     it('without options, it default to env.options', function (done) {
       var args = ['stub:run', 'foo'];
-      this.env.options = { some: 'stuff' };
+      this.env.options = { some: 'stuff', 'skip-install': true };
       this.env.run(args, function () {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'foo');
@@ -232,7 +232,7 @@ describe('Environment', function () {
 
     it('without args, it default to env.arguments', function (done) {
       this.env.arguments = ['stub:run', 'my-args'];
-      this.env.options = { some: 'stuff' };
+      this.env.options = { 'skip-install': true };
       this.env.run(function () {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'my-args');
@@ -513,7 +513,8 @@ describe('Environment', function () {
     it('emits the series of event on a specific generator', function (done) {
       var angular = new this.Generator([], {
         env: generators(),
-        resolved: __filename
+        resolved: __filename,
+        'skip-install': true
       });
 
       var lifecycle = ['start', 'createSomething', 'createSomethingElse', 'end'];
@@ -564,7 +565,7 @@ describe('Environment', function () {
         };
       }
 
-      generators()
+      generators([], { 'skip-install': true })
         .registerStub(this.Generator, 'angular:all')
         // Series of events proxied from the resolved generator
         .on('generators:start', assertEvent('generators:start'))
@@ -604,7 +605,8 @@ describe('Environment', function () {
 
       var generatorOnce = new GeneratorOnce([], {
         env: generators(),
-        resolved: __filename
+        resolved: __filename,
+        'skip-install': true
       });
 
       var isFirstEndEvent = true;
