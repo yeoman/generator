@@ -14,7 +14,7 @@
   ],
   "homepage": "http://yeoman.io",
   "bugs": "https://github.com/yeoman/generator/issues",
-  "author": "Chrome Developer Relations",
+  "author": "The Yeoman Team",
   "main": "main.js",
   "repository": {
     "type": "git",
