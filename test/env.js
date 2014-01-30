@@ -138,11 +138,6 @@ describe('Environment', function () {
       assert.throws(this.env.create.bind(this.end, 'i:do:not:exist'));
     });
 
-    it('add a name property on the options', function () {
-      assert.equal(this.env.create('stub').options.name, 'stub');
-      assert.equal(this.env.create('stub:foo:bar').options.name, 'bar');
-    });
-
     it('add the env as property on the options', function () {
       assert.equal(this.env.create('stub').options.env, this.env);
     });
