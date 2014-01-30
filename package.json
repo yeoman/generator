@@ -62,6 +62,7 @@
     "gulp-jshint": "~1.4.0",
     "jshint-stylish": "~0.1.4",
     "gulp-jscs": "~0.3.0",
-    "gulp-istanbul": "~0.1.0"
+    "gulp-istanbul": "~0.1.0",
+    "mockery": "~1.4.0"
   }
 }
