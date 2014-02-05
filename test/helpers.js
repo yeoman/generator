@@ -117,6 +117,20 @@ describe('yeoman.test', function () {
         done();
       });
     });
+
+    it('uses default values', function (done) {
+      this.generator.prompt([{ name: 'respuesta', type: 'input', default: 'bar' }], function (answers) {
+        assert.equal(answers.respuesta, 'bar');
+        done();
+      });
+    });
+
+    it('prefers mocked values', function (done) {
+      this.generator.prompt([{ name: 'answser', type: 'input', default: 'bar' }], function (answers) {
+        assert.equal(answers.answer, 'foo');
+        done();
+      });
+    });
   });
 
   describe('.before()', function () {
