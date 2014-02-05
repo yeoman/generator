@@ -280,7 +280,7 @@ describe('yeoman.generators.Base', function () {
           matcher: /\{\{\{([^\}]+)\}\}/g,
           start: '{{',
           end: '}}'
-        }
+        };
 
         this.dummy.template(this.src, this.dest, { foo: 'bar' }, {
           evaluate: /\{\{([\s\S]+?)\}\}/g,
@@ -297,7 +297,7 @@ describe('yeoman.generators.Base', function () {
         var body = fs.readFileSync(this.dest, 'utf8');
         assert.textEqual(body, '<version>bar</version> {{ foo }}\n');
       });
-    });    
+    });
   });
 
   describe('generator.directory(source, destination, process)', function () {
