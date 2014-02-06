@@ -55,11 +55,11 @@
   },
   "devDependencies": {
     "proxyquire": "~0.5.1",
-    "sinon": "~1.7.3",
-    "coveralls": "~2.6.0",
-    "gulp": "~3.4.0",
+    "sinon": "~1.8.1",
+    "coveralls": "~2.7.1",
+    "gulp": "~3.5.2",
     "gulp-mocha": "~0.4.1",
-    "gulp-jshint": "~1.3.2",
+    "gulp-jshint": "~1.4.0",
     "jshint-stylish": "~0.1.4",
     "gulp-jscs": "~0.3.0",
     "gulp-istanbul": "~0.1.0"
