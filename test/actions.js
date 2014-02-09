@@ -70,6 +70,14 @@ describe('yeoman.generators.Base', function () {
       this.dummy.copy('foo-copy.js');
       this.dummy.copy('yeoman-logo.png');
       this.dummy.copy(path.join(__dirname, 'fixtures/lodash-copy.js'), 'write/to/lodash.js');
+
+      this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents, source, destination, encoding) {
+        destination = destination.split('/')
+        destination.pop();
+        destination = destination.concat(['bar-process.js']).join('/');
+        return [contents, source, destination, encoding];
+      });
+
       this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents) {
         contents = contents.replace('foo', 'bar');
         contents = contents.replace('\r\n', '\n');
@@ -94,6 +102,10 @@ describe('yeoman.generators.Base', function () {
 
     it('should allow absolute path, and prevent the relative paths join', function (done) {
       fs.stat('write/to/bar.js', done);
+    });
+
+    it('should allow to change the destination via function', function (done) {
+      fs.stat('write/to/bar-process.js', done);
     });
 
     it('should allow to copy without using the templating (conficting with lodash/underscore)', function (done) {
