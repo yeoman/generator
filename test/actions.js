@@ -72,10 +72,12 @@ describe('yeoman.generators.Base', function () {
       this.dummy.copy(path.join(__dirname, 'fixtures/lodash-copy.js'), 'write/to/lodash.js');
 
       this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents, source, destination, encoding) {
+
         destination = destination.split('/')
         destination.pop();
         destination = destination.concat(['bar-process.js']).join('/');
-        return [contents, source, destination, encoding];
+        return { destination: destination };
+
       });
 
       this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents) {
