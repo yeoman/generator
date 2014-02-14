@@ -246,12 +246,12 @@ describe('yeoman.generators.Base', function () {
         assert.textEqual(body, 'foo = bar\n');
       });
 
-      it('process variable names in filenames', function () {
+      it('process underscode templates in destination filename', function () {
         var body = fs.readFileSync('fooooooo-template.js', 'utf8');
         assert.textEqual(body, 'var fooooooo = \'fooooooo\';' + '\n');
       });
 
-      it('process variable names in directory', function () {
+      it('process underscore templates in destination path', function () {
         var body = fs.readFileSync('write/to/bar-directory/from-template.js', 'utf8');
         assert.textEqual(body, 'var bar = \'bar\';' + '\n');
       });
