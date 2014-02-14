@@ -248,12 +248,12 @@ describe('yeoman.generators.Base', function () {
 
       it('process underscode templates in destination filename', function () {
         var body = fs.readFileSync('fooooooo-template.js', 'utf8');
-        assert.textEqual(body, 'var fooooooo = \'fooooooo\';' + '\n');
+        assert.textEqual(body, 'var fooooooo = \'fooooooo\';\n');
       });
 
       it('process underscore templates in destination path', function () {
         var body = fs.readFileSync('write/to/bar-directory/from-template.js', 'utf8');
-        assert.textEqual(body, 'var bar = \'bar\';' + '\n');
+        assert.textEqual(body, 'var bar = \'sbar\';\n');
       });
 
       it('should keep file mode', function () {
