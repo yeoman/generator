@@ -60,6 +60,32 @@ describe('yeoman.generator.lib.actions.wiring', function () {
     assert.equal(res, res2);
   });
 
+  it('appendFiles should work with css file', function () {
+    var html = '<html><head></head></html>';
+    var res = wiring.appendFiles(html, 'css', 'out/file.css', ['in/file1.css', 'in/file2.css']);
+    var fixture = fs.readFileSync(path.join(this.fixtures, 'css_block.html'),
+                                  'utf-8').trim();
+
+    assert.textEqual(res, fixture);
+  });
+
+  it('appendFiles should work with attributes params', function () {
+    var html = '<html><body></body></html>';
+    var res = wiring.appendFiles({
+      html: html,
+      fileType: 'js',
+      optimizedPath: 'out/file.js',
+      sourceFileList: ['in/file1.js', 'in/file2.js'],
+      attrs: {
+        "data-test": "my-attr"
+      }
+    });
+    var fixture = fs.readFileSync(path.join(this.fixtures, 'js_block_with_attr.html'),
+                                  'utf-8').trim();
+
+    assert.textEqual(res, fixture);
+  });
+
   it('should append content in the right place', function () {
     var html = '<html><body><section><span></span></section></body></html>';
     var expected = '<html><body><section><span></span>TEST</section></body></html>';
@@ -116,5 +142,60 @@ describe('yeoman.generator.lib.actions.wiring', function () {
     assert.equal(actual, expected);
 
     fs.writeFileSync(filepath, html, 'utf-8');
+  });
+
+  it('should append scripts', function () {
+    var html = '<html><body></body></html>';
+    var res = wiring.appendScripts(html, 'out/file.js', ['in/file1.js', 'in/file2.js']);
+    var fixture = fs.readFileSync(path.join(this.fixtures, 'js_block.html'),
+                                  'utf-8').trim();
+
+    assert.textEqual(res, fixture);
+
+  });
+
+  it('should remove script', function () {
+    var withScript = '<html><body><script src="file1.js"></script></body></html>';
+    var html = '<html><body></body></html>';
+
+    var res = wiring.removeScript(withScript, 'file1.js');
+
+    assert.textEqual(res, html);
+  });
+
+  it('should append styles', function () {
+    var html = '<html><head></head></html>';
+    var res = wiring.appendStyles(html, 'out/file.css', ['in/file1.css', 'in/file2.css']);
+    var fixture = fs.readFileSync(path.join(this.fixtures, 'css_block.html'),
+                                  'utf-8').trim();
+
+    assert.textEqual(res, fixture);
+  });
+
+  it('should remove style', function () {
+    var withStyle = '<html><head><link rel="stylesheet" href="file1.css"></head></html>';
+    var html = '<html><head></head></html>';
+
+    var res = wiring.removeStyle(withStyle, 'file1.css');
+
+    assert.textEqual(res, html);
+  });
+
+  it('should append scripts directory', function() {
+    var html = '<html><body></body></html>';
+    var res = wiring.appendScriptsDir(html, 'out/file.js', path.join(__dirname, 'fixtures', 'dir-fixtures'));
+    var fixture = fs.readFileSync(path.join(this.fixtures, 'js_block_dir.html'),
+                                  'utf-8').trim();
+
+    assert.textEqual(res, fixture);
+  });
+
+  it('should append styles directory', function() {
+    var html = '<html><head></head></html>';
+    var res = wiring.appendStylesDir(html, 'out/file.css', path.join(__dirname, 'fixtures', 'dir-css-fixtures'));
+    var fixture = fs.readFileSync(path.join(this.fixtures, 'css_block_dir.html'),
+                                  'utf-8').trim();
+
+    assert.textEqual(res, fixture);
   });
 });
