@@ -1,15 +1,16 @@
-
+/*global describe, before, after, it, afterEach, beforeEach */
+'use strict';
 var path    = require('path');
 var helpers = require('../..').test;
 
-describe('Backbone generator test', function() {
+describe('Backbone generator test', function () {
   before(helpers.before(path.join(__dirname, './temp')));
 
-  it('runs sucessfully', function(done) {
+  it('runs sucessfully', function (done) {
     helpers.runGenerator('backbone', done);
   });
 
-  it('creates expected files', function() {
+  it('creates expected files', function () {
    
     helpers.assertFile('app/scripts/models');
   
@@ -75,11 +76,11 @@ describe('Backbone generator test', function() {
   
   });
 
-  it('runs sucessfully with --coffee as argument', function(done) {
-    helpers.runGenerator('backbone', {coffee: true} ,done);
+  it('runs sucessfully with --coffee as argument', function (done) {
+    helpers.runGenerator('backbone', { coffee: true }, done);
   });
 
-  it('creates expected files when run with --coffee as argument', function(){
+  it('creates expected files when run with --coffee as argument', function () {
     helpers.assertFile('app/scripts/main.coffee');
 
     helpers.assertFile('app/scripts/routes/application-router.coffee');
@@ -91,11 +92,11 @@ describe('Backbone generator test', function() {
     helpers.assertFile('app/scripts/collections/application-collection.coffee');
   });
 
-  it('runs successfully with --test-framework as argument', function(done) {
-    helpers.runGenerator('backbone', {'test-framework': 'jasmine'} ,done);
+  it('runs successfully with --test-framework as argument', function (done) {
+    helpers.runGenerator('backbone', { 'test-framework': 'jasmine' }, done);
   });
 
-  it('creates jasmine files when run with --test-framework',function(){
+  it('creates jasmine files when run with --test-framework', function () {
     helpers.assertFile('test/runner/headless.js');
 
     helpers.assertFile('test/runner/html.js');

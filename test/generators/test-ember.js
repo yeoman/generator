@@ -1,15 +1,16 @@
-
+/*global describe, before, after, it, afterEach, beforeEach */
+'use strict';
 var path    = require('path');
 var helpers = require('../..').test;
 
-describe('Ember generator test', function() {
+describe('Ember generator test', function () {
   before(helpers.before(path.join(__dirname, './temp')));
 
-  it('runs sucessfully', function(done) {
+  it('runs sucessfully', function (done) {
     helpers.runGenerator('ember', done);
   });
 
-  it('creates expected files', function() {
+  it('creates expected files', function () {
    
     helpers.assertFile('app/scripts/models');
   

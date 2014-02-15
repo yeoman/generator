@@ -1,8 +1,8 @@
-/*global describe before it */
+/*global describe, before, after, it, afterEach, beforeEach */
+'use strict';
 var path = require('path');
 var helpers = require('../..').test;
 var generators = require('../..');
-
 
 describe('Angular generator test', function () {
   // cleanup the temp dir and cd into it

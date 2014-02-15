@@ -14,5 +14,6 @@
   "trailing": true,
   "smarttabs": true,
   "indent": 2,
-  "quotmark": "single"
+  "quotmark": "single",
+  "scripturl": true
 }
