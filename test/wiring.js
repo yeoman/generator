@@ -77,7 +77,7 @@ describe('yeoman.generator.lib.actions.wiring', function () {
       optimizedPath: 'out/file.js',
       sourceFileList: ['in/file1.js', 'in/file2.js'],
       attrs: {
-        "data-test": "my-attr"
+        'data-test': 'my-attr'
       }
     });
     var fixture = fs.readFileSync(path.join(this.fixtures, 'js_block_with_attr.html'),
@@ -181,7 +181,7 @@ describe('yeoman.generator.lib.actions.wiring', function () {
     assert.textEqual(res, html);
   });
 
-  it('should append scripts directory', function() {
+  it('should append scripts directory', function () {
     var html = '<html><body></body></html>';
     var res = wiring.appendScriptsDir(html, 'out/file.js', path.join(__dirname, 'fixtures', 'dir-fixtures'));
     var fixture = fs.readFileSync(path.join(this.fixtures, 'js_block_dir.html'),
@@ -190,7 +190,7 @@ describe('yeoman.generator.lib.actions.wiring', function () {
     assert.textEqual(res, fixture);
   });
 
-  it('should append styles directory', function() {
+  it('should append styles directory', function () {
     var html = '<html><head></head></html>';
     var res = wiring.appendStylesDir(html, 'out/file.css', path.join(__dirname, 'fixtures', 'dir-css-fixtures'));
     var fixture = fs.readFileSync(path.join(this.fixtures, 'css_block_dir.html'),

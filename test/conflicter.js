@@ -143,7 +143,7 @@ describe('Conflicter', function () {
         assert.equal(status, 'force');
         done();
       });
-      inquirer.readline.emit("line", "y");
+      inquirer.readline.emit('line', 'y');
     });
 
     it('conflict status skip', function (done) {
@@ -151,7 +151,7 @@ describe('Conflicter', function () {
         assert.equal(status, 'skip');
         done();
       });
-      inquirer.readline.emit("line", "n");
+      inquirer.readline.emit('line', 'n');
     });
 
     it('conflict status force all', function (done) {
@@ -159,7 +159,7 @@ describe('Conflicter', function () {
         assert.equal(status, 'force');
         done();
       });
-      inquirer.readline.emit("line", "a");
+      inquirer.readline.emit('line', 'a');
     });
 
     it('conflict status show diff', function (done) {
@@ -167,8 +167,8 @@ describe('Conflicter', function () {
         assert.equal(status, 'force');
         done();
       });
-      inquirer.readline.emit("line", "d");
-      inquirer.readline.emit("line", "y");
+      inquirer.readline.emit('line', 'd');
+      inquirer.readline.emit('line', 'y');
     });
 
     it('force conflict status', function (done) {
