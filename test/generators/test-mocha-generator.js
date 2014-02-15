@@ -1,15 +1,16 @@
-
+/*global describe, before, after, it, afterEach, beforeEach */
+'use strict';
 var path    = require('path');
 var helpers = require('../..').test;
 
-describe('Mocha:Generator generator test', function() {
+describe('Mocha:Generator generator test', function () {
   before(helpers.before(path.join(__dirname, './temp')));
 
-  it('runs sucessfully', function(done) {
+  it('runs sucessfully', function (done) {
     helpers.runGenerator('mocha:generator', done);
   });
 
-  it('creates expected files', function() {
+  it('creates expected files', function () {
   
     // Use helpers.assertFile() to help you test the output of your generator
     //
