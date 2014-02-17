@@ -131,6 +131,12 @@ describe('yeoman.test', function () {
         done();
       });
     });
+
+    it('works with a single prompt', function (done) {
+      this.generator.prompt({ name: 'answser', type: 'input' }, function () {
+        done();
+      });
+    });
   });
 
   describe('.before()', function () {
