@@ -21,8 +21,7 @@ gulp.task('test', function (cb) {
 
 gulp.task('static', function () {
   return gulp.src([
-    'test/**/*.js',
-    '!test/fixtures/**/*.js',
+    'test/*.js',
     'lib/**/*.js',
     'benchmark/**/*.js',
     'main.js',

@@ -204,7 +204,7 @@ describe('yeoman.generators.Base', function () {
         this.dummy.template('perm-test.js', 'write/to/perm-test.js');
         this.dummy.template('foo-template.js', 'write/to/from-template.js');
         this.dummy.template('foo-template.js');
-        this.dummy.template('<%=foo%>-template.js');
+        this.dummy.template('<%=foo%>-file.js');
         this.dummy.template('foo-template.js', 'write/to/<%=foo%>-directory/from-template.js', {
           foo: 'bar'
         });
@@ -247,7 +247,7 @@ describe('yeoman.generators.Base', function () {
       });
 
       it('process underscode templates in destination filename', function () {
-        var body = fs.readFileSync('fooooooo-template.js', 'utf8');
+        var body = fs.readFileSync('fooooooo-file.js', 'utf8');
         assert.textEqual(body, 'var fooooooo = \'fooooooo\';\n');
       });
 
