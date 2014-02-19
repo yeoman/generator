@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "proxyquire": "~0.5.1",
-    "sinon": "~1.7.3",
+    "sinon": "~1.8.2",
     "coveralls": "~2.7.1",
     "gulp": "~3.5.2",
     "gulp-mocha": "~0.4.1",

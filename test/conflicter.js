@@ -5,11 +5,12 @@ var events = require('events');
 var assert = require('assert');
 var Conflicter = require('../lib/util/conflicter');
 var log = require('../lib/util/log')();
+var inquirer = require('./helpers/inquirer');
 
 describe('Conflicter', function () {
   beforeEach(function () {
     var mockAdapter = {
-      prompt: function () {},
+      prompt: inquirer.prompt,
       diff: function () {},
       log: log
     };
@@ -22,9 +23,37 @@ describe('Conflicter', function () {
 
   it('#add()', function () {
     this.conflicter.add(__filename);
-    var conflict = this.conflicter.conflicts.pop();
+    var conflict = this.conflicter.pop();
     assert.deepEqual(conflict.file, __filename);
     assert.deepEqual(conflict.content, fs.readFileSync(__filename, 'utf8'));
+  });
+
+  it('#pop()', function () {
+    this.conflicter.add({
+      file: 'foo.js',
+      content: 'var foo = "foo";\n'
+    });
+    this.conflicter.add({
+      file: 'boo.js',
+      content: 'var boo = "boo";\n'
+    });
+    var conflict = this.conflicter.pop();
+    assert.deepEqual(conflict.file, 'boo.js');
+    assert.deepEqual(conflict.content, 'var boo = "boo";\n');
+  });
+
+  it('#shift()', function () {
+    this.conflicter.add({
+      file: 'foo.js',
+      content: 'var foo = "foo";\n'
+    });
+    this.conflicter.add({
+      file: 'boo.js',
+      content: 'var boo = "boo";\n'
+    });
+    var conflict = this.conflicter.shift();
+    assert.deepEqual(conflict.file, 'foo.js');
+    assert.deepEqual(conflict.content, 'var foo = "foo";\n');
   });
 
   describe('#resolve()', function () {
@@ -87,8 +116,14 @@ describe('Conflicter', function () {
     });
   });
 
-  describe.skip('#collision()', function () {
+  describe('#collision()', function () {
+    
     var me = fs.readFileSync(__filename, 'utf8');
+
+    afterEach(function () {
+      delete this.conflicter.force;
+    });
+
     it('identical status', function (done) {
       this.conflicter.collision(__filename, me, function (status) {
         assert.equal(status, 'identical');
@@ -103,7 +138,41 @@ describe('Conflicter', function () {
       });
     });
 
-    it('conflict status', function (done) {
+    it('conflict status force', function (done) {
+      this.conflicter.collision(__filename, '', function (status) {
+        assert.equal(status, 'force');
+        done();
+      });
+      inquirer.readline.emit('line', 'y');
+    });
+
+    it('conflict status skip', function (done) {
+      this.conflicter.collision(__filename, '', function (status) {
+        assert.equal(status, 'skip');
+        done();
+      });
+      inquirer.readline.emit('line', 'n');
+    });
+
+    it('conflict status force all', function (done) {
+      this.conflicter.collision(__filename, '', function (status) {
+        assert.equal(status, 'force');
+        done();
+      });
+      inquirer.readline.emit('line', 'a');
+    });
+
+    it('conflict status show diff', function (done) {
+      this.conflicter.collision(__filename, '', function (status) {
+        assert.equal(status, 'force');
+        done();
+      });
+      inquirer.readline.emit('line', 'd');
+      inquirer.readline.emit('line', 'y');
+    });
+
+    it('force conflict status', function (done) {
+      this.conflicter.force = true;
       this.conflicter.collision(__filename, '', function (status) {
         assert.equal(status, 'force');
         done();
