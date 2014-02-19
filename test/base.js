@@ -3,6 +3,11 @@
 var fs = require('fs');
 var path = require('path');
 var sinon = require('sinon');
+var mockery = require('mockery');
+mockery.enable({
+  warnOnReplace: false,
+  warnOnUnregistered: false
+});
 var generators = require('..');
 var yo = generators;
 var helpers = generators.test;
@@ -387,6 +392,82 @@ describe('yeoman.generators.Base', function () {
     it('return the value for the option name, doing lookup in options and Grunt config', function () {
       var name = this.dummy.defaultFor('something');
       assert.equal(name, 'else');
+    });
+  });
+
+  describe('#composeWith()', function () {
+    beforeEach(function () {
+      this.dummy = new this.Dummy([], {
+        resolved: 'unknown',
+        namespace: 'dummy',
+        env: this.env,
+        'skip-install': true
+      });
+      this.spy = sinon.spy();
+      this.GenCompose = yo.generators.Base.extend({ exec: this.spy });
+      this.env.registerStub(this.GenCompose, 'composed:gen');
+    });
+
+    it('runs the composed generators', function (done) {
+      this.dummy.composeWith('composed:gen');
+      var runSpy = sinon.spy(this.dummy, 'run');
+      // I use a setTimeout here just to make sure composeWith() doesn't run the generator
+      setTimeout(function () {
+        this.dummy.run(function () {
+          assert(this.spy.calledAfter(runSpy));
+          done();
+        }.bind(this));
+      }.bind(this), 100);
+    });
+
+    it('pass options and arguments to the composed generators', function (done) {
+      this.dummy.composeWith('composed:gen', {
+        options: { foo: 'bar', 'skip-install': true },
+        arguments: ['foo']
+      });
+      this.dummy.run(function () {
+        assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
+        assert.deepEqual(this.spy.firstCall.thisValue.args, ['foo']);
+        done();
+      }.bind(this));
+    });
+
+    describe('when passing a local path to a generator', function () {
+      beforeEach(function () {
+        this.spy = sinon.spy();
+        this.stubPath = path.join(__dirname, 'generator-dumb/main.js');
+        this.LocalDummy = yo.generators.Base.extend({ exec: this.spy });
+        mockery.registerMock(this.stubPath, this.LocalDummy);
+      });
+
+      it('runs the composed generator', function (done) {
+        this.dummy.composeWith('dumb', {}, { local: this.stubPath });
+        this.dummy.run(function () {
+          assert(this.LocalDummy.prototype.exec.called);
+          done();
+        }.bind(this));
+      });
+
+      it('pass options and arguments to the composed generators', function (done) {
+        this.dummy.composeWith('dumb', {
+          options: { foo: 'bar', 'skip-install': true },
+          arguments: ['foo']
+        }, { local: this.stubPath });
+        this.dummy.run(function () {
+          assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
+          assert.deepEqual(this.spy.firstCall.thisValue.args, ['foo']);
+          done();
+        }.bind(this));
+      });
+
+      it('sets correct metadata on the Generator constructor', function (done) {
+        this.dummy.composeWith('dumb', {}, { local: this.stubPath });
+        this.dummy.run(function () {
+          assert.equal(this.spy.firstCall.thisValue.constructor.namespace, 'dumb');
+          assert.equal(this.spy.firstCall.thisValue.constructor.resolved, this.stubPath);
+          done();
+        }.bind(this));
+      });
     });
   });
 
