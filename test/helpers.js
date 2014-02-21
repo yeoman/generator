@@ -5,6 +5,7 @@ var assert = require('assert');
 var sinon = require('sinon');
 var yeoman = require('..');
 var helpers = yeoman.test;
+var RunContext = require('../lib/test/run-context');
 
 describe('yeoman.test', function () {
   'use strict';
@@ -131,6 +132,12 @@ describe('yeoman.test', function () {
         done();
       });
     });
+
+    it('works with a single prompt', function (done) {
+      this.generator.prompt({ name: 'answser', type: 'input' }, function () {
+        done();
+      });
+    });
   });
 
   describe('.before()', function () {
@@ -144,6 +151,12 @@ describe('yeoman.test', function () {
         done();
       });
       helpers.before('dir');
+    });
+  });
+
+  describe('.run()', function () {
+    it('return a RunContext object', function () {
+      assert(helpers.run(helpers.createDummyGenerator()) instanceof RunContext);
     });
   });
 });
