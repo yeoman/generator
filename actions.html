@@ -62,7 +62,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line17">line 17</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line15">line 15</a>
     </li></ul></dd>
     
     
@@ -107,8 +107,9 @@
         <p>Bulk copy
 https://github.com/yeoman/generator/pull/359
 https://github.com/yeoman/generator/issues/350</p>
-<p>An optimized copy method for larger file trees.  Does not do
-full conflicter checks, only check ir root directory is not empty.</p>
+<p>A copy method skiping templating and conflict checking. It will allow copying
+a large amount of files without causing too much recursion errors. You should
+never use this method, unless there's no other solution.</p>
     </div>
     
 
@@ -158,7 +159,7 @@ full conflicter checks, only check ir root directory is not empty.</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Source file to copy from. Relative to this.sourceRoot()</p></td>
         </tr>
 	
 	
@@ -181,7 +182,7 @@ full conflicter checks, only check ir root directory is not empty.</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Destination file to write to. Relative to this.destinationRoot()</p></td>
         </tr>
 	
 	
@@ -235,7 +236,7 @@ full conflicter checks, only check ir root directory is not empty.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line137">line 137</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line136">line 136</a>
     </li></ul></dd>
     
     
@@ -272,6 +273,9 @@ full conflicter checks, only check ir root directory is not empty.</p>
     
     <div class="description">
         <p>Copies recursively the files from source directory to root directory.</p>
+<p>A copy method skiping templating and conflict checking. It will allow copying
+a large amount of files without causing too much recursion errors. You should
+never use this method, unless there's no other solution.</p>
     </div>
     
 
@@ -321,7 +325,7 @@ full conflicter checks, only check ir root directory is not empty.</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Source directory to copy from. Relative to this.sourceRoot()</p></td>
         </tr>
 	
 	
@@ -344,7 +348,7 @@ full conflicter checks, only check ir root directory is not empty.</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Directory to copy the source files into.Relative to this.destinationRoot().</p></td>
         </tr>
 	
 	
@@ -398,7 +402,7 @@ full conflicter checks, only check ir root directory is not empty.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line354">line 354</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line371">line 371</a>
     </li></ul></dd>
     
     
@@ -468,7 +472,7 @@ full conflicter checks, only check ir root directory is not empty.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line24">line 24</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line22">line 22</a>
     </li></ul></dd>
     
     
@@ -736,7 +740,7 @@ it does:</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Source file to copy from. Relative to this.sourceRoot()</p></td>
         </tr>
 	
 	
@@ -759,7 +763,7 @@ it does:</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Destination file to write to. Relative to this.destinationRoot()</p></td>
         </tr>
 	
 	
@@ -813,7 +817,7 @@ it does:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line81">line 81</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line79">line 79</a>
     </li></ul></dd>
     
     
@@ -899,7 +903,7 @@ it does:</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Source directory to copy from. Relative to this.sourceRoot()</p></td>
         </tr>
 	
 	
@@ -922,7 +926,7 @@ it does:</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Directory to copy the source files into. Relative to this.destinationRoot().</p></td>
         </tr>
 	
 	
@@ -976,7 +980,7 @@ it does:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line342">line 342</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line355">line 355</a>
     </li></ul></dd>
     
     
@@ -1004,7 +1008,7 @@ it does:</p>
         
             
 <dt>
-    <h4 class="name" id="engine"><span class="type-signature">&lt;static> </span>engine<span class="signature">(body, data)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="engine"><span class="type-signature">&lt;static> </span>engine<span class="signature">(body, data, options)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1015,6 +1019,7 @@ it does:</p>
         <p>The engine method is the function used whenever a template needs to be rendered.</p>
 <p>It uses the configured engine (default: underscore) to render the <code>body</code>
 template with the provided <code>data</code>.</p>
+<p>use options to pass paramters to engine (like _.templateSettings)</p>
     </div>
     
 
@@ -1091,6 +1096,29 @@ template with the provided <code>data</code>.</p>
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
 	</tbody>
 </table>
     
@@ -1118,7 +1146,7 @@ template with the provided <code>data</code>.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line297">line 297</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line310">line 310</a>
     </li></ul></dd>
     
     
@@ -1146,7 +1174,7 @@ template with the provided <code>data</code>.</p>
         
             
 <dt>
-    <h4 class="name" id="read"><span class="type-signature">&lt;static> </span>read<span class="signature">(filepath, encoding)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="read"><span class="type-signature">&lt;static> </span>read<span class="signature">(filepath, <span class="optional">encoding</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1181,7 +1209,11 @@ encoding or null. Non absolute path are prefixed by the source root.</p>
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
 		
+		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -1206,7 +1238,19 @@ encoding or null. Non absolute path are prefixed by the source root.</p>
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last"></td>
@@ -1229,10 +1273,26 @@ encoding or null. Non absolute path are prefixed by the source root.</p>
             </td>
             
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last"></td>
+                <td class="default">
+                
+                    "utf-8"
+                
+                </td>
+            
+            
+            <td class="description last"><p>Character encoding.</p></td>
         </tr>
 	
 	
@@ -1263,7 +1323,7 @@ encoding or null. Non absolute path are prefixed by the source root.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line171">line 171</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line170">line 170</a>
     </li></ul></dd>
     
     
@@ -1479,7 +1539,7 @@ a new remote fetch of the package on Github.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line392">line 392</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line408">line 408</a>
     </li></ul></dd>
     
     
@@ -1507,7 +1567,7 @@ a new remote fetch of the package on Github.</p>
         
             
 <dt>
-    <h4 class="name" id="template"><span class="type-signature">&lt;static> </span>template<span class="signature">(source, destination, data)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="template"><span class="type-signature">&lt;static> </span>template<span class="signature">(source, destination, data, options)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1519,8 +1579,10 @@ a new remote fetch of the package on Github.</p>
 at the relative destination. If the destination is not given it's assumed
 to be equal to the source relative to destination.</p>
 <p>Use configured engine to render the provided <code>source</code> template at the given
-<code>destination</code>. <code>data</code> is an optional hash to pass to the template, if
-undefined, executes the template in the generator instance context.</p>
+<code>destination</code>. The <code>destination</code> path its a template itself and supports variable
+interpolation. <code>data</code> is an optional hash to pass to the template, if undefined,
+executes the template in the generator instance context.</p>
+<p>use options to pass parameters to engine (like _.templateSettings)</p>
     </div>
     
 
@@ -1570,7 +1632,7 @@ undefined, executes the template in the generator instance context.</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Source file to read from. Relative to this.sourceRoot()</p></td>
         </tr>
 	
 	
@@ -1593,7 +1655,7 @@ undefined, executes the template in the generator instance context.</p>
             
             
             
-            <td class="description last"></td>
+            <td class="description last"><p>Destination file to write to. Relative to this.destinationRoot().</p></td>
         </tr>
 	
 	
@@ -1601,6 +1663,29 @@ undefined, executes the template in the generator instance context.</p>
         <tr>
             
                 <td class="name"><code>data</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>Hash to pass to the template. Leave undefined to use the generator instance context.</p></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
             
             
             <td class="type">
@@ -1647,7 +1732,7 @@ undefined, executes the template in the generator instance context.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line276">line 276</a>
+        <a href="actions.js.html">lib/actions/actions.js</a>, <a href="actions.js.html#line280">line 280</a>
     </li></ul></dd>
     
     
@@ -1675,7 +1760,7 @@ undefined, executes the template in the generator instance context.</p>
         
             
 <dt>
-    <h4 class="name" id="write"><span class="type-signature">&lt;static> </span>write<span class="signature">(filepath, content)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="write"><span class="type-signature">&lt;static> </span>write<span class="signature">(filepath, content, writeFile)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1761,6 +1846,29 @@ to the file write.</p>
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>writeFile</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"><p>An object containing options for the file writing, as shown here: http://nodejs.org/api/fs.html#fs_fs_writefile_filename_data_options_callback</p></td>
+        </tr>
+	
+	
 	</tbody>
 </table>
     
@@ -1829,13 +1937,13 @@ to the file write.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Thu Jan 09 2014 16:00:58 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Wed Feb 26 2014 13:34:13 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>

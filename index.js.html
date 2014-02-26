@@ -26,22 +26,18 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
-var fs = require('fs');
 var util = require('util');
 var path = require('path');
 var events = require('events');
-var spawn = require('child_process').spawn;
 var chalk = require('chalk');
 var _ = require('lodash');
+var GroupedQueue = require('grouped-queue');
 
 var debug = require('debug')('generators:environment');
 
-var Base = require('../base');
 var Store = require('./store');
 var resolver = require('./resolver');
 var TerminalAdapter = require('./adapter');
-
-var win32 = process.platform === 'win32';
 
 /**
  * `Environment` object is responsible of handling the lifecyle and bootstrap
@@ -76,8 +72,13 @@ var Environment = module.exports = function Environment(args, opts, adapter) {
   this.cwd = this.options.cwd || process.cwd();
   this.store = new Store();
 
+  this.runLoop = new GroupedQueue(['initialize', 'prompt', 'configure', 'default',
+    'write', 'conflicts', 'install', 'end']);
+
   this.lookups = ['.', 'generators', 'lib/generators'];
   this.aliases = [];
+
+  this.alias(/^([^:]+)$/, '$1:app');
 };
 
 util.inherits(Environment, events.EventEmitter);
@@ -156,7 +157,7 @@ Environment.prototype.help = function help(name) {
  * provided namespace, or a default namespace format if none if available.
  *
  * @param  {String} name      - Filepath to the a generator or a NPM module name
- * @param  {String} namespace - Namespace under which register the generator (optionnal)
+ * @param  {String} namespace - Namespace under which register the generator (optional)
  * @return {this}
  */
 
@@ -258,11 +259,6 @@ Environment.prototype.create = function create(namespace, options) {
 
   var Generator = this.get(namespace);
 
-  var args = options.arguments || options.args || _.clone(this.arguments);
-  args = Array.isArray(args) ? args : args.split(' ');
-
-  var opts = options.options || _.clone(this.options);
-
   if (!Generator) {
     return this.error(
       new Error(
@@ -274,10 +270,29 @@ Environment.prototype.create = function create(namespace, options) {
     );
   }
 
+  return this.instantiate(Generator, options);
+};
+
+/**
+ * Instantiate a Generator with metadatas
+ *
+ * @param {String}       namespace
+ * @param {Object}       options
+ * @param {Array|String} options.arguments  Arguments to pass the instance
+ * @param {Object}       options.options    Options to pass the instance
+ */
+
+Environment.prototype.instantiate = function instantiate(Generator, options) {
+  options = options || {};
+
+  var args = options.arguments || options.args || _.clone(this.arguments);
+  args = Array.isArray(args) ? args : args.split(' ');
+
+  var opts = options.options || _.clone(this.options);
+
   opts.env = this;
-  opts.name = name;
-  opts.resolved = Generator.resolved;
-  opts.namespace = namespace;
+  opts.resolved = Generator.resolved || 'unknown';
+  opts.namespace = Generator.namespace;
   return new Generator(args, opts);
 };
 
@@ -323,10 +338,6 @@ Environment.prototype.run = function run(args, options, done) {
     return generator;
   }
 
-  if (typeof done === 'function') {
-    generator.on('end', done);
-  }
-
   if (options.help) {
     return console.log(generator.help());
   }
@@ -341,7 +352,7 @@ Environment.prototype.run = function run(args, options, done) {
   generator.on('end', this.emit.bind(this, name + ':end'));
   generator.on('end', this.emit.bind(this, 'generators:end'));
 
-  return generator.run();
+  return generator.run(done);
 };
 
 /**
@@ -422,6 +433,10 @@ Environment.enforceUpdate = function (env) {
   if (!env.adapter) {
     env.adapter = new TerminalAdapter();
   }
+  if (!env.runLoop) {
+    env.runLoop = new GroupedQueue(['initialize', 'prompt', 'configure', 'default',
+    'write', 'conflicts', 'install', 'end']);
+  }
   return env;
 };
 </code></pre>
@@ -434,13 +449,13 @@ Environment.enforceUpdate = function (env) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Thu Jan 09 2014 16:00:58 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Wed Feb 26 2014 13:34:13 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>

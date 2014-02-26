@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/test/run-context.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: lib/test/run-context.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+var _ = require('lodash');
+var yeoman = require('../..');
+var util = require('util');
+var EventEmitter = require('events').EventEmitter;
+var helpers = require('./helpers');
+
+/**
+ * This class provide a run context object to façade the complexity involved in setting
+ * up a generator for testing.
+ * @constructor
+ * @param  {String|Function} Generator - Namespace or generator constructor. If the later
+ *                                       is provided, then namespace is assumed to be
+ *                                       'gen:test' in all cases.
+ * @return {this}
+ */
+
+var RunContext = module.exports = function RunContext(Generator) {
+  var namespace;
+
+  this._asyncHolds = 0;
+  this.env = yeoman();
+  this.args = [];
+  this.options = {};
+
+  if (_.isString(Generator)) {
+    namespace = this.env.namespace(Generator);
+    this.env.register(Generator);
+  } else {
+    namespace = 'gen:test';
+    this.env.registerStub(Generator, namespace);
+  }
+
+  this.generator = this.env.create(namespace);
+
+  setTimeout(this._onReady.bind(this), 0);
+};
+
+util.inherits(RunContext, EventEmitter);
+
+/**
+ * Hold the execution until the returned callback is triggered
+ * @private
+ * @return {Function} Callback to notify the normal execution can resume
+ */
+
+RunContext.prototype._holdExec = function () {
+  this._asyncHolds++;
+  return function () {
+    this._asyncHolds--;
+    this._onReady();
+  }.bind(this);
+};
+
+/**
+ * Method called when the context is ready to run the generator.
+ * @private
+ */
+
+RunContext.prototype._onReady = function () {
+  if (this._asyncHolds !== 0) return;
+  this.generator.args = this.args;
+  this.generator.arguments = this.args;
+  this.generator.options = _.extend({
+    'skip-install': true
+  }, this.options);
+  this.generator.run();
+};
+
+/**
+ * Clean the provided directory, then change directory into it.
+ * @param  {String} dirPath - Directory path (relative to CWD). Prefer passing an absolute
+ *                            file path for predictable results.
+ * @return {this}
+ */
+
+RunContext.prototype.inDir = function (dirPath) {
+  var release = this._holdExec();
+  helpers.testDirectory(dirPath, release);
+  return this;
+};
+
+/**
+ * Provide arguments to the run context
+ * @param  {String|Array} args - command line arguments as Array or space separated string
+ * @return {this}
+ */
+
+RunContext.prototype.withArguments = function (args) {
+  this.args = _.isString(args) ? args.split(' ') : args;
+  return this;
+};
+
+/**
+ * Provide options to the run context
+ * @param  {Object} options - command line options (e.g. `--opt-one=foo`)
+ * @return {this}
+ */
+
+RunContext.prototype.withOptions = function (options) {
+  this.options = options;
+  return this;
+};
+
+/**
+ * Mock the prompt with dummy answers
+ * @param  {Object} answers - Answers to the prompt questions
+ * @return {this}
+ */
+
+RunContext.prototype.withPrompt = function (answers) {
+  helpers.mockPrompt(this.generator, answers);
+  return this;
+};
+
+/**
+ * Add a callback to be called after the generator has runned.
+ * @param  {Function} callback
+ * @return {this}
+ */
+
+RunContext.prototype.onEnd = function (cb) {
+  this.generator.once('end', cb);
+  return this;
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Wed Feb 26 2014 13:34:13 GMT-0500 (Est)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -28,11 +28,9 @@
             <pre class="prettyprint source linenums"><code>'use strict';
 var fs = require('fs');
 var path = require('path');
-var events = require('events');
 var mkdirp = require('mkdirp');
 var isBinaryFile = require('isbinaryfile');
 var rimraf = require('rimraf');
-var async = require('async');
 var iconv = require('iconv-lite');
 var chalk = require('chalk');
 var file = require('file-utils');
@@ -100,8 +98,8 @@ actions._prepCopy = function _prepCopy(source, destination, process) {
  * `copy`, `template` (only when could be applied/required by legacy code),
  * `write` and alike consider.
  *
- * @param {String} source
- * @param {String} destination
+ * @param {String} source      Source file to copy from. Relative to this.sourceRoot()
+ * @param {String} destination Destination file to write to. Relative to this.destinationRoot()
  * @param {Function} process
  */
 
@@ -153,11 +151,12 @@ actions.copy = function copy(source, destination, process) {
  * https://github.com/yeoman/generator/pull/359
  * https://github.com/yeoman/generator/issues/350
  *
- * An optimized copy method for larger file trees.  Does not do
- * full conflicter checks, only check ir root directory is not empty.
+ * A copy method skiping templating and conflict checking. It will allow copying
+ * a large amount of files without causing too much recursion errors. You should
+ * never use this method, unless there's no other solution.
  *
- * @param {String} source
- * @param {String} destination
+ * @param {String} source      Source file to copy from. Relative to this.sourceRoot()
+ * @param {String} destination Destination file to write to. Relative to this.destinationRoot()
  * @param {Function} process
  */
 
@@ -192,7 +191,7 @@ actions.bulkCopy = function bulkCopy(source, destination, process) {
  * encoding or null. Non absolute path are prefixed by the source root.
  *
  * @param {String} filepath
- * @param {String} encoding
+ * @param {String} [encoding="utf-8"] Character encoding.
  */
 
 actions.read = function read(filepath, encoding) {
@@ -228,9 +227,10 @@ actions.read = function read(filepath, encoding) {
  *
  * @param {String} filepath
  * @param {String} content
+ * @param {Object} writeFile An object containing options for the file writing, as shown here: http://nodejs.org/api/fs.html#fs_fs_writefile_filename_data_options_callback
  */
 
-actions.write = function write(filepath, content) {
+actions.write = function write(filepath, content, writeFile) {
   this.checkForCollision(filepath, content, function (err, config) {
     if (err) {
       config.callback(err);
@@ -241,7 +241,7 @@ actions.write = function write(filepath, content) {
     // actual write
     if (/force|create/.test(config.status)) {
       mkdirp.sync(path.dirname(filepath));
-      fs.writeFileSync(filepath, content);
+      fs.writeFileSync(filepath, content, writeFile);
     }
 
     config.callback();
@@ -292,22 +292,32 @@ actions.checkForCollision = function checkForCollision(filepath, content, cb) {
  * to be equal to the source relative to destination.
  *
  * Use configured engine to render the provided `source` template at the given
- * `destination`. `data` is an optional hash to pass to the template, if
- * undefined, executes the template in the generator instance context.
+ * `destination`. The `destination` path its a template itself and supports variable
+ * interpolation. `data` is an optional hash to pass to the template, if undefined,
+ * executes the template in the generator instance context.
  *
- * @param {String} source
- * @param {String} destination
- * @param {Object} data
+ * use options to pass parameters to engine (like _.templateSettings)
+ *
+ * @param {String} source      Source file to read from. Relative to this.sourceRoot()
+ * @param {String} destination Destination file to write to. Relative to this.destinationRoot().
+ * @param {Object} data        Hash to pass to the template. Leave undefined to use the generator instance context.
+ * @param {Object} options
  */
 
-actions.template = function template(source, destination, data) {
+actions.template = function template(source, destination, data, options) {
   data = data || this;
-  destination = destination || source;
+  destination = this.engine(destination || source, data, options);
+
+  if (!this.isPathAbsolute(source)) {
+    source = path.join(this.sourceRoot(), this.engine(source, data, options));
+  }
 
   var body = this.read(source, 'utf8');
-  body = this.engine(body, data);
+  var writeFile = { mode: fs.statSync(source).mode };
 
-  this.write(destination, body);
+  body = this.engine(body, data, options);
+
+  this.write(destination, body, writeFile);
   return this;
 };
 
@@ -317,17 +327,20 @@ actions.template = function template(source, destination, data) {
  * It uses the configured engine (default: underscore) to render the `body`
  * template with the provided `data`.
  *
+ * use options to pass paramters to engine (like _.templateSettings)
+ *
  * @param {String} body
  * @param {Object} data
+ * @param {Object} options
  */
 
-actions.engine = function engine(body, data) {
+actions.engine = function engine(body, data, options) {
   if (!this._engine) {
     throw new Error('Trying to render template without valid engine.');
   }
 
   return this._engine.detect &amp;&amp; this._engine.detect(body) ?
-    this._engine(body, data) :
+    this._engine(body, data, options) :
     body;
 };
 
@@ -361,8 +374,8 @@ actions._directory = function _directory(source, destination, process, bulk) {
 /**
  * Copies recursively the files from source directory to root directory.
  *
- * @param {String} source
- * @param {String} destination
+ * @param {String} source      Source directory to copy from. Relative to this.sourceRoot()
+ * @param {String} destination Directory to copy the source files into. Relative to this.destinationRoot().
  * @param {Function} process
  */
 
@@ -373,13 +386,16 @@ actions.directory = function directory(source, destination, process) {
 /**
  * Copies recursively the files from source directory to root directory.
  *
- * @param {String} source
- * @param {String} destination
+ * A copy method skiping templating and conflict checking. It will allow copying
+ * a large amount of files without causing too much recursion errors. You should
+ * never use this method, unless there's no other solution.
+ *
+ * @param {String} source      Source directory to copy from. Relative to this.sourceRoot()
+ * @param {String} destination Directory to copy the source files into.Relative to this.destinationRoot().
  * @param {Function} process
  */
 
 actions.bulkDirectory = function directory(source, destination, process) {
-  var self = this;
   // Join the source here because the conflicter will not run
   // until next tick, which resets the source root on remote
   // bulkCopy operations
@@ -531,13 +547,13 @@ actions.remote = function (username, repo, branch, cb, refresh) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Thu Jan 09 2014 16:00:58 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Wed Feb 26 2014 13:34:13 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>

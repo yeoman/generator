@@ -30,6 +30,7 @@ var fs = require('fs');
 var util = require('util');
 var path = require('path');
 var events = require('events');
+var assert = require('assert');
 var _ = require('lodash');
 var async = require('async');
 var findup = require('findup-sync');
@@ -62,6 +63,7 @@ var fileLogger = { write: noop, warn: noop };
  * @mixes actions/string
  * @mixes actions/user
  * @mixes actions/wiring
+ * @mixes actions/help
  * @mixes nodejs/EventEmitter
  *
  * @param {String|Array} args
@@ -72,7 +74,7 @@ var fileLogger = { write: noop, warn: noop };
  * @property {String}  resolved    - the path to the current generator
  * @property {String}  generatorName
  * @property {String}  description - Used in `--help` output
- * @property {String}  appname     - Application name determine from the CWD folder
+ * @property {String}  appname     - The application name
  * @property {Storage} config      - `.yo-rc` config file manager
  * @property {Object}  src         - File util instance scoped to `sourceRoot`
  * @property {Object}  dest        - File util instance scoped to `destinationRoot`
@@ -80,7 +82,7 @@ var fileLogger = { write: noop, warn: noop };
  *
  * @example
  * var yeoman = require('yeoman-generator');
- * var MyGenerator = yeoman.generators.base.extend({
+ * var MyGenerator = yeoman.generators.Base.extend({
  *   createGruntfile: function() {
  *     this.dest.write('// Grunt file content', 'Gruntfile.js');
  *   }
@@ -99,17 +101,11 @@ var Base = module.exports = function Base(args, options) {
   this.options = options || {};
 
   // checks required paramaters
-  if (!this.options.env) {
-    throw new Error('You must provide the environment object. Use env#create() to create a new generator.');
-  }
-
-  if (!this.options.resolved) {
-    throw new Error('You must provide the resolved path value. Use env#create() to create a new generator.');
-  }
+  assert(this.options.env, 'You must provide the environment object. Use env#create() to create a new generator.');
+  assert(this.options.resolved, 'You must provide the resolved path value. Use env#create() to create a new generator.');
 
   this.env = this.options.env;
   this.resolved = this.options.resolved;
-  this.fallbacks = this.options.generators || this.options.generator || {};
   this.generatorName = this.options.name || '';
 
   require('./env').enforceUpdate(this.env);
@@ -147,8 +143,9 @@ var Base = module.exports = function Base(args, options) {
   this._arguments = [];
   this._options = [];
   this._hooks = [];
+  this._composedWith = [];
   this._conflicts = [];
-  this.appname = path.basename(process.cwd()).replace(/[^\w\s]+?/g, ' ');
+  this.appname = this.determineAppname();
 
   this.option('help', {
     alias: 'h',
@@ -158,13 +155,13 @@ var Base = module.exports = function Base(args, options) {
   // Set the file-utils environments
   // Set logger as a noop as logging is handled by the yeoman conflicter
   this.src = file.createEnv({
-    base: this.sourceRoot(),
-    dest: this.destinationRoot(),
+    base: this.sourceRoot.bind(this),
+    dest: this.destinationRoot.bind(this),
     logger: fileLogger
   });
   this.dest = file.createEnv({
-    base: this.destinationRoot(),
-    dest: this.sourceRoot(),
+    base: this.destinationRoot.bind(this),
+    dest: this.sourceRoot.bind(this),
     logger: fileLogger
   });
 
@@ -186,6 +183,7 @@ _.extend(Base.prototype, require('./actions/file'));
 _.extend(Base.prototype, require('./actions/install'));
 _.extend(Base.prototype, require('./actions/string'));
 _.extend(Base.prototype, require('./actions/wiring'));
+_.extend(Base.prototype, require('./actions/help'));
 _.extend(Base.prototype, require('./util/common'));
 Base.prototype.user = require('./actions/user');
 Base.prototype.shell = require('shelljs');
@@ -320,8 +318,8 @@ Base.prototype.argument = function argument(name, config) {
  * none is given, the same values used to initialize the invoker are
  * used to initialize the invoked.
  *
- * @param {String|Array} args
- * @param {Function} cb
+ * @param {String|Array} [args]
+ * @param {Function} [cb]
  */
 
 Base.prototype.run = function run(args, cb) {
@@ -335,41 +333,28 @@ Base.prototype.run = function run(args, cb) {
     args = this.args;
   }
 
+  args = _.isString(args) ? args.split(' ') : args;
   cb = cb || function () {};
-
-  var runHooks = function () {
-    self.runHooks(cb);
-  };
 
   var methods = Object.keys(Object.getPrototypeOf(this));
 
-  var resolve = function (method) {
-    var rules = {
-      underscore: method.charAt(0) !== '_',
-      initialize: !/^(constructor|initialize)$/.test(method),
-      valid: function () {
-        return this.underscore &amp;&amp; this.initialize;
-      }
-    };
+  assert(methods.length, 'This Generator is empty. Add at least one method for it to be runned.');
 
-    return function (next) {
-      if (!rules.valid()) {
-        return next();
-      }
+  this.env.runLoop.once('end', function () {
+    self.emit('end');
+    cb();
+  });
 
+  // Ensure a prototype method is candidate to be runned by default
+  function methodIsValid(name) {
+    return name.charAt(0) !== '_' &amp;&amp; name !== 'constructor';
+  }
+
+  function addMethod(method, methodName, queueName) {
+    self.env.runLoop.add(queueName || 'default', function (completed) {
       var done = function (err) {
-        if (err) {
-          self.emit('error', err);
-        }
-
-        // resolve file conflicts after every method completes.
-        self.conflicter.resolve(function (err) {
-          if (err) {
-            return self.emit('error', err);
-          }
-
-          next();
-        });
+        if (err) self.emit('error', err);
+        completed();
       };
 
       var running = false;
@@ -378,19 +363,47 @@ Base.prototype.run = function run(args, cb) {
         return done;
       };
 
-      self.emit(method);
-      self.emit('method', method);
-
-      // Make sure we run the method assigned to the prototype, not an instance value.
-      Object.getPrototypeOf(self)[method].apply(self, args);
+      self.emit(methodName);
+      self.emit('method', methodName);
+      method.apply(self, args);
 
       if (!running) {
         done();
       }
-    };
-  };
+    });
+  }
 
-  async.series(methods.map(resolve), runHooks);
+  function addInQueue(name) {
+    var item = Object.getPrototypeOf(self)[name];
+    var queueName = self.env.runLoop.queueNames.indexOf(name) >= 0 ? name : null;
+
+    // Name points to a function; run it!
+    if (_.isFunction(item)) {
+      return addMethod(item, name, queueName);
+    }
+
+    // Not a queue hash; stop
+    if (!queueName) return;
+
+    // Run each queue items
+    _.each(item, function (method, methodName) {
+      if (!_.isFunction(method)) return;
+      addMethod(method, methodName, queueName);
+    });
+  }
+
+  methods.filter(methodIsValid).forEach(addInQueue);
+
+  // Add the default conflicts handling
+  this.env.runLoop.add('conflicts', function (done) {
+    this.conflicter.resolve(function (err) {
+      if (err) this.emit('error', err);
+      done();
+    }.bind(this));
+  }.bind(this));
+
+  this.runHooks();
+  _.invoke(this._composedWith, 'run');
 
   return this;
 };
@@ -402,26 +415,19 @@ Base.prototype.run = function run(args, cb) {
  */
 
 Base.prototype.runHooks = function runHooks(cb) {
-  var self = this;
-  var hooks = this._hooks;
+  cb = _.isFunction(cb) ? cb : function () {};
 
-  var callback = function (err) {
-    self.emit('end');
-    cb(err);
-  };
-
-  var resolve = function (hook) {
-    var resolved = self.defaultFor(hook.name);
-    var context = hook.as || self.resolved || self.generateName;
-    var options = _.clone(hook.options || self.options);
-    options.args = _.clone(hook.args || self.args);
+  var setupInvoke = function (hook) {
+    var resolved = this.defaultFor(hook.name);
+    var options = _.clone(hook.options || this.options);
+    options.args = _.clone(hook.args || this.args);
 
     return function (next) {
-      self.invoke(resolved + (context ? ':' + context : ''), options, next);
-    };
-  };
+      this.invoke(resolved + (hook.as ? ':' + hook.as : ''), options, next);
+    }.bind(this);
+  }.bind(this);
 
-  async.series(hooks.map(resolve), callback);
+  async.series(this._hooks.map(setupInvoke), cb);
 
   return this;
 };
@@ -438,9 +444,10 @@ Base.prototype.runHooks = function runHooks(cb) {
  *
  * ### Options:
  *
- *   - `as` The context value to use when runing the hooked generator
- *   - `args` The array of positional arguments to init and run the generator with
- *   - `options` An object containing a nested `options` property with the hash of options to use to init and run the generator with
+ *   - `as`      The context value to use when runing the hooked generator
+ *   - `args`    The array of positional arguments to init and run the generator with
+ *   - `options` An object containing a nested `options` property with the hash of options
+ *               to use to init and run the generator with
  *
  * ### Examples:
  *
@@ -466,11 +473,7 @@ Base.prototype.hookFor = function hookFor(name, config) {
   config = config || {};
 
   // enforce use of hookFor during instantiation
-  if (this._running) {
-    return this.emit('error', new Error(
-      'hookFor must be used within the constructor only'
-    ));
-  }
+  assert(!this._running, 'hookFor can only be used inside the constructor function');
 
   // add the corresponding option to this class, so that we output these hooks
   // in help
@@ -496,171 +499,42 @@ Base.prototype.hookFor = function hookFor(name, config) {
  */
 
 Base.prototype.defaultFor = function defaultFor(name) {
-  var config = this.fallbacks;
-
-  if (this.options[name]) {
-    name = this.options[name];
-  } else if (config &amp;&amp; config[name]) {
-    name = config[name];
-  }
-
-  return name;
+  return this.options[name] || name;
 };
 
 /**
- * Generate the default banner for help output, adjusting output to
- * argument type.
+ * Compose this generator with another one.
+ * @param  {String} namespace  The generator namespace to compose with
+ * @param  {Object} options    The options passed to the Generator
+ * @param  {Object} [settings] Settings hash on the composition relation
+ * @param  {string} [settings.local]        Path to a locally stored generator
+ * @param  {String} [settings.link="weak"]  If "strong", the composition will occured
+ *                                          even when the composition is initialized by
+ *                                          the end user
+ * @return {this}
  *
- * Options:
+ * @example &lt;caption>Using a peerDependency generator&lt;/caption>
+ * this.composeWith('bootstrap', { options: { sass: true } });
  *
- *   - `name` Uppercased value to display (only relevant with `String` type)
- *   - `type` String, Number, Object or Array
- *
- * @param {Object} config
+ * @example &lt;caption>Using a direct dependency generator&lt;/caption>
+ * this.composeWith('bootstrap', { options: { sass: true } }, {
+ *   local: require.resolve('generator-bootstrap/app/main.js');
+ * });
  */
 
-Base.prototype.bannerFor = function bannerFor(config) {
-  return config.type === Boolean ? '' :
-    config.type === String ? config.name.toUpperCase() :
-    config.type === Number ? 'N' :
-    config.type === Object ? 'key:value' :
-    config.type === Array ? 'one two three' :
-    '';
-};
-
-/**
- * Tries to get the description from a USAGE file one folder above the
- * source root otherwise uses a default description.
- */
-
-Base.prototype.help = function help() {
-  var filepath = path.join(this.sourceRoot(), '../USAGE');
-  var exists = fs.existsSync(filepath);
-
-  var out = [
-    'Usage:',
-    '  ' + this.usage(),
-    ''
-  ];
-
-  // build options
-  if (this._options.length) {
-    out = out.concat([
-      'Options:',
-      this.optionsHelp(),
-      ''
-    ]);
+Base.prototype.composeWith = function composeWith(namespace, options, settings) {
+  settings = settings || {};
+  var generator;
+  if (settings.local) {
+    var Generator = require(settings.local);
+    Generator.resolved = settings.local;
+    Generator.namespace = namespace;
+    generator = this.env.instantiate(Generator, options);
+  } else {
+    generator = this.env.create(namespace, options);
   }
-
-  // build arguments
-  if (this._arguments.length) {
-    out = out.concat([
-      'Arguments:',
-      this.argumentsHelp(),
-      ''
-    ]);
-  }
-
-  // append USAGE file is any
-  if (exists) {
-    out.push(fs.readFileSync(filepath, 'utf8'));
-  }
-
-  return out.join('\n');
-};
-
-/**
- * Output usage information for this given generator, depending on its arguments,
- * options or hooks.
- */
-
-Base.prototype.usage = function usage() {
-  var options = this._options.length ? '[options]' : '';
-  var name = ' ' + this.options.namespace;
-  var args = '';
-
-  if (this._arguments.length) {
-    args = this._arguments.map(formatArg).join(' ');
-  }
-
-  name = name.replace(/^yeoman:/, '');
-
-  var out = 'yo' + name + ' ' + options + ' ' + args;
-
-  if (this.description) {
-    out += '\n\n' + this.description;
-  }
-
-  return out;
-};
-
-function formatArg(argItem) {
-  var arg = '&lt;' + argItem.name + '>';
-
-  if (!argItem.config.required) {
-    arg = '[' + arg + ']';
-  }
-
-  return arg;
-}
-
-/**
- * Simple setter for custom `description` to append on help output.
- *
- * @param {String} description
- */
-
-Base.prototype.desc = function desc(description) {
-  this.description = description || '';
+  this._composedWith.push(generator);
   return this;
-};
-
-Base.prototype.argumentsHelp = function argumentsHelp() {
-  var rows = this._arguments.map(function (a) {
-    return [
-      '',
-      a.name ? a.name : '',
-      a.config.type ? '# Type: ' + a.config.type.name : '',
-      'Required: ' + a.config.required
-    ];
-  });
-
-  return this.log.table({
-    rows: rows
-  });
-};
-
-/**
- * Returns the list of options in formatted table.
- */
-
-Base.prototype.optionsHelp = function optionsHelp() {
-  var options = this._options.filter(function (el) {
-    return !el.hide;
-  });
-
-  var hookOpts = this._hooks.map(function (hook) {
-    return hook.generator &amp;&amp; hook.generator._options;
-  }).reduce(function (a, b) {
-    a = a.concat(b);
-    return a;
-  }, []).filter(function (opts) {
-    return opts &amp;&amp; opts.name !== 'help';
-  });
-
-  var rows = options.concat(hookOpts).map(function (o) {
-    return [
-      '',
-      o.alias ? '-' + o.alias + ', ' : '',
-      '--' + o.name,
-      o.desc ? '# ' + o.desc : '',
-      o.defaults == null ? '' : 'Default: ' + o.defaults
-    ];
-  });
-
-  return this.log.table({
-    rows: rows
-  });
 };
 
 /**
@@ -702,10 +576,6 @@ Base.prototype.destinationRoot = function (rootPath) {
 
     // Reset the storage
     this._setStorage();
-
-    // Update file helpers path bases
-    this.dest.setBase(this._destinationRoot);
-    this.src.setDestBase(this._destinationRoot);
   }
 
   return this._destinationRoot || process.cwd();
@@ -722,10 +592,6 @@ Base.prototype.destinationRoot = function (rootPath) {
 Base.prototype.sourceRoot = function (rootPath) {
   if (_.isString(rootPath)) {
     this._sourceRoot = path.resolve(rootPath);
-
-    // Update file helpers path bases
-    this.src.setBase(this._sourceRoot);
-    this.dest.setDestBase(this._sourceRoot);
   }
 
   return this._sourceRoot;
@@ -758,6 +624,29 @@ Base.prototype.getCollisionFilter = function () {
 };
 
 /**
+ * Determines the name of the application.
+ *
+ * First checks for name in bower.json.
+ * Then checks for name in package.json.
+ * Finally defaults to the name of the current directory.
+ */
+Base.prototype.determineAppname = function () {
+  var appname;
+
+  try {
+    appname = require(path.join(process.cwd(), 'bower.json')).name;
+  } catch (e) {
+    try {
+      appname = require(path.join(process.cwd(), 'package.json')).name;
+    } catch (e) {
+      appname = path.basename(process.cwd());
+    }
+  }
+
+  return appname.replace(/[^\w\s]+?/g, ' ');
+};
+
+/**
  * Extend this Class to create a new one inherithing this one.
  * Also add a helper __super__ object poiting to the parent prototypes methods
  * @param  {Object} protoProps  Prototype properties (available on the instances)
@@ -775,13 +664,13 @@ Base.extend = require('class-extend').extend;
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Thu Jan 09 2014 16:00:58 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Wed Feb 26 2014 13:34:13 GMT-0500 (Est)
 </footer>
 
 <script> prettyPrint(); </script>
