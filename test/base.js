@@ -417,13 +417,24 @@ describe('yeoman.generators.Base', function () {
     it('runs the composed generators', function (done) {
       this.dummy.composeWith('composed:gen');
       var runSpy = sinon.spy(this.dummy, 'run');
-      // I use a setTimeout here just to make sure composeWith() doesn't run the generator
+      // I use a setTimeout here just to make sure composeWith() doesn't start the
+      // generator before the base one is runned.
       setTimeout(function () {
         this.dummy.run(function () {
           assert(this.spy.calledAfter(runSpy));
           done();
         }.bind(this));
       }.bind(this), 100);
+    });
+
+    it('run the composed generator even if main generator is already running.', function (done) {
+      this.Dummy.prototype.writing = function () {
+        this.composeWith('composed:gen');
+      };
+      this.dummy.run(function () {
+        assert(this.spy.called);
+        done();
+      }.bind(this));
     });
 
     it('pass options and arguments to the composed generators', function (done) {
