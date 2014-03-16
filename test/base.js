@@ -80,6 +80,12 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
+  describe('prototype', function () {
+    it('methods does\'nt conflict with Env#runQueue', function () {
+      assert.notImplement(Base.prototype, this.env.runLoop.queueNames);
+    });
+  });
+
   describe('#appname', function () {
     it('is set to the `determineAppname()` return value', function () {
       assert.equal(this.dummy.appname, this.dummy.determineAppname());
@@ -143,12 +149,12 @@ describe('yeoman.generators.Base', function () {
       this.TestGenerator.prototype.exec2 = sinon.spy();
       this.TestGenerator.prototype.exec3 = sinon.spy();
       this.TestGenerator.prototype._private = sinon.spy();
-      this.TestGenerator.prototype.prompt = {
+      this.TestGenerator.prototype.prompting = {
         m1: sinon.spy(),
         m2: sinon.spy(),
         prop: 'foo'
       };
-      this.TestGenerator.prototype.initialize = sinon.spy();
+      this.TestGenerator.prototype.initializing = sinon.spy();
       this.testGen = new this.TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
@@ -259,15 +265,15 @@ describe('yeoman.generators.Base', function () {
 
     it('run methods in a queue hash', function (done) {
       this.testGen.run(function () {
-        assert(this.TestGenerator.prototype.prompt.m1.calledOnce);
-        assert(this.TestGenerator.prototype.prompt.m2.calledOnce);
+        assert(this.TestGenerator.prototype.prompting.m1.calledOnce);
+        assert(this.TestGenerator.prototype.prompting.m2.calledOnce);
         done();
       }.bind(this));
     });
 
     it('run named queued methods in order', function (done) {
-      var initSpy = this.TestGenerator.prototype.initialize;
-      var promptSpy = this.TestGenerator.prototype.prompt.m1;
+      var initSpy = this.TestGenerator.prototype.initializing;
+      var promptSpy = this.TestGenerator.prototype.prompting.m1;
       this.testGen.run(function () {
         assert(initSpy.calledBefore(promptSpy));
         done();
@@ -275,7 +281,7 @@ describe('yeoman.generators.Base', function () {
     });
 
     it('run queued methods in order even if not in order in prototype', function (done) {
-      var initSpy = this.TestGenerator.prototype.initialize;
+      var initSpy = this.TestGenerator.prototype.initializing;
       var execSpy = this.TestGenerator.prototype.exec;
       this.testGen.run(function () {
         assert(initSpy.calledBefore(execSpy));
