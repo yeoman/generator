@@ -175,4 +175,19 @@ describe('yeoman.assert', function () {
     });
   });
 
+  describe('.notImplement()', function () {
+    beforeEach(function () {
+      this.subject = { foo: noop, bar: noop };
+      this.interfaceSome = ['foo'];
+    });
+
+    it('pass if an object doesn\'t implement an interface', function () {
+      assert.doesNotThrow(yo.assert.notImplement.bind(yo.assert, this.subject, ['stuff']));
+    });
+
+    it('fails if methods are present', function () {
+      assert.throws(yo.assert.notImplement.bind(yo.assert, this.subject, ['foo']));
+    });
+  });
+
 });
