@@ -44,27 +44,27 @@ describe('Generator#user', function () {
       this.shell.exec.restore();
     });
 
-    describe('.username', function () {
-      it('is the username used by git', function () {
-        assert.equal(this.user.git.username, 'Yeoman');
+    describe('.name', function () {
+      it('is the name used by git', function () {
+        assert.equal(this.user.git.name, 'Yeoman');
       });
 
       it('is read-only', function () {
         assert.throws(function () {
-          this.user.git.username = 'bar';
+          this.user.git.name = 'bar';
         });
       });
 
       it('cache the value', function () {
-        this.user.git.username;
-        this.user.git.username;
+        this.user.git.name;
+        this.user.git.name;
         assert.equal(this.shell.exec.callCount, 1);
       });
 
       it('cache is linked to the CWD', function () {
-        this.user.git.username;
+        this.user.git.name;
         shell.cd('subdir');
-        this.user.git.username;
+        this.user.git.name;
         assert.equal(this.shell.exec.callCount, 2);
       });
     });
