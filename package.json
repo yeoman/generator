@@ -51,7 +51,8 @@
     "rimraf": "^2.2.0",
     "shelljs": "^0.2.6",
     "text-table": "^0.2.0",
-    "underscore.string": "^2.3.1"
+    "underscore.string": "^2.3.1",
+    "nopt": "~2.1.1"
   },
   "devDependencies": {
     "gulp": "^3.6.0",

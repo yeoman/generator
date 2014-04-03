@@ -77,6 +77,23 @@ describe('yeoman.generators.Base', function () {
       });
       assert.equal(generator.options['test-framework'], 'mocha');
     });
+
+    it('set options based on nopt arguments', function () {
+      var generator = new generators.Base(['--foo', 'bar'], {
+        env: this.env,
+        resolved: 'test'
+      });
+      assert.equal(generator.options.foo, true);
+    });
+
+    it('set arguments based on nopt arguments', function () {
+      var generator = new generators.Base(['--foo', 'bar'], {
+        env: this.env,
+        resolved: 'test'
+      });
+      generator.argument('baz');
+      assert.equal(generator.baz, 'bar');
+    });
   });
 
   describe('prototype', function () {
@@ -353,6 +370,55 @@ describe('yeoman.generators.Base', function () {
         defaults: undefined,
         hide: false
       });
+    });
+  });
+
+  describe('#parseOptions()', function () {
+    beforeEach(function () {
+      this.dummy = new this.Dummy(['start', '--foo', 'bar', '-s', 'baz', 'remain'], {
+        env: this.env,
+        resolved: 'test'
+      });
+      this.dummy.option('foo', {
+        type: String
+      });
+      this.dummy.option('shortOpt', {
+        type: String,
+        alias: 's'
+      });
+    });
+
+    it('set generator options', function () {
+      this.dummy.parseOptions();
+      assert.equal(this.dummy.options.foo, 'bar');
+    });
+
+    it('set generator alias options', function () {
+      this.dummy.parseOptions();
+      assert.equal(this.dummy.options.shortOpt, 'baz');
+    });
+
+    it('set args to what remains', function () {
+      this.dummy.parseOptions();
+      assert.deepEqual(this.dummy.args, ['start', 'remain']);
+    });
+
+    it('optionally take args param', function () {
+      this.dummy.parseOptions(['other']);
+      assert.deepEqual(this.dummy.args, ['other']);
+    });
+
+    it('gracefully handle no args', function () {
+      var dummy = new this.Dummy({
+        env: this.env,
+        resolved: 'test'
+      });
+      dummy.option('foo', {
+        type: String
+      });
+
+      dummy.parseOptions();
+      assert.equal(dummy.options.foo, undefined);
     });
   });
 
