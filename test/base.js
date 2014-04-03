@@ -352,7 +352,7 @@ describe('yeoman.generators.Base', function () {
         desc: 'Description for foo',
         name: 'foo',
         type: Boolean,
-        defaults: false,
+        defaults: undefined,
         hide: false
       });
     });
@@ -511,12 +511,12 @@ describe('yeoman.generators.Base', function () {
         'A new desc for this generator',
         '',
         'Options:',
-        '-h, --help # Print generator\'s options and usage Default: false',
+        '-h, --help # Print generator\'s options and usage Default: undefined',
         '--hook1 # Hook1 to be invoked',
         '--hook2 # Hook2 to be invoked',
         '--hook3 # Hook3 to be invoked',
         '--hook4 # Hook4 to be invoked',
-        '--ooOoo # Description for ooOoo Default: false',
+        '--ooOoo # Description for ooOoo Default: undefined',
         '',
         'Arguments:',
         'baz # definition; explanation; summary Type: Number Required: false',
