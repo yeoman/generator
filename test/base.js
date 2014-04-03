@@ -345,10 +345,8 @@ describe('yeoman.generators.Base', function () {
         resolved: 'test'
       });
 
-      assert.equal(generator._options.length, 1);
       generator.option('foo');
-      assert.equal(generator._options.length, 2);
-      assert.deepEqual(generator._options.pop(), {
+      assert.deepEqual(generator._options.foo, {
         desc: 'Description for foo',
         name: 'foo',
         type: Boolean,
@@ -378,7 +376,7 @@ describe('yeoman.generators.Base', function () {
     it('create the matching option', function () {
       this.dummy._running = false;
       this.dummy.hookFor('something');
-      assert.deepEqual(this.dummy._options.pop(), {
+      assert.deepEqual(this.dummy._options.something, {
         desc: 'Something to be invoked',
         name: 'something',
         type: Boolean,
@@ -549,7 +547,7 @@ describe('yeoman.generators.Base', function () {
 
     it('returns the expected usage output without options', function () {
       this.dummy._arguments.length = 0;
-      this.dummy._options.length = 0;
+      this.dummy._options = {};
       var usage = this.dummy.usage();
       assert.equal(usage.trim(), 'yo dummy');
     });
