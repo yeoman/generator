@@ -13,7 +13,7 @@ gulp.task('static', function () {
     'test/*.js',
     'lib/**/*.js',
     'benchmark/**/*.js',
-    'main.js',
+    'index.js',
     'doc.js',
     'gulpfile.js'
   ])
@@ -26,7 +26,7 @@ gulp.task('static', function () {
 gulp.task('test', function (cb) {
   gulp.src([
     'lib/**/*.js',
-    'main.js'
+    'index.js'
   ])
   .pipe(istanbul())
   .on('end', function () {

@@ -18,7 +18,6 @@
   ],
   "homepage": "http://yeoman.io",
   "author": "The Yeoman Team",
-  "main": "main.js",
   "repository": "yeoman/generator",
   "engines": {
     "node": ">=0.10.0"
