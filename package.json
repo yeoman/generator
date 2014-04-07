@@ -40,6 +40,7 @@
     "findup-sync": "^0.1.2",
     "glob": "^3.2.0",
     "grouped-queue": "^0.2.1",
+    "gruntfile-editor": "^0.1.0",
     "iconv-lite": "^0.2.10",
     "inquirer": "^0.4.0",
     "isbinaryfile": "^2.0.0",

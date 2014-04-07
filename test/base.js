@@ -21,7 +21,7 @@ describe('yeoman.generators.Base', function () {
   beforeEach(function () {
     var env = this.env = generators([], { 'skip-install': true });
 
-    var Dummy = helpers.createDummyGenerator();
+    var Dummy = this.Dummy = helpers.createDummyGenerator();
 
     env.registerStub(Dummy, 'ember:all');
     env.registerStub(Dummy, 'hook1:ember');
@@ -31,7 +31,6 @@ describe('yeoman.generators.Base', function () {
       this.write(path.join(__dirname, 'temp.dev/app/scripts/models/application-model.js'), '// ...');
     }, 'hook4');
 
-    this.Dummy = Dummy;
     this.dummy = new Dummy(['bar', 'baz', 'bom'], {
       foo: false,
       something: 'else',
@@ -560,6 +559,38 @@ describe('yeoman.generators.Base', function () {
       this.dummy.destinationRoot('foo');
       assert.equal(this.Dummy.prototype._setStorage.callCount, 2);
       this.Dummy.prototype._setStorage.restore();
+    });
+  });
+
+  describe('#gruntfile', function () {
+    beforeEach(function () {
+      this.dummy = new this.Dummy([], {
+        resolved: 'unknown',
+        namespace: 'dummy',
+        env: this.env,
+        'skip-install': true
+      });
+    });
+
+    it('expose the gruntfile editor API', function () {
+      assert(this.dummy.gruntfile instanceof require('gruntfile-editor'));
+    });
+
+    it('uses the gruntfile editor of the Env if available', function () {
+      this.dummy.env.gruntfile = 'foo';
+      assert.equal(this.dummy.gruntfile, 'foo');
+    });
+
+    it('schedule gruntfile writing on the write Queue', function (done) {
+      this.Dummy.prototype.grunt = function () {
+        this.dest.delete('Gruntfile.js', { force: true });
+        this.gruntfile.insertConfig('foo', '{}');
+      };
+      this.dummy.run(function () {
+        var gruntfile = this.dummy.dest.read('Gruntfile.js');
+        assert(gruntfile.indexOf('foo:') > 0);
+        done();
+      }.bind(this));
     });
   });
 
