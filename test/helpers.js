@@ -126,6 +126,15 @@ describe('yeoman.test', function () {
       });
     });
 
+    it('uses default values when no answers is passed', function (done) {
+      var generator = helpers.createDummyGenerator();
+      helpers.mockPrompt(generator);
+      generator.prompt([{ name: 'respuesta', type: 'input', default: 'bar' }], function (answers) {
+        assert.equal(answers.respuesta, 'bar');
+        done();
+      });
+    });
+
     it('prefers mocked values', function (done) {
       this.generator.prompt([{ name: 'answser', type: 'input', default: 'bar' }], function (answers) {
         assert.equal(answers.answer, 'foo');
