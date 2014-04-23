@@ -499,19 +499,35 @@ describe('yeoman.generators.Base', function () {
       this.dummy.option('ooOoo');
       this.dummy.argument('baz', {
         type: Number,
-        required: false
+        required: false,
+        desc: 'definition; explanation; summary'
       });
       this.dummy.desc('A new desc for this generator');
       var help = this.dummy.help();
+      var expected = [
+        'Usage:',
+        'yo dummy [options] [<baz>]',
+        '',
+        'A new desc for this generator',
+        '',
+        'Options:',
+        '-h, --help # Print generator\'s options and usage Default: false',
+        '--hook1 # Hook1 to be invoked',
+        '--hook2 # Hook2 to be invoked',
+        '--hook3 # Hook3 to be invoked',
+        '--hook4 # Hook4 to be invoked',
+        '--ooOoo # Description for ooOoo Default: false',
+        '',
+        'Arguments:',
+        'baz # definition; explanation; summary Type: Number Required: false',
+        ''
+      ];
 
-      assert.ok(help.match('Usage:'));
-      assert.ok(help.match('yo dummy \\[options\\] \\[<baz>\\]'));
-      assert.ok(help.match('A new desc for this generator'));
-      assert.ok(help.match('Options:'));
-      assert.ok(help.match('--help   # Print generator\'s options and usage'));
-      assert.ok(help.match('--ooOoo  # Description for ooOoo'));
-      assert.ok(help.match('Arguments:'));
-      assert.ok(help.match('baz  # Type: Number  Required: false'));
+      help.split('\n').forEach(function(line, i) {
+        // do not test whitespace; we care about the content, not formatting.
+        // formatting is best left up to the tests for module "text-table"
+        assert.textEqual(line.trim().replace(/\s+/g, ' '), expected[i]);
+      });
     });
   });
 
