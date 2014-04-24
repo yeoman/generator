@@ -10,7 +10,6 @@ var helpers = yo.test;
 var RunContext = require('../lib/test/run-context');
 
 describe('RunContext', function () {
-
   beforeEach(function () {
     var Dummy = this.Dummy = helpers.createDummyGenerator();
     this.execSpy = sinon.spy();
@@ -116,6 +115,20 @@ describe('RunContext', function () {
   });
 
   describe('#withPrompt()', function () {
+    it('is call automatically', function (done) {
+      this.Dummy.prototype.askFor = function () {
+        this.prompt({
+          name: 'yeoman',
+          type: 'input',
+          message: 'Hey!',
+          default: 'pass'
+        }, function (answers) {
+          assert.equal(answers.yeoman, 'pass');
+          done();
+        });
+      };
+    });
+
     it('mock the prompt', function (done) {
       this.Dummy.prototype.askFor = function () {
         this.prompt({

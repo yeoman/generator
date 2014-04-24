@@ -6,6 +6,7 @@ var sinon = require('sinon');
 var yeoman = require('..');
 var helpers = yeoman.test;
 var RunContext = require('../lib/test/run-context');
+var env = yeoman();
 
 describe('yeoman.test', function () {
   'use strict';
@@ -127,7 +128,7 @@ describe('yeoman.test', function () {
     });
 
     it('uses default values when no answers is passed', function (done) {
-      var generator = helpers.createDummyGenerator();
+      var generator = env.instantiate(helpers.createDummyGenerator());
       helpers.mockPrompt(generator);
       generator.prompt([{ name: 'respuesta', type: 'input', default: 'bar' }], function (answers) {
         assert.equal(answers.respuesta, 'bar');
@@ -146,6 +147,28 @@ describe('yeoman.test', function () {
       this.generator.prompt({ name: 'answser', type: 'input' }, function () {
         done();
       });
+    });
+
+    it('can be call multiple time on the same generator', function (done) {
+      var generator = env.instantiate(helpers.createDummyGenerator());
+      var prompt = generator.prompt;
+      helpers.mockPrompt(generator, { foo: 1 });
+      helpers.mockPrompt(generator, { foo: 2 });
+      assert.equal(generator.origPrompt, prompt, 'origPrompt should point to the initial prompt method');
+      generator.prompt({}, function (answers) {
+        assert.equal(answers.foo, 2);
+        done();
+      });
+    });
+
+    it('keep prompt method asynchronous', function (done) {
+      var val = [];
+      this.generator.prompt({ name: 'answser', type: 'input' }, function () {
+        val.push(2);
+        assert.deepEqual(val, [1, 2]);
+        done();
+      });
+      val.push(1);
     });
   });
 
