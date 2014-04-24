@@ -35,6 +35,15 @@ describe('RunContext', function () {
         done();
       }.bind(this));
     });
+
+    it('only run a generator once', function (done) {
+      this.ctx.onEnd(function () {
+        assert(this.execSpy.calledOnce);
+        done();
+      }.bind(this));
+      this.ctx._onReady();
+      this.ctx._onReady();
+    });
   });
 
   describe('#inDir()', function () {
@@ -126,7 +135,7 @@ describe('RunContext', function () {
     });
   });
 
-  describe('#then()', function () {
+  describe('#onEnd()', function () {
     it('is called after the generator ran', function (done) {
       assert(this.execSpy.notCalled);
       this.ctx.onEnd(function () {
