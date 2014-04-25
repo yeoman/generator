@@ -8,6 +8,11 @@ var jscs = require('gulp-jscs');
 var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
 
+var handleErr = function (err) {
+  console.log(err.message);
+  process.exit(1);
+};
+
 gulp.task('static', function () {
   return gulp.src([
     'test/*.js',
@@ -20,7 +25,8 @@ gulp.task('static', function () {
   .pipe(jshint('.jshintrc'))
   .pipe(jshint.reporter('jshint-stylish'))
   .pipe(jshint.reporter('fail'))
-  .pipe(jscs());
+  .pipe(jscs())
+  .on('error', handleErr);
 });
 
 gulp.task('test', function (cb) {
