@@ -415,11 +415,6 @@ describe('yeoman.generators.Base', function () {
       assert.deepEqual(this.dummy.args, ['start', 'remain']);
     });
 
-    it('optionally take args param', function () {
-      this.dummy.parseOptions(['other']);
-      assert.deepEqual(this.dummy.args, ['other']);
-    });
-
     it('gracefully handle no args', function () {
       var dummy = new this.Dummy({
         env: this.env,
