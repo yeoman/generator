@@ -352,6 +352,18 @@ describe('yeoman.generators.Base', function () {
       assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', { required: true }));
       assert.equal(dummy._arguments.length, 1);
     });
+
+    it('can be called before #option()', function () {
+      var dummy = new generators.Base(['--foo', 'bar', 'baz'], {
+        env: this.env,
+        resolved: 'dummy/all'
+      });
+
+      dummy.argument('baz');
+      dummy.option('foo', { type: String });
+
+      assert.equal(dummy.baz, 'baz');
+    });
   });
 
   describe('#option()', function () {
