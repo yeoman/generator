@@ -77,6 +77,23 @@ describe('yeoman.generators.Base', function () {
       });
       assert.equal(generator.options['test-framework'], 'mocha');
     });
+
+    it('set options based on nopt arguments', function () {
+      var generator = new generators.Base(['--foo', 'bar'], {
+        env: this.env,
+        resolved: 'test'
+      });
+      assert.equal(generator.options.foo, true);
+    });
+
+    it('set arguments based on nopt arguments', function () {
+      var generator = new generators.Base(['--foo', 'bar'], {
+        env: this.env,
+        resolved: 'test'
+      });
+      generator.argument('baz');
+      assert.equal(generator.baz, 'bar');
+    });
   });
 
   describe('prototype', function () {
@@ -335,6 +352,18 @@ describe('yeoman.generators.Base', function () {
       assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', { required: true }));
       assert.equal(dummy._arguments.length, 1);
     });
+
+    it('can be called before #option()', function () {
+      var dummy = new generators.Base(['--foo', 'bar', 'baz'], {
+        env: this.env,
+        resolved: 'dummy/all'
+      });
+
+      dummy.argument('baz');
+      dummy.option('foo', { type: String });
+
+      assert.equal(dummy.baz, 'baz');
+    });
   });
 
   describe('#option()', function () {
@@ -345,16 +374,58 @@ describe('yeoman.generators.Base', function () {
         resolved: 'test'
       });
 
-      assert.equal(generator._options.length, 1);
       generator.option('foo');
-      assert.equal(generator._options.length, 2);
-      assert.deepEqual(generator._options.pop(), {
+      assert.deepEqual(generator._options.foo, {
         desc: 'Description for foo',
         name: 'foo',
         type: Boolean,
-        defaults: false,
+        defaults: undefined,
         hide: false
       });
+    });
+  });
+
+  describe('#parseOptions()', function () {
+    beforeEach(function () {
+      this.dummy = new this.Dummy(['start', '--foo', 'bar', '-s', 'baz', 'remain'], {
+        env: this.env,
+        resolved: 'test'
+      });
+      this.dummy.option('foo', {
+        type: String
+      });
+      this.dummy.option('shortOpt', {
+        type: String,
+        alias: 's'
+      });
+    });
+
+    it('set generator options', function () {
+      this.dummy.parseOptions();
+      assert.equal(this.dummy.options.foo, 'bar');
+    });
+
+    it('set generator alias options', function () {
+      this.dummy.parseOptions();
+      assert.equal(this.dummy.options.shortOpt, 'baz');
+    });
+
+    it('set args to what remains', function () {
+      this.dummy.parseOptions();
+      assert.deepEqual(this.dummy.args, ['start', 'remain']);
+    });
+
+    it('gracefully handle no args', function () {
+      var dummy = new this.Dummy({
+        env: this.env,
+        resolved: 'test'
+      });
+      dummy.option('foo', {
+        type: String
+      });
+
+      dummy.parseOptions();
+      assert.equal(dummy.options.foo, undefined);
     });
   });
 
@@ -378,7 +449,7 @@ describe('yeoman.generators.Base', function () {
     it('create the matching option', function () {
       this.dummy._running = false;
       this.dummy.hookFor('something');
-      assert.deepEqual(this.dummy._options.pop(), {
+      assert.deepEqual(this.dummy._options.something, {
         desc: 'Something to be invoked',
         name: 'something',
         type: Boolean,
@@ -511,12 +582,12 @@ describe('yeoman.generators.Base', function () {
         'A new desc for this generator',
         '',
         'Options:',
-        '-h, --help # Print generator\'s options and usage Default: false',
+        '-h, --help # Print generator\'s options and usage Default: undefined',
         '--hook1 # Hook1 to be invoked',
         '--hook2 # Hook2 to be invoked',
         '--hook3 # Hook3 to be invoked',
         '--hook4 # Hook4 to be invoked',
-        '--ooOoo # Description for ooOoo Default: false',
+        '--ooOoo # Description for ooOoo Default: undefined',
         '',
         'Arguments:',
         'baz # definition; explanation; summary Type: Number Required: false',
@@ -549,7 +620,7 @@ describe('yeoman.generators.Base', function () {
 
     it('returns the expected usage output without options', function () {
       this.dummy._arguments.length = 0;
-      this.dummy._options.length = 0;
+      this.dummy._options = {};
       var usage = this.dummy.usage();
       assert.equal(usage.trim(), 'yo dummy');
     });

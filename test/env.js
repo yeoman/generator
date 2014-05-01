@@ -92,7 +92,7 @@ describe('Environment', function () {
     it('pass options.arguments', function () {
       var args = ['foo', 'bar'];
       var generator = this.env.create('stub', { arguments: args });
-      assert.equal(generator.arguments, args);
+      assert.deepEqual(generator.arguments, args);
     });
 
     it('pass options.arguments as string', function () {
@@ -104,15 +104,15 @@ describe('Environment', function () {
     it('pass options.args (as `arguments` alias)', function () {
       var args = ['foo', 'bar'];
       var generator = this.env.create('stub', { args: args });
-      assert.equal(generator.arguments, args);
+      assert.deepEqual(generator.arguments, args);
     });
 
     it('prefer options.arguments over options.args', function () {
       var args1 = ['yo', 'unicorn'];
       var args = ['foo', 'bar'];
       var generator = this.env.create('stub', { arguments: args1, args: args });
-      assert.equal(generator.arguments, args1);
-      assert.notEqual(generator.arguments, args);
+      assert.deepEqual(generator.arguments, args1);
+      assert.notDeepEqual(generator.arguments, args);
     });
 
     it('default arguments to `env.arguments`', function () {
