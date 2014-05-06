@@ -170,6 +170,37 @@ describe('yeoman.test', function () {
       });
       val.push(1);
     });
+
+    it('does not add errors if validation pass', function (done) {
+      helpers.mockPrompt(this.generator, [{ answer1: 'foo' }, { answer2: 'foo' }]);
+      this.generator.prompt([{ name: 'answser1', type: 'input' }, { name: 'answser2', type: 'input', validate: { not: 'aFunction' }}], function () {
+        assert.ok(this.generator.prompt.errors == null, 'The errors array should not be attached in case of no validation error.');
+        done();
+      }.bind(this));
+    });
+
+    it('validation function returns no validation error', function (done) {
+      var validationTrue = function () {
+        return true;
+      };
+      this.generator.prompt({ name: 'answser', type: 'input', validate: validationTrue }, function () {
+        assert.ok(this.generator.prompt.errors == null, 'The errors array should not be attached in case of no validation error.');
+        done();
+      }.bind(this));
+    });
+
+    it('validation function returns validation error', function (done) {
+      var validationError = function () {
+        return 'error message';
+      };
+      this.generator.prompt({ name: 'answer', type: 'input', validate: validationError }, function () {
+        assert.ok(this.generator.prompt.errors != null, 'The errors array should be attached in case of a validation error.');
+        assert.equal(this.generator.prompt.errors.length, 1, 'There should be only 1 error attached.');
+        assert.equal(this.generator.prompt.errors[0].name, 'answer', 'The error is not for the expected prompt.');
+        assert.equal(this.generator.prompt.errors[0].message, 'error message', 'The returned error message is not expected.');
+        done();
+      }.bind(this));
+    });
   });
 
   describe('.before()', function () {
