@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Mixin: actions/install</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,131 +16,131 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Mixin: actions/install</h1>
-    
+
     
 
 
 
 <section>
-    
+
 <header>
     <h2>
     actions/install
     </h2>
     
-</header>  
+</header>
 
 <article>
     <div class="container-overview">
     
-    
+
     
         
-        
+
         
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="install.js.html">lib/actions/install.js</a>, <a href="install.js.html#line12">line 12</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-        
+
         
     
     </div>
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
-    
-    
+
     
         <h3 class="subsection-title">Methods</h3>
-        
+
         <dl>
             
 <dt>
-    <h4 class="name" id="bowerInstall"><span class="type-signature">&lt;static> </span>bowerInstall<span class="signature">(paths, options, cb)</span><span class="type-signature"></span></h4>
-    
+    <h4 class="name" id="bowerInstall"><span class="type-signature">&lt;static> </span>bowerInstall<span class="signature">(cmpnt, options, cb)</span><span class="type-signature"></span></h4>
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
-        <p>Receives a list of <code>paths</code>, and an Hash of <code>options</code> to install through bower.</p>
+        <p>Receives a list of <code>components</code>, and a Hash of <code>options</code> to install through bower.</p>
     </div>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
-                <td class="name"><code>paths</code></td>
+                <td class="name"><code>cmpnt</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -152,21 +152,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
-            <td class="description last"><p>Packages to install</p></td>
+
+            <td class="description last"><p>Components to install</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>options</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -175,21 +175,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>Options to invoke <code>bower install</code> with, see <code>bower help install</code></p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>cb</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -198,64 +198,66 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="install.js.html">lib/actions/install.js</a>, <a href="install.js.html#line145">line 145</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
 </dd>
 
@@ -263,67 +265,66 @@
             
 <dt>
     <h4 class="name" id="installDependencies"><span class="type-signature">&lt;static> </span>installDependencies<span class="signature">(options)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Runs <code>npm</code> and <code>bower</code> in the generated directory concurrently and prints a
 message to let the user know.</p>
-<h3 id="options-">Options:</h3>
-<ul>
+<h3>Options:</h3><ul>
 <li><code>npm</code> Boolean whether to run <code>npm install</code> (<code>true</code>)</li>
 <li><code>bower</code> Boolean whether to run <code>bower install</code> (<code>true</code>)</li>
 <li><code>skipInstall</code> Boolean whether to skip automatic installation (<code>false</code>)</li>
 <li><code>skipMessage</code> Boolean whether to show the used bower/npm commands (<code>false</code>)</li>
 </ul>
-<h3 id="examples-">Examples:</h3>
-<pre><code>this.installDependencies({
+<h3>Examples:</h3><pre><code>this.installDependencies({
   bower: true,
   npm: true,
   skipInstall: false,
   callback: function () {
     console.log('Everything is ready!');
   }
-});</code></pre>
+});
+</code></pre>
     </div>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>options</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -332,115 +333,117 @@ message to let the user know.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="install.js.html">lib/actions/install.js</a>, <a href="install.js.html#line75">line 75</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="npmInstall"><span class="type-signature">&lt;static> </span>npmInstall<span class="signature">(paths, options, cb)</span><span class="type-signature"></span></h4>
-    
+    <h4 class="name" id="npmInstall"><span class="type-signature">&lt;static> </span>npmInstall<span class="signature">(pkgs, options, cb)</span><span class="type-signature"></span></h4>
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
-        <p>Receives a list of <code>paths</code>, and an Hash of <code>options</code> to install through npm.</p>
+        <p>Receives a list of <code>packages</code>, and a Hash of <code>options</code> to install through npm.</p>
     </div>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
-                <td class="name"><code>paths</code></td>
+                <td class="name"><code>pkgs</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -452,21 +455,21 @@ message to let the user know.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>Packages to install</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>options</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -475,21 +478,21 @@ message to let the user know.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>Options to invoke <code>npm install</code> with, see <code>npm help install</code></p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>cb</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -498,64 +501,66 @@ message to let the user know.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="install.js.html">lib/actions/install.js</a>, <a href="install.js.html#line157">line 157</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
 </dd>
 
@@ -563,11 +568,11 @@ message to let the user know.</p>
             
 <dt>
     <h4 class="name" id="runInstall"><span class="type-signature">&lt;static> </span>runInstall<span class="signature">(installer, paths, options, cb)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Combine package manager cmd line arguments and run the <code>install</code> command.</p>
@@ -575,38 +580,38 @@ message to let the user know.</p>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>installer</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -615,21 +620,21 @@ message to let the user know.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>Which package manager to use</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>paths</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -641,21 +646,21 @@ message to let the user know.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>Packages to install, empty string for <code>npm install</code></p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>options</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -664,21 +669,21 @@ message to let the user know.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>Options to invoke <code>install</code> with</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>cb</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -687,76 +692,78 @@ message to let the user know.</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="install.js.html">lib/actions/install.js</a>, <a href="install.js.html#line23">line 23</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
 </dd>
 
         </dl>
     
+
     
-    
-    
+
     
 </article>
 
-</section>  
+</section>
 
 
 
@@ -770,7 +777,7 @@ message to let the user know.</p>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Wed Feb 26 2014 13:34:13 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 17 2014 23:37:54 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

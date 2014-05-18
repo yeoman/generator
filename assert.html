@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Module: test/assert</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,68 +16,68 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Module: test/assert</h1>
-    
+
     
 
 
 
 <section>
-    
+
 <header>
     <h2>
     test/assert
     </h2>
     
-</header>  
+</header>
 
 <article>
     <div class="container-overview">
     
-    
+
     
         
             <div class="description"><p>Collection of test assertions helpers</p>
 <p>It mixes in the native node.js <code>assert</code> module. So you can just use this module as a
 drop-in replacement.</p></div>
         
-        
+
         
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line1">line 1</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-        
+
         
             <h3>Example</h3>
             
@@ -86,159 +86,37 @@ drop-in replacement.</p></div>
         
     
     </div>
+
     
-    
-    
+
     
         <h3 class="subsection-title">Mixes In</h3>
-        
+
         <ul>
             <li>nodejs/assert</li>
         </ul>
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
         <h3 class="subsection-title">Methods</h3>
-        
+
         <dl>
             
 <dt>
-    <h4 class="name" id="file"><span class="type-signature">&lt;static> </span>file<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
-    
+    <h4 class="name" id="file"><span class="type-signature">&lt;static> </span>file<span class="signature">(path)</span><span class="type-signature"></span></h4>
+
     
 </dt>
 <dd>
-    
-    
-    <div class="description">
-        <p>Assert that each of an array of files exists</p>
-    </div>
-    
 
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>pairs</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"><p>an array of paths to files</p></td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line44">line 44</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>assert.file(['templates/user.hbs', 'templates/user/edit.hbs']);</code></pre>
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="file"><span class="type-signature">&lt;static> </span>file<span class="signature">(file)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
     
     <div class="description">
         <p>Assert that a file exists</p>
@@ -246,38 +124,38 @@ drop-in replacement.</p></div>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
-                <td class="name"><code>file</code></td>
+                <td class="name"><code>path</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -286,64 +164,66 @@ drop-in replacement.</p></div>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>path to a file</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line44">line 44</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
         <h5>Example</h5>
         
@@ -355,12 +235,12 @@ drop-in replacement.</p></div>
         
             
 <dt>
-    <h4 class="name" id="file"><span class="type-signature">&lt;static> </span>file<span class="signature">(file, reg)</span><span class="type-signature"></span></h4>
-    
+    <h4 class="name" id="file"><span class="type-signature">&lt;static> </span>file<span class="signature">(path, reg)</span><span class="type-signature"></span></h4>
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Assert that a file's content matches a regex</p>
@@ -368,38 +248,38 @@ drop-in replacement.</p></div>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
-                <td class="name"><code>file</code></td>
+                <td class="name"><code>path</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -408,21 +288,21 @@ drop-in replacement.</p></div>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>path to a file</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>reg</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -431,66 +311,68 @@ drop-in replacement.</p></div>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>regex that will be used to search the file</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
+    
+
+    
+
+    
+
     
         <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line44">line 44</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
         <h5>Example</h5>
         
@@ -502,12 +384,136 @@ drop-in replacement.</p></div>
         
             
 <dt>
-    <h4 class="name" id="fileContent"><span class="type-signature">&lt;static> </span>fileContent<span class="signature">(file, reg)</span><span class="type-signature"></span></h4>
-    
+    <h4 class="name" id="file"><span class="type-signature">&lt;static> </span>file<span class="signature">(paths)</span><span class="type-signature"></span></h4>
+
     
 </dt>
 <dd>
+
     
+    <div class="description">
+        <p>Assert that each files in the array exists</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>paths</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>an array of paths to files</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>assert.file(['templates/user.hbs', 'templates/user/edit.hbs']);</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="fileContent"><span class="type-signature">&lt;static> </span>fileContent<span class="signature">(file, reg)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
     
     <div class="description">
         <p>Assert that a file's content matches a regex</p>
@@ -515,38 +521,38 @@ drop-in replacement.</p></div>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>file</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -555,21 +561,21 @@ drop-in replacement.</p></div>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>path to a file</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>reg</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -578,64 +584,66 @@ drop-in replacement.</p></div>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>regex that will be used to search the file</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line132">line 132</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
         <h5>Example</h5>
         
@@ -648,11 +656,11 @@ drop-in replacement.</p></div>
             
 <dt>
     <h4 class="name" id="fileContent"><span class="type-signature">&lt;static> </span>fileContent<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Assert that each file in an array of file-regex pairs matches its corresponding regex</p>
@@ -660,38 +668,38 @@ drop-in replacement.</p></div>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>pairs</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -700,68 +708,74 @@ drop-in replacement.</p></div>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>an array of arrays, where each subarray is a [String, RegExp] pair</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line132">line 132</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
         <h5>Example</h5>
         
-    <pre class="prettyprint"><code>var arg = [  [ 'models/user.js', /App\.User \ DS\.Model\.extend/ ],  [ 'controllers/user.js', /App\.UserController = Ember\.ObjectController\.extend/ ]]assert.fileContent(arg);</code></pre>
+    <pre class="prettyprint"><code>var arg = [
+  [ 'models/user.js', /App\.User \ DS\.Model\.extend/ ],
+  [ 'controllers/user.js', /App\.UserController = Ember\.ObjectController\.extend/ ]
+]
+assert.fileContent(arg);</code></pre>
 
     
 </dd>
@@ -770,11 +784,11 @@ drop-in replacement.</p></div>
             
 <dt>
     <h4 class="name" id="files"><span class="type-signature">&lt;static> </span>files<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Assert that each of an array of files exists. If an item is an array with
@@ -784,38 +798,38 @@ that the file content matches the regex</p>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>pairs</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -824,66 +838,68 @@ that the file content matches the regex</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>an array of paths to files or file/regex subarrays</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
+    
+
+    
+
+    
+
     
         <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line95">line 95</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
         <h5>Examples</h5>
         
@@ -898,11 +914,11 @@ that the file content matches the regex</p>
             
 <dt>
     <h4 class="name" id="implement"><span class="type-signature">&lt;static> </span>implement<span class="signature">(subject, methods)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Assert an Object implements an interface</p>
@@ -910,38 +926,38 @@ that the file content matches the regex</p>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>subject</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -950,21 +966,21 @@ that the file content matches the regex</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>subject implementing the façade</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>methods</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -976,64 +992,66 @@ that the file content matches the regex</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>a façace, hash or array of keys to be implemented</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line196">line 196</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
 </dd>
 
@@ -1041,11 +1059,11 @@ that the file content matches the regex</p>
             
 <dt>
     <h4 class="name" id="noFile"><span class="type-signature">&lt;static> </span>noFile<span class="signature">(file)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Assert that a file doesn't exist</p>
@@ -1053,38 +1071,38 @@ that the file content matches the regex</p>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>file</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1093,64 +1111,66 @@ that the file content matches the regex</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>path to a file</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line74">line 74</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
         <h5>Example</h5>
         
@@ -1163,11 +1183,11 @@ that the file content matches the regex</p>
             
 <dt>
     <h4 class="name" id="noFile"><span class="type-signature">&lt;static> </span>noFile<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Assert that each of an array of files doesn't exist</p>
@@ -1175,38 +1195,38 @@ that the file content matches the regex</p>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>pairs</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1215,64 +1235,66 @@ that the file content matches the regex</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>an array of paths to files</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line74">line 74</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
         <h5>Example</h5>
         
@@ -1285,11 +1307,11 @@ that the file content matches the regex</p>
             
 <dt>
     <h4 class="name" id="noFileContent"><span class="type-signature">&lt;static> </span>noFileContent<span class="signature">(pairs)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Assert that each file in an array of file-regex pairs does not match its corresponding regex</p>
@@ -1297,38 +1319,38 @@ that the file content matches the regex</p>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>pairs</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1337,11 +1359,11 @@ that the file content matches the regex</p>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>an array of arrays, where each subarray is a [String, RegExp] pair
 var arg = [
   [ 'models/user.js', /App.User \ DS.Model.extend/ ],
@@ -1349,57 +1371,59 @@ var arg = [
 ]
 assert.noFileContent(arg);</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line162">line 162</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
 </dd>
 
@@ -1407,11 +1431,11 @@ assert.noFileContent(arg);</p></td>
             
 <dt>
     <h4 class="name" id="noFileContent"><span class="type-signature">&lt;static> </span>noFileContent<span class="signature">(file, reg)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         <p>Assert that a file's content does not match a regex</p>
@@ -1419,38 +1443,38 @@ assert.noFileContent(arg);</p></td>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>file</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1459,21 +1483,21 @@ assert.noFileContent(arg);</p></td>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>path to a file</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>reg</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1482,64 +1506,66 @@ assert.noFileContent(arg);</p></td>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>regex that will be used to search the file</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line162">line 162</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
         <h5>Example</h5>
         
@@ -1551,12 +1577,157 @@ assert.noFileContent(arg);</p></td>
         
             
 <dt>
-    <h4 class="name" id="textEqual"><span class="type-signature">&lt;static> </span>textEqual<span class="signature">(value, expected)</span><span class="type-signature"></span></h4>
-    
+    <h4 class="name" id="notImplement"><span class="type-signature">&lt;static> </span>notImplement<span class="signature">(subject, methods)</span><span class="type-signature"></span></h4>
+
     
 </dt>
 <dd>
+
     
+    <div class="description">
+        <p>Assert an Object doesn't implements any method of an interface</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>subject not implementing the methods</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>methods</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>hash or array of methods name to be implemented</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line212">line 212</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="textEqual"><span class="type-signature">&lt;static> </span>textEqual<span class="signature">(value, expected)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
     
     <div class="description">
         <p>Assert that two strings are equal after standardization of newlines</p>
@@ -1564,38 +1735,38 @@ assert.noFileContent(arg);</p></td>
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>value</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1604,21 +1775,21 @@ assert.noFileContent(arg);</p></td>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>a string</p></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>expected</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1627,64 +1798,66 @@ assert.noFileContent(arg);</p></td>
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"><p>the expected value of the string</p></td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
     
 
     
+<dl class="details">
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="assert.js.html">lib/test/assert.js</a>, <a href="assert.js.html#line182">line 182</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
 
     
 
     
+
     
+
     
-    
-    
-    
+
     
         <h5>Example</h5>
         
@@ -1695,13 +1868,13 @@ assert.noFileContent(arg);</p></td>
 
         </dl>
     
+
     
-    
-    
+
     
 </article>
 
-</section>  
+</section>
 
 
 
@@ -1715,7 +1888,7 @@ assert.noFileContent(arg);</p></td>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha3</a> on Wed Feb 26 2014 13:34:13 GMT-0500 (Est)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 17 2014 23:37:54 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
