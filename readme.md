@@ -3,7 +3,7 @@
 > A Rails-inspired generator system that provides scaffolding for your apps.
 
 
-### [Getting Started](http://yeoman.io/generators.html)&nbsp;&nbsp;&nbsp;[API Documentation](http://yeoman.github.io/generator/)
+### [Getting Started](http://yeoman.io/authoring/getting-started.html)&nbsp;&nbsp;&nbsp;[API Documentation](http://yeoman.github.io/generator/)
 
 
 ![Generator output](https://img.skitch.com/20120923-jxbn2njgk5dp7ttk94i1tx9ek2.png)
