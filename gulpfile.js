@@ -35,7 +35,7 @@ gulp.task('test', function (cb) {
     'index.js'
   ])
   .pipe(istanbul())
-  .on('end', function () {
+  .on('finish', function () {
     gulp.src(['test/*.js'])
       .pipe(mocha({
         reporter: 'spec',

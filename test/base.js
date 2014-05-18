@@ -550,8 +550,8 @@ describe('yeoman.generators.Base', function () {
       it('sets correct metadata on the Generator constructor', function (done) {
         this.dummy.composeWith('dumb', {}, { local: this.stubPath });
         this.dummy.run(function () {
-          assert.equal(this.spy.firstCall.thisValue.constructor.namespace, 'dumb');
-          assert.equal(this.spy.firstCall.thisValue.constructor.resolved, this.stubPath);
+          assert.equal(this.spy.firstCall.thisValue.options.namespace, 'dumb');
+          assert.equal(this.spy.firstCall.thisValue.options.resolved, this.stubPath);
           done();
         }.bind(this));
       });
