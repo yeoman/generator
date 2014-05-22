@@ -89,23 +89,34 @@ describe('Storage', function () {
       assert.equal(this.saveSpy.callCount, 2);
     });
 
-    it('returns the saved value (with key)', function () {
-      assert.equal(this.store.set('name', 'Yeoman!'), 'Yeoman!');
-    });
+    describe('@return', function () {
+      beforeEach(function () {
+        this.storePath = path.join(shell.tempdir(), 'setreturn.json');
+        this.store = new Storage('test', this.storePath);
+      });
 
-    it('returns the saved value (without key)', function () {
-      assert.deepEqual(
-        this.store.set({ foo: 'bar', john: 'doe' }),
-        { foo: 'bar', john: 'doe' }
-      );
-    });
+      afterEach(function () {
+        shell.rm('-f', this.storePath);
+      });
 
-    it('returns the saved value (update values)', function () {
-      this.store.set({ foo: 'bar', john: 'doe' });
-      assert.deepEqual(
-        this.store.set({ foo: 'moo' }),
-        { foo: 'moo', john: 'doe' }
-      );
+      it('the saved value (with key)', function () {
+        assert.equal(this.store.set('name', 'Yeoman!'), 'Yeoman!');
+      });
+
+      it('the saved value (without key)', function () {
+        assert.deepEqual(
+          this.store.set({ foo: 'bar', john: 'doe' }),
+          { foo: 'bar', john: 'doe' }
+        );
+      });
+
+      it('the saved value (update values)', function () {
+        this.store.set({ foo: 'bar', john: 'doe' });
+        assert.deepEqual(
+          this.store.set({ foo: 'moo' }),
+          { foo: 'moo', john: 'doe' }
+        );
+      });
     });
   });
 
@@ -197,25 +208,35 @@ describe('Storage', function () {
       assert.throws(this.store.defaults.bind(this.store, 'foo'));
     });
 
-    it('returns the saved value when passed an empty object', function () {
-      assert.deepEqual(
-        this.store.defaults({}),
-        { foo: 'bar', val1: 1 }
-      );
-    });
+    describe('@return', function () {
+      beforeEach(function () {
+        this.storePath = path.join(shell.tempdir(), 'defaultreturn.json');
+        this.store = new Storage('test', this.storePath);
+        this.store.set('val1', 1);
+        this.store.set('foo', 'bar');
+      });
 
-    it('returns the saved value when passed the same key', function () {
-      assert.deepEqual(
-        this.store.defaults({ foo: 'baz' }),
-        { foo: 'bar', val1: 1 }
-      );
-    });
+      afterEach(function () {
+        shell.rm('-f', this.storePath);
+      });
 
-    it('returns the saved value when passed new key', function () {
-      assert.deepEqual(
-        this.store.defaults({ food: 'pizza' }),
-        { foo: 'bar', val1: 1, food: 'pizza' }
-      );
+      it('the saved value when passed an empty object', function () {
+        assert.deepEqual(this.store.defaults({}), { foo: 'bar', val1: 1 });
+      });
+
+      it('the saved value when passed the same key', function () {
+        assert.deepEqual(
+          this.store.defaults({ foo: 'baz' }),
+          { foo: 'bar', val1: 1 }
+        );
+      });
+
+      it('the saved value when passed new key', function () {
+        assert.deepEqual(
+          this.store.defaults({ food: 'pizza' }),
+          { foo: 'bar', val1: 1, food: 'pizza' }
+        );
+      });
     });
   });
 
