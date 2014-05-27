@@ -38,6 +38,7 @@
     "download": "^0.1.6",
     "file-utils": "^0.2.0",
     "findup-sync": "^0.1.2",
+    "github-username": "~0.1.1",
     "glob": "^4.0.2",
     "grouped-queue": "^0.3.0",
     "gruntfile-editor": "^0.1.0",
