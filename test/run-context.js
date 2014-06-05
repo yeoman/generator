@@ -18,30 +18,36 @@ describe('RunContext', function () {
   });
 
   describe('constructor', function () {
-    it('accept path parameter', function () {
+    it('accept path parameter', function (done) {
       var ctx = new RunContext(path.join(__dirname, './fixtures/custom-generator-simple'));
-      assert(ctx.env.get('simple:app'));
+      ctx.on('ready', function () {
+        assert(ctx.env.get('simple:app'));
+        done();
+      });
     });
 
-    it('accept generator constructor parameter (and assign gen:test as namespace)', function () {
-      assert(this.ctx.env.get('gen:test'));
+    it('accept generator constructor parameter (and assign gen:test as namespace)', function (done) {
+      this.ctx.on('ready', function () {
+        assert(this.ctx.env.get('gen:test'));
+        done();
+      }.bind(this));
     });
 
     it('run the generator asynchronously', function (done) {
       assert(this.execSpy.notCalled);
-      this.ctx.onEnd(function () {
-        assert(this.execSpy.calledOnce);
+      this.ctx.on('end', function () {
+        sinon.assert.calledOnce(this.execSpy);
         done();
       }.bind(this));
     });
 
     it('only run a generator once', function (done) {
-      this.ctx.onEnd(function () {
-        assert(this.execSpy.calledOnce);
+      this.ctx.on('end', function () {
+        sinon.assert.calledOnce(this.execSpy);
         done();
       }.bind(this));
-      this.ctx._onReady();
-      this.ctx._onReady();
+      this.ctx._run();
+      this.ctx._run();
     });
   });
 
@@ -61,12 +67,40 @@ describe('RunContext', function () {
     it('is chainable', function () {
       assert.equal(this.ctx.inDir(this.tmp), this.ctx);
     });
+
+    it('accepts optional `cb` to be invoked with resolved `dir`', function (done) {
+      var ctx = new RunContext(this.Dummy);
+      var cb = sinon.spy(function () {
+        sinon.assert.calledOnce(cb);
+        sinon.assert.calledOn(cb, ctx);
+        sinon.assert.calledWith(cb, path.resolve(this.tmp));
+        done();
+      }.bind(this));
+      ctx.inDir(this.tmp, cb);
+    });
+
+    it('optional `cb` can use `this.async()` to delay execution', function (done) {
+      var ctx = new RunContext(this.Dummy);
+      var delayed = false;
+      var cb = sinon.spy(function () {
+        var release = this.async();
+        setTimeout(function () {
+          delayed = true;
+          release();
+        }.bind(this), 1);
+      });
+      ctx.inDir(this.tmp, cb)
+        .on('ready', function () {
+          assert(delayed);
+          done();
+        });
+    });
   });
 
   describe('#withArguments()', function () {
     it('provide arguments to the generator when passed as Array', function (done) {
       this.ctx.withArguments(['one', 'two']);
-      this.ctx.onEnd(function () {
+      this.ctx.on('end', function () {
         assert.deepEqual(this.execSpy.firstCall.thisValue.arguments, ['one', 'two']);
         done();
       }.bind(this));
@@ -74,7 +108,7 @@ describe('RunContext', function () {
 
     it('provide arguments to the generator when passed as String', function (done) {
       this.ctx.withArguments('foo bar');
-      this.ctx.onEnd(function () {
+      this.ctx.on('end', function () {
         assert.deepEqual(this.execSpy.firstCall.thisValue.arguments, ['foo', 'bar']);
         done();
       }.bind(this));
@@ -88,14 +122,14 @@ describe('RunContext', function () {
   describe('#withOptions()', function () {
     it('provide options to the generator', function (done) {
       this.ctx.withOptions({ foo: 'bar' });
-      this.ctx.onEnd(function () {
+      this.ctx.on('end', function () {
         assert.equal(this.execSpy.firstCall.thisValue.options.foo, 'bar');
         done();
       }.bind(this));
     });
 
     it('set skip-install by default', function (done) {
-      this.ctx.onEnd(function () {
+      this.ctx.on('end', function () {
         assert.equal(this.execSpy.firstCall.thisValue.options['skip-install'], true);
         done();
       }.bind(this));
@@ -103,7 +137,7 @@ describe('RunContext', function () {
 
     it('allow skip-install to be overriden', function (done) {
       this.ctx.withOptions({ 'skip-install': false });
-      this.ctx.onEnd(function () {
+      this.ctx.on('end', function () {
         assert.equal(this.execSpy.firstCall.thisValue.options['skip-install'], false);
         done();
       }.bind(this));
@@ -148,17 +182,35 @@ describe('RunContext', function () {
     });
   });
 
-  describe('#onEnd()', function () {
-    it('is called after the generator ran', function (done) {
-      assert(this.execSpy.notCalled);
-      this.ctx.onEnd(function () {
-        assert(this.execSpy.calledOnce);
+  describe('#withGenerators()', function () {
+    it('should register paths', function (done) {
+      this.ctx.withGenerators([
+        path.join(__dirname, './fixtures/custom-generator-simple')
+      ]).on('ready', function () {
+        assert(this.ctx.env.get('simple:app'));
         done();
       }.bind(this));
     });
 
-    it('is chainable', function () {
-      assert.equal(this.ctx.onEnd(function () {}), this.ctx);
+    it('should register mocked generator', function (done) {
+      this.ctx.withGenerators([
+        [helpers.createDummyGenerator(), 'dummy:gen']
+      ]).on('ready', function () {
+        assert(this.ctx.env.get('dummy:gen'));
+        done();
+      }.bind(this));
+    });
+
+    it('should accumulate generators from multiple calls', function (done) {
+      this.ctx.withGenerators([
+        path.join(__dirname, './fixtures/custom-generator-simple')
+      ]).withGenerators([
+        [helpers.createDummyGenerator(), 'dummy:gen']
+      ]).on('ready', function () {
+        assert(this.ctx.env.get('dummy:gen'));
+        assert(this.ctx.env.get('simple:app'));
+        done();
+      }.bind(this));
     });
   });
 });

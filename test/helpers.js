@@ -21,6 +21,18 @@ describe('yeoman.test', function () {
     util.inherits(this.StubGenerator, yeoman.Base);
   });
 
+  describe('.registerDependencies()', function () {
+    it('accepts dependency as a path', function () {
+      helpers.registerDependencies(env, ['./custom-generator-simple']);
+      assert(env.get('simple:app'));
+    });
+
+    it('accepts dependency as array of [<generator>, <name>]', function () {
+      helpers.registerDependencies(env, [[this.StubGenerator, 'stub:app']]);
+      assert(env.get('stub:app'));
+    });
+  });
+
   describe('.createGenerator()', function () {
     it('create a new generator', function () {
       var generator = helpers.createGenerator('unicorn:app', [
