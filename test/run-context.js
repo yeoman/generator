@@ -46,8 +46,8 @@ describe('RunContext', function () {
         sinon.assert.calledOnce(this.execSpy);
         done();
       }.bind(this));
-      this.ctx._onReady();
-      this.ctx._onReady();
+      this.ctx._run();
+      this.ctx._run();
     });
   });
 
@@ -77,6 +77,23 @@ describe('RunContext', function () {
         done();
       }.bind(this));
       ctx.inDir(this.tmp, cb);
+    });
+
+    it('optional `cb` can use `this.async()` to delay execution', function (done) {
+      var ctx = new RunContext(this.Dummy);
+      var delayed = false;
+      var cb = sinon.spy(function () {
+        var release = this.async();
+        setTimeout(function () {
+          delayed = true;
+          release();
+        }.bind(this), 1);
+      });
+      ctx.inDir(this.tmp, cb)
+        .on('ready', function () {
+          assert(delayed);
+          done();
+        });
     });
   });
 
