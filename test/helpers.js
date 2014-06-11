@@ -139,6 +139,16 @@ describe('yeoman.test', function () {
       });
     });
 
+    it('calls default value functions', function (done) {
+      var defaultFn = function () {
+        return 'bar';
+      };
+      this.generator.prompt([{ name: 'fromDefaultFn', type: 'input', default: defaultFn }], function (answers) {
+        assert.equal(answers.fromDefaultFn, 'bar');
+        done();
+      });
+    });
+
     it('uses default values when no answers is passed', function (done) {
       var generator = env.instantiate(helpers.createDummyGenerator());
       helpers.mockPrompt(generator);
