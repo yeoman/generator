@@ -149,6 +149,17 @@ describe('yeoman.test', function () {
       });
     });
 
+    it('passes answers object to default value functions', function (done) {
+      var defaultFn = function (answers) {
+        assert.ok(answers, 'Did not pass answers object to mocked default function');
+        return answers.answer + 'bar';
+      };
+      this.generator.prompt([{ name: 'fromDefaultFn', type: 'input', default: defaultFn }], function (answers) {
+        assert.equal(answers.fromDefaultFn, 'foobar');
+        done();
+      });
+    });
+
     it('uses default values when no answers is passed', function (done) {
       var generator = env.instantiate(helpers.createDummyGenerator());
       helpers.mockPrompt(generator);
