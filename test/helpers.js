@@ -139,6 +139,27 @@ describe('yeoman.test', function () {
       });
     });
 
+    it('calls default value functions', function (done) {
+      var defaultFn = function () {
+        return 'bar';
+      };
+      this.generator.prompt([{ name: 'fromDefaultFn', type: 'input', default: defaultFn }], function (answers) {
+        assert.equal(answers.fromDefaultFn, 'bar');
+        done();
+      });
+    });
+
+    it('passes answers object to default value functions', function (done) {
+      var defaultFn = function (answers) {
+        assert.ok(answers, 'Did not pass answers object to mocked default function');
+        return answers.answer + 'bar';
+      };
+      this.generator.prompt([{ name: 'fromDefaultFn', type: 'input', default: defaultFn }], function (answers) {
+        assert.equal(answers.fromDefaultFn, 'foobar');
+        done();
+      });
+    });
+
     it('uses default values when no answers is passed', function (done) {
       var generator = env.instantiate(helpers.createDummyGenerator());
       helpers.mockPrompt(generator);
@@ -149,14 +170,14 @@ describe('yeoman.test', function () {
     });
 
     it('prefers mocked values', function (done) {
-      this.generator.prompt([{ name: 'answser', type: 'input', default: 'bar' }], function (answers) {
+      this.generator.prompt([{ name: 'answer', type: 'input', default: 'bar' }], function (answers) {
         assert.equal(answers.answer, 'foo');
         done();
       });
     });
 
     it('works with a single prompt', function (done) {
-      this.generator.prompt({ name: 'answser', type: 'input' }, function () {
+      this.generator.prompt({ name: 'answer', type: 'input' }, function () {
         done();
       });
     });
@@ -175,7 +196,7 @@ describe('yeoman.test', function () {
 
     it('keep prompt method asynchronous', function (done) {
       var val = [];
-      this.generator.prompt({ name: 'answser', type: 'input' }, function () {
+      this.generator.prompt({ name: 'answer', type: 'input' }, function () {
         val.push(2);
         assert.deepEqual(val, [1, 2]);
         done();
@@ -185,7 +206,7 @@ describe('yeoman.test', function () {
 
     it('does not add errors if validation pass', function (done) {
       helpers.mockPrompt(this.generator, [{ answer1: 'foo' }, { answer2: 'foo' }]);
-      this.generator.prompt([{ name: 'answser1', type: 'input' }, { name: 'answser2', type: 'input', validate: { not: 'aFunction' }}], function () {
+      this.generator.prompt([{ name: 'answer1', type: 'input' }, { name: 'answer2', type: 'input', validate: { not: 'aFunction' }}], function () {
         assert.ok(this.generator.prompt.errors == null, 'The errors array should not be attached in case of no validation error.');
         done();
       }.bind(this));
@@ -195,7 +216,7 @@ describe('yeoman.test', function () {
       var validationTrue = function () {
         return true;
       };
-      this.generator.prompt({ name: 'answser', type: 'input', validate: validationTrue }, function () {
+      this.generator.prompt({ name: 'answer', type: 'input', validate: validationTrue }, function () {
         assert.ok(this.generator.prompt.errors == null, 'The errors array should not be attached in case of no validation error.');
         done();
       }.bind(this));
