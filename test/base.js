@@ -324,6 +324,12 @@ describe('yeoman.generators.Base', function () {
       assert.equal(this.dummy.foo, 'bar');
     });
 
+    it('can still be set as a property once defined', function () {
+      this.dummy.argument('foo');
+      this.dummy.foo = 'barbar';
+      assert.equal(this.dummy.foo, 'barbar');
+    });
+
     it('slice positional arguments when config.type is Array', function () {
       this.dummy.argument('bar', { type: Array });
       assert.deepEqual(this.dummy.bar, ['bar', 'baz', 'bom']);
