@@ -99,18 +99,21 @@ describe('Storage', function () {
         shell.rm('-f', this.storePath);
       });
 
-      it('the saved value (with key)', function () {
+      it('the saved value (with key)', function (done) {
+        this.store.once('save', done);
         assert.equal(this.store.set('name', 'Yeoman!'), 'Yeoman!');
       });
 
-      it('the saved value (without key)', function () {
+      it('the saved value (without key)', function (done) {
+        this.store.once('save', done);
         assert.deepEqual(
           this.store.set({ foo: 'bar', john: 'doe' }),
           { foo: 'bar', john: 'doe' }
         );
       });
 
-      it('the saved value (update values)', function () {
+      it('the saved value (update values)', function (done) {
+        this.store.once('save', done);
         this.store.set({ foo: 'bar', john: 'doe' });
         assert.deepEqual(
           this.store.set({ foo: 'moo' }),
