@@ -148,7 +148,7 @@ describe('RunContext', function () {
     });
   });
 
-  describe('#withPrompt()', function () {
+  describe('#withPrompts()', function () {
     it('is call automatically', function (done) {
       this.Dummy.prototype.askFor = function () {
         this.prompt({
@@ -174,11 +174,11 @@ describe('RunContext', function () {
           done();
         });
       };
-      this.ctx.withPrompt({ yeoman: 'yes please' });
+      this.ctx.withPrompts({ yeoman: 'yes please' });
     });
 
     it('is chainable', function () {
-      assert.equal(this.ctx.withPrompt({}), this.ctx);
+      assert.equal(this.ctx.withPrompts({}), this.ctx);
     });
   });
 
