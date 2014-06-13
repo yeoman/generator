@@ -13,7 +13,7 @@
 
 ## Getting Started
 
-If you're interested in writing your own Yeoman generator we recommend reading [the official getting started guide](http://yeoman.io/generators.html).
+If you're interested in writing your own Yeoman generator we recommend reading [the official getting started guide](http://yeoman.io/authoring/).
 
 There are typically two types of generators - simple boilerplate 'copiers' and more advanced generators which can use custom prompts, remote dependencies, wiring and much more.
 
