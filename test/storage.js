@@ -209,14 +209,16 @@ describe('Storage', function () {
     });
 
     describe('@return', function () {
-      beforeEach(function () {
+      beforeEach(function (done) {
         this.storePath = path.join(shell.tempdir(), 'defaultreturn.json');
         this.store = new Storage('test', this.storePath);
         this.store.set('val1', 1);
         this.store.set('foo', 'bar');
+        this.store.on('save', done);
       });
 
       afterEach(function () {
+        this.store.removeAllListeners('save');
         shell.rm('-f', this.storePath);
       });
 
