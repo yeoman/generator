@@ -168,6 +168,7 @@ describe('yeoman.generators.Base', function () {
       this.TestGenerator.prototype.prompting = {
         m1: sinon.spy(),
         m2: sinon.spy(),
+        _private: sinon.spy(),
         prop: 'foo'
       };
       this.TestGenerator.prototype.initializing = sinon.spy();
@@ -283,6 +284,13 @@ describe('yeoman.generators.Base', function () {
       this.testGen.run(function () {
         assert(this.TestGenerator.prototype.prompting.m1.calledOnce);
         assert(this.TestGenerator.prototype.prompting.m2.calledOnce);
+        done();
+      }.bind(this));
+    });
+
+    it('ignore underscore prefixed method in a queue hash', function (done) {
+      this.testGen.run(function () {
+        assert(this.TestGenerator.prototype.prompting._private.notCalled);
         done();
       }.bind(this));
     });
