@@ -178,10 +178,12 @@ describe('Storage', function () {
       this.store.once('save', function () {
         assert.equal(this.forceSaveSpy.callCount, 1);
         assert.equal(this.saveSpy.callCount, 3);
+        assert(!this.store.pending);
         done();
       }.bind(this));
 
       this.store.save();
+      assert(this.store.pending);
       this.store.save();
       this.store.save();
     });
