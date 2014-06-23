@@ -149,18 +149,28 @@ describe('Storage', function () {
   });
 
   describe('#save()', function () {
-    beforeEach(function () {
+    beforeEach(function (done) {
       this.forceSaveSpy = sinon.spy(Storage.prototype, 'forceSave');
       this.storePath = path.join(shell.tempdir(), 'save.json');
       this.store = new Storage('test', this.storePath);
       this.store.set('foo', 'bar');
       this.saveSpy = sinon.spy(this.store, 'save');
+      this.store.once('save', done);
     });
 
-    afterEach(function () {
-      shell.rm('-f', this.storePath);
-      this.forceSaveSpy.restore();
-      this.saveSpy.restore();
+    afterEach(function (done) {
+      var teardown = function () {
+        shell.rm('-f', this.storePath);
+        this.forceSaveSpy.restore();
+        this.saveSpy.restore();
+        done();
+      }.bind(this);
+
+      if (this.store.pending) {
+        this.store.once('save', teardown);
+      } else {
+        teardown();
+      }
     });
 
     it('create storage file if none existed', function (done) {
@@ -176,7 +186,7 @@ describe('Storage', function () {
 
     it('debounce multiple calls', function (done) {
       this.store.once('save', function () {
-        assert.equal(this.forceSaveSpy.callCount, 1);
+        assert.equal(this.forceSaveSpy.callCount, 2); // It is called once in the setup
         assert.equal(this.saveSpy.callCount, 3);
         assert(!this.store.pending);
         done();
@@ -186,6 +196,23 @@ describe('Storage', function () {
       assert(this.store.pending);
       this.store.save();
       this.store.save();
+    });
+
+    describe('when multiples instances sharing same file', function () {
+      beforeEach(function () {
+        this.store2 = new Storage('test2', this.storePath);
+      });
+
+      it('only update modified namespace', function () {
+        this.store2.set('bar', 'foo');
+        this.store2.forceSave();
+        this.store.set('foo', 'bar');
+        this.store.forceSave();
+
+        var json = require(this.storePath);
+        assert.equal(json.test.foo, 'bar');
+        assert.equal(json.test2.bar, 'foo');
+      });
     });
   });
 
