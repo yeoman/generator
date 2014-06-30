@@ -16,10 +16,19 @@ describe('Storage', function () {
     this.saveSpy = sinon.spy(this.store, 'save');
   });
 
-  afterEach(function () {
-    shell.rm('-f', this.storePath);
-    process.chdir(this.beforeDir);
-    this.saveSpy.restore();
+  afterEach(function (done) {
+    var teardown = function () {
+      shell.rm('-f', this.storePath);
+      process.chdir(this.beforeDir);
+      this.saveSpy.restore();
+      done();
+    }.bind(this);
+
+    if (this.store.pending) {
+      this.store.once('save', teardown);
+    } else {
+      teardown();
+    }
   });
 
   describe('.constructor()', function () {
