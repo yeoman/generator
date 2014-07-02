@@ -37,12 +37,24 @@ describe('TerminalAdapter', function () {
   });
 
   describe('#log()', function () {
+    var logMessage;
+    var stderrWriteBackup = process.stderr.write;
+
     beforeEach(function () {
       this.spyerror = sinon.spy(console, 'error');
+
+      logMessage = '';
+      process.stderr.write = (function (write) {
+        return function (str, encoding, fd) {
+          logMessage = str;
+        };
+      }(process.stderr.write));
     });
 
     afterEach(function () {
       console.error.restore();
+
+      process.stderr.write = stderrWriteBackup;
     });
 
     it('calls console.error and perform strings interpolation', function () {
@@ -52,7 +64,16 @@ describe('TerminalAdapter', function () {
         reps: 'reps'
       });
       assert(this.spyerror.withArgs('has many reps').calledOnce);
+      assert.equal(logMessage, 'has many reps\n');
     });
+
+    it('substitutes strings correctly when context argument is falsey', function () {
+      this.adapter.log('Zero = %d, One = %s', 0, 1);
+
+      assert(this.spyerror.calledOnce);
+      assert.equal(logMessage, 'Zero = 0, One = 1\n');
+    });
+
   });
 
   describe('#log', function () {
