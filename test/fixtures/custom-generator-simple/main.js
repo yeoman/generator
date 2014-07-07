@@ -9,8 +9,8 @@
 // object, which means that you can use the API as if you were extending
 // `Base`.
 //
-// It works with simple generator, if you need to do a bit more complex
-// stuff, extends from Generator.Base and defines your generator steps
+// It works with simple generator. If you need to do a bit more complex
+// stuff, extend from Generator.Base and defines your generator steps
 // in several methods.
 
 module.exports = function(args, options) {
@@ -18,7 +18,7 @@ module.exports = function(args, options) {
 };
 
 module.exports.name = 'You can name your generator';
-module.exports.description = 'Ana add a custom description by adding a `description` property to your function.';
+module.exports.description = 'And add a custom description by adding a `description` property to your function.';
 module.exports.usage = 'Usage can be used to customize the help output';
 
 // namespace is resolved depending on the location of this generator,
