@@ -94,6 +94,15 @@ describe('yeoman.generators.Base', function () {
       generator.argument('baz');
       assert.equal(generator.baz, 'bar');
     });
+
+    it('set options with false values', function (done) {
+      var generator = helpers
+        .run(path.join(__dirname, './fixtures/options-generator'))
+        .withOptions({ testOption: false }).on('end', function () {
+          assert.equal(this.generator.options.testOption, false);
+          done();
+        });
+    });
   });
 
   describe('prototype', function () {
