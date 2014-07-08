@@ -74,6 +74,29 @@ describe('TerminalAdapter', function () {
       assert.equal(logMessage, 'Zero = 0, One = 1\n');
     });
 
+    it('boolean values', function () {
+      this.adapter.log(true);
+      assert(this.spyerror.withArgs(true).calledOnce);
+      assert.equal(logMessage, 'true\n');
+    });
+
+    it('#write() numbers', function () {
+      this.adapter.log(42);
+      assert(this.spyerror.withArgs(42).calledOnce);
+      assert.equal(logMessage, 42);
+    });
+
+    it('#write() objects', function () {
+      var outputObject = {
+        something: 72,
+        another: 12
+      };
+
+      this.adapter.log(outputObject);
+      assert(this.spyerror.withArgs(outputObject).calledOnce);
+      assert.equal(logMessage, '{ something: 72, another: 12 }\n');
+    });
+
   });
 
   describe('#log', function () {
