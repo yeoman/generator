@@ -17,7 +17,7 @@ describe('Environment Resolver', function () {
       process.chdir(this.projectRoot);
       shell.exec('npm install', { silent: true });
       shell.exec('npm install generator-jquery', { silent: true });
-      shell.exec('npm install -g generator-angular generator-dummy', { silent: true });
+      shell.exec('npm install -g generator-dummytest generator-dummy', { silent: true });
 
       fs.symlinkSync(
         path.resolve('../custom-generator-extend'),
@@ -55,8 +55,8 @@ describe('Environment Resolver', function () {
     });
 
     globalLookupTest('register global generators', function () {
-      assert.ok(this.env.get('angular:app'));
-      assert.ok(this.env.get('angular:controller'));
+      assert.ok(this.env.get('dummytest:app'));
+      assert.ok(this.env.get('dummytest:controller'));
     });
 
     it('register symlinked generators', function () {
