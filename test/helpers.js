@@ -234,6 +234,20 @@ describe('yeoman.test', function () {
         done();
       }.bind(this));
     });
+
+    it('does not call validation function when prompt should be skipped', function (done) {
+      var validateFunc = sinon.stub().returns(true);
+      helpers.mockPrompt(this.generator);
+      this.generator.prompt({
+        name: 'answer',
+        type: 'input',
+        when: function () { return false; },
+        validate: validateFunc
+      }, function () {
+        sinon.assert.notCalled(validateFunc);
+        done();
+      });
+    });
   });
 
   describe('.before()', function () {
