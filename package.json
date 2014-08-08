@@ -32,6 +32,7 @@
     "chalk": "^0.4.0",
     "cheerio": "^0.17.0",
     "class-extend": "^0.1.0",
+    "cross-spawn": "^0.1.7",
     "dargs": "^0.1.0",
     "debug": "^1.0.1",
     "diff": "^1.0.4",
