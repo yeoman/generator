@@ -52,6 +52,7 @@
     "nopt": "^3.0.0",
     "request": "^2.34.0",
     "rimraf": "^2.2.0",
+    "run-async": "^0.1.0",
     "shelljs": "^0.3.0",
     "text-table": "^0.2.0",
     "underscore.string": "^2.3.1"

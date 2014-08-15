@@ -248,6 +248,17 @@ describe('yeoman.test', function () {
         done();
       });
     });
+
+    it('works with async method', function (done) {
+      var whenFn = function () {
+        var done = this.async();
+        done(true);
+      };
+      this.generator.prompt([{ name: 'foo', type: 'input', when: whenFn, default: 'bar' }], function (answers) {
+        assert.equal(answers.foo, 'bar');
+        done();
+      });
+    });
   });
 
   describe('.before()', function () {
