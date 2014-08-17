@@ -22,15 +22,11 @@ The docs cover how to create generators from scratch as well as recommending com
 For deeper research, read the code source or visit our [API documentation](http://yeoman.github.io/generator/).
 
 
-## Testing generators
-
-There is currently no formal infrastructure for testing generators, however you may find our [mocha generator](https://github.com/yeoman/generator-mocha) for custom generators useful.
-
 ### Debugging
 
 To debug a generator, you can pass Node.js debug's flags by running it like this:
 
-```bash
+```sh
 # OS X / Linux
 node --debug `which yo` <generator> [arguments]
 
@@ -40,26 +36,13 @@ node --debug <path to yo binary> <generator> [arguments]
 
 Yeoman generators also use a debug mode to log relevant informations. You can activate it by setting the `DEBUG` environment variable to the desired scope (for the generator system scope is `generators:*`).
 
-```bash
+```sh
 # OS X / Linux
 DEBUG=generators/*
 
 # Windows
 set DEBUG=generators/*
 ```
-
-## Officially maintained generators
-
-* [Web App](https://github.com/yeoman/generator-webapp#readme)
-* [AngularJS](https://github.com/yeoman/generator-angular#readme)
-* [Backbone](https://github.com/yeoman/generator-backbone#readme)
-* [Ember](https://github.com/yeoman/generator-ember#readme)
-* [Polymer](https://github.com/yeoman/generator-polymer#readme)
-* [Jasmine](https://github.com/yeoman/generator-jasmine#readme)
-* [Mocha](https://github.com/yeoman/generator-mocha#readme)
-* [Karma](https://github.com/yeoman/generator-karma#readme)
-* [Chrome Apps Basic Boilerplate](https://github.com/yeoman/generator-chromeapp#readme)
-* [Chrome Extension Boilerplate](https://github.com/yeoman/generator-chrome-extension#readme)
 
 
 ## License
