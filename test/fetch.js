@@ -91,15 +91,15 @@ describe('generators.Base fetch utilities', function () {
 
   describe('#remote()', function () {
     it('should remotely fetch a package on github', function (done) {
-      this.dummy.remote('yeoman', 'generators', done);
+      this.dummy.remote('yeoman', 'generator', done);
     });
 
     it('should have the result cached internally into a `_cache` folder', function (done) {
-      fs.stat(path.join(this.dummy.cacheRoot(), 'yeoman/generators/master'), done);
+      fs.stat(path.join(this.dummy.cacheRoot(), 'yeoman/generator/master'), done);
     });
 
     it('should invoke `cb` with a remote object to interract with the downloaded package', function (done) {
-      this.dummy.remote('yeoman', 'generators', function (err, remote) {
+      this.dummy.remote('yeoman', 'generator', function (err, remote) {
         if (err) {
           return done(err);
         }
