@@ -36,7 +36,7 @@
     "dargs": "^0.1.0",
     "debug": "^1.0.1",
     "diff": "^1.0.4",
-    "download": "^0.1.6",
+    "download": "^1.0.2",
     "file-utils": "^0.2.0",
     "findup-sync": "^0.1.2",
     "github-username": "~0.1.1",
@@ -50,7 +50,6 @@
     "mime": "^1.2.9",
     "mkdirp": "^0.5.0",
     "nopt": "^3.0.0",
-    "request": "^2.34.0",
     "rimraf": "^2.2.0",
     "run-async": "^0.1.0",
     "shelljs": "^0.3.0",
@@ -66,6 +65,7 @@
     "gulp-mocha": "^0.4.1",
     "jshint-stylish": "^0.2.0",
     "mockery": "^1.4.0",
+    "nock": "^0.45.0",
     "proxyquire": "^1.0.0",
     "sinon": "^1.9.1"
   }

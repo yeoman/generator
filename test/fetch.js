@@ -4,9 +4,9 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var events = require('events');
+var tmpdir = require('os').tmpdir();
 var assert = require('assert');
-var sinon = require('sinon');
-var proxyquire = require('proxyquire');
+var nock = require('nock');
 var generators = require('..');
 var fetch = require('../lib/actions/fetch');
 
@@ -45,32 +45,19 @@ describe('generators.Base fetch utilities', function () {
   });
 
   describe('#tarball()', function () {
-    beforeEach(function () {
-      this.events = new events.EventEmitter();
-      this.download = sinon.stub().returns(this.events);
-      this.fetch = proxyquire('../lib/actions/fetch', { download: this.download });
-      this.fetch.log = {
-        write: noop,
-        info: noop,
-        ok: noop
-      };
-    });
-
     it('download and untar via the NPM download package', function (done) {
-      var called = false;
-      var from = 'https://github.com/yeoman/generator/archive/master.tar.gz';
-      var dest = './yeoman-generator/';
-      var cb = function () {
-        called = true;
-        done();
-      };
-      this.fetch.tarball(from, dest, cb);
+      var tmp = path.join(tmpdir, 'yeoman-test');
+      var scope = nock('http://example.com')
+        .get('/f.tar.gz')
+        .replyWithFile(200, path.join(__dirname, 'fixtures/testFile.tar.gz'));
 
-      var downloadCall = this.download.args[0];
-      assert.equal(downloadCall[0], from);
-      assert.equal(downloadCall[1], dest);
-      assert.ok(!called);
-      this.events.emit('close');
+      this.dummy.tarball('http://example.com/f.tar.gz', tmp, function (err) {
+        if (err) {
+          return done(err);
+        }
+        assert(scope.isDone());
+        done();
+      });
     });
 
     it('aliases #extract()', function () {
@@ -79,26 +66,32 @@ describe('generators.Base fetch utilities', function () {
   });
 
   describe('#fetch()', function () {
-    it('should allow the fething of a single file', function (done) {
-      this.dummy.fetch('https://raw.github.com/yeoman/generator/master/readme.md', './some/path/README.md', function (err) {
+    it('allow the fetching of a single file', function (done) {
+      var tmp = path.join(tmpdir, 'yeoman-test');
+      var scope = nock('http://example.com')
+        .get('/f.txt')
+        .replyWithFile(200, path.join(__dirname, 'fixtures/help.txt'));
+
+      this.dummy.fetch('http://example.com/f.txt', tmp, function (err) {
         if (err) {
           return done(err);
         }
-        fs.stat('./some/path/README.md', done);
+        assert(scope.isDone());
+        fs.stat(path.join(tmp, 'f.txt'), done);
       });
     });
   });
 
   describe('#remote()', function () {
-    it('should remotely fetch a package on github', function (done) {
+    it('remotely fetch a package on github', function (done) {
       this.dummy.remote('yeoman', 'generator', done);
     });
 
-    it('should have the result cached internally into a `_cache` folder', function (done) {
+    it('cache the result internally into a `_cache` folder', function (done) {
       fs.stat(path.join(this.dummy.cacheRoot(), 'yeoman/generator/master'), done);
     });
 
-    it('should invoke `cb` with a remote object to interract with the downloaded package', function (done) {
+    it('invoke `cb` with a remote object to interract with the downloaded package', function (done) {
       this.dummy.remote('yeoman', 'generator', function (err, remote) {
         if (err) {
           return done(err);
