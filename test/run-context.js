@@ -113,9 +113,17 @@ describe('RunContext', function () {
         done();
       }.bind(this));
     });
-
-    it('is chainable', function () {
-      assert.equal(this.ctx.withArguments(''), this.ctx);
+    
+    it('throws when arguments passed is neither a String or an Array', function () {
+      assert.throws(this.ctx.withArguments.bind(this.ctx, { foo: 'bar' }));
+    });
+	  
+    it('is chainable', function (done) {
+      this.ctx.withArguments('foo').withArguments('bar');
+      this.ctx.on('end', function () {
+        assert.deepEqual(this.execSpy.firstCall.thisValue.arguments, ['foo', 'bar']);
+        done();
+      }.bind(this));
     });
   });
 
@@ -143,8 +151,14 @@ describe('RunContext', function () {
       }.bind(this));
     });
 
-    it('is chainable', function () {
-      assert.equal(this.ctx.withOptions({}), this.ctx);
+    it('is chainable', function (done) {
+      this.ctx.withOptions({ foo: 'bar' }).withOptions({ john: 'doe' });
+      this.ctx.on('end', function () {
+        var options =  this.execSpy.firstCall.thisValue.options;
+        assert.equal(options.foo, 'bar');
+        assert.equal(options.john, 'doe');
+        done();
+      }.bind(this));
     });
   });
 
@@ -177,8 +191,23 @@ describe('RunContext', function () {
       this.ctx.withPrompts({ yeoman: 'yes please' });
     });
 
-    it('is chainable', function () {
-      assert.equal(this.ctx.withPrompts({}), this.ctx);
+    it('is chainable', function (done) {
+      this.Dummy.prototype.askFor = function () {
+        this.prompt([{
+          name: 'yeoman',
+          type: 'input',
+          message: 'Hey!'
+        }, {
+          name: 'yo',
+          type: 'input',
+          message: 'Yo!'
+        }], function (answers) {
+          assert.equal(answers.yeoman, 'yes please');
+          assert.equal(answers.yo, 'yo man');
+          done();
+        });
+      };
+      this.ctx.withPrompts({ yeoman: 'yes please' }).withPrompts({ yo: 'yo man' });
     });
   });
 
