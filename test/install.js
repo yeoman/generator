@@ -1,6 +1,5 @@
 /*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
-var sinon = require('sinon');
 var generators = require('..');
 var assert = generators.assert;
 var helpers = generators.test;

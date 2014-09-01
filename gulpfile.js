@@ -1,12 +1,12 @@
 'use strict';
-var fs = require('fs');
-var path = require('path');
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
+var eslint = require('gulp-eslint');
 var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
+var _ = require('lodash');
 
 var handleErr = function (err) {
   console.log(err.message);
@@ -14,6 +14,7 @@ var handleErr = function (err) {
 };
 
 gulp.task('static', function () {
+  var eslintHasError = false;	
   return gulp.src([
     'test/*.js',
     'lib/**/*.js',
@@ -26,7 +27,21 @@ gulp.task('static', function () {
   .pipe(jshint.reporter('jshint-stylish'))
   .pipe(jshint.reporter('fail'))
   .pipe(jscs())
-  .on('error', handleErr);
+  .on('error', handleErr)
+  .pipe(eslint())
+  .pipe(eslint.format())
+  .on('data', function (file) {
+    if (file.eslint.messages && file.eslint.messages.length && _.any(file.eslint.messages, function (item) {
+      return item.severity === 2;
+    })) {
+      eslintHasError = true;
+    }
+  })
+  .on('end', function () {
+    if (eslintHasError) {		
+      process.exit(1);
+    }
+  });
 });
 
 gulp.task('test', function (cb) {
