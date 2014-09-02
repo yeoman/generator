@@ -113,11 +113,11 @@ describe('RunContext', function () {
         done();
       }.bind(this));
     });
-    
+
     it('throws when arguments passed is neither a String or an Array', function () {
       assert.throws(this.ctx.withArguments.bind(this.ctx, { foo: 'bar' }));
     });
-	  
+
     it('is chainable', function (done) {
       this.ctx.withArguments('foo').withArguments('bar');
       this.ctx.on('end', function () {
@@ -212,7 +212,7 @@ describe('RunContext', function () {
   });
 
   describe('#withGenerators()', function () {
-    it('should register paths', function (done) {
+    it('register paths', function (done) {
       this.ctx.withGenerators([
         path.join(__dirname, './fixtures/custom-generator-simple')
       ]).on('ready', function () {
@@ -221,7 +221,7 @@ describe('RunContext', function () {
       }.bind(this));
     });
 
-    it('should register mocked generator', function (done) {
+    it('register mocked generator', function (done) {
       this.ctx.withGenerators([
         [helpers.createDummyGenerator(), 'dummy:gen']
       ]).on('ready', function () {
@@ -230,7 +230,7 @@ describe('RunContext', function () {
       }.bind(this));
     });
 
-    it('should accumulate generators from multiple calls', function (done) {
+    it('allow multiple calls', function (done) {
       this.ctx.withGenerators([
         path.join(__dirname, './fixtures/custom-generator-simple')
       ]).withGenerators([
