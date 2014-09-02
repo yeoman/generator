@@ -3,14 +3,20 @@
 var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
-var shell = require('shelljs');
 var sinon = require('sinon');
 var Storage = require('../lib/util/storage');
+var os = require('os');
+
+function rm(path) {
+  if (fs.existsSync(path)) {
+    fs.unlinkSync(path);
+  }
+}
 
 describe('Storage', function () {
   beforeEach(function () {
     this.beforeDir = process.cwd();
-    this.storePath = path.join(shell.tempdir(), 'new-config.json');
+    this.storePath = path.join(os.tmpdir(), 'new-config.json');
     this.store = new Storage('test', this.storePath);
     this.store.set('foo', 'bar');
     this.saveSpy = sinon.spy(this.store, 'save');
@@ -18,9 +24,8 @@ describe('Storage', function () {
 
   afterEach(function (done) {
     var teardown = function () {
-      shell.rm('-f', this.storePath);
+      rm(this.storePath);
       process.chdir(this.beforeDir);
-      this.saveSpy.restore();
       done();
     }.bind(this);
 
@@ -50,7 +55,7 @@ describe('Storage', function () {
   });
 
   it('defaults store path to `.yo-rc.json`', function (done) {
-    var tmp = shell.tempdir();
+    var tmp = os.tmpdir();
     process.chdir(tmp);
     var store = new Storage('yo');
 
@@ -100,12 +105,12 @@ describe('Storage', function () {
 
     describe('@return', function () {
       beforeEach(function () {
-        this.storePath = path.join(shell.tempdir(), 'setreturn.json');
+        this.storePath = path.join(os.tmpdir(), 'setreturn.json');
         this.store = new Storage('test', this.storePath);
       });
 
       afterEach(function () {
-        shell.rm('-f', this.storePath);
+        rm(this.storePath);
       });
 
       it('the saved value (with key)', function (done) {
@@ -160,8 +165,9 @@ describe('Storage', function () {
   describe('#save()', function () {
     beforeEach(function (done) {
       this.forceSaveSpy = sinon.spy(Storage.prototype, 'forceSave');
-      this.storePath = path.join(shell.tempdir(), 'save.json');
-      this.store = new Storage('test', this.storePath);
+      this.saveStorePath = path.join(os.tmpdir(), 'save.json');
+      rm(this.saveStorePath);
+      this.store = new Storage('test', this.saveStorePath);
       this.store.set('foo', 'bar');
       this.saveSpy = sinon.spy(this.store, 'save');
       this.store.once('save', done);
@@ -169,9 +175,8 @@ describe('Storage', function () {
 
     afterEach(function (done) {
       var teardown = function () {
-        shell.rm('-f', this.storePath);
+        rm(this.saveStorePath);
         this.forceSaveSpy.restore();
-        this.saveSpy.restore();
         done();
       }.bind(this);
 
@@ -182,15 +187,10 @@ describe('Storage', function () {
       }
     });
 
-    it('create storage file if none existed', function (done) {
-      this.store.once('save', function () {
-        var fileContent = JSON.parse(fs.readFileSync(this.storePath));
-        assert.equal(fileContent.test.foo, 'bar');
-        assert.ok(!this.store.existed);
-        done();
-      }.bind(this));
-
-      this.store.save();
+    it('create storage file if none existed', function () {
+      var fileContent = JSON.parse(fs.readFileSync(this.saveStorePath));
+      assert.equal(fileContent.test.foo, 'bar');
+      assert.ok(!this.store.existed);
     });
 
     it('debounce multiple calls', function (done) {
@@ -209,7 +209,7 @@ describe('Storage', function () {
 
     describe('when multiples instances sharing same file', function () {
       beforeEach(function () {
-        this.store2 = new Storage('test2', this.storePath);
+        this.store2 = new Storage('test2', this.saveStorePath);
       });
 
       it('only update modified namespace', function () {
@@ -218,7 +218,7 @@ describe('Storage', function () {
         this.store.set('foo', 'bar');
         this.store.forceSave();
 
-        var json = require(this.storePath);
+        var json = require(this.saveStorePath);
         assert.equal(json.test.foo, 'bar');
         assert.equal(json.test2.bar, 'foo');
       });
@@ -251,7 +251,7 @@ describe('Storage', function () {
 
     describe('@return', function () {
       beforeEach(function (done) {
-        this.storePath = path.join(shell.tempdir(), 'defaultreturn.json');
+        this.storePath = path.join(os.tmpdir(), 'defaultreturn.json');
         this.store = new Storage('test', this.storePath);
         this.store.set('val1', 1);
         this.store.set('foo', 'bar');
@@ -260,7 +260,7 @@ describe('Storage', function () {
 
       afterEach(function () {
         this.store.removeAllListeners('save');
-        shell.rm('-f', this.storePath);
+        rm(this.storePath);
       });
 
       it('the saved value when passed an empty object', function () {
