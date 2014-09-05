@@ -13,7 +13,7 @@
 // stuff, extends from Generator.Base and defines your generator steps
 // in several methods.
 var util = require('util');
-var generators = require('../../../index');
+var generators = require('../../../');
 
 module.exports = function(args, options) {
   generators.Base.apply(this, arguments);
