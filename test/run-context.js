@@ -25,6 +25,35 @@ describe('RunContext', function () {
       });
     });
 
+    it('accept flgRun false parameter and create an instance of the generator without running it', function (done) {
+      this.runSpy = sinon.spy(RunContext.prototype._run);
+      this.createSpy = sinon.spy(RunContext.prototype._create);
+      RunContext.prototype._run = this.runSpy;
+      RunContext.prototype._create = this.createSpy;
+      var ctx = new RunContext(path.join(__dirname, './fixtures/custom-generator-simple'), false);
+
+      ctx.on('ready', function () {
+        assert(this.runSpy.notCalled);
+        sinon.assert.calledOnce(this.createSpy);
+        done();
+      }.bind(this));
+
+    });
+
+    it('accept flgRun true parameter and run the generator', function (done) {
+      this.runSpy = sinon.spy(RunContext.prototype._run);
+      this.createSpy = sinon.spy(RunContext.prototype._create);
+      RunContext.prototype._run = this.runSpy;
+      RunContext.prototype._create = this.createSpy;
+      var ctx = new RunContext(path.join(__dirname, './fixtures/custom-generator-simple'), true);
+      ctx.on('end', function () {
+        assert(this.createSpy.notCalled);
+        sinon.assert.calledOnce(this.runSpy);
+        done();
+      }.bind(this));
+
+    });
+
     it('accept generator constructor parameter (and assign gen:test as namespace)', function (done) {
       this.ctx.on('ready', function () {
         assert(this.ctx.env.get('gen:test'));
@@ -153,7 +182,7 @@ describe('RunContext', function () {
     it('is chainable', function (done) {
       this.ctx.withOptions({ foo: 'bar' }).withOptions({ john: 'doe' });
       this.ctx.on('end', function () {
-        var options =  this.execSpy.firstCall.thisValue.options;
+        var options = this.execSpy.firstCall.thisValue.options;
         assert.equal(options.foo, 'bar');
         assert.equal(options.john, 'doe');
         done();
