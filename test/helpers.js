@@ -58,10 +58,10 @@ describe('yeoman.test', function () {
 
   describe('.decorate()', function () {
     beforeEach(function () {
-      this.spy = sinon.spy();
-      this.spyStub = sinon.spy();
-      this.execSpy = sinon.spy();
-      this.execStubSpy = sinon.spy();
+      this.spy = sinon.stub().returns(1);
+      this.spyStub = sinon.stub().returns(2);
+      this.execSpy = sinon.stub().returns(3);
+      this.execStubSpy = sinon.stub().returns(4);
       this.ctx = {
         exec: this.execSpy,
         execStub: this.execStubSpy
@@ -69,8 +69,8 @@ describe('yeoman.test', function () {
 
       helpers.decorate(this.ctx, 'exec', this.spy);
       helpers.decorate(this.ctx, 'execStub', this.spyStub, { stub: true });
-      this.ctx.exec('foo', 'bar');
-      this.ctx.execStub();
+      this.execResult = this.ctx.exec('foo', 'bar');
+      this.execStubResult = this.ctx.execStub();
     });
 
     it('wraps a method', function () {
@@ -83,6 +83,14 @@ describe('yeoman.test', function () {
 
     it('skip original methods if stub: true', function () {
       assert(this.execStubSpy.notCalled);
+    });
+    
+    it('returns original methods if stub: false', function () {
+      assert.equal(this.execResult, 3);
+    });
+    
+    it('returns stub methods if stub: true', function () {
+      assert.equal(this.execStubResult, 2);
     });
   });
 
