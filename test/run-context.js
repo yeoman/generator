@@ -25,6 +25,19 @@ describe('RunContext', function () {
       });
     });
 
+    it('propagate generator error events', function (done) {
+      var error = new Error();
+      var Dummy = helpers.createDummyGenerator();
+      var execSpy = sinon.stub().throws(error);
+      Dummy.prototype.exec = execSpy;
+      var ctx = new RunContext(Dummy);
+      ctx.on('error', function (err) {
+        sinon.assert.calledOnce(execSpy);
+        assert.equal(err, error);
+        done();
+      });
+    });
+
     it('accept generator constructor parameter (and assign gen:test as namespace)', function (done) {
       this.ctx.on('ready', function () {
         assert(this.ctx.env.get('gen:test'));
@@ -48,6 +61,65 @@ describe('RunContext', function () {
       this.ctx._run();
       this.ctx._run();
     });
+  });
+
+  describe('error handling', function () {
+
+    function removeListeners(host, handlerName) {
+      if (!host) return;
+      // store the original handlers for the host
+      var originalHandlers = host.listeners(handlerName);
+      // remove the current handlers for the host
+      host.removeAllListeners(handlerName);
+      return originalHandlers;
+    }
+
+    function setListeners(host, handlerName, handlers) {
+      if (!host) return;
+      handlers.forEach(host.on.bind(host, handlerName));
+    }
+
+    function processError(host, handlerName, cb) {
+      if (!host) return;
+      host.once(handlerName, cb);
+    }
+
+    beforeEach(function () {
+      this.originalHandlersProcess = removeListeners(process, 'uncaughtException');
+      this.originalHandlersProcessDomain = removeListeners(process.domain, 'error');
+    });
+
+    afterEach(function () {
+      setListeners(process, 'uncaughtException', this.originalHandlersProcess);
+      setListeners(process.domain, 'error', this.originalHandlersProcessDomain);
+    });
+
+    it('throw an error when no listener is present', function (done) {
+      var error = new Error('dummy exception');
+      var execSpy = sinon.stub().throws(error);
+
+      var errorHandler = function (err) {
+        sinon.assert.calledOnce(execSpy);
+        assert.equal(err, error);
+        done();
+      };
+
+      // tests can be run via 2 commands : 'gulp test' or 'mocha'
+      // in 'mocha' case the error has to be caught using process.on('uncaughtException')
+      // in 'gulp' case the error has to be caught using process.domain.on('error')
+      // as we don't know in which case we are, we set the error handler for both
+      processError(process, 'uncaughtException', errorHandler);
+      processError(process.domain, 'error', errorHandler);
+
+      var Dummy = helpers.createDummyGenerator();
+      Dummy.prototype.exec = execSpy;
+
+      setImmediate(function () {
+        new RunContext(Dummy);
+      });
+
+    });
+
   });
 
   describe('#inDir()', function () {
@@ -153,7 +225,7 @@ describe('RunContext', function () {
     it('is chainable', function (done) {
       this.ctx.withOptions({ foo: 'bar' }).withOptions({ john: 'doe' });
       this.ctx.on('end', function () {
-        var options =  this.execSpy.firstCall.thisValue.options;
+        var options = this.execSpy.firstCall.thisValue.options;
         assert.equal(options.foo, 'bar');
         assert.equal(options.john, 'doe');
         done();
