@@ -4,6 +4,7 @@ var os = require('os');
 var path = require('path');
 var assert = require('assert');
 var sinon = require('sinon');
+var inquirer = require('inquirer');
 var yo = require('..');
 var helpers = yo.test;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-run-context');
@@ -11,20 +12,29 @@ var tmpdir = path.join(os.tmpdir(), 'yeoman-run-context');
 var RunContext = require('../lib/test/run-context');
 
 describe('RunContext', function () {
+  this.timeout(2000);
+
   beforeEach(function () {
+    this.defaultInput = inquirer.prompts.input;
     var Dummy = this.Dummy = helpers.createDummyGenerator();
     this.execSpy = sinon.spy();
     Dummy.prototype.exec = this.execSpy;
     this.ctx = new RunContext(Dummy);
   });
 
+  afterEach(function (done) {
+    if (this.ctx.completed) return done();
+    this.ctx.on('end', done);
+  });
+
   describe('constructor', function () {
     it('accept path parameter', function (done) {
       var ctx = new RunContext(path.join(__dirname, './fixtures/custom-generator-simple'));
-      ctx.on('ready', function () {
-        assert(ctx.env.get('simple:app'));
-        done();
-      });
+      ctx
+        .on('ready', function () {
+          assert(ctx.env.get('simple:app'));
+        })
+        .on('end', done);
     });
 
     it('propagate generator error events', function (done) {
@@ -51,6 +61,13 @@ describe('RunContext', function () {
       assert(this.execSpy.notCalled);
       this.ctx.on('end', function () {
         sinon.assert.calledOnce(this.execSpy);
+        done();
+      }.bind(this));
+    });
+
+    it('reset mocked prompt after running', function (done) {
+      this.ctx.on('end', function () {
+        assert.equal(this.defaultInput, inquirer.prompts.input);
         done();
       }.bind(this));
     });
@@ -147,9 +164,8 @@ describe('RunContext', function () {
         sinon.assert.calledOnce(cb);
         sinon.assert.calledOn(cb, ctx);
         sinon.assert.calledWith(cb, path.resolve(this.tmp));
-        done();
       }.bind(this));
-      ctx.inDir(this.tmp, cb);
+      ctx.inDir(this.tmp, cb).on('end', done);
     });
 
     it('optional `cb` can use `this.async()` to delay execution', function (done) {
@@ -165,8 +181,8 @@ describe('RunContext', function () {
       ctx.inDir(this.tmp, cb)
         .on('ready', function () {
           assert(delayed);
-          done();
-        });
+        })
+        .on('end', done);
     });
   });
 
@@ -245,9 +261,9 @@ describe('RunContext', function () {
           default: 'pass'
         }, function (answers) {
           assert.equal(answers.yeoman, 'pass');
-          done();
         });
       };
+      this.ctx.on('end', done);
     });
 
     it('mock the prompt', function (done) {
@@ -258,14 +274,16 @@ describe('RunContext', function () {
           message: 'Hey!'
         }, function (answers) {
           assert.equal(answers.yeoman, 'yes please');
-          done();
         });
       };
-      this.ctx.withPrompts({ yeoman: 'yes please' });
+      this.ctx
+        .withPrompts({ yeoman: 'yes please' })
+        .on('end', done);
     });
 
     it('is chainable', function (done) {
       this.Dummy.prototype.askFor = function () {
+        var cb = this.async();
         this.prompt([{
           name: 'yeoman',
           type: 'input',
@@ -277,10 +295,13 @@ describe('RunContext', function () {
         }], function (answers) {
           assert.equal(answers.yeoman, 'yes please');
           assert.equal(answers.yo, 'yo man');
-          done();
+          cb();
         });
       };
-      this.ctx.withPrompts({ yeoman: 'yes please' }).withPrompts({ yo: 'yo man' });
+      this.ctx
+        .withPrompts({ yeoman: 'yes please' })
+        .withPrompts({ yo: 'yo man' })
+        .on('end', done);
     });
   });
 
