@@ -5,6 +5,17 @@ var events = require('events');
 var assert = require('assert');
 var Conflicter = require('../lib/util/conflicter');
 var log = require('../lib/util/log')();
+var _ = require('lodash');
+var inquirer = require('inquirer');
+
+var fileFoo = {
+  file: 'foo.js',
+  content: 'var foo = "foo";\n'
+};
+var fileBar = {
+  file: 'boo.js',
+  content: 'var boo = "boo";\n'
+};
 
 describe('Conflicter', function () {
   beforeEach(function () {
@@ -22,9 +33,25 @@ describe('Conflicter', function () {
 
   it('#add()', function () {
     this.conflicter.add(__filename);
-    var conflict = this.conflicter.conflicts.pop();
+    var conflict = this.conflicter.pop();
     assert.deepEqual(conflict.file, __filename);
     assert.deepEqual(conflict.content, fs.readFileSync(__filename, 'utf8'));
+  });
+
+  it('#pop()', function () {
+    this.conflicter.add(fileFoo);
+    this.conflicter.add(fileBar);
+    var conflict = this.conflicter.pop();
+    assert.deepEqual(conflict.file, 'boo.js');
+    assert.deepEqual(conflict.content, 'var boo = "boo";\n');
+  });
+
+  it('#shift()', function () {
+    this.conflicter.add(fileFoo);
+    this.conflicter.add(fileBar);
+    var conflict = this.conflicter.shift();
+    assert.deepEqual(conflict.file, 'foo.js');
+    assert.deepEqual(conflict.content, 'var foo = "foo";\n');
   });
 
   describe('#resolve()', function () {
@@ -87,8 +114,32 @@ describe('Conflicter', function () {
     });
   });
 
-  describe.skip('#collision()', function () {
+  describe('#collision()', function () {
     var me = fs.readFileSync(__filename, 'utf8');
+
+    beforeEach(function () {
+      var mockAdapter = {
+        prompt: inquirer.prompt,
+        diff: function () {},
+        log: log
+      };
+      var self = this;
+      var Prompt = function (q, cb) {
+        this.answer = _.where(q.choices, { key: self.answer })[0].value;
+      };
+
+      Prompt.prototype.run = function (cb) {
+        cb(this.answer);
+      };
+      inquirer.registerPrompt('expand', Prompt);
+      this.conflicter = new Conflicter(mockAdapter);
+    });
+
+    afterEach(function () {
+      inquirer.restoreDefaultPrompts();
+      delete this.conflicter.force;
+    });
+
     it('identical status', function (done) {
       this.conflicter.collision(__filename, me, function (status) {
         assert.equal(status, 'identical');
@@ -97,13 +148,38 @@ describe('Conflicter', function () {
     });
 
     it('create status', function (done) {
-      this.conflicter.collision('foo.js', '', function (status) {
+      this.conflicter.collision('file-who-does-not-exist.js', '', function (status) {
         assert.equal(status, 'create');
         done();
       });
     });
 
-    it('conflict status', function (done) {
+    it('user choose "yes"', function (done) {
+      this.answer = 'y';
+      this.conflicter.collision(__filename, '', function (status) {
+        assert.equal(status, 'force');
+        done();
+      });
+    });
+
+    it('user chosse "skip"', function (done) {
+      this.answer = 'n';
+      this.conflicter.collision(__filename, '', function (status) {
+        assert.equal(status, 'skip');
+        done();
+      });
+    });
+
+    it('user choose "all"', function (done) {
+      this.answer = 'a';
+      this.conflicter.collision(__filename, '', function (status) {
+        assert.equal(status, 'force');
+        done();
+      });
+    });
+
+    it('force conflict status', function (done) {
+      this.conflicter.force = true;
       this.conflicter.collision(__filename, '', function (status) {
         assert.equal(status, 'force');
         done();
