@@ -36,14 +36,6 @@ describe('generators.Base fetch utilities', function () {
     this.Dummy = Dummy;
   });
 
-  describe('#bowerInstall()', function () {
-    it('fetch remote from Bower', function (done) {
-      this.dummy.bowerInstall('backbone', function () {
-        fs.stat('bower_components/backbone', done);
-      });
-    });
-  });
-
   describe('#tarball()', function () {
     it('download and untar via the NPM download package', function (done) {
       var tmp = path.join(tmpdir, 'yeoman-test');
