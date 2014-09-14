@@ -14,7 +14,6 @@ var handleErr = function (err) {
 };
 
 gulp.task('static', function () {
-  var eslintHasError = false;	
   return gulp.src([
     'test/*.js',
     'lib/**/*.js',
@@ -30,18 +29,7 @@ gulp.task('static', function () {
   .on('error', handleErr)
   .pipe(eslint())
   .pipe(eslint.format())
-  .on('data', function (file) {
-    if (file.eslint.messages && file.eslint.messages.length && _.any(file.eslint.messages, function (item) {
-      return item.severity === 2;
-    })) {
-      eslintHasError = true;
-    }
-  })
-  .on('end', function () {
-    if (eslintHasError) {		
-      process.exit(1);
-    }
-  });
+  .pipe(eslint.failOnError());
 });
 
 gulp.task('test', function (cb) {

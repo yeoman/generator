@@ -84,11 +84,11 @@ describe('yeoman.test', function () {
     it('skip original methods if stub: true', function () {
       assert(this.execStubSpy.notCalled);
     });
-    
+
     it('returns original methods if stub: false', function () {
       assert.equal(this.execResult, 3);
     });
-    
+
     it('returns stub methods if stub: true', function () {
       assert.equal(this.execStubResult, 2);
     });
