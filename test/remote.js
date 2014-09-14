@@ -14,6 +14,25 @@ describe('yeoman.base#remote', function () {
     this.dummy = env.create('dummy');
   });
 
+  it('remotely fetch a package on github', function (done) {
+    this.dummy.remote('yeoman', 'generator', done);
+  });
+
+  it('cache the result internally into a `_cache` folder', function (done) {
+    this.dummy.remote('yeoman', 'generator', function () {
+      fs.stat(path.join(this.dummy.cacheRoot(), 'yeoman/generator/master'), done);
+    }.bind(this));
+  });
+
+  it('invoke `cb` with a remote object to interract with the downloaded package', function (done) {
+    this.dummy.remote('yeoman', 'generator', function (err, remote) {
+      if (err) return done(err);
+
+      assert.implement(remote, ['copy', 'template', 'directory']);
+      done();
+    });
+  });
+
   describe('github', function () {
     describe('callback argument remote#copy', function () {
 
