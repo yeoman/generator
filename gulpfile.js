@@ -6,7 +6,6 @@ var jscs = require('gulp-jscs');
 var eslint = require('gulp-eslint');
 var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
-var _ = require('lodash');
 
 var handleErr = function (err) {
   console.log(err.message);
