@@ -2,8 +2,6 @@
 'use strict';
 var fs = require('fs');
 var path = require('path');
-var util = require('util');
-var events = require('events');
 var tmpdir = require('os').tmpdir();
 var assert = require('../lib/test/assert');
 var nock = require('nock');

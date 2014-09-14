@@ -1,10 +1,9 @@
 'use strict';
-var fs = require('fs');
-var path = require('path');
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
+var eslint = require('gulp-eslint');
 var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
 
@@ -26,7 +25,10 @@ gulp.task('static', function () {
   .pipe(jshint.reporter('jshint-stylish'))
   .pipe(jshint.reporter('fail'))
   .pipe(jscs())
-  .on('error', handleErr);
+  .on('error', handleErr)
+  .pipe(eslint())
+  .pipe(eslint.format())
+  .pipe(eslint.failOnError());
 });
 
 gulp.task('test', function (cb) {

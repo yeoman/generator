@@ -99,7 +99,7 @@ describe('yeoman.generators.Base', function () {
       var generator = helpers
         .run(path.join(__dirname, './fixtures/options-generator'))
         .withOptions({ testOption: false }).on('end', function () {
-          assert.equal(this.generator.options.testOption, false);
+          assert.equal(generator.options.testOption, false);
           done();
         });
     });

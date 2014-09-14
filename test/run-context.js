@@ -1,6 +1,5 @@
 /*global it, describe, before, beforeEach, afterEach */
 'use strict';
-var util = require('util');
 var path = require('path');
 var assert = require('assert');
 var sinon = require('sinon');

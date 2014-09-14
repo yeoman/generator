@@ -109,6 +109,7 @@ describe('yeoman.generators.Base', function () {
       if (process.platform === 'win32') { return done(); }
 
       fs.stat('write/to/bar.js', function (err, stats) {
+        if (err) throw err;
         assert(stats.mode & 1 === 1, 'File should be executable.');
         done();
       });
