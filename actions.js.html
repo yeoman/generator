@@ -26,6 +26,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
+var _ = require('underscore.string');
 var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
@@ -412,131 +413,6 @@ actions.bulkDirectory = function directory(source, destination, process) {
   });
   return this;
 };
-
-/**
- * Remotely fetch a package on github, store this into a _cache folder, and
- * provide a "remote" object as a facade API to ourself (part of genrator API,
- * copy, template, directory). It's possible to remove local cache, and force
- * a new remote fetch of the package on Github.
- *
- * ### Examples:
- *
- *     this.remote('user', 'repo', function(err, remote) {
- *       remote.copy('.', 'vendors/user-repo');
- *     });
- *
- * @param {String} username
- * @param {String} repo
- * @param {String} branch
- * @param {Function} cb
- * @param {Boolean} refresh
- */
-
-actions.remote = function (username, repo, branch, cb, refresh) {
-  if (!cb) {
-    cb = branch;
-    branch = 'master';
-  }
-
-  var self = this;
-  var cache = path.join(this.cacheRoot(), username, repo, branch);
-  var url = 'http://github.com/' + [username, repo, 'archive', branch].join('/') + '.tar.gz';
-
-  fs.stat(cache, function (err) {
-    // already cached
-    if (!err) {
-      // no refresh, so we can use this cache
-      if (!refresh) {
-        return done();
-      }
-
-      // otherwise, we need to remove it, to fetch it again
-      rimraf(cache, function (err) {
-        if (err) {
-          return cb(err);
-        }
-        self.tarball(url, cache, done);
-      });
-
-    } else {
-      self.tarball(url, cache, done);
-    }
-  });
-
-  function done(err) {
-    if (err) {
-      return cb(err);
-    }
-
-    var files = self.expandFiles('**', { cwd: cache, dot: true });
-
-    var remote = {};
-    remote.cachePath = cache;
-
-    // simple proxy to `.copy(source, destination)`
-    remote.copy = function copy(source, destination) {
-      source = path.join(cache, source);
-      self.copy(source, destination);
-      return this;
-    };
-
-    // simple proxy to `.bulkCopy(source, destination)`
-    remote.bulkCopy = function copy(source, destination) {
-      source = path.join(cache, source);
-      self.bulkCopy(source, destination);
-      return this;
-    };
-
-    // same as `.template(source, destination, data)`
-    remote.template = function template(source, destination, data) {
-      data = data || self;
-      destination = destination || source;
-      source = path.join(cache, source);
-
-      var body = self.engine(self.read(source), data);
-      self.write(destination, body);
-    };
-
-    // same as `.template(source, destination)`
-    remote.directory = function directory(source, destination) {
-      var root = self.sourceRoot();
-      self.sourceRoot(cache);
-      self.directory(source, destination);
-      self.sourceRoot(root);
-    };
-
-    // simple proxy to `.bulkDirectory(source, destination)`
-    remote.bulkDirectory = function directory(source, destination) {
-      var root = self.sourceRoot();
-      self.sourceRoot(cache);
-      self.bulkDirectory(source, destination);
-      self.sourceRoot(root);
-    };
-
-    var noop = function () {};
-    var fileLogger = { write: noop, warn: noop };
-
-    // Set the file-utils environments
-    // Set logger as a noop as logging is handled by the yeoman conflicter
-    remote.src = file.createEnv({
-      base: cache,
-      dest: self.destinationRoot(),
-      logger: fileLogger
-    });
-    remote.dest = file.createEnv({
-      base: self.destinationRoot(),
-      dest: cache,
-      logger: fileLogger
-    });
-
-    remote.dest.registerValidationFilter('collision', self.getCollisionFilter());
-    remote.src.registerValidationFilter('collision', self.getCollisionFilter());
-
-    cb(err, remote, files);
-  }
-
-  return this;
-};
 </code></pre>
         </article>
     </section>
@@ -547,13 +423,13 @@ actions.remote = function (username, repo, branch, cb, refresh) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="remote.html">actions/remote</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 17 2014 23:40:32 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha8</a> on Sat Sep 13 2014 22:25:43 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

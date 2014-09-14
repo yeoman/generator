@@ -63,6 +63,7 @@ var fileLogger = { write: noop, warn: noop };
  * @mixes actions/invoke
  * @mixes actions/spawn_command
  * @mixes actions/string
+ * @mixes actions/remote
  * @mixes actions/user
  * @mixes actions/wiring
  * @mixes actions/help
@@ -115,7 +116,6 @@ var Base = module.exports = function Base(args, options) {
   // checks required paramaters
   assert(this.options.env, 'You must provide the environment object. Use env#create() to create a new generator.');
   assert(this.options.resolved, 'You must provide the resolved path value. Use env#create() to create a new generator.');
-
   this.env = this.options.env;
   this.resolved = this.options.resolved;
 
@@ -204,6 +204,7 @@ _.extend(Base.prototype, require('./actions/fetch'));
 _.extend(Base.prototype, require('./actions/file'));
 _.extend(Base.prototype, require('./actions/install'));
 _.extend(Base.prototype, require('./actions/string'));
+_.extend(Base.prototype, require('./actions/remote'));
 _.extend(Base.prototype, require('./actions/wiring'));
 _.extend(Base.prototype, require('./actions/help'));
 _.extend(Base.prototype, require('./util/common'));
@@ -244,11 +245,11 @@ Base.prototype.option = function option(name, config) {
     hide: false
   });
 
-  if (!this._options[name]) {
+  if (this._options[name] == null) {
     this._options[name] = config;
   }
 
-  if (!this.options[name]) {
+  if (this.options[name] == null) {
     this.options[name] = config.defaults;
   }
 
@@ -303,7 +304,7 @@ Base.prototype.argument = function argument(name, config) {
       return position >= this.args.length ? config.defaults : value;
     },
     set: function (value) {
-      this[name] = value;
+      this.args[position] = value;
     }
   });
 
@@ -378,12 +379,19 @@ Base.prototype.run = function run(args, cb) {
 
   var methods = Object.keys(Object.getPrototypeOf(this));
 
-  assert(methods.length, 'This Generator is empty. Add at least one method for it to be runned.');
+  assert(methods.length, 'This Generator is empty. Add at least one method for it to run.');
+
+  var endProcess = function () {
+    this.emit('end');
+    cb();
+  }.bind(this);
 
   this.env.runLoop.once('end', function () {
-    self.emit('end');
-    cb();
-  });
+    if (this.config.pending) {
+      return this.config.on('save', endProcess);
+    }
+    endProcess();
+  }.bind(this));
 
   // Ensure a prototype method is candidate to be run by default
   function methodIsValid(name) {
@@ -427,7 +435,7 @@ Base.prototype.run = function run(args, cb) {
 
     // Run each queue items
     _.each(item, function (method, methodName) {
-      if (!_.isFunction(method)) return;
+      if (!_.isFunction(method) || !methodIsValid(methodName)) return;
       addMethod(method, methodName, queueName);
     });
   }
@@ -695,7 +703,7 @@ Base.prototype.determineAppname = function () {
 
 /**
  * Extend this Class to create a new one inherithing this one.
- * Also add a helper __super__ object poiting to the parent prototypes methods
+ * Also add a helper \_\_super__ object pointing to the parent prototypes methods
  * @param  {Object} protoProps  Prototype properties (available on the instances)
  * @param  {Object} staticProps Static properties (available on the contructor)
  * @return {Object}             New sub class
@@ -711,13 +719,13 @@ Base.extend = require('class-extend').extend;
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="remote.html">actions/remote</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 17 2014 23:40:32 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha8</a> on Sat Sep 13 2014 22:25:43 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

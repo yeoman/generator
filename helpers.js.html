@@ -34,8 +34,10 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('lodash');
+var async = require('async');
 var rimraf = require('rimraf');
 var mkdirp = require('mkdirp');
+var runAsync = require('run-async');
 var assert = require('./assert');
 var generators = require('../..');
 var RunContext = require('../test/run-context');
@@ -99,7 +101,7 @@ exports.decorate = function decorate(context, method, replacement, options) {
     var rep = replacement.apply(context, arguments);
 
     if (!options.stub) {
-      naturalMethod.apply(context, arguments);
+      return naturalMethod.apply(context, arguments);
     }
 
     return rep;
@@ -208,32 +210,67 @@ exports.testDirectory = function (dir, cb) {
  */
 
 exports.mockPrompt = function (generator, answers) {
+
   var origPrompt = generator.origPrompt || generator.prompt;
   answers = answers || {};
   generator.prompt = function (prompts, done) {
     if (!_.isArray(prompts)) {
       prompts = [prompts];
     }
-
-    prompts.forEach(function (prompt) {
-      if (!(prompt.name in answers)) {
-        answers[prompt.name] = prompt.default;
-      }
-
-      if (_.isFunction(prompt.validate)) {
-        var validation = prompt.validate(answers[prompt.name]);
-        if (validation !== true) {
-          if (generator.prompt.errors == null) {
-            generator.prompt.errors = [];
+    async.each(prompts, function (prompt, done) {
+      var processDefault = function (after) {
+        if (!(prompt.name in answers)) {
+          if (_.isFunction(prompt.default)) {
+            runAsync(prompt.default, function (val) {
+              answers[prompt.name] = val;
+              after();
+            }, answers);
+          } else {
+            answers[prompt.name] = prompt.default;
+            after();
           }
-          generator.prompt.errors.push({
-            name: prompt.name,
-            message: validation
-          });
+        } else {
+          after();
         }
-      }
+      };
+
+      // Skip further processing (like `validate`) for prompts
+      // that should not be executed
+      var processWhen = function (after) {
+        if (_.isFunction(prompt.when)) {
+          runAsync(prompt.when, after, answers);
+        } else {
+          after(true);
+        }
+      };
+
+      var processValidate = function (after) {
+        if (_.isFunction(prompt.validate)) {
+          runAsync(prompt.validate, function (validation) {
+            if (validation !== true) {
+              if (generator.prompt.errors == null) {
+                generator.prompt.errors = [];
+              }
+              generator.prompt.errors.push({
+                name: prompt.name,
+                message: validation
+              });
+            }
+            after();
+          }, answers[prompt.name]);
+        } else {
+          after();
+        }
+      };
+
+      processDefault(
+        processWhen.bind(null, function (goOn) {
+          if (!goOn) return done();
+          processValidate(done.bind(null, null));
+        }));
+    }, function () {
+      setTimeout(done.bind(null, answers), 0);
     });
-    setTimeout(done.bind(null, answers), 0);
   };
   generator.origPrompt = origPrompt;
 };
@@ -271,13 +308,8 @@ exports.createDummyGenerator = function () {
 
 exports.createGenerator = function (name, dependencies, args, options) {
   var env = generators();
-  dependencies.forEach(function (d) {
-    if (d instanceof Array) {
-      env.registerStub(d[0], d[1]);
-    } else {
-      env.register(d);
-    }
-  });
+
+  this.registerDependencies(env, dependencies);
 
   var generator = env.create(name, { arguments: args, options: options });
 
@@ -292,6 +324,23 @@ exports.createGenerator = function (name, dependencies, args, options) {
   generator.on('end', env.emit.bind(this, 'generators:end'));
 
   return generator;
+};
+
+/**
+ * Register a list of dependent generators into the provided env.
+ * Dependecies can be path (autodiscovery) or an array [&lt;generator>, &lt;name>]
+ *
+ * @param {Array} dependencies - paths to the generators dependencies
+ */
+
+exports.registerDependencies = function (env, dependencies) {
+  dependencies.forEach(function (d) {
+    if (_.isArray(d)) {
+      env.registerStub(d[0], d[1]);
+    } else {
+      env.register(d);
+    }
+  });
 };
 
 /**
@@ -313,13 +362,13 @@ exports.run = function (Generator) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="remote.html">actions/remote</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 17 2014 23:40:32 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha8</a> on Sat Sep 13 2014 22:25:43 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -39,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="Environment"><span class="type-signature"></span>new Environment<span class="signature">(args, opts, <span class="optional">adaper</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Environment"><span class="type-signature"></span>new Environment<span class="signature">(args, opts, adaper<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -77,7 +77,7 @@ options parser.</p>
         <th>Type</th>
 
         
-        <th>Argument</th>
+        <th>Attributes</th>
         
 
         
@@ -259,6 +259,8 @@ options parser.</p>
 
     
 
+     
+
     
 
     
@@ -269,7 +271,7 @@ options parser.</p>
         <dl>
             
 <dt>
-    <h4 class="name" id="enforceUpdate"><span class="type-signature">&lt;static> </span>enforceUpdate<span class="signature">(env)</span><span class="type-signature"> &rarr; {<a href="Environment.html">Environment</a>}</span></h4>
+    <h4 class="name" id="enforceUpdate"><span class="type-signature">(static) </span>enforceUpdate<span class="signature">(env)</span><span class="type-signature"> &rarr; {<a href="Environment.html">Environment</a>}</span></h4>
 
     
 </dt>
@@ -1055,7 +1057,7 @@ registered, the list of available generators is also displayed.</p>
         
             
 <dt>
-    <h4 class="name" id="instantiate"><span class="type-signature"></span>instantiate<span class="signature">(namespace, options)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="instantiate"><span class="type-signature"></span>instantiate<span class="signature">(namespace, options, options.arguments, options.options)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -1280,18 +1282,17 @@ registered, the list of available generators is also displayed.</p>
     
     <div class="description">
         <p>Given a String <code>filepath</code>, tries to figure out the relative namespace.</p>
-<h3>Examples:</h3><pre><code>this.namespace('backbone/all/index.js');
-// =&gt; backbone:all
+<h3>Examples:</h3><pre class="prettyprint source"><code>this.namespace('backbone/all/index.js');
+// => backbone:all
 
 this.namespace('generator-backbone/model');
-// =&gt; backbone:model
+// => backbone:model
 
 this.namespace('backbone.js');
-// =&gt; backbone
+// => backbone
 
 this.namespace('generator-mocha/backbone/model/index.js');
-// =&gt; mocha:backbone:model
-</code></pre>
+// => mocha:backbone:model</code></pre>
     </div>
     
 
@@ -2140,13 +2141,13 @@ on the provided arguments, options and the list of registered generators.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="remote.html">actions/remote</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 17 2014 23:40:32 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha8</a> on Sat Sep 13 2014 22:25:43 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

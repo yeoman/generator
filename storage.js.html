@@ -58,37 +58,14 @@ var Storage = module.exports = function Storage(name, configPath) {
 
   this.path = configPath || path.join(process.cwd(), '.yo-rc.json');
   this.name = name;
-  this.existed = false;
+  this.pending = false;
 
-  this.save = _.debounce(_.bind(this.forceSave, this), 5);
+  this._throttledSave = _.debounce(_.bind(this.forceSave, this), 5);
 
-  this.loadConfig();
+  this._store = readJSON(this.path)[this.name] || {};
+  this.existed = Object.keys(this._store).length > 0;
 };
 util.inherits(Storage, EventEmitter);
-
-/**
- * Get the previous configs or setup a new one.
- * note: it won't actually create any file before save is called.
- * @return {Object} Key-value object store
- */
-
-Storage.prototype.loadConfig = function () {
-
-  if (fs.existsSync(this.path)) {
-    var content = fs.readFileSync(this.path, 'utf8');
-    this._fullStore = JSON.parse(content);
-    this.existed = true;
-  } else {
-    this._fullStore = {};
-  }
-
-  if (!this._fullStore[this.name]) {
-    this._fullStore[this.name] = {};
-  }
-
-  this._store = this._fullStore[this.name];
-  return this._store;
-};
 
 /**
  * Schedule a save to happen sometime on a future tick.
@@ -96,7 +73,10 @@ Storage.prototype.loadConfig = function () {
  * @return {null}
  */
 
-Storage.prototype.save = function () {};
+Storage.prototype.save = function () {
+  this.pending = true;
+  this._throttledSave();
+};
 
 /**
  * Force save (synchronously write the store to disk).
@@ -104,7 +84,10 @@ Storage.prototype.save = function () {};
  */
 
 Storage.prototype.forceSave = function () {
-  fs.writeFileSync(this.path, JSON.stringify(this._fullStore, null, '  '));
+  var fullStore = readJSON(this.path);
+  fullStore[this.name] = this._store;
+  fs.writeFileSync(this.path, JSON.stringify(fullStore, null, '  '));
+  this.pending = false;
   this.emit('save');
 };
 
@@ -129,24 +112,26 @@ Storage.prototype.getAll = function () {
 
 /**
  * Assign a key to a value and schedule a save.
- * @param {String} key
- * @param {*} val  Any valid JSON type value (String, Number, Array, Object)
+ * @param {String} key  The key under which the value is stored
+ * @param {*} val  Any valid JSON type value (String, Number, Array, Object).
+ * @return {*} val  Whatever was passed in as val.
  */
 
 Storage.prototype.set = function (key, val) {
   assert(!_.isFunction(val), 'Storage value can\'t be a function');
 
   if (_.isObject(key)) {
-    _.extend(this._store, key);
+    val = _.extend(this._store, key);
   } else {
     this._store[key] = val;
   }
   this.save();
+  return val;
 };
 
 /**
  * Delete a key from the store and schedule a save.
- * @param  {String} key
+ * @param  {String} key  The key under which the value is stored.
  * @return {null}
  */
 
@@ -158,15 +143,23 @@ Storage.prototype.delete = function (key) {
 /**
  * Setup the store with defaults value and schedule a save.
  * If keys already exist, the initial value is kept.
- * @param  {Object} defaults Key-value object to store.
- * @return {null}
+ * @param  {Object} defaults  Key-value object to store.
+ * @return {*} val  Returns the merged options.
  */
 
 Storage.prototype.defaults = function (defaults) {
   assert(_.isObject(defaults), 'Storage `defaults` method only accept objects');
   var val = _.defaults(this.getAll(), defaults);
   this.set(val);
+  return val;
 };
+
+function readJSON(path) {
+  if (fs.existsSync(path)) {
+    return JSON.parse(fs.readFileSync(path, 'utf8'));
+  }
+  return {};
+}
 </code></pre>
         </article>
     </section>
@@ -177,13 +170,13 @@ Storage.prototype.defaults = function (defaults) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="remote.html">actions/remote</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 17 2014 23:40:32 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha8</a> on Sat Sep 13 2014 22:25:43 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

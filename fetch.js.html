@@ -26,12 +26,8 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
-var request = require('request');
-var download = require('download');
+var Download = require('download');
 var chalk = require('chalk');
-
-var proxy = process.env.http_proxy || process.env.HTTP_PROXY ||
-    process.env.https_proxy || process.env.HTTPS_PROXY || '';
 
 /**
  * @mixin
@@ -40,67 +36,69 @@ var proxy = process.env.http_proxy || process.env.HTTP_PROXY ||
 var fetch = module.exports;
 
 /**
- * Download a string or an array of files to a given destination.
+ * Download a file to a given destination.
  *
- * @param {String|Array} url
+ * @param {String} url
  * @param {String} destination
  * @param {Function} cb
  */
 
 fetch.fetch = function _fetch(url, destination, cb) {
-  var dl = download(url, destination, { proxy: proxy });
   var log = this.log('... Fetching %s ...', url);
-
-  return dl
-    .on('data', function () {
-      log.write('.');
-    })
-    .on('error', cb)
-    .once('close', function () {
-      log.ok('Done in ' + destination).write();
-      cb();
+  var download = new Download()
+    .get(url, destination)
+    .use(function (res) {
+      res.on('data', function () {
+        log.write('.');
+      });
     });
+
+  download.run(function (err) {
+    if (err) return cb(err);
+
+    log.ok('Done in ' + destination).write();
+    cb();
+  });
 };
 
 /**
- * Fetch a string or an array of archives and extract it/them to a given
- * destination.
+ * Fetch an archive and extract it to a given destination.
  *
- * @param {String|Array} archive
+ * @param {String} archive
  * @param {String} destination
  * @param {Function} cb
  */
 
 fetch.extract = function _extract(archive, destination, cb) {
-  var opts = {
-    extract: true,
-    proxy: proxy,
-    strip: 1
-  };
-
-  var dl = download(archive, destination, opts);
   var log = this.log.write()
     .info('... Fetching %s ...', archive)
     .info(chalk.yellow('This might take a few moments'));
 
-  return dl
-    .on('data', function () {
-      log.write('.');
-    })
-    .on('error', cb)
-    .once('close', function () {
-      log.write().ok('Done in ' + destination).write();
-      cb();
+  var download = new Download()
+    .get(archive, destination, { extract: true, strip: 1 })
+    .use(function (res) {
+      res.on('data', function () {
+        log.write('.');
+      });
     });
+
+  download.run(function (err) {
+    if (err) return cb(err);
+
+    log.write().ok('Done in ' + destination).write();
+    cb();
+  });
 };
 
+/** @alias fetch.extract */
 fetch.tarball = fetch.extract;
 
 /**
- * Expose the request module set up with a proxy
+ * Export of the `request` node module.
+ * @deprecated Require your own version of the request module.
+ *             Yeoman will eventually remove it.
  */
-
-fetch.request = request.defaults({ proxy: proxy });
+fetch.request = require('request');
 </code></pre>
         </article>
     </section>
@@ -111,13 +109,13 @@ fetch.request = request.defaults({ proxy: proxy });
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="remote.html">actions/remote</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 17 2014 23:40:32 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha8</a> on Sat Sep 13 2014 22:25:43 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

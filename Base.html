@@ -392,7 +392,7 @@ It define options, arguments, hooks, file, prompt, log, API, etc.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line66">line 66</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line67">line 67</a>
     </li></ul></dd>
     
 
@@ -454,6 +454,8 @@ var MyGenerator = yeoman.generators.Base.extend({
         
             <li><a href="string.html">actions/string</a></li>
         
+            <li><a href="remote.html">actions/remote</a></li>
+        
             <li><a href="user.html">actions/user</a></li>
         
             <li><a href="wiring.html">actions/wiring</a></li>
@@ -468,6 +470,8 @@ var MyGenerator = yeoman.generators.Base.extend({
 
     
 
+     
+
     
 
     
@@ -476,7 +480,7 @@ var MyGenerator = yeoman.generators.Base.extend({
         <dl>
             
 <dt>
-    <h4 class="name" id="extend"><span class="type-signature">&lt;static> </span>extend<span class="type-signature"></span></h4>
+    <h4 class="name" id="extend"><span class="type-signature">(static) </span>extend<span class="type-signature"></span></h4>
 
     
 </dt>
@@ -484,7 +488,7 @@ var MyGenerator = yeoman.generators.Base.extend({
     
     <div class="description">
         <p>Extend this Class to create a new one inherithing this one.
-Also add a helper <strong>super</strong> object poiting to the parent prototypes methods</p>
+Also add a helper __super__ object pointing to the parent prototypes methods</p>
     </div>
     
 
@@ -513,7 +517,7 @@ Also add a helper <strong>super</strong> object poiting to the parent prototypes
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line676">line 676</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line684">line 684</a>
     </li></ul></dd>
     
 
@@ -663,7 +667,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line255">line 255</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line256">line 256</a>
     </li></ul></dd>
     
 
@@ -693,7 +697,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
         
             
 <dt>
-    <h4 class="name" id="composeWith"><span class="type-signature"></span>composeWith<span class="signature">(namespace, options, <span class="optional">settings</span>)</span><span class="type-signature"> &rarr; {this}</span></h4>
+    <h4 class="name" id="composeWith"><span class="type-signature"></span>composeWith<span class="signature">(namespace, options, settings<span class="signature-attributes">opt</span>, settings.local<span class="signature-attributes">opt</span>, settings.link<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
 </dt>
@@ -723,7 +727,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
         <th>Type</th>
 
         
-        <th>Argument</th>
+        <th>Attributes</th>
         
 
         
@@ -839,7 +843,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
         <th>Type</th>
 
         
-        <th>Argument</th>
+        <th>Attributes</th>
         
 
         
@@ -963,7 +967,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line538">line 538</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line546">line 546</a>
     </li></ul></dd>
     
 
@@ -1115,7 +1119,7 @@ property.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line514">line 514</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line522">line 522</a>
     </li></ul></dd>
     
 
@@ -1236,7 +1240,7 @@ multiple file actions (like <code>this.write</code> and <code>this.copy</code>)<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line585">line 585</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line593">line 593</a>
     </li></ul></dd>
     
 
@@ -1332,7 +1336,7 @@ Finally defaults to the name of the current directory.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line651">line 651</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line659">line 659</a>
     </li></ul></dd>
     
 
@@ -1403,7 +1407,7 @@ Finally defaults to the name of the current directory.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line622">line 622</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line630">line 630</a>
     </li></ul></dd>
     
 
@@ -1450,12 +1454,11 @@ a generator &quot;step&quot; - top-level methods).</p>
 <h3>Options:</h3><ul>
 <li><code>as</code>      The context value to use when runing the hooked generator</li>
 <li><code>args</code>    The array of positional arguments to init and run the generator with</li>
-<li><code>options</code> An object containing a nested <code>options</code> property with the hash of options<pre><code>      to use to init and run the generator with
-</code></pre></li>
+<li><code>options</code> An object containing a nested <code>options</code> property with the hash of options<pre class="prettyprint source"><code>      to use to init and run the generator with</code></pre></li>
 </ul>
-<h3>Examples:</h3><pre><code>// $ yo webapp --test-framework jasmine
+<h3>Examples:</h3><pre class="prettyprint source"><code>// $ yo webapp --test-framework jasmine
 this.hookFor('test-framework');
-// =&gt; registers the `jasmine` hook
+// => registers the `jasmine` hook
 
 // $ yo mygen:subgen --myargument
 this.hookFor('mygen', {
@@ -1465,8 +1468,7 @@ this.hookFor('mygen', {
       'myargument': true
     }
   }
-}
-</code></pre>
+}</code></pre>
     </div>
     
 
@@ -1570,7 +1572,7 @@ this.hookFor('mygen', {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line485">line 485</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line493">line 493</a>
     </li></ul></dd>
     
 
@@ -1720,7 +1722,7 @@ parsed by nopt as a <code>this.options</code> Hash object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line210">line 210</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line211">line 211</a>
     </li></ul></dd>
     
 
@@ -1791,7 +1793,7 @@ parsed by nopt as a <code>this.options</code> Hash object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line562">line 562</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line570">line 570</a>
     </li></ul></dd>
     
 
@@ -1821,7 +1823,7 @@ parsed by nopt as a <code>this.options</code> Hash object.</p>
         
             
 <dt>
-    <h4 class="name" id="run"><span class="type-signature"></span>run<span class="signature">(<span class="optional">args</span>, <span class="optional">cb</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="run"><span class="type-signature"></span>run<span class="signature">(args<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -1858,7 +1860,7 @@ used to initialize the invoked.</p>
         <th>Type</th>
 
         
-        <th>Argument</th>
+        <th>Attributes</th>
         
 
         
@@ -1968,7 +1970,7 @@ used to initialize the invoked.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line338">line 338</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line339">line 339</a>
     </li></ul></dd>
     
 
@@ -1998,7 +2000,7 @@ used to initialize the invoked.</p>
         
             
 <dt>
-    <h4 class="name" id="runHooks"><span class="type-signature"></span>runHooks<span class="signature">(<span class="optional">cb</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="runHooks"><span class="type-signature"></span>runHooks<span class="signature">(cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -2028,7 +2030,7 @@ used to initialize the invoked.</p>
         <th>Type</th>
 
         
-        <th>Argument</th>
+        <th>Attributes</th>
         
 
         
@@ -2099,7 +2101,7 @@ used to initialize the invoked.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line430">line 430</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line438">line 438</a>
     </li></ul></dd>
     
 
@@ -2220,7 +2222,7 @@ This path is used by <code>this.dest</code> and <code>this.src</code> and multip
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line610">line 610</a>
+        <a href="base.js.html">lib/base.js</a>, <a href="base.js.html#line618">line 618</a>
     </li></ul></dd>
     
 
@@ -2285,13 +2287,13 @@ This path is used by <code>this.dest</code> and <code>this.src</code> and multip
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="remote.html">actions/remote</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 17 2014 23:40:32 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha8</a> on Sat Sep 13 2014 22:25:43 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
