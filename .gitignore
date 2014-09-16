@@ -1,3 +1,7 @@
+# Logs
+logs
+*.log
+
 node_modules/
 temp/
 temp.dev/
