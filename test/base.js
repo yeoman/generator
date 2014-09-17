@@ -662,6 +662,7 @@ describe('generators.Base', function () {
         '',
         'Options:',
         '-h, --help # Print generator\'s options and usage',
+        '--skip-cache # Do not remember prompt answers Default: false',
         '--hook1 # Hook1 to be invoked',
         '--hook2 # Hook2 to be invoked',
         '--hook3 # Hook3 to be invoked',
@@ -711,14 +712,14 @@ describe('generators.Base', function () {
     });
 
     it('is updated when destinationRoot change', function () {
-      sinon.spy(this.Dummy.prototype, '_setStorage');
+      sinon.spy(this.Dummy.prototype, '_getStorage');
       this.dummy.destinationRoot('foo');
-      assert.equal(this.Dummy.prototype._setStorage.callCount, 1);
+      assert.equal(this.Dummy.prototype._getStorage.callCount, 1);
       this.dummy.destinationRoot();
-      assert.equal(this.Dummy.prototype._setStorage.callCount, 1);
+      assert.equal(this.Dummy.prototype._getStorage.callCount, 1);
       this.dummy.destinationRoot('foo');
-      assert.equal(this.Dummy.prototype._setStorage.callCount, 2);
-      this.Dummy.prototype._setStorage.restore();
+      assert.equal(this.Dummy.prototype._getStorage.callCount, 2);
+      this.Dummy.prototype._getStorage.restore();
     });
   });
 
@@ -901,4 +902,33 @@ describe('generators.Base', function () {
     });
   });
 
+  describe('#rootGeneratorName', function () {
+    afterEach(function () {
+      rimraf.sync('package.json');
+    });
+
+    it('returns the default name', function () {
+      assert.equal(this.dummy.rootGeneratorName(), '*');
+    });
+
+    it('returns generator name', function () {
+      fs.writeFileSync('package.json', '{ "name": "generator-name" }');
+      assert.equal(this.dummy.rootGeneratorName(), 'generator-name');
+    });
+  });
+
+  describe('#rootGeneratorVersion', function () {
+    afterEach(function () {
+      rimraf.sync('package.json');
+    });
+
+    it('returns the default version', function () {
+      assert.equal(this.dummy.rootGeneratorVersion(), '0.0.0');
+    });
+
+    it('returns generator version', function () {
+      fs.writeFileSync('package.json', '{ "version": "1.0.0" }');
+      assert.equal(this.dummy.rootGeneratorVersion(), '1.0.0');
+    });
+  });
 });
