@@ -2,3 +2,6 @@ node_modules/
 temp/
 temp.dev/
 coverage/
+
+# IDE
+.idea
