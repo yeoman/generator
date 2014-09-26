@@ -37,4 +37,24 @@ describe('Base#invoke()', function () {
       done();
     });
   });
+
+  it('works when invoked from runLoop', function (done) {
+    var stubGenFinished = false;
+
+    this.gen.constructor.prototype.bar = function () {
+      var cb = this.async();
+      var invoked = this.invoke('foo:bar',
+        { options: { 'skip-install': true } },
+        function () {
+          stubGenFinished = true;
+          assert(invoked.stubGenRunned, 'runned');
+          cb();
+        });
+    };
+
+    this.gen.run(function () {
+      assert(stubGenFinished, 'finished');
+      done();
+    });
+  });
 });
