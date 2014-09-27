@@ -1,6 +1,5 @@
 /*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
-
 var yo = require('..');
 var helpers = yo.test;
 var assert = yo.assert;

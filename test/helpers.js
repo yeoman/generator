@@ -1,4 +1,5 @@
 /*global it, describe, before, beforeEach, afterEach */
+'use strict';
 var util = require('util');
 var path = require('path');
 var assert = require('assert');
@@ -9,8 +10,6 @@ var RunContext = require('../lib/test/run-context');
 var env = yeoman();
 
 describe('yeoman.test', function () {
-  'use strict';
-
   beforeEach(function () {
     process.chdir(path.join(__dirname, './fixtures'));
     var self = this;
