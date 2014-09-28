@@ -7,8 +7,6 @@ var yo = require('..');
 var noop = function () {};
 
 describe('yeoman.assert', function () {
-  'use strict';
-
   beforeEach(function () {
     process.chdir(path.join(__dirname, './fixtures'));
   });
