@@ -333,6 +333,13 @@ describe('yeoman.generators.Base', function () {
         done();
       }.bind(this));
     });
+
+    it('run all registered hooks', function (done) {
+      this.dummy.run();
+      this.dummy.on('end', function () {
+        fs.stat('app/scripts/models/application-model.js', done);
+      });
+    });
   });
 
   describe('#_', function () {
@@ -461,14 +468,6 @@ describe('yeoman.generators.Base', function () {
 
       dummy.parseOptions();
       assert.equal(dummy.options.foo, undefined);
-    });
-  });
-
-  describe('#runHooks()', function () {
-    it('go through all registered hooks, and invoke them in series', function (done) {
-      this.dummy.runHooks(function () {
-        fs.stat('app/scripts/models/application-model.js', done);
-      });
     });
   });
 
