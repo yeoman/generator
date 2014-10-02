@@ -2,6 +2,7 @@
 'use strict';
 var fs = require('fs');
 var path = require('path');
+var util = require('util');
 var sinon = require('sinon');
 var mockery = require('mockery');
 mockery.enable({
@@ -713,6 +714,90 @@ describe('yeoman.generators.Base', function () {
         assert(gruntfile.indexOf('foo:') > 0);
         done();
       }.bind(this));
+    });
+  });
+
+  describe('Events', function () {
+    before(function () {
+      var Generator = this.Generator = function () {
+        generators.Base.apply(this, arguments);
+      };
+
+      Generator.namespace = 'angular:all';
+
+      util.inherits(Generator, generators.Base);
+
+      Generator.prototype.createSomething = function () {};
+      Generator.prototype.createSomethingElse = function () {};
+    });
+
+    it('emits the series of event on a specific generator', function (done) {
+      var angular = new this.Generator([], {
+        env: generators(),
+        resolved: __filename,
+        'skip-install': true
+      });
+
+      var lifecycle = ['start', 'createSomething', 'createSomethingElse', 'end'];
+
+      function assertEvent(e) {
+        return function () {
+          assert.equal(e, lifecycle.shift());
+          if (e === 'end') {
+            done();
+          }
+        };
+      }
+
+      angular
+        // Start event, emitted right before "running" the generator.
+        .on('start', assertEvent('start'))
+        // End event, emitted after the generation process, when every generator method and hooks are executed
+        .on('end', assertEvent('end'))
+        // Emitted when a conflict is detected, right after the prompt happens.
+        // .on('conflict', assertEvent('conflict'))
+        // Emitted on every prompt, both for conflict state and generators one.
+        // .on('prompt', assertEvent('prompt'))
+        // Emitted right before a hook is invoked
+        // .on('hook', assertEvent('hook'))
+        // Emitted on each generator method
+        .on('createSomething', assertEvent('createSomething'))
+        .on('createSomethingElse', assertEvent('createSomethingElse'));
+
+      angular.run();
+    });
+
+    it('only call the end event once (bug #402)', function (done) {
+      function GeneratorOnce() {
+        generators.Base.apply(this, arguments);
+        this.sourceRoot(path.join(__dirname, 'fixtures'));
+        this.destinationRoot(path.join(__dirname, 'temp'));
+      }
+
+      util.inherits(GeneratorOnce, generators.Base);
+
+      GeneratorOnce.prototype.createDuplicate = function () {
+        this.copy('foo-copy.js');
+        this.copy('foo-copy.js');
+      };
+
+      var generatorOnce = new GeneratorOnce([], {
+        env: generators(),
+        resolved: __filename,
+        'skip-install': true
+      });
+
+      var isFirstEndEvent = true;
+
+      generatorOnce.on('end', function () {
+        assert.ok(isFirstEndEvent);
+        if (isFirstEndEvent) {
+          done();
+        }
+        isFirstEndEvent = false;
+      });
+
+      generatorOnce.run();
     });
   });
 

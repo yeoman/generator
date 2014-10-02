@@ -2,8 +2,8 @@
 'use strict';
 var fs = require('fs');
 var path = require('path');
+var log = require('yeoman-environment').util.log();
 var generators = require('..');
-var log = require('../lib/util/log')();
 var helpers = generators.test;
 var assert = generators.assert;
 var Conflicter = require('../lib/util/conflicter');
