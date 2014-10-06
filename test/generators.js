@@ -9,7 +9,7 @@ var assert = generators.assert;
 var helpers = generators.test;
 var sinon = require('sinon');
 
-var Environment = require('../lib/env');
+var Environment = require('yeoman-environment');
 
 describe('Generators', function () {
   before(helpers.setUpTestDirectory(path.join(__dirname, 'temp')));
@@ -24,8 +24,8 @@ describe('Generators', function () {
       var args = ['model', 'Post'];
       var opts = { help: true };
       var env = generators(args, opts);
-      assert.equal(env.arguments, args);
-      assert.equal(env.options, opts);
+      assert.deepEqual(env.arguments, args);
+      assert.deepEqual(env.options, opts);
     });
   });
 

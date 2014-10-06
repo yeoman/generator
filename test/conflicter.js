@@ -3,8 +3,8 @@
 var fs = require('fs');
 var events = require('events');
 var assert = require('assert');
+var log = require('yeoman-environment').util.log();
 var Conflicter = require('../lib/util/conflicter');
-var log = require('../lib/util/log')();
 var _ = require('lodash');
 var inquirer = require('inquirer');
 

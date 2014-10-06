@@ -41,7 +41,6 @@
     "findup-sync": "^0.1.2",
     "github-username": "^1.0.0",
     "glob": "^4.0.2",
-    "grouped-queue": "^0.3.0",
     "gruntfile-editor": "^0.2.0",
     "iconv-lite": "^0.4.4",
     "inquirer": "^0.7.1",
@@ -54,8 +53,8 @@
     "rimraf": "^2.2.0",
     "run-async": "^0.1.0",
     "shelljs": "^0.3.0",
-    "text-table": "^0.2.0",
-    "underscore.string": "^2.3.1"
+    "underscore.string": "^2.3.1",
+    "yeoman-environment": "^1.0.0"
   },
   "devDependencies": {
     "gulp": "^3.6.0",
