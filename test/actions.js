@@ -7,7 +7,6 @@ var generators = require('..');
 var helpers = generators.test;
 var assert = generators.assert;
 var Conflicter = require('../lib/util/conflicter');
-var win32 = process.platform === 'win32';
 
 describe('yeoman.generators.Base', function () {
   before(helpers.setUpTestDirectory(path.join(__dirname, 'temp')));
@@ -50,16 +49,8 @@ describe('yeoman.generators.Base', function () {
   });
 
   describe('generator.cacheRoot()', function () {
-    it('should show the cache root where yeoman stores all temp files, on a platform that follows XDG', function () {
-      process.env.XDG_CACHE_HOME = '.';
-      assert.equal(this.dummy.cacheRoot(), path.join(process.env.XDG_CACHE_HOME, 'yeoman'));
-    });
-
-    it('should show the cache root where yeoman stores all temp files, on a plateform that doesn\'t follow XDG', function () {
-      if (process.env.XDG_CACHE_HOME) {
-        delete process.env.XDG_CACHE_HOME;
-      }
-      assert.equal(this.dummy.cacheRoot(), path.join(process.env[win32 ? 'USERPROFILE' : 'HOME'], '.cache/yeoman'));
+    it('should show the cache root where yeoman stores all temp files', function () {
+      assert(/yeoman$/.test(this.dummy.cacheRoot()));
     });
   });
 
