@@ -287,4 +287,12 @@ describe('yeoman.test', function () {
       assert(helpers.run(helpers.createDummyGenerator()) instanceof RunContext);
     });
   });
+
+  describe('.create()', function () {
+    it('return a RunContext object', function () {
+      var ctx = helpers.create(helpers.createDummyGenerator());
+      assert(ctx instanceof RunContext);
+      assert.equal(ctx.runned, false);
+    });
+  });
 });
