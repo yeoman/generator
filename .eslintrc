@@ -33,6 +33,7 @@
     "no-use-before-define": 2,
     "quotes": [2, "single"],
     "strict": 2,
+    "valid-jsdoc": [2, { "requireReturn": false, "requireParamDescription": false }],
     "wrap-iife": [2, "any"],
     "yoda": 0
   }
