@@ -31,9 +31,9 @@ var Environment = require('yeoman-environment');
  *        console.log('done!');
  *      });
  *
+ * @alias module:yeoman-generator
  */
 
-/** @alias module:yeoman-generator */
 var yeoman = module.exports = function createEnv() {
   return Environment.createEnv.apply(Environment, arguments);
 };
