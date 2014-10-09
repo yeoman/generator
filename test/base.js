@@ -254,6 +254,18 @@ describe('yeoman.generators.Base', function () {
       this.testGen.run();
     });
 
+    it('can emit error from sync methods', function (done) {
+      var error = new Error();
+      this.TestGenerator.prototype.throwing = function () {
+        throw error;
+      };
+      this.testGen.on('error', function (err) {
+        assert.equal(err, error);
+        done();
+      });
+      this.testGen.run();
+    });
+
     it('run methods in series', function (done) {
       var async1Running = false;
       var async1Runned = false;
