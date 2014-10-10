@@ -69,6 +69,7 @@
     "nock": "^0.45.0",
     "proxyquire": "^1.0.0",
     "sinon": "^1.9.1",
-    "gulp-eslint": "~0.1.8"
+    "gulp-eslint": "~0.1.8",
+    "gulp-plumber": "~0.6.6"
   }
 }

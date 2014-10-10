@@ -6,6 +6,7 @@ var jscs = require('gulp-jscs');
 var eslint = require('gulp-eslint');
 var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
+var plumber = require('gulp-plumber');
 
 var handleErr = function (err) {
   console.log(err.message);
@@ -36,9 +37,12 @@ gulp.task('test', function (cb) {
     'lib/**/*.js',
     'index.js'
   ])
-  .pipe(istanbul())
+  .pipe(istanbul({
+    includeUntested: true
+  }))
   .on('finish', function () {
     gulp.src(['test/*.js'])
+      .pipe(plumber())
       .pipe(mocha({
         reporter: 'spec',
         timeout: 100000
