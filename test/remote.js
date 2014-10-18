@@ -1,12 +1,14 @@
 /*global describe, it, before */
 'use strict';
+var os = require('os');
 var generators = require('..');
 var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
+var tmpdir = path.join(os.tmpdir(), 'yeoman-remote');
 
 describe('yeoman.base#remote', function () {
-  before(generators.test.setUpTestDirectory(path.join(__dirname, 'temp')));
+  before(generators.test.setUpTestDirectory(tmpdir));
 
   before(function () {
     var env = this.env = generators();

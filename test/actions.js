@@ -1,15 +1,17 @@
 /*global describe, before, after, it, afterEach, beforeEach */
 'use strict';
 var fs = require('fs');
+var os = require('os');
 var path = require('path');
 var log = require('yeoman-environment').util.log();
 var generators = require('..');
 var helpers = generators.test;
 var assert = generators.assert;
 var Conflicter = require('../lib/util/conflicter');
+var tmpdir = path.join(os.tmpdir(), 'yeoman-actions');
 
 describe('yeoman.generators.Base', function () {
-  before(helpers.setUpTestDirectory(path.join(__dirname, 'temp')));
+  before(helpers.setUpTestDirectory(tmpdir));
 
   before(function () {
     var env = this.env = generators();

@@ -2,17 +2,19 @@
 'use strict';
 var path = require('path');
 var fs = require('fs');
+var os = require('os');
 var events = require('events');
 var file = require('file-utils');
 var generators = require('..');
 var assert = generators.assert;
 var helpers = generators.test;
 var sinon = require('sinon');
+var tmpdir = path.join(os.tmpdir(), 'yeoman-generators');
 
 var Environment = require('yeoman-environment');
 
 describe('Generators', function () {
-  before(helpers.setUpTestDirectory(path.join(__dirname, 'temp')));
+  before(helpers.setUpTestDirectory(tmpdir));
 
   describe('module', function () {
     it('initialize new Environments', function () {

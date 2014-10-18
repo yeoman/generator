@@ -8,7 +8,7 @@ var nock = require('nock');
 var yeoman = require('..');
 var fetch = require('../lib/actions/fetch');
 
-var tmp = path.join(tmpdir, 'yeoman-test');
+var tmp = path.join(tmpdir, 'yeoman-fetch');
 
 describe('yeoman.generators.Base fetch utilities', function () {
   beforeEach(function () {

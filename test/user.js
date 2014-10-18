@@ -1,11 +1,14 @@
 /*global describe, before, it, after, before, beforeEach, afterEach */
 /*jshint expr: true */
 'use strict';
+var os = require('os');
+var path = require('path');
 var shell = require('shelljs');
 var assert = require('assert');
 var sinon = require('sinon');
 var proxyquire = require('proxyquire');
 var file = require('../lib/actions/file');
+var tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 
 describe('Generator#user', function () {
 
@@ -17,9 +20,9 @@ describe('Generator#user', function () {
 
     before(function () {
       this.cwd = process.cwd();
-      this.tmp = shell.tempdir();
+      this.tmp = tmpdir;
       shell.cd(this.tmp);
-      file.mkdir('subdir');
+      file.mkdir(path.join(tmpdir, 'subdir'));
       shell.exec('git init --quiet');
       shell.exec('git config --local user.name Yeoman');
       shell.exec('git config --local user.email yo@yeoman.io');
@@ -88,9 +91,9 @@ describe('Generator#user', function () {
 
     before(function () {
       this.cwd = process.cwd();
-      this.tmp = shell.tempdir();
+      this.tmp = tmpdir;
       shell.cd(this.tmp);
-      file.mkdir('subdir');
+      file.mkdir(path.join(tmpdir, 'subdir'));
       shell.exec('git init --quiet');
       shell.exec('git config --local user.name Zeno');
       shell.exec('git config --local user.email hi@zenorocha.com');

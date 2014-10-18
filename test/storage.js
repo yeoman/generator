@@ -5,7 +5,10 @@ var fs = require('fs');
 var assert = require('assert');
 var sinon = require('sinon');
 var Storage = require('../lib/util/storage');
+var generators = require('..');
+var helpers = generators.test;
 var os = require('os');
+var tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 
 function rm(path) {
   if (fs.existsSync(path)) {
@@ -14,9 +17,11 @@ function rm(path) {
 }
 
 describe('Storage', function () {
+  before(helpers.setUpTestDirectory(tmpdir));
+
   beforeEach(function () {
     this.beforeDir = process.cwd();
-    this.storePath = path.join(os.tmpdir(), 'new-config.json');
+    this.storePath = path.join(tmpdir, 'new-config.json');
     this.store = new Storage('test', this.storePath);
     this.store.set('foo', 'bar');
     this.saveSpy = sinon.spy(this.store, 'save');
@@ -55,7 +60,7 @@ describe('Storage', function () {
   });
 
   it('defaults store path to `.yo-rc.json`', function (done) {
-    var tmp = os.tmpdir();
+    var tmp = tmpdir;
     process.chdir(tmp);
     var store = new Storage('yo');
 
@@ -105,7 +110,7 @@ describe('Storage', function () {
 
     describe('@return', function () {
       beforeEach(function () {
-        this.storePath = path.join(os.tmpdir(), 'setreturn.json');
+        this.storePath = path.join(tmpdir, 'setreturn.json');
         this.store = new Storage('test', this.storePath);
       });
 
@@ -165,7 +170,7 @@ describe('Storage', function () {
   describe('#save()', function () {
     beforeEach(function (done) {
       this.forceSaveSpy = sinon.spy(Storage.prototype, 'forceSave');
-      this.saveStorePath = path.join(os.tmpdir(), 'save.json');
+      this.saveStorePath = path.join(tmpdir, 'save.json');
       rm(this.saveStorePath);
       this.store = new Storage('test', this.saveStorePath);
       this.store.set('foo', 'bar');
@@ -251,7 +256,7 @@ describe('Storage', function () {
 
     describe('@return', function () {
       beforeEach(function (done) {
-        this.storePath = path.join(os.tmpdir(), 'defaultreturn.json');
+        this.storePath = path.join(tmpdir, 'defaultreturn.json');
         this.store = new Storage('test', this.storePath);
         this.store.set('val1', 1);
         this.store.set('foo', 'bar');
