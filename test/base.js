@@ -1,6 +1,7 @@
 /*global describe, before, beforeEach, after, afterEach, it */
 'use strict';
 var fs = require('fs');
+var os = require('os');
 var path = require('path');
 var util = require('util');
 var sinon = require('sinon');
@@ -13,11 +14,12 @@ var generators = require('..');
 var yo = generators;
 var helpers = generators.test;
 var assert = generators.assert;
+var tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 
 var Base = generators.generators.Base;
 
 describe('yeoman.generators.Base', function () {
-  before(helpers.setUpTestDirectory(path.join(__dirname, 'temp.dev')));
+  before(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
     var env = this.env = generators([], { 'skip-install': true });
@@ -29,7 +31,7 @@ describe('yeoman.generators.Base', function () {
     env.registerStub(Dummy, 'hook2:ember:all');
     env.registerStub(Dummy, 'hook3');
     env.registerStub(function () {
-      this.write(path.join(__dirname, 'temp.dev/app/scripts/models/application-model.js'), '// ...');
+      this.write(path.join(tmpdir, 'app/scripts/models/application-model.js'), '// ...');
     }, 'hook4');
 
     this.dummy = new Dummy(['bar', 'baz', 'bom'], {
@@ -119,8 +121,8 @@ describe('yeoman.generators.Base', function () {
   });
 
   describe('#determineAppname()', function () {
-    before(function () {
-      process.chdir(path.join(__dirname, 'temp.dev'));
+    beforeEach(function () {
+      process.chdir(tmpdir);
     });
 
     afterEach(function () {
@@ -141,7 +143,7 @@ describe('yeoman.generators.Base', function () {
     });
 
     it('returns appname from the current directory', function () {
-      assert.equal(this.dummy.determineAppname(), 'temp dev');
+      assert.equal(this.dummy.determineAppname(), 'yeoman base');
     });
   });
 
@@ -783,7 +785,7 @@ describe('yeoman.generators.Base', function () {
       function GeneratorOnce() {
         generators.Base.apply(this, arguments);
         this.sourceRoot(path.join(__dirname, 'fixtures'));
-        this.destinationRoot(path.join(__dirname, 'temp'));
+        this.destinationRoot(path.join(os.tmpdir(), 'yeoman-base-once'));
       }
 
       util.inherits(GeneratorOnce, generators.Base);

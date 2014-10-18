@@ -1,10 +1,12 @@
 /*global it, describe, before, beforeEach, afterEach */
 'use strict';
+var os = require('os');
 var path = require('path');
 var assert = require('assert');
 var sinon = require('sinon');
 var yo = require('..');
 var helpers = yo.test;
+var tmpdir = path.join(os.tmpdir(), 'yeoman-run-context');
 
 var RunContext = require('../lib/test/run-context');
 
@@ -125,7 +127,7 @@ describe('RunContext', function () {
   describe('#inDir()', function () {
     beforeEach(function () {
       process.chdir(__dirname);
-      this.tmp = path.join(__dirname, './temp.dev');
+      this.tmp = tmpdir;
     });
 
     it('call helpers.testDirectory()', function () {
