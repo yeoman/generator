@@ -118,8 +118,9 @@ describe('Conflicter', function () {
     var me = fs.readFileSync(__filename, 'utf8');
 
     beforeEach(function () {
+      var prompt = inquirer.createPromptModule();
       var mockAdapter = {
-        prompt: inquirer.prompt,
+        prompt: prompt,
         diff: function () {},
         log: log
       };
@@ -131,12 +132,11 @@ describe('Conflicter', function () {
       Prompt.prototype.run = function (cb) {
         cb(this.answer);
       };
-      inquirer.registerPrompt('expand', Prompt);
+      prompt.registerPrompt('expand', Prompt);
       this.conflicter = new Conflicter(mockAdapter);
     });
 
     afterEach(function () {
-      inquirer.restoreDefaultPrompts();
       delete this.conflicter.force;
     });
 
