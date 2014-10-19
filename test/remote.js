@@ -1,10 +1,11 @@
-/*global describe, it, before */
+/*global describe, it, before, beforeEach */
 'use strict';
 var os = require('os');
 var generators = require('..');
 var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
+var nock = require('nock');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-remote');
 
 describe('yeoman.base#remote', function () {
@@ -14,6 +15,13 @@ describe('yeoman.base#remote', function () {
     var env = this.env = generators();
     env.registerStub(generators.test.createDummyGenerator(), 'dummy');
     this.dummy = env.create('dummy');
+  });
+
+  beforeEach(function () {
+    nock('http://github.com')
+      .persist()
+      .get('/yeoman/generator/archive/master.tar.gz')
+      .replyWithFile(200, path.join(__dirname, 'fixtures/testRemoteFile.tar.gz'));
   });
 
   it('remotely fetch a package on github', function (done) {
