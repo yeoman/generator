@@ -3,18 +3,18 @@
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
-var log = require('yeoman-environment').util.log();
 var generators = require('..');
 var helpers = generators.test;
 var assert = generators.assert;
 var Conflicter = require('../lib/util/conflicter');
+var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-actions');
 
 describe('yeoman.generators.Base', function () {
   before(helpers.setUpTestDirectory(tmpdir));
 
   before(function () {
-    var env = this.env = generators();
+    var env = this.env = generators([], {}, new TestAdapter());
     env.registerStub(helpers.createDummyGenerator(), 'dummy');
     this.dummy = env.create('dummy');
 
@@ -389,22 +389,17 @@ describe('yeoman.generators.Base', function () {
     it('should check for conflict if directory already exists', function (done) {
       var oldConflicter = this.dummy.conflicter;
       var callCount = 0;
-      var adapterMock = {
-        prompt: function (config, cb) {
-          cb({ overwrite: this.answer });
-        },
-        log: log,
-        answer: null
+      var dummyGenerator = this.dummy;
+      var answers = {
+        overwrite: function (cb) {
+          callCount++;
+          assert(callCount, 1);
+          dummyGenerator.conflicter = oldConflicter;
+          cb();
+        }
       };
 
-      adapterMock.answer = function (cb) {
-        callCount++;
-        assert(callCount, 1);
-        this.dummy.conflicter = oldConflicter;
-        cb();
-      }.bind(this);
-      this.dummy.conflicter = new Conflicter(adapterMock);
-
+      this.dummy.conflicter = new Conflicter(new TestAdapter(answers));
       this.dummy.bulkDirectory('bulk-operation', 'bulk-operation');
       this.dummy.conflicter.resolve(done);
     });
