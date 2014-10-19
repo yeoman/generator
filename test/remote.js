@@ -11,15 +11,11 @@ var tmpdir = path.join(os.tmpdir(), 'yeoman-remote');
 describe('yeoman.base#remote', function () {
   before(generators.test.setUpTestDirectory(tmpdir));
 
-  before(function () {
+  beforeEach(function () {
     var env = this.env = generators();
     env.registerStub(generators.test.createDummyGenerator(), 'dummy');
     this.dummy = env.create('dummy');
-  });
-
-  beforeEach(function () {
     nock('http://github.com')
-      .persist()
       .get('/yeoman/generator/archive/master.tar.gz')
       .replyWithFile(200, path.join(__dirname, 'fixtures/testRemoteFile.tar.gz'));
   });
