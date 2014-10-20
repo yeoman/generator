@@ -1,21 +1,25 @@
 /*global describe, it, before, beforeEach */
 'use strict';
 var os = require('os');
-var generators = require('..');
 var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
+var yeoman = require('yeoman-environment');
 var nock = require('nock');
+var generators = require('..');
+var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-remote');
 
 describe('yeoman.base#remote', function () {
   before(generators.test.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    var env = this.env = generators();
-    env.registerStub(generators.test.createDummyGenerator(), 'dummy');
-    this.dummy = env.create('dummy');
-    nock('http://github.com')
+    this.env = yeoman.createEnv([], {}, new TestAdapter({
+      overwrite: function (cb) { cb('force'); }
+    }));
+    this.env.registerStub(generators.test.createDummyGenerator(), 'dummy');
+    this.dummy = this.env.create('dummy');
+    nock('https://github.com')
       .get('/yeoman/generator/archive/master.tar.gz')
       .replyWithFile(200, path.join(__dirname, 'fixtures/testRemoteFile.tar.gz'));
   });
@@ -41,8 +45,7 @@ describe('yeoman.base#remote', function () {
 
   describe('github', function () {
     describe('callback argument remote#copy', function () {
-
-      before(function (done) {
+      beforeEach(function (done) {
         this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
           this.dummy.foo = 'foo';
           remote.copy('test/fixtures/template.jst', 'remote-githug/template.js');
@@ -59,8 +62,7 @@ describe('yeoman.base#remote', function () {
     });
 
     describe('callback argument remote#bulkCopy', function () {
-
-      before(function (done) {
+      beforeEach(function (done) {
         this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
           remote.bulkCopy('test/fixtures/foo-template.js', 'remote-githug/foo-template.js');
           this.dummy.conflicter.resolve(done);
@@ -80,8 +82,7 @@ describe('yeoman.base#remote', function () {
     });
 
     describe('callback argument remote#directory', function () {
-
-      before(function (done) {
+      beforeEach(function (done) {
         this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
           remote.directory('test/generators', 'remote-githug/generators');
           this.dummy.conflicter.resolve(done);
@@ -91,12 +92,10 @@ describe('yeoman.base#remote', function () {
       it('copy a directory from a remote resource', function (done) {
         fs.stat('remote-githug/generators/test-angular.js', done);
       });
-
     });
 
     describe('callback argument remote#bulkDirectory', function () {
-
-      before(function (done) {
+      beforeEach(function (done) {
         this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
           remote.bulkDirectory('test/fixtures', 'remote-githug/fixtures');
           this.dummy.conflicter.resolve(done);
@@ -113,11 +112,10 @@ describe('yeoman.base#remote', function () {
           done();
         });
       });
-
     });
 
     describe('callback argument remote fileUtils Environment instances', function () {
-      before(function (done) {
+      beforeEach(function (done) {
         this.cachePath = path.join(this.dummy.cacheRoot(), 'yeoman/generator/master');
         this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
           this.remoteArg = remote;
@@ -139,9 +137,8 @@ describe('yeoman.base#remote', function () {
 
   describe('absolute', function () {
     describe('callback argument remote#copy', function () {
-
-      before(function (done) {
-        this.dummy.remote('https://github.com/yeoman/generator/archive/master.zip', function (err, remote) {
+      beforeEach(function (done) {
+        this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
           this.dummy.foo = 'foo';
           remote.copy('test/fixtures/template.jst', 'remote-absolute/template.js');
           this.dummy.conflicter.resolve(done);
@@ -157,9 +154,8 @@ describe('yeoman.base#remote', function () {
     });
 
     describe('callback argument remote#bulkCopy', function () {
-
-      before(function (done) {
-        this.dummy.remote('https://github.com/yeoman/generator/archive/master.zip', function (err, remote) {
+      beforeEach(function (done) {
+        this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
           remote.bulkCopy('test/fixtures/foo-template.js', 'remote-absolute/foo-template.js');
           this.dummy.conflicter.resolve(done);
         }.bind(this), true);
@@ -178,9 +174,8 @@ describe('yeoman.base#remote', function () {
     });
 
     describe('callback argument remote#directory', function () {
-
-      before(function (done) {
-        this.dummy.remote('https://github.com/yeoman/generator/archive/master.zip', function (err, remote) {
+      beforeEach(function (done) {
+        this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
           remote.directory('test/generators', 'remote-absolute/generators');
           this.dummy.conflicter.resolve(done);
         }.bind(this), true);
@@ -189,13 +184,11 @@ describe('yeoman.base#remote', function () {
       it('copy a directory from a remote resource', function (done) {
         fs.stat('remote-absolute/generators/test-angular.js', done);
       });
-
     });
 
     describe('callback argument remote#bulkDirectory', function () {
-
-      before(function (done) {
-        this.dummy.remote('https://github.com/yeoman/generator/archive/master.zip', function (err, remote) {
+      beforeEach(function (done) {
+        this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
           remote.bulkDirectory('test/fixtures', 'remote-absolute/fixtures');
           this.dummy.conflicter.resolve(done);
         }.bind(this), true);
@@ -211,13 +204,12 @@ describe('yeoman.base#remote', function () {
           done();
         });
       });
-
     });
 
     describe('callback argument remote fileUtils Environment instances', function () {
-      before(function (done) {
-        this.cachePath = path.join(this.dummy.cacheRoot(), 'httpsgithubcomyeomangeneratorarchivemasterzip');
-        this.dummy.remote('https://github.com/yeoman/generator/archive/master.zip', function (err, remote) {
+      beforeEach(function (done) {
+        this.cachePath = path.join(this.dummy.cacheRoot(), 'httpsgithubcomyeomangeneratorarchivemastertargz');
+        this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
           this.remoteArg = remote;
           done();
         }.bind(this));
