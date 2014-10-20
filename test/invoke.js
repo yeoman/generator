@@ -1,12 +1,14 @@
 /*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
-var yo = require('..');
-var helpers = yo.test;
-var assert = yo.assert;
+var yeoman = require('yeoman-environment');
+var generators = require('..');
+var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var helpers = generators.test;
+var assert = generators.assert;
 
 describe('Base#invoke()', function () {
   beforeEach(function () {
-    this.env = yo();
+    this.env = yeoman.createEnv([], {}, new TestAdapter());
     this.Generator = helpers.createDummyGenerator();
     this.gen = new this.Generator({
       namespace: 'foo:lab',
@@ -14,7 +16,7 @@ describe('Base#invoke()', function () {
       env: this.env,
       'skip-install': true
     });
-    this.SubGen = yo.generators.Base.extend({
+    this.SubGen = generators.Base.extend({
       exec: function () { this.stubGenRunned = true; }
     });
     this.env.registerStub(this.SubGen, 'foo:bar');
