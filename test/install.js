@@ -1,8 +1,10 @@
 /*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
+var yeoman = require('yeoman-environment');
 var generators = require('..');
 var assert = generators.assert;
 var helpers = generators.test;
+var TestAdapter = require('../lib/test/adapter').TestAdapter;
 
 var asyncStub = {
   on: function (key, cb) {
@@ -15,9 +17,9 @@ var asyncStub = {
 
 describe('Base Generator (actions/install mixin)', function () {
   beforeEach(function () {
-    var env = this.env = generators();
-    env.registerStub(helpers.createDummyGenerator(), 'dummy');
-    this.dummy = env.create('dummy');
+    this.env = yeoman.createEnv([], {}, new TestAdapter());
+    this.env.registerStub(helpers.createDummyGenerator(), 'dummy');
+    this.dummy = this.env.create('dummy');
 
     // Keep track of all commands executed by spawnCommand.
     this.commandsRun = [];
