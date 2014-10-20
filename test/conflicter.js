@@ -1,12 +1,12 @@
 /*global describe, before, after, it, beforeEach, afterEach */
 'use strict';
 var fs = require('fs');
-var events = require('events');
 var assert = require('assert');
-var log = require('yeoman-environment').util.log();
 var Conflicter = require('../lib/util/conflicter');
+var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var _ = require('lodash');
 var inquirer = require('inquirer');
+var sinon = require('sinon');
 
 var fileFoo = {
   file: 'foo.js',
@@ -19,16 +19,11 @@ var fileBar = {
 
 describe('Conflicter', function () {
   beforeEach(function () {
-    var mockAdapter = {
-      prompt: function () {},
-      diff: function () {},
-      log: log
-    };
-    this.conflicter = new Conflicter(mockAdapter);
+    this.conflicter = new Conflicter(new TestAdapter());
   });
 
   it('is an event emitter', function () {
-    assert.ok(this.conflicter instanceof events.EventEmitter);
+    assert.ok(this.conflicter instanceof require('events').EventEmitter);
   });
 
   it('#add()', function () {
@@ -115,24 +110,20 @@ describe('Conflicter', function () {
   });
 
   describe('#collision()', function () {
-    var me = fs.readFileSync(__filename, 'utf8');
-
     beforeEach(function () {
-      var prompt = inquirer.createPromptModule();
-      var mockAdapter = {
-        prompt: prompt,
-        diff: function () {},
-        log: log
-      };
       var self = this;
+      var mockAdapter = new TestAdapter();
+
+      // TODO: This test must be decouple from the inquirer module. This is very ugly...
+      mockAdapter.prompt = inquirer.createPromptModule();
       var Prompt = function (q, cb) {
         this.answer = _.where(q.choices, { key: self.answer })[0].value;
       };
-
       Prompt.prototype.run = function (cb) {
         cb(this.answer);
       };
-      prompt.registerPrompt('expand', Prompt);
+      mockAdapter.prompt.registerPrompt('expand', Prompt);
+
       this.conflicter = new Conflicter(mockAdapter);
     });
 
@@ -141,6 +132,7 @@ describe('Conflicter', function () {
     });
 
     it('identical status', function (done) {
+      var me = fs.readFileSync(__filename, 'utf8');
       this.conflicter.collision(__filename, me, function (status) {
         assert.equal(status, 'identical');
         done();
@@ -188,62 +180,31 @@ describe('Conflicter', function () {
   });
 
   describe('#diff()', function () {
-
     beforeEach(function () {
-      this.oldConflicter = this.conflicter;
-      this.adapterMock = {
-        diff: null,
-        log: function () {}
-      };
-      this.conflicter = new Conflicter(this.adapterMock);
-    });
-
-    afterEach(function () {
-      this.conflicter = this.oldConflicter;
+      this.adapter = new TestAdapter();
+      this.conflicter = new Conflicter(this.adapter);
     });
 
     it('Calls adapter diff function', function () {
-      var callCount = 0;
-      this.adapterMock.diff = function () {
-        callCount++;
-      };
       this.conflicter.diff('actual', 'expected');
-      assert(callCount, 1);
+      sinon.assert.calledOnce(this.adapter.diff);
     });
-
   });
 
   describe('#_ask()', function () {
-
     beforeEach(function () {
-      this.oldConflicter = this.conflicter;
-      this.adapterMock = {
-        prompt: function (config, cb) {
-          cb({
-            overwrite: this.answer
-          });
-        },
-        err: null,
-        answer: null
-      };
-      this.conflicter = new Conflicter(this.adapterMock);
-    });
-
-    afterEach(function () {
-      this.conflicter = this.oldConflicter;
+      this.answer = sinon.spy(function (cb) {
+        cb('skip');
+      });
+      var adapter = new TestAdapter({ overwrite: this.answer });
+      this.conflicter = new Conflicter(adapter);
     });
 
     it('Calls answer related function and pass a callback', function (done) {
-      var callCount = 0;
-      this.adapterMock.answer = function (cb) {
-        callCount++;
-        cb();
-      };
       this.conflicter._ask('/tmp/file', 'my file contents', function () {
-        assert(callCount, 1);
+        sinon.assert.calledOnce(this.answer);
         done();
-      });
+      }.bind(this));
     });
-
   });
 });
