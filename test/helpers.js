@@ -180,12 +180,10 @@ describe('yeoman.test', function () {
       helpers.restore();
     });
 
-    it('alias .setUpTestDirectory()', function (done) {
-      helpers.stub(helpers, 'setUpTestDirectory', function (dir) {
-        assert.equal(dir, 'dir');
-        done();
-      });
+    it('alias .setUpTestDirectory()', function () {
+      var spy = sinon.spy(helpers, 'setUpTestDirectory');
       helpers.before('dir');
+      sinon.assert.calledWith(spy, 'dir');
     });
   });
 
