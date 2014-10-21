@@ -18,7 +18,7 @@ var helpers = generators.test;
 var assert = generators.assert;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 
-describe('yeoman.generators.Base', function () {
+describe('generators.Base', function () {
   before(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {

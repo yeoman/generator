@@ -6,7 +6,7 @@ var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var helpers = generators.test;
 var assert = generators.assert;
 
-describe('Base#invoke()', function () {
+describe('generators.Base#invoke()', function () {
   beforeEach(function () {
     this.env = yeoman.createEnv([], {}, new TestAdapter());
     this.Generator = helpers.createDummyGenerator();

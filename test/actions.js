@@ -10,7 +10,7 @@ var Conflicter = require('../lib/util/conflicter');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-actions');
 
-describe('yeoman.generators.Base', function () {
+describe('generators.Base (actions/actions)', function () {
   before(helpers.setUpTestDirectory(tmpdir));
 
   before(function () {
@@ -22,41 +22,41 @@ describe('yeoman.generators.Base', function () {
     this.dummy.sourceRoot(this.fixtures);
   });
 
-  it('generator.prompt(defaults, prompts, cb)', function (done) {
+  it('#prompt()', function (done) {
     this.dummy.prompt([], function () {
       done();
     });
   });
 
-  describe('generator.sourceRoot(root)', function () {
-    it('should update the "_sourceRoot" property when root is given', function () {
+  describe('#sourceRoot()', function () {
+    it('updates the "_sourceRoot" property when root is given', function () {
       this.dummy.sourceRoot(this.fixtures);
       assert.equal(this.dummy._sourceRoot, this.fixtures);
     });
 
-    it('should return the updated or current value of "_sourceRoot"', function () {
+    it('returns the updated or current value of "_sourceRoot"', function () {
       assert.equal(this.dummy.sourceRoot(), this.fixtures);
     });
   });
 
-  describe('generator.destinationRoot(root)', function () {
-    it('should update the "_destinationRoot" property when root is given', function () {
+  describe('#destinationRoot()', function () {
+    it('updates the "_destinationRoot" property when root is given', function () {
       this.dummy.destinationRoot('.');
       assert.equal(this.dummy._destinationRoot, process.cwd());
     });
 
-    it('should return the updated or current value of "_destinationRoot"', function () {
+    it('returns the updated or current value of "_destinationRoot"', function () {
       assert.equal(this.dummy.destinationRoot(), process.cwd());
     });
   });
 
-  describe('generator.cacheRoot()', function () {
-    it('should show the cache root where yeoman stores all temp files', function () {
+  describe('#cacheRoot()', function () {
+    it('returns the cache root where yeoman stores all temp files', function () {
       assert(/yeoman$/.test(this.dummy.cacheRoot()));
     });
   });
 
-  describe('generator.copy(source, destination, process)', function () {
+  describe('#copy()', function () {
     before(function (done) {
       this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       this.dummy.copy('foo.js', 'write/to/foo.js');
@@ -77,38 +77,38 @@ describe('yeoman.generators.Base', function () {
       this.dummy.conflicter.resolve(done);
     });
 
-    it('should copy source files relative to the "sourceRoot" value', function (done) {
+    it('copy source files relative to the "sourceRoot" value', function (done) {
       fs.stat('write/to/foo.js', done);
     });
 
-    it('should copy to destination files relative to the "destinationRoot" value', function (done) {
+    it('copy to destination files relative to the "destinationRoot" value', function (done) {
       fs.stat('write/to/foo-destRoot.js', done);
     });
 
-    it('should allow absolute path, and prevent the relative paths join', function (done) {
+    it('allow absolute path, and prevent the relative paths join', function (done) {
       fs.stat('write/to/bar.js', done);
     });
 
-    it('should allow to copy without using the templating (conficting with lodash/underscore)', function (done) {
+    it('allow to copy without using the templating (conficting with lodash/underscore)', function (done) {
       fs.stat('write/to/lodash.js', done);
     });
 
-    it('should default the destination to the source filepath value', function (done) {
+    it('defaults the destination to the source filepath value', function (done) {
       fs.stat('foo-copy.js', done);
     });
 
-    it('should retain executable mode on copied files', function (done) {
+    it('retains executable mode on copied files', function (done) {
       // Don't run on windows
       if (process.platform === 'win32') { return done(); }
 
       fs.stat('write/to/bar.js', function (err, stats) {
         if (err) throw err;
-        assert(stats.mode & 1 === 1, 'File should be executable.');
+        assert(stats.mode & 1 === 1, 'File be executable.');
         done();
       });
     });
 
-    it('should process source contents via function', function (done) {
+    it('process source contents via function', function (done) {
       fs.readFile('write/to/foo-process.js', function (err, data) {
         if (err) throw err;
         assert.textEqual(String(data), 'var bar = \'foo\';\n');
@@ -116,7 +116,7 @@ describe('yeoman.generators.Base', function () {
       });
     });
 
-    it('should not give a conflict on same binary files', function (done) {
+    it('does not give a conflict on same binary files', function (done) {
       this.dummy.conflicter.force = true;
       this.dummy.conflicter.collision('yeoman-logo.png', fs.readFileSync(path.join(this.fixtures, 'yeoman-logo.png')), function (status) {
         assert.equal(status, 'identical');
@@ -126,14 +126,14 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.bulkCopy(source, destination, process)', function () {
+  describe('#bulkCopy()', function () {
 
     before(function () {
       this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/foo.js');
       this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo-template.js'), 'write/to/noProcess.js');
     });
 
-    it('should copy a file', function (done) {
+    it('copy a file', function (done) {
       fs.readFile('write/to/foo.js', function (err, data) {
         if (err) throw err;
         assert.textEqual(String(data), 'var foo = \'foo\';\n');
@@ -141,7 +141,7 @@ describe('yeoman.generators.Base', function () {
       });
     });
 
-    it('should not run conflicter or template engine', function (done) {
+    it('does not run conflicter or template engine', function (done) {
       var self = this;
       fs.readFile('write/to/noProcess.js', function (err, data) {
         if (err) throw err;
@@ -156,25 +156,25 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.read(filepath, encoding)', function () {
-    it('should read files relative to the "sourceRoot" value', function () {
+  describe('#read()', function () {
+    it('read files relative to the "sourceRoot" value', function () {
       var body = this.dummy.read('foo.js');
       assert.textEqual(body, 'var foo = \'foo\';' + '\n');
     });
-    it('should allow absolute path, and prevent the relative paths join', function () {
+    it('allow absolute path, and prevent the relative paths join', function () {
       var body = this.dummy.read(path.join(__dirname, 'fixtures/foo.js'));
       assert.textEqual(body, 'var foo = \'foo\';' + '\n');
     });
   });
 
-  describe('generator.write(filepath, content)', function () {
+  describe('#write()', function () {
     before(function (done) {
       this.body = 'var bar = \'bar\';' + '\n';
       this.dummy.write('write/to/foobar.js', this.body);
       this.dummy.conflicter.resolve(done);
     });
 
-    it('should write the specified files relative to the "destinationRoot" value', function (done) {
+    it('writes the specified files relative to the "destinationRoot" value', function (done) {
       var body = this.body;
       fs.readFile('write/to/foobar.js', 'utf8', function (err, actual) {
         if (err) {
@@ -250,7 +250,7 @@ describe('yeoman.generators.Base', function () {
         assert.textEqual(body, 'var bar = \'bar\';\n');
       });
 
-      it('should keep file mode', function () {
+      it('keep file mode', function () {
         var originFileStat = fs.statSync(this.fixtures + '/perm-test.js');
         var bodyStat = fs.statSync('write/to/perm-test.js');
         assert.equal(originFileStat.mode, bodyStat.mode);
@@ -308,7 +308,7 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.directory(source, destination, process)', function () {
+  describe('#directory()', function () {
     before(function (done) {
       this.dummy.directory('./dir-fixtures', 'directory');
       this.dummy.directory('./dir-fixtures');
@@ -323,7 +323,7 @@ describe('yeoman.generators.Base', function () {
       this.dummy.conflicter.resolve(done);
     });
 
-    it('should copy and process source files to destination', function (done) {
+    it('copy and process source files to destination', function (done) {
       fs.stat('directory/foo-template.js', function (err) {
         if (err) {
           return done(err);
@@ -332,7 +332,7 @@ describe('yeoman.generators.Base', function () {
       });
     });
 
-    it('should defaults the destination to the source filepath value, relative to "destinationRoot" value', function (done) {
+    it('defaults the destination to the source filepath value, relative to "destinationRoot" value', function (done) {
       fs.stat('dir-fixtures/foo-template.js', function (err) {
         if (err) {
           return done(err);
@@ -341,20 +341,20 @@ describe('yeoman.generators.Base', function () {
       });
     });
 
-    it('should process underscore templates with the actual generator instance', function () {
+    it('process underscore templates with the actual generator instance', function () {
       var body = fs.readFileSync('directory/foo-template.js', 'utf8');
       var foo = this.dummy.foo;
       assert.textEqual(body, 'var ' + foo + ' = \'' + foo + '\';\n');
     });
 
-    it('should process source contents via function', function () {
+    it('process source contents via function', function () {
       var body = fs.readFileSync('directory-processed/foo-process.js', 'utf8');
       assert.textEqual(body, 'var bar = \'foo\';\n');
     });
 
   });
 
-  describe('generator.bulkDirectory(source, destination, process)', function () {
+  describe('#bulkDirectory()', function () {
     before(function (done) {
       this.dummy.sourceRoot(this.fixtures);
       this.dummy.destinationRoot('.');
@@ -378,7 +378,7 @@ describe('yeoman.generators.Base', function () {
       fs.rmdirSync(this.fixtures + '/bulk-operation');
     });
 
-    it('should bulk copy one thousand files', function (done) {
+    it('bulk copy one thousand files', function (done) {
       fs.readFile('bulk-operation/999.js', function (err, data) {
         if (err) throw err;
         assert.equal(data, '999');
@@ -386,7 +386,7 @@ describe('yeoman.generators.Base', function () {
       });
     });
 
-    it('should check for conflict if directory already exists', function (done) {
+    it('check for conflict if directory already exists', function (done) {
       var oldConflicter = this.dummy.conflicter;
       var callCount = 0;
       var dummyGenerator = this.dummy;
@@ -405,16 +405,16 @@ describe('yeoman.generators.Base', function () {
     });
   });
 
-  describe('generator.expandFiles', function () {
+  describe('#expandFiles()', function () {
     before(function (done) {
       this.dummy.copy('foo.js', 'write/abc/abc.js');
       this.dummy.conflicter.resolve(done);
     });
-    it('should return expand files', function () {
+    it('returns expand files', function () {
       var files = this.dummy.expandFiles('write/abc/**');
       assert.deepEqual(files, ['write/abc/abc.js']);
     });
-    it('should return expand files', function () {
+    it('returns expand files', function () {
       var files = this.dummy.expandFiles('abc/**', { cwd: './write' });
       assert.deepEqual(files, ['abc/abc.js']);
     });

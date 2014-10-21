@@ -13,7 +13,7 @@ var tmpdir = path.join(os.tmpdir(), 'yeoman-generators');
 
 var Environment = require('yeoman-environment');
 
-describe('Generators', function () {
+describe('Generators module', function () {
   before(helpers.setUpTestDirectory(tmpdir));
 
   describe('module', function () {
@@ -31,7 +31,7 @@ describe('Generators', function () {
     });
   });
 
-  describe('yeoman.generators', function () {
+  describe('.generators', function () {
     it('should have a Base object to extend from', function () {
       assert.ok(generators.Base);
     });
@@ -41,7 +41,7 @@ describe('Generators', function () {
     });
   });
 
-  describe('yeoman.generators.Base', function () {
+  describe('generators.Base', function () {
     beforeEach(function () {
       this.env = generators();
       this.generator = new generators.Base({
@@ -50,7 +50,7 @@ describe('Generators', function () {
       });
     });
 
-    it('should be an EventEmitter', function (done) {
+    it('is an EventEmitter', function (done) {
       assert.ok(this.generator instanceof events.EventEmitter);
       assert.ok(typeof this.generator.on === 'function');
       assert.ok(typeof this.generator.emit === 'function');
@@ -140,7 +140,7 @@ describe('Generators', function () {
     });
   });
 
-  describe('yeoman.generators.NamedBase', function () {
+  describe('generators.NamedBase', function () {
     before(function () {
       this.env = generators();
       this.generator = new generators.NamedBase(['namedArg'], {
@@ -149,11 +149,11 @@ describe('Generators', function () {
       });
     });
 
-    it('should be a Base generator', function () {
+    it('extend Base generator', function () {
       assert.ok(this.generator instanceof generators.Base);
     });
 
-    it('and it should have a name property', function () {
+    it('have a name property', function () {
       assert.equal(this.generator.name, 'namedArg');
     });
   });

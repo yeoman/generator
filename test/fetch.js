@@ -12,7 +12,7 @@ var TestAdapter = require('../lib/test/adapter').TestAdapter;
 
 var tmp = path.join(tmpdir, 'yeoman-fetch');
 
-describe('yeoman.generators.Base fetch utilities', function () {
+describe('generators.Base (actions/fetch)', function () {
   beforeEach(function () {
     this.dummy = new generators.Base({
       env: yeoman.createEnv([], {}, new TestAdapter()),

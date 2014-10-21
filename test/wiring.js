@@ -6,12 +6,12 @@ var wiring = require('../lib/actions/wiring');
 var yeoman = require('..');
 var assert = yeoman.assert;
 
-describe('Yeoman actions/wiring', function () {
+describe('generators.Base (actions/wiring)', function () {
   before(function () {
     this.fixtures = path.join(__dirname, 'fixtures');
   });
 
-  it('should generate a simple block', function () {
+  it('generate a simple block', function () {
     var res = wiring.generateBlock('js', 'main.js', [
       'path/file1.js',
       'path/file2.js'
@@ -20,7 +20,7 @@ describe('Yeoman actions/wiring', function () {
     assert.equal(res.trim(), '<!-- build:js main.js -->\npath/file1.js,path/file2.js        <!-- endbuild -->');
   });
 
-  it('should generate a simple block with search path', function () {
+  it('generate a simple block with search path', function () {
     var res = wiring.generateBlock('js', 'main.js', [
       'path/file1.js',
       'path/file2.js'
@@ -29,7 +29,7 @@ describe('Yeoman actions/wiring', function () {
     assert.equal(res.trim(), '<!-- build:js(.tmp/) main.js -->\npath/file1.js,path/file2.js        <!-- endbuild -->');
   });
 
-  it('should generate block with multiple search paths', function () {
+  it('generate block with multiple search paths', function () {
     var res = wiring.generateBlock('js', 'main.js', [
       'path/file1.js',
       'path/file2.js'
@@ -38,7 +38,7 @@ describe('Yeoman actions/wiring', function () {
     assert.equal(res.trim(), '<!-- build:js({.tmp/,dist/}) main.js -->\npath/file1.js,path/file2.js        <!-- endbuild -->');
   });
 
-  it('should append js files to an html string', function () {
+  it('append js files to an html string', function () {
     var html = '<html><body></body></html>';
     var res = wiring.appendFiles(html, 'js', 'out/file.js', ['in/file1.js', 'in/file2.js']);
     var fixture = fs.readFileSync(path.join(this.fixtures, 'js_block.html'),
@@ -47,7 +47,7 @@ describe('Yeoman actions/wiring', function () {
     assert.textEqual(res, fixture);
   });
 
-  it('appendFiles should work the same using the object syntax', function () {
+  it('appendFiles work the same using the object syntax', function () {
     var html = '<html><body></body></html>';
     var res = wiring.appendFiles(html, 'js', 'out/file.js', ['in/file1.js', 'in/file2.js']);
     var res2 = wiring.appendFiles({
@@ -60,33 +60,33 @@ describe('Yeoman actions/wiring', function () {
     assert.equal(res, res2);
   });
 
-  it('should append content in the right place', function () {
+  it('append content in the right place', function () {
     var html = '<html><body><section><span></span></section></body></html>';
     var expected = '<html><body><section><span></span>TEST</section></body></html>';
     assert.equal(wiring.append(html, 'section', 'TEST'), expected);
     assert.equal(wiring.domUpdate(html, 'section', 'TEST', 'a'), expected);
   });
 
-  it('should prepend content in the right place', function () {
+  it('prepend content in the right place', function () {
     var html = '<html><body><section><span></span></section></body></html>';
     var expected = '<html><body><section>TEST<span></span></section></body></html>';
     assert.equal(wiring.prepend(html, 'section', 'TEST'), expected);
     assert.equal(wiring.domUpdate(html, 'section', 'TEST', 'p'), expected);
   });
 
-  it('should replace content correctly', function () {
+  it('replace content correctly', function () {
     var html = '<html><body><section><span></span></section></body></html>';
     var expected = '<html><body><section>TEST</section></body></html>';
     assert.equal(wiring.domUpdate(html, 'section', 'TEST', 'r'), expected);
   });
 
-  it('should delete content correctly', function () {
+  it('delete content correctly', function () {
     var html = '<html><body><section><span></span></section></body></html>';
     var expected = '<html><body></body></html>';
     assert.equal(wiring.domUpdate(html, 'section', 'TEST', 'd'), expected);
   });
 
-  it('should append to files in the right place', function () {
+  it('append to files in the right place', function () {
     var html = '<html><body><section><span></span></section></body></html>';
     var expected = '<html><body><section><span></span>TEST</section></body></html>';
     var filepath = path.join(this.fixtures, 'append-prepend-to-file.html');
@@ -102,7 +102,7 @@ describe('Yeoman actions/wiring', function () {
     fs.writeFileSync(filepath, html, 'utf-8');
   });
 
-  it('should prepend to files in the right place', function () {
+  it('prepend to files in the right place', function () {
     var html = '<html><body><section><span></span></section></body></html>';
     var expected = '<html><body><section>TEST<span></span></section></body></html>';
     var filepath = path.join(this.fixtures, 'append-prepend-to-file.html');
@@ -118,7 +118,7 @@ describe('Yeoman actions/wiring', function () {
     fs.writeFileSync(filepath, html, 'utf-8');
   });
 
-  it('should handle with non-ascii characters well',function () {
+  it('handle with non-ascii characters well',function () {
     var html = '<html><body><p></p></body></html>';
     var expected = '<html><body><p>Hello World!你好世界!ハローワールド!안녕 하세요 세계!</p></body></html>';
     assert.equal(wiring.domUpdate(html, 'p', 'Hello World!你好世界!ハローワールド!안녕 하세요 세계!', 'p'), expected);
@@ -193,7 +193,7 @@ describe('Yeoman actions/wiring', function () {
   });
 
   describe('#removeStyle()', function () {
-    it('should remove style', function () {
+    it('remove style', function () {
       var withStyle = '<html><head><link rel="stylesheet" href="file1.css"></head></html>';
       var html = '<html><head></head></html>';
 
@@ -214,7 +214,7 @@ describe('Yeoman actions/wiring', function () {
   });
 
   describe('#appendStylesDir()', function () {
-    it('should append styles directory', function () {
+    it('append styles directory', function () {
       var html = '<html><head></head></html>';
       var res = wiring.appendStylesDir(html, 'out/file.css', path.join(__dirname, 'fixtures/dir-css-fixtures'));
       var fixture = fs.readFileSync(path.join(this.fixtures, 'css_block_dir.html'), 'utf-8').trim();

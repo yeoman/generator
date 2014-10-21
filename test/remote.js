@@ -10,7 +10,7 @@ var generators = require('..');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-remote');
 
-describe('yeoman.base#remote', function () {
+describe('generators.Base#remote()', function () {
   before(generators.test.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {

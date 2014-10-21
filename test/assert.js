@@ -6,7 +6,7 @@ var yo = require('..');
 
 var noop = function () {};
 
-describe('yeoman.assert', function () {
+describe('generators.assert', function () {
   beforeEach(function () {
     process.chdir(path.join(__dirname, './fixtures'));
   });

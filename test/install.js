@@ -15,7 +15,7 @@ var asyncStub = {
   }
 };
 
-describe('Base Generator (actions/install mixin)', function () {
+describe('generators.Base (actions/install mixin)', function () {
   beforeEach(function () {
     this.env = yeoman.createEnv([], {}, new TestAdapter());
     this.env.registerStub(helpers.createDummyGenerator(), 'dummy');

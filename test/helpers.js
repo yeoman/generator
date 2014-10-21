@@ -9,7 +9,7 @@ var helpers = yeoman.test;
 var RunContext = require('../lib/test/run-context');
 var env = yeoman();
 
-describe('yeoman.test', function () {
+describe('generators.test', function () {
   beforeEach(function () {
     process.chdir(path.join(__dirname, './fixtures'));
     var self = this;
