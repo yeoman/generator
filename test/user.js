@@ -1,51 +1,52 @@
 /*global describe, before, it, after, before, beforeEach, afterEach */
-/*jshint expr: true */
 'use strict';
+var assert = require('assert');
+var mkdirp = require('mkdirp');
+var nock = require('nock');
 var os = require('os');
 var path = require('path');
-var shell = require('shelljs');
-var assert = require('assert');
-var sinon = require('sinon');
 var proxyquire = require('proxyquire');
-var file = require('../lib/actions/file');
+var rimraf = require('rimraf');
+var shell = require('shelljs');
+var sinon = require('sinon');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-user');
+var generators = require('..');
 
-describe('Generator#user', function () {
+describe('generators.Base#user', function () {
+  before(function () {
+    this.prevCwd = process.cwd();
+    this.tmp = tmpdir;
+    mkdirp.sync(path.join(tmpdir, 'subdir'));
+    process.chdir(tmpdir);
+    shell.exec('git init --quiet');
+    shell.exec('git config --local user.name Yeoman');
+    shell.exec('git config --local user.email yo@yeoman.io');
+  });
+
+  after(function (done) {
+    process.chdir(this.prevCwd);
+    rimraf(tmpdir, done);
+  });
+
+  beforeEach(function () {
+    process.chdir(this.tmp);
+    this.shell = shell;
+    sinon.spy(this.shell, 'exec');
+
+    this.user = proxyquire('../lib/actions/user', {
+      shelljs: this.shell
+    });
+  });
+
+  afterEach(function () {
+    this.shell.exec.restore();
+  });
 
   it('is exposed on the Base generator', function () {
-    assert.equal(require('../lib/actions/user'), require('../lib/base').prototype.user);
+    assert.equal(require('../lib/actions/user'), generators.Base.prototype.user);
   });
 
   describe('.git', function () {
-
-    before(function () {
-      this.cwd = process.cwd();
-      this.tmp = tmpdir;
-      shell.cd(this.tmp);
-      file.mkdir(path.join(tmpdir, 'subdir'));
-      shell.exec('git init --quiet');
-      shell.exec('git config --local user.name Yeoman');
-      shell.exec('git config --local user.email yo@yeoman.io');
-    });
-
-    after(function () {
-      shell.cd(this.cwd);
-    });
-
-    beforeEach(function () {
-      shell.cd(this.tmp);
-
-      this.shell = shell;
-      sinon.spy(this.shell, 'exec');
-
-      this.user = proxyquire('../lib/actions/user', {
-        shelljs: this.shell
-      });
-    });
-
-    afterEach(function () {
-      this.shell.exec.restore();
-    });
 
     describe('.name()', function () {
       it('is the name used by git', function () {
@@ -60,7 +61,7 @@ describe('Generator#user', function () {
 
       it('cache is linked to the CWD', function () {
         this.user.git.name();
-        shell.cd('subdir');
+        process.chdir('subdir');
         this.user.git.name();
         assert.equal(this.shell.exec.callCount, 2);
       });
@@ -79,49 +80,34 @@ describe('Generator#user', function () {
 
       it('cache is linked to the CWD', function () {
         this.user.git.email();
-        shell.cd('subdir');
+        process.chdir('subdir');
         this.user.git.email();
         assert.equal(this.shell.exec.callCount, 2);
       });
     });
-
   });
 
   describe('.github', function () {
-
-    before(function () {
-      this.cwd = process.cwd();
-      this.tmp = tmpdir;
-      shell.cd(this.tmp);
-      file.mkdir(path.join(tmpdir, 'subdir'));
-      shell.exec('git init --quiet');
-      shell.exec('git config --local user.name Zeno');
-      shell.exec('git config --local user.email hi@zenorocha.com');
-    });
-
-    after(function () {
-      shell.cd(this.cwd);
-    });
-
-    beforeEach(function () {
-      shell.cd(this.tmp);
-
-      this.shell = shell;
-      sinon.spy(this.shell, 'exec');
-
-      this.user = proxyquire('../lib/actions/user', {
-        shelljs: this.shell
-      });
-    });
-
-    afterEach(function () {
-      this.shell.exec.restore();
-    });
-
     describe('.username()', function () {
+      beforeEach(function () {
+        nock('https://api.github.com')
+          .filteringPath(/q=[^&]*/g, 'q=XXX')
+          .get('/search/users?q=XXX')
+          .times(1)
+          .reply(200, {
+            items: [
+              { login: 'mockname' }
+            ]
+          });
+      });
+
+      afterEach(function () {
+        nock.restore();
+      });
+
       it('is the username used by GitHub', function (done) {
         this.user.github.username(function (err, res) {
-          assert.equal(res, 'zenorocha');
+          assert.equal(res, 'mockname');
           done();
         });
       });
