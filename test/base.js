@@ -6,31 +6,31 @@ var path = require('path');
 var util = require('util');
 var sinon = require('sinon');
 var mockery = require('mockery');
+var rimraf = require('rimraf');
+var yeoman = require('yeoman-environment');
 mockery.enable({
   warnOnReplace: false,
   warnOnUnregistered: false
 });
+var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var generators = require('..');
-var yo = generators;
 var helpers = generators.test;
 var assert = generators.assert;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-base');
-
-var Base = generators.generators.Base;
 
 describe('yeoman.generators.Base', function () {
   before(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    var env = this.env = generators([], { 'skip-install': true });
+    this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
 
     var Dummy = this.Dummy = helpers.createDummyGenerator();
 
-    env.registerStub(Dummy, 'ember:all');
-    env.registerStub(Dummy, 'hook1:ember');
-    env.registerStub(Dummy, 'hook2:ember:all');
-    env.registerStub(Dummy, 'hook3');
-    env.registerStub(function () {
+    this.env.registerStub(Dummy, 'ember:all');
+    this.env.registerStub(Dummy, 'hook1:ember');
+    this.env.registerStub(Dummy, 'hook2:ember:all');
+    this.env.registerStub(Dummy, 'hook3');
+    this.env.registerStub(function () {
       this.write(path.join(tmpdir, 'app/scripts/models/application-model.js'), '// ...');
     }, 'hook4');
 
@@ -40,7 +40,7 @@ describe('yeoman.generators.Base', function () {
       // mandatory options, created by the env#create() helper
       resolved: 'ember:all',
       namespace: 'dummy',
-      env: env,
+      env: this.env,
       'skip-install': true
     });
 
@@ -110,7 +110,7 @@ describe('yeoman.generators.Base', function () {
 
   describe('prototype', function () {
     it('methods does\'nt conflict with Env#runQueue', function () {
-      assert.notImplement(Base.prototype, this.env.runLoop.queueNames);
+      assert.notImplement(generators.Base.prototype, this.env.runLoop.queueNames);
     });
   });
 
@@ -126,8 +126,8 @@ describe('yeoman.generators.Base', function () {
     });
 
     afterEach(function () {
-      yo.file.delete('bower.json');
-      yo.file.delete('package.json');
+      rimraf.sync('bower.json');
+      rimraf.sync('package.json');
       delete require.cache[path.join(process.cwd(), 'bower.json')];
       delete require.cache[path.join(process.cwd(), 'package.json')];
     });
@@ -149,23 +149,24 @@ describe('yeoman.generators.Base', function () {
 
   describe('.extend()', function () {
     it('create a new object inheriting the Generator', function () {
-      assert.ok(new (Base.extend())([], { resolved: 'path/', env: this.env }) instanceof Base);
+      var gen = new (generators.Base.extend())([], { resolved: 'path/', env: this.env });
+      assert.ok(gen instanceof generators.Base);
     });
 
     it('pass the extend method along', function () {
-      var Sub = Base.extend();
-      assert.ok(Sub.extend);
+      var Sub = generators.Base.extend();
+      assert.equal(Sub.extend, generators.Base.extend);
     });
 
     it('assign prototype methods', function () {
       var proto = { foo: function () {}};
-      var Sub = Base.extend(proto);
+      var Sub = generators.Base.extend(proto);
       assert.equal(Sub.prototype.foo, proto.foo);
     });
 
     it('assign static methods', function () {
       var staticProps = { foo: function () {}};
-      var Sub = Base.extend({}, staticProps);
+      var Sub = generators.Base.extend({}, staticProps);
       assert.equal(Sub.foo, staticProps.foo);
     });
   });
@@ -289,7 +290,7 @@ describe('yeoman.generators.Base', function () {
     });
 
     it('throws if no method is available', function () {
-      var gen = new (yo.generators.Base.extend())([], {
+      var gen = new (generators.Base.extend())([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
         env: this.env
@@ -530,7 +531,7 @@ describe('yeoman.generators.Base', function () {
         'skip-install': true
       });
       this.spy = sinon.spy();
-      this.GenCompose = yo.generators.Base.extend({ exec: this.spy });
+      this.GenCompose = generators.Base.extend({ exec: this.spy });
       this.env.registerStub(this.GenCompose, 'composed:gen');
     });
 
@@ -573,7 +574,7 @@ describe('yeoman.generators.Base', function () {
       beforeEach(function () {
         this.spy = sinon.spy();
         this.stubPath = path.join(__dirname, 'generator-dumb/main.js');
-        this.LocalDummy = yo.generators.Base.extend({ exec: this.spy });
+        this.LocalDummy = generators.Base.extend({ exec: this.spy });
         mockery.registerMock(this.stubPath, this.LocalDummy);
       });
 
@@ -747,7 +748,7 @@ describe('yeoman.generators.Base', function () {
 
     it('emits the series of event on a specific generator', function (done) {
       var angular = new this.Generator([], {
-        env: generators(),
+        env: yeoman.createEnv([], {}, new TestAdapter()),
         resolved: __filename,
         'skip-install': true
       });
@@ -796,7 +797,7 @@ describe('yeoman.generators.Base', function () {
       };
 
       var generatorOnce = new GeneratorOnce([], {
-        env: generators(),
+        env: yeoman.createEnv([], {}, new TestAdapter()),
         resolved: __filename,
         'skip-install': true
       });
