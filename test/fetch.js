@@ -3,17 +3,19 @@
 var fs = require('fs');
 var path = require('path');
 var tmpdir = require('os').tmpdir();
-var assert = require('../lib/test/assert');
 var nock = require('nock');
-var yeoman = require('..');
+var yeoman = require('yeoman-environment');
+var generators = require('..');
+var assert = generators.assert;
 var fetch = require('../lib/actions/fetch');
+var TestAdapter = require('../lib/test/adapter').TestAdapter;
 
 var tmp = path.join(tmpdir, 'yeoman-fetch');
 
 describe('yeoman.generators.Base fetch utilities', function () {
   beforeEach(function () {
-    this.dummy = new yeoman.generators.Base({
-      env: yeoman(),
+    this.dummy = new generators.Base({
+      env: yeoman.createEnv([], {}, new TestAdapter()),
       resolved: 'test:fetch'
     });
   });
