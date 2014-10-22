@@ -96,8 +96,16 @@ describe('generators.assert', function () {
       assert.doesNotThrow(yo.assert.fileContent.bind(yo.assert, 'testFile', /Roses are red/));
     });
 
+    it('accept a file and string when the file contains the string', function () {
+      assert.doesNotThrow(yo.assert.fileContent.bind(yo.assert, 'testFile', 'Roses are red'));
+    });
+
     it('reject a file and regex when the file content does not match the regex', function () {
       assert.throws(yo.assert.fileContent.bind(yo.assert, 'testFile', /Roses are blue/));
+    });
+
+    it('reject a file and string when the file content does not contain the string', function () {
+      assert.throws(yo.assert.fileContent.bind(yo.assert, 'testFile', 'Roses are blue'));
     });
 
     it('accept an array of file/regex pairs when each file\'s content matches the corresponding regex', function () {
@@ -122,8 +130,16 @@ describe('generators.assert', function () {
       assert.doesNotThrow(yo.assert.noFileContent.bind(yo.assert, 'testFile', /Roses are blue/));
     });
 
+    it('accept a file and string when the file content does not contain the string', function () {
+      assert.doesNotThrow(yo.assert.noFileContent.bind(yo.assert, 'testFile', 'Roses are blue'));
+    });
+
     it('reject a file and regex when the file content matches the regex', function () {
       assert.throws(yo.assert.noFileContent.bind(yo.assert, 'testFile', /Roses are red/));
+    });
+
+    it('reject a file and string when the file content contain the string', function () {
+      assert.throws(yo.assert.noFileContent.bind(yo.assert, 'testFile', 'Roses are red'));
     });
 
     it('accept an array of file/regex pairs when each file\'s content does not match its corresponding regex', function () {
