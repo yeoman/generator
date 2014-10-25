@@ -274,11 +274,11 @@ describe('generators.Base', function () {
       var async1Runned = false;
       this.TestGenerator.prototype.async1 = function () {
         async1Running = true;
-        var done = this.async();
+        var cb = this.async();
         setTimeout(function () {
           async1Running = false;
           async1Runned = true;
-          done();
+          cb();
         }, 10);
       };
       this.TestGenerator.prototype.async2 = function () {
