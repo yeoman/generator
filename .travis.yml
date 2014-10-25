@@ -5,4 +5,5 @@ before_script:
   - npm install -g bower
   - export NODE_PATH="$NVM_PATH/../node_modules"
 env:
-  - DEBUG="generators:*"
+  global:
+    - DEBUG="generators:*"
