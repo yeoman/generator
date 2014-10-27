@@ -2,9 +2,9 @@
 'use strict';
 var yeoman = require('yeoman-environment');
 var generators = require('..');
-var assert = generators.assert;
 var helpers = generators.test;
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var sinon = require('sinon');
 
 var asyncStub = {
   on: function (key, cb) {
@@ -22,45 +22,57 @@ describe('generators.Base (actions/install mixin)', function () {
     this.dummy = this.env.create('dummy');
 
     // Keep track of all commands executed by spawnCommand.
-    this.commandsRun = [];
-    this.dummy.spawnCommand = function spawnCommand(cmd, args) {
-      this.commandsRun.push([cmd, args]);
-      return asyncStub;
-    }.bind(this);
+    this.spawnCommandStub = sinon.stub(this.dummy, 'spawnCommand');
+    this.spawnCommandStub.returns(asyncStub);
+  });
+
+  describe('#runInstall()', function () {
+    it('takes a config object and passes it to the spawned process', function (done) {
+      var spawnEnv = {
+        env: {
+          PATH: '/path/to/bin'
+        }
+      };
+      //args: installer, paths, options, cb
+      this.dummy.runInstall('nestedScript', ['path1', 'path2'], spawnEnv, done);
+      sinon.assert.calledWithExactly(this.spawnCommandStub, 'nestedScript', ['install', 'path1', 'path2'], spawnEnv);
+    });
   });
 
   describe('#bowerInstall()', function () {
     it('spawn a bower process', function (done) {
       this.dummy.bowerInstall(null, done);
-      assert(this.commandsRun.length, 1);
-      assert.deepEqual(this.commandsRun[0], ['bower', ['install']]);
+      sinon.assert.calledOnce(this.spawnCommandStub);
+      sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
     });
 
     it('spawn a bower process with formatted options', function (done) {
       this.dummy.bowerInstall('jquery', { saveDev: true }, done);
-      assert(this.commandsRun.length, 1);
-      assert.deepEqual(this.commandsRun[0], ['bower', ['install', 'jquery', '--save-dev']]);
+      sinon.assert.calledOnce(this.spawnCommandStub);
+      sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install', 'jquery', '--save-dev'], { saveDev: true });
     });
   });
 
   describe('#npmInstall()', function () {
     it('run without callback', function () {
       this.dummy.npmInstall('yo', { save: true });
-      assert.deepEqual(this.commandsRun.length, 1);
+      sinon.assert.calledOnce(this.spawnCommandStub);
     });
   });
 
   describe('#installDependencies()', function () {
     it('spawn npm and bower', function (done) {
       this.dummy.installDependencies(function () {
-        assert.deepEqual(this.commandsRun, [['bower', ['install']], ['npm', ['install']]]);
+        sinon.assert.calledTwice(this.spawnCommandStub);
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install'], {});
         done();
       }.bind(this));
     });
 
     it('doesn\'t spawn anything with skipInstall', function () {
       this.dummy.installDependencies({ skipInstall: true });
-      assert.deepEqual(this.commandsRun.length, 0);
+      sinon.assert.notCalled(this.spawnCommandStub);
     });
 
     it('call callback if skipInstall', function (done) {
