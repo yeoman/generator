@@ -1,1 +1,1 @@
-<version>{{= foo }}</version> {{{ foo }}
+<version>{{= foo }}</version>{{ spy() }}

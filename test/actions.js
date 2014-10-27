@@ -3,6 +3,7 @@
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
+var sinon = require('sinon');
 var generators = require('..');
 var helpers = generators.test;
 var assert = generators.assert;
@@ -13,19 +14,14 @@ var tmpdir = path.join(os.tmpdir(), 'yeoman-actions');
 describe('generators.Base (actions/actions)', function () {
   before(helpers.setUpTestDirectory(tmpdir));
 
-  before(function () {
+  beforeEach(function () {
     var env = this.env = generators([], {}, new TestAdapter());
     env.registerStub(helpers.createDummyGenerator(), 'dummy');
     this.dummy = env.create('dummy');
 
     this.fixtures = path.join(__dirname, 'fixtures');
     this.dummy.sourceRoot(this.fixtures);
-  });
-
-  it('#prompt()', function (done) {
-    this.dummy.prompt([], function () {
-      done();
-    });
+    this.dummy.foo = 'bar';
   });
 
   describe('#sourceRoot()', function () {
@@ -74,7 +70,7 @@ describe('generators.Base (actions/actions)', function () {
       this.dummy.destinationRoot('write/to');
       this.dummy.copy('foo.js', 'foo-destRoot.js');
       this.dummy.destinationRoot(oldDestRoot);
-      this.dummy.conflicter.resolve(done);
+      this.dummy._writeFiles(done);
     });
 
     it('copy source files relative to the "sourceRoot" value', function (done) {
@@ -99,7 +95,7 @@ describe('generators.Base (actions/actions)', function () {
 
     it('retains executable mode on copied files', function (done) {
       // Don't run on windows
-      if (process.platform === 'win32') { return done(); }
+      if (process.platform === 'win32') return done();
 
       fs.stat('write/to/bar.js', function (err, stats) {
         if (err) throw err;
@@ -115,19 +111,9 @@ describe('generators.Base (actions/actions)', function () {
         done();
       });
     });
-
-    it('does not give a conflict on same binary files', function (done) {
-      this.dummy.conflicter.force = true;
-      this.dummy.conflicter.collision('yeoman-logo.png', fs.readFileSync(path.join(this.fixtures, 'yeoman-logo.png')), function (status) {
-        assert.equal(status, 'identical');
-        this.dummy.conflicter.force = false;
-        done();
-      }.bind(this));
-    });
   });
 
   describe('#bulkCopy()', function () {
-
     before(function () {
       this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/foo.js');
       this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo-template.js'), 'write/to/noProcess.js');
@@ -141,18 +127,13 @@ describe('generators.Base (actions/actions)', function () {
       });
     });
 
-    it('does not run conflicter or template engine', function (done) {
-      var self = this;
-      fs.readFile('write/to/noProcess.js', function (err, data) {
-        if (err) throw err;
-        assert.textEqual(String(data), 'var <%= foo %> = \'<%= foo %>\';\n');
-        self.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/noProcess.js');
-        fs.readFile('write/to/noProcess.js', function (err, data) {
-          if (err) throw err;
-          assert.textEqual(String(data), 'var foo = \'foo\';\n');
-          done();
-        });
-      });
+    it('does not run conflicter or template engine', function () {
+      var data = fs.readFileSync('write/to/noProcess.js');
+      assert.textEqual(String(data), 'var <%= foo %> = \'<%= foo %>\';\n');
+
+      this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/noProcess.js');
+      var data2 = fs.readFileSync('write/to/noProcess.js');
+      assert.textEqual(String(data2), 'var foo = \'foo\';\n');
     });
   });
 
@@ -161,6 +142,7 @@ describe('generators.Base (actions/actions)', function () {
       var body = this.dummy.read('foo.js');
       assert.textEqual(body, 'var foo = \'foo\';' + '\n');
     });
+
     it('allow absolute path, and prevent the relative paths join', function () {
       var body = this.dummy.read(path.join(__dirname, 'fixtures/foo.js'));
       assert.textEqual(body, 'var foo = \'foo\';' + '\n');
@@ -171,24 +153,18 @@ describe('generators.Base (actions/actions)', function () {
     before(function (done) {
       this.body = 'var bar = \'bar\';' + '\n';
       this.dummy.write('write/to/foobar.js', this.body);
-      this.dummy.conflicter.resolve(done);
+      this.dummy._writeFiles(done);
     });
 
-    it('writes the specified files relative to the "destinationRoot" value', function (done) {
+    it('writes the specified files relative to the "destinationRoot" value', function () {
       var body = this.body;
-      fs.readFile('write/to/foobar.js', 'utf8', function (err, actual) {
-        if (err) {
-          return done(err);
-        }
-        assert.ok(actual, body);
-        done();
-      });
+      var actual = fs.readFileSync('write/to/foobar.js', 'utf8');
+      assert.ok(actual, body);
     });
   });
 
   describe('#template()', function () {
     describe('without options', function () {
-
       before(function (done) {
         // Create file with weird permission for testing
         var permFileName = this.fixtures + '/perm-test.js';
@@ -209,7 +185,7 @@ describe('generators.Base (actions/actions)', function () {
           foo: 'bar',
           bar: 'foo'
         });
-        this.dummy.conflicter.resolve(done);
+        this.dummy._writeFiles(done);
       });
 
       after(function () {
@@ -267,7 +243,7 @@ describe('generators.Base (actions/actions)', function () {
           interpolate: /\{\{=([\s\S]+?)\}\}/g,
           escape: /\{\{-([\s\S]+?)\}\}/g
         });
-        this.dummy.conflicter.resolve(done);
+        this.dummy._writeFiles(done);
       });
 
       it('uses tags specified in option', function () {
@@ -280,6 +256,7 @@ describe('generators.Base (actions/actions)', function () {
       beforeEach(function (done) {
         this.src = 'custom-template-setting.xml';
         this.dest = 'write/to/custom-template-setting.xml';
+        this.spy = sinon.spy();
 
         var oldEngineOptions = this.dummy.options.engine.options;
 
@@ -290,20 +267,23 @@ describe('generators.Base (actions/actions)', function () {
           end: '}}'
         };
 
-        this.dummy.template(this.src, this.dest, { foo: 'bar' }, {
+        this.dummy.template(this.src, this.dest, {
+          foo: 'bar',
+          spy: this.spy
+        }, {
           evaluate: /\{\{([\s\S]+?)\}\}/g,
           interpolate: /\{\{=([\s\S]+?)\}\}/g,
           escape: /\{\{-([\s\S]+?)\}\}/g
         });
 
-        this.dummy.conflicter.resolve(done);
-
         this.dummy.options.engine.options = oldEngineOptions;
+        this.dummy._writeFiles(done);
       });
 
       it('uses tags specified in option and engine', function () {
         var body = fs.readFileSync(this.dest, 'utf8');
-        assert.textEqual(body, '<version>bar</version> {{ foo }}\n');
+        assert.textEqual(body, '<version>bar</version>\n');
+        sinon.assert.calledOnce(this.spy);
       });
     });
   });
@@ -320,7 +300,7 @@ describe('generators.Base (actions/actions)', function () {
 
         return contents;
       });
-      this.dummy.conflicter.resolve(done);
+      this.dummy._writeFiles(done);
     });
 
     it('copy and process source files to destination', function (done) {
@@ -408,7 +388,7 @@ describe('generators.Base (actions/actions)', function () {
   describe('#expandFiles()', function () {
     before(function (done) {
       this.dummy.copy('foo.js', 'write/abc/abc.js');
-      this.dummy.conflicter.resolve(done);
+      this.dummy._writeFiles(done);
     });
     it('returns expand files', function () {
       var files = this.dummy.expandFiles('write/abc/**');

@@ -1,7 +1,8 @@
 /*global describe, before, after, it, beforeEach, afterEach */
 'use strict';
-var fs = require('fs');
 var assert = require('assert');
+var fs = require('fs');
+var path = require('path');
 var Conflicter = require('../lib/util/conflicter');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var _ = require('lodash');
@@ -176,6 +177,17 @@ describe('Conflicter', function () {
         assert.equal(status, 'force');
         done();
       });
+    });
+
+    it('does not give a conflict on same binary files', function (done) {
+      this.conflicter.force = true;
+      this.conflicter.collision(
+        path.join(__dirname, 'fixtures/yeoman-logo.png'),
+        fs.readFileSync(path.join(__dirname, 'fixtures/yeoman-logo.png')),
+        function (status) {
+          assert.equal(status, 'identical');
+          done();
+        }.bind(this));
     });
   });
 

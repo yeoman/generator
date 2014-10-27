@@ -14,9 +14,7 @@ describe('generators.Base#remote()', function () {
   before(generators.test.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    this.env = yeoman.createEnv([], {}, new TestAdapter({
-      overwrite: function (cb) { cb('force'); }
-    }));
+    this.env = yeoman.createEnv([], {}, new TestAdapter());
     this.env.registerStub(generators.test.createDummyGenerator(), 'dummy');
     this.dummy = this.env.create('dummy');
     nock('https://github.com')
@@ -49,15 +47,13 @@ describe('generators.Base#remote()', function () {
         this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
           this.dummy.foo = 'foo';
           remote.copy('test/fixtures/template.jst', 'remote-githug/template.js');
-          this.dummy.conflicter.resolve(done);
+          this.dummy._writeFiles(done);
         }.bind(this), true);
       });
 
-      it('copy a file from a remote resource', function (done) {
-        fs.readFile('remote-githug/template.js', function (err, data) {
-          assert.equal(data.toString(), 'var foo = \'foo\';\n');
-          done();
-        });
+      it('copy a file from a remote resource', function () {
+        var data = fs.readFileSync('remote-githug/template.js');
+        assert.equal(data, 'var foo = \'foo\';\n');
       });
     });
 
@@ -65,7 +61,7 @@ describe('generators.Base#remote()', function () {
       beforeEach(function (done) {
         this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
           remote.bulkCopy('test/fixtures/foo-template.js', 'remote-githug/foo-template.js');
-          this.dummy.conflicter.resolve(done);
+          this.dummy._writeFiles(done);
         }.bind(this), true);
       });
 
@@ -73,11 +69,9 @@ describe('generators.Base#remote()', function () {
         fs.stat('remote-githug/foo-template.js', done);
       });
 
-      it('doesn\'t process templates on bulkCopy', function (done) {
-        fs.readFile('remote-githug/foo-template.js', function (err, data) {
-          assert.equal(data.toString(), 'var <%= foo %> = \'<%= foo %>\';\n');
-          done();
-        });
+      it('doesn\'t process templates on bulkCopy', function () {
+        var data = fs.readFileSync('remote-githug/foo-template.js');
+        assert.equal(data, 'var <%= foo %> = \'<%= foo %>\';\n');
       });
     });
 
@@ -85,7 +79,7 @@ describe('generators.Base#remote()', function () {
       beforeEach(function (done) {
         this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
           remote.directory('test/generators', 'remote-githug/generators');
-          this.dummy.conflicter.resolve(done);
+          this.dummy._writeFiles(done);
         }.bind(this), true);
       });
 
@@ -98,6 +92,7 @@ describe('generators.Base#remote()', function () {
       beforeEach(function (done) {
         this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
           remote.bulkDirectory('test/fixtures', 'remote-githug/fixtures');
+          this.dummy.conflicter.force = true;
           this.dummy.conflicter.resolve(done);
         }.bind(this), true);
       });
@@ -106,11 +101,9 @@ describe('generators.Base#remote()', function () {
         fs.stat('remote-githug/fixtures/foo.js', done);
       });
 
-      it('doesn\'t process templates on bulkDirectory', function (done) {
-        fs.readFile('remote-githug/fixtures/foo-template.js', function (err, data) {
-          assert.equal(data.toString(), 'var <%= foo %> = \'<%= foo %>\';\n');
-          done();
-        });
+      it('doesn\'t process templates on bulkDirectory', function () {
+        var data = fs.readFileSync('remote-githug/fixtures/foo-template.js');
+        assert.equal(data, 'var <%= foo %> = \'<%= foo %>\';\n');
       });
     });
 
@@ -138,18 +131,16 @@ describe('generators.Base#remote()', function () {
   describe('absolute', function () {
     describe('callback argument remote#copy', function () {
       beforeEach(function (done) {
+        this.dummy.foo = 'foo';
         this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
-          this.dummy.foo = 'foo';
           remote.copy('test/fixtures/template.jst', 'remote-absolute/template.js');
-          this.dummy.conflicter.resolve(done);
+          this.dummy._writeFiles(done);
         }.bind(this), true);
       });
 
-      it('copy a file from a remote resource', function (done) {
-        fs.readFile('remote-absolute/template.js', function (err, data) {
-          assert.equal(data.toString(), 'var foo = \'foo\';\n');
-          done();
-        });
+      it('copy a file from a remote resource', function () {
+        var data = fs.readFileSync('remote-absolute/template.js');
+        assert.equal(data, 'var foo = \'foo\';\n');
       });
     });
 
@@ -157,6 +148,7 @@ describe('generators.Base#remote()', function () {
       beforeEach(function (done) {
         this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
           remote.bulkCopy('test/fixtures/foo-template.js', 'remote-absolute/foo-template.js');
+          this.dummy.conflicter.force = true;
           this.dummy.conflicter.resolve(done);
         }.bind(this), true);
       });
@@ -165,11 +157,9 @@ describe('generators.Base#remote()', function () {
         fs.stat('remote-absolute/foo-template.js', done);
       });
 
-      it('doesn\'t process templates on bulkCopy', function (done) {
-        fs.readFile('remote-absolute/foo-template.js', function (err, data) {
-          assert.equal(data.toString(), 'var <%= foo %> = \'<%= foo %>\';\n');
-          done();
-        });
+      it('doesn\'t process templates on bulkCopy', function () {
+        var data = fs.readFileSync('remote-absolute/foo-template.js');
+        assert.equal(data, 'var <%= foo %> = \'<%= foo %>\';\n');
       });
     });
 
@@ -177,7 +167,7 @@ describe('generators.Base#remote()', function () {
       beforeEach(function (done) {
         this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
           remote.directory('test/generators', 'remote-absolute/generators');
-          this.dummy.conflicter.resolve(done);
+          this.dummy._writeFiles(done);
         }.bind(this), true);
       });
 
@@ -190,6 +180,7 @@ describe('generators.Base#remote()', function () {
       beforeEach(function (done) {
         this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
           remote.bulkDirectory('test/fixtures', 'remote-absolute/fixtures');
+          this.dummy.conflicter.force = true;
           this.dummy.conflicter.resolve(done);
         }.bind(this), true);
       });
@@ -198,11 +189,9 @@ describe('generators.Base#remote()', function () {
         fs.stat('remote-absolute/fixtures/foo.js', done);
       });
 
-      it('doesn\'t process templates on bulkDirectory', function (done) {
-        fs.readFile('remote-absolute/fixtures/foo-template.js', function (err, data) {
-          assert.equal(data.toString(), 'var <%= foo %> = \'<%= foo %>\';\n');
-          done();
-        });
+      it('doesn\'t process templates on bulkDirectory', function () {
+        var data = fs.readFileSync('remote-absolute/fixtures/foo-template.js');
+        assert.equal(data, 'var <%= foo %> = \'<%= foo %>\';\n');
       });
     });
 

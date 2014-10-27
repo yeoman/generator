@@ -42,7 +42,6 @@
     "github-username": "^1.0.0",
     "glob": "^4.0.2",
     "gruntfile-editor": "^0.2.0",
-    "iconv-lite": "^0.4.4",
     "inquirer": "^0.8.0",
     "isbinaryfile": "^2.0.0",
     "lodash": "^2.4.1",
