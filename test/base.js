@@ -106,6 +106,14 @@ describe('generators.Base', function () {
           done();
         });
     });
+
+    it('setup fs editor', function () {
+      var generator = new generators.Base([], {
+        env: this.env,
+        resolved: 'test'
+      });
+      assert(generator.fs);
+    });
   });
 
   describe('prototype', function () {
@@ -346,6 +354,25 @@ describe('generators.Base', function () {
       };
       this.testGen.run(function () {
         assert(saveSpy.called);
+        done();
+      }.bind(this));
+    });
+
+    it('commit mem-fs to disk', function (done) {
+      var filepath;
+      var oldFilePath;
+      this.TestGenerator.prototype.writing = function () {
+        oldFilePath = path.join(this.destinationRoot(), 'old-system.txt');
+        // Just ensure we don't have issue if both old and new system run.
+        this.write(oldFilePath, 'hey');
+        this.fs.write(
+          filepath = path.join(this.destinationRoot(), 'fromfs.txt'),
+          'generated'
+        );
+      };
+      this.testGen.run(function () {
+        assert(fs.existsSync(oldFilePath));
+        assert(fs.existsSync(filepath));
         done();
       }.bind(this));
     });
