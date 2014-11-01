@@ -103,7 +103,7 @@ describe('Generators module', function () {
         it('aborting', function () {
           // make sure the file exist
           var fileContent = this.generator.dest.read('file-conflict.txt');
-          var checkForCollision = sinon.stub(this.generator, 'checkForCollision');
+          var checkForCollision = sinon.stub(this.generator.conflicter, 'checkForCollision');
 
           this.generator.dest.write('file-conflict.txt', 'some conficting content');
 
@@ -120,7 +120,7 @@ describe('Generators module', function () {
         it('allowing', function () {
           // make sure the file exist
           var fileContent = this.generator.dest.read('file-conflict.txt');
-          var checkForCollision = sinon.stub(this.generator, 'checkForCollision');
+          var checkForCollision = sinon.stub(this.generator.conflicter, 'checkForCollision');
 
           this.generator.dest.write('file-conflict.txt', 'some conficting content');
 
