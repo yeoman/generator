@@ -11,9 +11,6 @@
   "noarg": true,
   "undef": true,
   "strict": true,
-  "trailing": true,
-  "smarttabs": true,
-  "indent": 2,
   "quotmark": "single",
   "scripturl": true
 }
