@@ -7,44 +7,20 @@ var Conflicter = require('../lib/util/conflicter');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var sinon = require('sinon');
 
-var fileFoo = {
-  file: 'foo.js',
-  content: 'var foo = "foo";\n'
-};
-var fileBar = {
-  file: 'boo.js',
-  content: 'var boo = "boo";\n'
-};
-
 describe('Conflicter', function () {
   beforeEach(function () {
     this.conflicter = new Conflicter(new TestAdapter());
   });
 
-  it('#add()', function () {
-    this.conflicter.add({
-      file: __filename,
-      content: fs.readFileSync(__filename, 'utf8')
-    });
-    var conflict = this.conflicter.pop();
-    assert.deepEqual(conflict.file, __filename);
-    assert.deepEqual(conflict.content, fs.readFileSync(__filename, 'utf8'));
-  });
+  it('#checkForCollision()', function () {
+    var spy = sinon.spy();
+    var contents = fs.readFileSync(__filename, 'utf8');
+    this.conflicter.checkForCollision(__filename, contents, spy);
 
-  it('#pop()', function () {
-    this.conflicter.add(fileFoo);
-    this.conflicter.add(fileBar);
-    var conflict = this.conflicter.pop();
-    assert.deepEqual(conflict.file, 'boo.js');
-    assert.deepEqual(conflict.content, 'var boo = "boo";\n');
-  });
-
-  it('#shift()', function () {
-    this.conflicter.add(fileFoo);
-    this.conflicter.add(fileBar);
-    var conflict = this.conflicter.shift();
-    assert.deepEqual(conflict.file, 'foo.js');
-    assert.deepEqual(conflict.content, 'var foo = "foo";\n');
+    var conflict = this.conflicter.conflicts.pop();
+    assert.deepEqual(conflict.file.path, __filename);
+    assert.deepEqual(conflict.file.contents, fs.readFileSync(__filename, 'utf8'));
+    assert.deepEqual(conflict.callback, spy);
   });
 
   describe('#resolve()', function () {
@@ -56,16 +32,8 @@ describe('Conflicter', function () {
       var spy = sinon.spy();
       this.conflicter.force = true;
 
-      this.conflicter.add({
-        file: __filename,
-        content: fs.readFileSync(__filename),
-        callback: spy
-      });
-      this.conflicter.add({
-        file: 'foo.js',
-        content: 'var foo = "foo";\n',
-        callback: spy
-      });
+      this.conflicter.checkForCollision(__filename, fs.readFileSync(__filename), spy);
+      this.conflicter.checkForCollision('foo.js', 'var foo = "foo";\n', spy);
 
       this.conflicter.resolve(function () {
         assert.equal(spy.callCount, 2);
@@ -76,16 +44,26 @@ describe('Conflicter', function () {
   });
 
   describe('#collision()', function () {
+    beforeEach(function () {
+      this.conflictingFile = { path: __filename, contents: '' };
+    });
+
     it('identical status', function (done) {
       var me = fs.readFileSync(__filename, 'utf8');
-      this.conflicter.collision(__filename, me, function (status) {
+      this.conflicter.collision({
+        path: __filename,
+        contents: me
+      }, function (status) {
         assert.equal(status, 'identical');
         done();
       });
     });
 
     it('create status', function (done) {
-      this.conflicter.collision('file-who-does-not-exist.js', '', function (status) {
+      this.conflicter.collision({
+        path: 'file-who-does-not-exist.js',
+        contents: ''
+      }, function (status) {
         assert.equal(status, 'create');
         done();
       });
@@ -93,7 +71,7 @@ describe('Conflicter', function () {
 
     it('user choose "yes"', function (done) {
       var conflicter = new Conflicter(new TestAdapter({ action: 'write' }));
-      conflicter.collision(__filename, '', function (status) {
+      conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'force');
         done();
       });
@@ -101,7 +79,7 @@ describe('Conflicter', function () {
 
     it('user choose "skip"', function (done) {
       var conflicter = new Conflicter(new TestAdapter({ action: 'skip' }));
-      conflicter.collision(__filename, '', function (status) {
+      conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'skip');
         done();
       });
@@ -109,7 +87,7 @@ describe('Conflicter', function () {
 
     it('user choose "force"', function (done) {
       var conflicter = new Conflicter(new TestAdapter({ action: 'force' }));
-      conflicter.collision(__filename, '', function (status) {
+      conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'force');
         done();
       });
@@ -117,7 +95,7 @@ describe('Conflicter', function () {
 
     it('force conflict status', function (done) {
       this.conflicter.force = true;
-      this.conflicter.collision(__filename, '', function (status) {
+      this.conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'force');
         done();
       });
@@ -125,14 +103,13 @@ describe('Conflicter', function () {
 
     it('does not give a conflict on same binary files', function (done) {
       this.conflicter.force = true;
-      this.conflicter.collision(
-        path.join(__dirname, 'fixtures/yeoman-logo.png'),
-        fs.readFileSync(path.join(__dirname, 'fixtures/yeoman-logo.png')),
-        function (status) {
-          assert.equal(status, 'identical');
-          done();
-        }.bind(this)
-      );
+      this.conflicter.collision({
+        path: path.join(__dirname, 'fixtures/yeoman-logo.png'),
+        contents: fs.readFileSync(path.join(__dirname, 'fixtures/yeoman-logo.png'))
+      }, function (status) {
+        assert.equal(status, 'identical');
+        done();
+      }.bind(this));
     });
   });
 });
