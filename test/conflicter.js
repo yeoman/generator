@@ -23,12 +23,11 @@ describe('Conflicter', function () {
     this.conflicter = new Conflicter(new TestAdapter());
   });
 
-  it('is an event emitter', function () {
-    assert.ok(this.conflicter instanceof require('events').EventEmitter);
-  });
-
   it('#add()', function () {
-    this.conflicter.add(__filename);
+    this.conflicter.add({
+      file: __filename,
+      content: fs.readFileSync(__filename, 'utf8')
+    });
     var conflict = this.conflicter.pop();
     assert.deepEqual(conflict.file, __filename);
     assert.deepEqual(conflict.content, fs.readFileSync(__filename, 'utf8'));
@@ -55,58 +54,26 @@ describe('Conflicter', function () {
       this.conflicter.resolve(done);
     });
 
-    it('with at least one, without async callback handling', function (done) {
-      var conflicts = 0;
-      var callbackExecuted = false;
+    it('with a conflict', function (done) {
+      var spy = sinon.spy();
+      this.conflicter.force = true;
 
-      this.conflicter.add(__filename);
+      this.conflicter.add({
+        file: __filename,
+        content: fs.readFileSync(__filename),
+        callback: spy
+      });
       this.conflicter.add({
         file: 'foo.js',
-        content: 'var foo = "foo";\n'
-      });
-
-      // called.
-      this.conflicter.once('resolved:' + __filename, function () {
-        conflicts++;
-      });
-
-      // not called.
-      this.conflicter.once('resolved:foo.js', function () {
-        conflicts++;
+        content: 'var foo = "foo";\n',
+        callback: spy
       });
 
       this.conflicter.resolve(function () {
-        callbackExecuted = true;
-      });
-
-      assert(conflicts, 1);
-      assert(!callbackExecuted);
-      done();
-    });
-
-    it('with at least one, with async callback handling', function (done) {
-      var called = 0;
-
-      this.conflicter.add(__filename);
-      this.conflicter.add({
-        file: 'foo.js',
-        content: 'var foo = "foo";\n'
-      });
-
-      this.conflicter.once('resolved:' + __filename, function (config) {
-        called++;
-        config.callback();
-      });
-
-      this.conflicter.once('resolved:foo.js', function (config) {
-        called++;
-        config.callback();
-      });
-
-      this.conflicter.resolve(function () {
-        assert(called, 2);
+        assert.equal(spy.callCount, 2);
+        assert.equal(this.conflicter.conflicts.length, 0, 'Expected conflicter to be empty after running');
         done();
-      });
+      }.bind(this));
     });
   });
 
