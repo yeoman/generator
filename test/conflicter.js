@@ -102,7 +102,6 @@ describe('Conflicter', function () {
     });
 
     it('does not give a conflict on same binary files', function (done) {
-      this.conflicter.force = true;
       this.conflicter.collision({
         path: path.join(__dirname, 'fixtures/yeoman-logo.png'),
         contents: fs.readFileSync(path.join(__dirname, 'fixtures/yeoman-logo.png'))
