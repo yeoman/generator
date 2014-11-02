@@ -3,9 +3,10 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
+var _ = require('lodash');
+var sinon = require('sinon');
 var Conflicter = require('../lib/util/conflicter');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
-var sinon = require('sinon');
 
 describe('Conflicter', function () {
   beforeEach(function () {
@@ -109,6 +110,21 @@ describe('Conflicter', function () {
         assert.equal(status, 'identical');
         done();
       }.bind(this));
+    });
+
+    it('does not provide a diff option for directory', function (done) {
+      var conflicter = new Conflicter(new TestAdapter({ action: 'write' }));
+      var spy = sinon.spy(conflicter.adapter, 'prompt');
+      conflicter.collision({
+        path: __dirname,
+        contents: null
+      }, function (status) {
+        assert.equal(
+          _.where(spy.firstCall.args[0][0].choices, { value: 'diff' }).length,
+          0
+        );
+        done();
+      });
     });
   });
 });
