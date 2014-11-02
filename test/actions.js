@@ -7,7 +7,6 @@ var sinon = require('sinon');
 var generators = require('..');
 var helpers = generators.test;
 var assert = generators.assert;
-var Conflicter = require('../lib/util/conflicter');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-actions');
 
@@ -338,6 +337,7 @@ describe('generators.Base (actions/actions)', function () {
     before(function (done) {
       this.dummy.sourceRoot(this.fixtures);
       this.dummy.destinationRoot('.');
+      this.dummy.conflicter.force = true;
       // Create temp bulk operation files
       // These cannot just be in the repo or the other directory tests fail
       require('mkdirp').sync(this.fixtures + '/bulk-operation');
@@ -367,19 +367,7 @@ describe('generators.Base (actions/actions)', function () {
     });
 
     it('check for conflict if directory already exists', function (done) {
-      var oldConflicter = this.dummy.conflicter;
-      var callCount = 0;
-      var dummyGenerator = this.dummy;
-      var answers = {
-        overwrite: function (cb) {
-          callCount++;
-          assert(callCount, 1);
-          dummyGenerator.conflicter = oldConflicter;
-          cb();
-        }
-      };
-
-      this.dummy.conflicter = new Conflicter(new TestAdapter(answers));
+      this.dummy.conflicter.force = true;
       this.dummy.bulkDirectory('bulk-operation', 'bulk-operation');
       this.dummy.conflicter.resolve(done);
     });

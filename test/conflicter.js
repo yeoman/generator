@@ -5,8 +5,6 @@ var fs = require('fs');
 var path = require('path');
 var Conflicter = require('../lib/util/conflicter');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
-var _ = require('lodash');
-var inquirer = require('inquirer');
 var sinon = require('sinon');
 
 var fileFoo = {
@@ -78,27 +76,6 @@ describe('Conflicter', function () {
   });
 
   describe('#collision()', function () {
-    beforeEach(function () {
-      var self = this;
-      var mockAdapter = new TestAdapter();
-
-      // TODO: This test must be decouple from the inquirer module. This is very ugly...
-      mockAdapter.prompt = inquirer.createPromptModule();
-      var Prompt = function (q, cb) {
-        this.answer = _.where(q.choices, { key: self.answer })[0].value;
-      };
-      Prompt.prototype.run = function (cb) {
-        cb(this.answer);
-      };
-      mockAdapter.prompt.registerPrompt('expand', Prompt);
-
-      this.conflicter = new Conflicter(mockAdapter);
-    });
-
-    afterEach(function () {
-      delete this.conflicter.force;
-    });
-
     it('identical status', function (done) {
       var me = fs.readFileSync(__filename, 'utf8');
       this.conflicter.collision(__filename, me, function (status) {
@@ -115,24 +92,24 @@ describe('Conflicter', function () {
     });
 
     it('user choose "yes"', function (done) {
-      this.answer = 'y';
-      this.conflicter.collision(__filename, '', function (status) {
+      var conflicter = new Conflicter(new TestAdapter({ action: 'write' }));
+      conflicter.collision(__filename, '', function (status) {
         assert.equal(status, 'force');
         done();
       });
     });
 
-    it('user chosse "skip"', function (done) {
-      this.answer = 'n';
-      this.conflicter.collision(__filename, '', function (status) {
+    it('user choose "skip"', function (done) {
+      var conflicter = new Conflicter(new TestAdapter({ action: 'skip' }));
+      conflicter.collision(__filename, '', function (status) {
         assert.equal(status, 'skip');
         done();
       });
     });
 
-    it('user choose "all"', function (done) {
-      this.answer = 'a';
-      this.conflicter.collision(__filename, '', function (status) {
+    it('user choose "force"', function (done) {
+      var conflicter = new Conflicter(new TestAdapter({ action: 'force' }));
+      conflicter.collision(__filename, '', function (status) {
         assert.equal(status, 'force');
         done();
       });
@@ -154,36 +131,8 @@ describe('Conflicter', function () {
         function (status) {
           assert.equal(status, 'identical');
           done();
-        }.bind(this));
-    });
-  });
-
-  describe('#diff()', function () {
-    beforeEach(function () {
-      this.adapter = new TestAdapter();
-      this.conflicter = new Conflicter(this.adapter);
-    });
-
-    it('Calls adapter diff function', function () {
-      this.conflicter.diff('actual', 'expected');
-      sinon.assert.calledOnce(this.adapter.diff);
-    });
-  });
-
-  describe('#_ask()', function () {
-    beforeEach(function () {
-      this.answer = sinon.spy(function (cb) {
-        cb('skip');
-      });
-      var adapter = new TestAdapter({ overwrite: this.answer });
-      this.conflicter = new Conflicter(adapter);
-    });
-
-    it('Calls answer related function and pass a callback', function (done) {
-      this.conflicter._ask('/tmp/file', 'my file contents', function () {
-        sinon.assert.calledOnce(this.answer);
-        done();
-      }.bind(this));
+        }.bind(this)
+      );
     });
   });
 });
