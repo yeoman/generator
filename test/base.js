@@ -759,6 +759,32 @@ describe('generators.Base', function () {
     });
   });
 
+  describe('#templatePath()', function () {
+    it('joins path to the source root', function () {
+      assert.equal(
+        this.dummy.templatePath('bar.js'),
+        path.join(this.dummy.sourceRoot(), 'bar.js')
+      );
+      assert.equal(
+        this.dummy.templatePath('dir/', 'bar.js'),
+        path.join(this.dummy.sourceRoot(), '/dir/bar.js')
+      );
+    });
+  });
+
+  describe('#destinationPath()', function () {
+    it('joins path to the source root', function () {
+      assert.equal(
+        this.dummy.destinationPath('bar.js'),
+        path.join(this.dummy.destinationRoot(), 'bar.js')
+      );
+      assert.equal(
+        this.dummy.destinationPath('dir/', 'bar.js'),
+        path.join(this.dummy.destinationRoot(), '/dir/bar.js')
+      );
+    });
+  });
+
   describe('Events', function () {
     before(function () {
       var Generator = this.Generator = function () {
