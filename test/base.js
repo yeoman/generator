@@ -7,6 +7,7 @@ var util = require('util');
 var sinon = require('sinon');
 var mockery = require('mockery');
 var rimraf = require('rimraf');
+var through = require('through2');
 var yeoman = require('yeoman-environment');
 mockery.enable({
   warnOnReplace: false,
@@ -782,6 +783,43 @@ describe('generators.Base', function () {
         this.dummy.destinationPath('dir/', 'bar.js'),
         path.join(this.dummy.destinationRoot(), '/dir/bar.js')
       );
+    });
+  });
+
+  describe('#registerTransformStream()', function () {
+    beforeEach(function () {
+      this.filepath = path.join(os.tmpdir(), '/yeoman-transform-stream/filea.txt');
+      this.TestGenerator = helpers.createDummyGenerator();
+      this.testGen = new this.TestGenerator([], {
+        resolved: 'generator-ember/all/index.js',
+        namespace: 'dummy',
+        env: this.env
+      });
+    });
+
+    afterEach(function (done) {
+      rimraf(this.filepath, done);
+    });
+
+    it('add the transform stream to the commit stream', function (done) {
+      var self = this;
+      this.TestGenerator.prototype.writing = function () {
+        this.fs.write(self.filepath, 'not correct');
+
+        this
+          .registerTransformStream(through.obj(function (file, enc, cb) {
+            file.contents = new Buffer('a');
+            cb(null, file);
+          }))
+          .registerTransformStream(through.obj(function (file, enc, cb) {
+            file.contents = new Buffer(file.contents.toString() + 'b');
+            cb(null, file);
+          }));
+      };
+      this.testGen.run(function () {
+        assert.equal(fs.readFileSync(this.filepath, 'utf8'), 'ab');
+        done();
+      }.bind(this));
     });
   });
 
