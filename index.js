@@ -39,12 +39,6 @@ var yeoman = module.exports = function createEnv() {
 };
 
 /**
- * Reference to the inquirer module
- * @deprecated Require your own copy of the module, this one will be removed after 1.0
- */
-yeoman.inquirer = require('inquirer');
-
-/**
  * Global file helpers methods
  * {@link https://github.com/SBoudrias/file-utils}
  */

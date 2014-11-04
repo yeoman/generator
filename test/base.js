@@ -705,12 +705,6 @@ describe('generators.Base', function () {
     });
   });
 
-  describe('#shell', function () {
-    it('extend shelljs module', function () {
-      assert.implement(this.dummy.shell, require('shelljs'));
-    });
-  });
-
   describe('#config', function () {
     it('provide a storage instance', function () {
       assert.ok(this.dummy.config instanceof require('../lib/util/storage'));
