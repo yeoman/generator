@@ -34,7 +34,7 @@
     "class-extend": "^0.1.0",
     "cross-spawn": "^0.2.3",
     "dargs": "^2.0.3",
-    "debug": "^1.0.1",
+    "debug": "^2.1.0",
     "detect-conflict": "^1.0.0",
     "diff": "^1.0.4",
     "download": "^3.1.2",
@@ -62,16 +62,16 @@
   "devDependencies": {
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.0",
-    "gulp-istanbul": "^0.2.0",
+    "gulp-eslint": "~0.1.8",
+    "gulp-istanbul": "^0.3.1",
     "gulp-jscs": "^1.1.0",
     "gulp-jshint": "^1.5.3",
     "gulp-mocha": "^1.0.0",
-    "jshint-stylish": "^0.4.0",
+    "gulp-plumber": "~0.6.6",
+    "jshint-stylish": "^1.0.0",
     "mockery": "^1.4.0",
-    "nock": "^0.45.0",
+    "nock": "^0.48.2",
     "proxyquire": "^1.0.0",
-    "sinon": "^1.9.1",
-    "gulp-eslint": "~0.1.8",
-    "gulp-plumber": "~0.6.6"
+    "sinon": "^1.9.1"
   }
 }
