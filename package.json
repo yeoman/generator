@@ -46,7 +46,7 @@
     "inquirer": "^0.8.0",
     "isbinaryfile": "^2.0.0",
     "lodash": "^2.4.1",
-    "mem-fs-editor": "SBoudrias/mem-fs-editor",
+    "mem-fs-editor": "^1.0.0",
     "mime": "^1.2.9",
     "mkdirp": "^0.5.0",
     "nopt": "^3.0.0",
@@ -57,7 +57,7 @@
     "through2": "^0.6.3",
     "underscore.string": "^2.3.1",
     "xdg-basedir": "^1.0.0",
-    "yeoman-environment": "yeoman/environment#mem-fs"
+    "yeoman-environment": "^1.1.0"
   },
   "devDependencies": {
     "gulp": "^3.6.0",
