@@ -57,6 +57,7 @@
     "text-table": "^0.2.0",
     "through2": "^0.6.3",
     "underscore.string": "^2.3.1",
+    "user-home": "^1.1.0",
     "xdg-basedir": "^1.0.0",
     "yeoman-environment": "^1.1.0"
   },
