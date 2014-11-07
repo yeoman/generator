@@ -1,13 +1,15 @@
 /*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
-var path = require('path');
-var fs = require('fs');
 var assert = require('assert');
+var FileEditor = require('mem-fs-editor');
+var fs = require('fs');
+var os = require('os');
+var path = require('path');
 var sinon = require('sinon');
+var env = require('yeoman-environment');
 var Storage = require('../lib/util/storage');
 var generators = require('..');
 var helpers = generators.test;
-var os = require('os');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 
 function rm(path) {
@@ -22,23 +24,16 @@ describe('Storage', function () {
   beforeEach(function () {
     this.beforeDir = process.cwd();
     this.storePath = path.join(tmpdir, 'new-config.json');
-    this.store = new Storage('test', this.storePath);
+    this.memFs = env.createEnv().sharedFs;
+    this.fs = FileEditor.create(this.memFs);
+    this.store = new Storage('test', this.fs, this.storePath);
     this.store.set('foo', 'bar');
     this.saveSpy = sinon.spy(this.store, 'save');
   });
 
-  afterEach(function (done) {
-    var teardown = function () {
-      rm(this.storePath);
-      process.chdir(this.beforeDir);
-      done();
-    }.bind(this);
-
-    if (this.store.pending) {
-      this.store.once('save', teardown);
-    } else {
-      teardown();
-    }
+  afterEach(function () {
+    rm(this.storePath);
+    process.chdir(this.beforeDir);
   });
 
   describe('.constructor()', function () {
@@ -47,30 +42,25 @@ describe('Storage', function () {
     });
 
     it('take a path parameter', function () {
-      var store = new Storage('test', path.join(__dirname, './fixtures/config.json'));
+      var store = new Storage('test', this.fs, path.join(__dirname, './fixtures/config.json'));
       assert.equal(store.get('testFramework'), 'mocha');
       assert.ok(store.existed);
     });
   });
 
   it('namespace each store sharing the same store file', function () {
-    var store = new Storage('foobar', this.storePath);
+    var store = new Storage('foobar', this.fs, this.storePath);
     store.set('foo', 'something else');
-    assert.ok(this.store.get('foo') === 'bar');
+    assert.equal(this.store.get('foo'), 'bar');
   });
 
-  it('defaults store path to `.yo-rc.json`', function (done) {
-    var tmp = tmpdir;
-    process.chdir(tmp);
-    var store = new Storage('yo');
-
-    store.on('save', function () {
-      var fileContent = JSON.parse(fs.readFileSync(path.join(tmp, '.yo-rc.json')));
-      assert.equal(fileContent.yo.foo, 'bar');
-      done();
-    });
-
+  it('defaults store path to `.yo-rc.json`', function () {
+    process.chdir(tmpdir);
+    var store = new Storage('yo', this.fs);
     store.set('foo', 'bar');
+
+    var fileContent = this.fs.readJSON('.yo-rc.json');
+    assert.equal(fileContent.yo.foo, 'bar');
   });
 
   describe('#get()', function () {
@@ -111,28 +101,25 @@ describe('Storage', function () {
     describe('@return', function () {
       beforeEach(function () {
         this.storePath = path.join(tmpdir, 'setreturn.json');
-        this.store = new Storage('test', this.storePath);
+        this.store = new Storage('test', this.fs, this.storePath);
       });
 
       afterEach(function () {
         rm(this.storePath);
       });
 
-      it('the saved value (with key)', function (done) {
-        this.store.once('save', done);
+      it('the saved value (with key)', function () {
         assert.equal(this.store.set('name', 'Yeoman!'), 'Yeoman!');
       });
 
-      it('the saved value (without key)', function (done) {
-        this.store.once('save', done);
+      it('the saved value (without key)', function () {
         assert.deepEqual(
           this.store.set({ foo: 'bar', john: 'doe' }),
           { foo: 'bar', john: 'doe' }
         );
       });
 
-      it('the saved value (update values)', function (done) {
-        this.store.once('save', done);
+      it('the saved value (update values)', function () {
         this.store.set({ foo: 'bar', john: 'doe' });
         assert.deepEqual(
           this.store.set({ foo: 'moo' }),
@@ -148,11 +135,12 @@ describe('Storage', function () {
     });
 
     it('get all values', function () {
-      assert.deepEqual(this.store.getAll(), this.store._store);
+      assert.deepEqual(this.store.getAll().foo, 'bar');
     });
 
     it('does not return a reference to the inner store', function () {
-      assert.notEqual(this.store.getAll(), this.store._store);
+      this.store.getAll().foo = 'uhoh';
+      assert.equal(this.store.getAll().foo, 'bar');
     });
   });
 
@@ -168,73 +156,42 @@ describe('Storage', function () {
   });
 
   describe('#save()', function () {
-    beforeEach(function (done) {
-      this.forceSaveSpy = sinon.spy(Storage.prototype, 'forceSave');
+    beforeEach(function () {
       this.saveStorePath = path.join(tmpdir, 'save.json');
       rm(this.saveStorePath);
-      this.store = new Storage('test', this.saveStorePath);
+      this.store = new Storage('test', this.fs, this.saveStorePath);
       this.store.set('foo', 'bar');
       this.saveSpy = sinon.spy(this.store, 'save');
-      this.store.once('save', done);
     });
 
-    afterEach(function (done) {
-      var teardown = function () {
-        rm(this.saveStorePath);
-        this.forceSaveSpy.restore();
-        done();
-      }.bind(this);
-
-      if (this.store.pending) {
-        this.store.once('save', teardown);
-      } else {
-        teardown();
-      }
-    });
-
-    it('create storage file if none existed', function () {
-      var fileContent = JSON.parse(fs.readFileSync(this.saveStorePath));
-      assert.equal(fileContent.test.foo, 'bar');
-      assert.ok(!this.store.existed);
-    });
-
-    it('debounce multiple calls', function (done) {
-      this.store.once('save', function () {
-        assert.equal(this.forceSaveSpy.callCount, 2); // It is called once in the setup
-        assert.equal(this.saveSpy.callCount, 3);
-        assert(!this.store.pending);
-        done();
-      }.bind(this));
-
-      this.store.save();
-      assert(this.store.pending);
-      this.store.save();
-      this.store.save();
-    });
-
-    describe('when multiples instances sharing same file', function () {
+    describe('when multiples instances share the same file', function () {
       beforeEach(function () {
-        this.store2 = new Storage('test2', this.saveStorePath);
+        this.store2 = new Storage('test2', this.fs, this.saveStorePath);
       });
 
       it('only update modified namespace', function () {
         this.store2.set('bar', 'foo');
-        this.store2.forceSave();
         this.store.set('foo', 'bar');
-        this.store.forceSave();
 
-        var json = require(this.saveStorePath);
+        var json = this.fs.readJSON(this.saveStorePath);
         assert.equal(json.test.foo, 'bar');
         assert.equal(json.test2.bar, 'foo');
       });
     });
-  });
 
-  describe('#forceSave()', function () {
-    it('save file immediatly', function () {
-      this.store.forceSave();
-      var fileContent = JSON.parse(fs.readFileSync(this.storePath));
-      assert.equal(fileContent.test.foo, 'bar');
+    describe('when multiples instances share the same namespace', function () {
+      beforeEach(function () {
+        this.store2 = new Storage('test', this.fs, this.saveStorePath);
+      });
+
+      it('only update modified namespace', function () {
+        this.store2.set('bar', 'foo');
+        this.store.set('foo', 'bar');
+
+        var json = this.fs.readJSON(this.saveStorePath);
+        assert.equal(json.test.foo, 'bar');
+        assert.equal(json.test.bar, 'foo');
+      });
     });
   });
 
@@ -255,16 +212,14 @@ describe('Storage', function () {
     });
 
     describe('@return', function () {
-      beforeEach(function (done) {
+      beforeEach(function () {
         this.storePath = path.join(tmpdir, 'defaultreturn.json');
-        this.store = new Storage('test', this.storePath);
+        this.store = new Storage('test', this.fs, this.storePath);
         this.store.set('val1', 1);
         this.store.set('foo', 'bar');
-        this.store.on('save', done);
       });
 
       afterEach(function () {
-        this.store.removeAllListeners('save');
         rm(this.storePath);
       });
 

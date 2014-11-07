@@ -347,18 +347,6 @@ describe('generators.Base', function () {
       }.bind(this));
     });
 
-    it('wait for storage to persist before triggering end', function (done) {
-      var saveSpy = sinon.spy();
-      this.TestGenerator.prototype.end = function () {
-        this.config.save();
-        this.config.on('save', saveSpy);
-      };
-      this.testGen.run(function () {
-        assert(saveSpy.called);
-        done();
-      }.bind(this));
-    });
-
     it('commit mem-fs to disk', function (done) {
       var filepath;
       var oldFilePath;
