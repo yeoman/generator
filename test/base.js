@@ -589,7 +589,7 @@ describe('generators.Base', function () {
     describe('when passing a local path to a generator', function () {
       beforeEach(function () {
         this.spy = sinon.spy();
-        this.stubPath = path.join(__dirname, 'generator-dumb/main.js');
+        this.stubPath = path.join(__dirname, 'fixtures/mocha-generator');
         this.LocalDummy = generators.Base.extend({ exec: this.spy });
         mockery.registerMock(this.stubPath, this.LocalDummy);
       });
@@ -618,7 +618,10 @@ describe('generators.Base', function () {
         this.dummy.composeWith('dumb', {}, { local: this.stubPath });
         this.dummy.run(function () {
           assert.equal(this.spy.firstCall.thisValue.options.namespace, 'dumb');
-          assert.equal(this.spy.firstCall.thisValue.options.resolved, this.stubPath);
+          assert.equal(
+            this.spy.firstCall.thisValue.options.resolved,
+            require.resolve(this.stubPath)
+          );
           done();
         }.bind(this));
       });
