@@ -1,6 +1,7 @@
 /*global it, describe, before, beforeEach, afterEach */
 'use strict';
 var os = require('os');
+var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
 var sinon = require('sinon');
@@ -12,9 +13,8 @@ var tmpdir = path.join(os.tmpdir(), 'yeoman-run-context');
 var RunContext = require('../lib/test/run-context');
 
 describe('RunContext', function () {
-  this.timeout(2000);
-
   beforeEach(function () {
+    process.chdir(__dirname);
     this.defaultInput = inquirer.prompts.input;
     var Dummy = this.Dummy = helpers.createDummyGenerator();
     this.execSpy = sinon.spy();
@@ -23,6 +23,7 @@ describe('RunContext', function () {
   });
 
   afterEach(function (done) {
+    process.chdir(__dirname);
     if (this.ctx.completed) return done();
     this.ctx.on('end', done);
   });
@@ -68,6 +69,14 @@ describe('RunContext', function () {
     it('reset mocked prompt after running', function (done) {
       this.ctx.on('end', function () {
         assert.equal(this.defaultInput, inquirer.prompts.input);
+        done();
+      }.bind(this));
+    });
+
+    it('automatically run in a random tmpdir', function (done) {
+      this.ctx.on('end', function () {
+        assert.notEqual(process.cwd(), __dirname);
+        assert.equal(fs.realpathSync(os.tmpdir()), path.dirname(process.cwd()));
         done();
       }.bind(this));
     });
