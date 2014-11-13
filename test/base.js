@@ -9,6 +9,7 @@ var mockery = require('mockery');
 var rimraf = require('rimraf');
 var through = require('through2');
 var yeoman = require('yeoman-environment');
+var userHome = require('user-home');
 mockery.enable({
   warnOnReplace: false,
   warnOnUnregistered: false
@@ -364,6 +365,17 @@ describe('generators.Base', function () {
         assert(fs.existsSync(filepath));
         done();
       }.bind(this));
+    });
+
+    it('does not pass config file to conflicter', function (done) {
+
+      this.TestGenerator.prototype.writing = function () {
+        fs.writeFileSync(this.destinationPath('.yo-rc.json'), '{"foo": 3}');
+        fs.writeFileSync(path.join(userHome, '.yo-rc-global.json'), '{"foo": 3}');
+        this.config.set('bar', 1);
+        this._globalConfig.set('bar', 1);
+      };
+      this.testGen.run(done);
     });
   });
 
