@@ -73,7 +73,7 @@
     "gulp-plumber": "~0.6.6",
     "jshint-stylish": "^1.0.0",
     "mockery": "^1.4.0",
-    "nock": "^0.48.2",
+    "nock": "^0.50.0",
     "nsp": "*",
     "proxyquire": "^1.0.0"
   }
