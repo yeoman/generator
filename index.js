@@ -56,9 +56,9 @@ yeoman.test = require('./lib/test/helpers');
 
 /**
  * Test assertions helpers
- * {@link module:test/assert}
+ * {@link https://github.com/yeoman/yeoman-assert}
  */
-yeoman.assert = require('./lib/test/assert');
+yeoman.assert = require('yeoman-assert');
 
 /**
  * Yeoman base's generators
