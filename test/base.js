@@ -711,7 +711,7 @@ describe('generators.Base', function () {
 
   describe('#config', function () {
     it('provide a storage instance', function () {
-      assert.ok(this.dummy.config instanceof require('../lib/util/storage'));
+      assert.ok(this.dummy.config instanceof require('yeoman-storage'));
     });
 
     it('is updated when destinationRoot change', function () {
