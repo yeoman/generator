@@ -42,7 +42,7 @@
     "file-utils": "^0.2.0",
     "findup-sync": "^0.1.2",
     "github-username": "^1.0.0",
-    "glob": "^4.0.2",
+    "glob": "4.2.2",
     "gruntfile-editor": "^0.2.0",
     "inquirer": "^0.8.0",
     "isbinaryfile": "^2.0.0",
