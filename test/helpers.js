@@ -148,6 +148,28 @@ describe('generators.test', function () {
       });
     });
 
+    it('supports `null` answer for `list` type', function (done) {
+      var generator = env.instantiate(helpers.createDummyGenerator());
+      helpers.mockPrompt(generator, {
+        respuesta: null
+      });
+      generator.prompt([{ name: 'respuesta', message: 'foo', type: 'list', default: 'bar' }], function (answers) {
+        assert.equal(answers.respuesta, null);
+        done();
+      });
+    });
+
+    it('treats `null` as no answer for `input` type', function (done) {
+      var generator = env.instantiate(helpers.createDummyGenerator());
+      helpers.mockPrompt(generator, {
+        respuesta: null
+      });
+      generator.prompt([{ name: 'respuesta', message: 'foo', type: 'input', default: 'bar' }], function (answers) {
+        assert.equal(answers.respuesta, 'bar');
+        done();
+      });
+    });
+
     it('prefers mocked values over defaults', function (done) {
       this.generator.prompt([{ name: 'answer', type: 'input', default: 'bar' }], function (answers) {
         assert.equal(answers.answer, 'foo');
