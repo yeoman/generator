@@ -118,7 +118,7 @@ describe('generators.Base (actions/wiring)', function () {
     fs.writeFileSync(filepath, html, 'utf-8');
   });
 
-  it('handle with non-ascii characters well',function () {
+  it('handle with non-ascii characters well', function () {
     var html = '<html><body><p></p></body></html>';
     var expected = '<html><body><p>Hello World!你好世界!ハローワールド!안녕 하세요 세계!</p></body></html>';
     assert.equal(wiring.domUpdate(html, 'p', 'Hello World!你好世界!ハローワールド!안녕 하세요 세계!', 'p'), expected);
