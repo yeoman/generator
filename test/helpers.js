@@ -179,6 +179,15 @@ describe('generators.test', function () {
       });
     });
 
+    it('supports `false` answer for `confirm` type', function (done) {
+      var generator = env.instantiate(helpers.createDummyGenerator());
+      helpers.mockPrompt(generator, { respuesta: false });
+      generator.prompt([{ name: 'respuesta', message: 'foo', type: 'confirm' }], function (answers) {
+        assert.equal(answers.respuesta, false);
+        done();
+      });
+    });
+
     it('prefers mocked values over defaults', function (done) {
       this.generator.prompt([{ name: 'answer', type: 'input', default: 'bar' }], function (answers) {
         assert.equal(answers.answer, 'foo');
