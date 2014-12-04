@@ -78,6 +78,18 @@ describe('PromptSuggestion', function () {
       assert.equal(result.default, 'foo');
     });
 
+    it('keep inquirer objects', function () {
+      var question = {
+        type: 'checkbox',
+        name: 'respuesta',
+        default: ['bar'],
+        store: true,
+        choices: [new inquirer.Separator('spacer')]
+      };
+      var result = promptSuggestion.prefillQuestions(this.store, question)[0];
+      assert.ok(result.choices[0] instanceof inquirer.Separator);
+    });
+
     describe('take a checkbox', function () {
       beforeEach(function () {
         this.store.set('promptValues', {
