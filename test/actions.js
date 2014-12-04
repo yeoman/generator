@@ -128,7 +128,7 @@ describe('generators.Base (actions/actions)', function () {
 
     it('does not run conflicter or template engine', function () {
       var data = fs.readFileSync('write/to/noProcess.js');
-      assert.textEqual(String(data), 'var <%= foo %> = \'<%= foo %>\';\n');
+      assert.textEqual(String(data), 'var <%= foo %> = \'<%= foo %>\';\n<%%= extra %>\n');
 
       this.dummy.bulkCopy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/noProcess.js');
       var data2 = fs.readFileSync('write/to/noProcess.js');
@@ -197,17 +197,17 @@ describe('generators.Base (actions/actions)', function () {
 
       it('defaults the destination to the source filepath value, relative to "destinationRoot" value', function () {
         var body = fs.readFileSync('foo-template.js', 'utf8');
-        assert.textEqual(body, 'var fooooooo = \'fooooooo\';' + '\n');
+        assert.textEqual(body, 'var fooooooo = \'fooooooo\';\n<%= extra %>\n');
       });
 
       it('process underscore templates with the passed-in data', function () {
         var body = fs.readFileSync('write/to/from-template-bar.js', 'utf8');
-        assert.textEqual(body, 'var bar = \'bar\';' + '\n');
+        assert.textEqual(body, 'var bar = \'bar\';\n<%= extra %>\n');
       });
 
       it('process underscore templates with the actual generator instance, when no data is given', function () {
         var body = fs.readFileSync('write/to/from-template.js', 'utf8');
-        assert.textEqual(body, 'var fooooooo = \'fooooooo\';' + '\n');
+        assert.textEqual(body, 'var fooooooo = \'fooooooo\';\n<%= extra %>\n');
       });
 
       it('parses `${}` tags', function () {
@@ -222,7 +222,7 @@ describe('generators.Base (actions/actions)', function () {
 
       it('process underscore templates in destination path', function () {
         var body = fs.readFileSync('write/to/bar-directory/from-template.js', 'utf8');
-        assert.textEqual(body, 'var bar = \'bar\';\n');
+        assert.textEqual(body, 'var bar = \'bar\';\n<%= extra %>\n');
       });
 
       it('keep file mode', function () {
