@@ -827,7 +827,7 @@ describe('generators.Base', function () {
         generators.Base.apply(this, arguments);
       };
 
-      Generator.namespace = 'angular:all';
+      Generator.namespace = 'angular:app';
 
       util.inherits(Generator, generators.Base);
 
@@ -842,31 +842,23 @@ describe('generators.Base', function () {
         'skip-install': true
       });
 
-      var lifecycle = ['start', 'createSomething', 'createSomethingElse', 'end'];
+      var lifecycle = ['run', 'method:createSomething', 'method:createSomethingElse', 'end'];
 
       function assertEvent(e) {
         return function () {
           assert.equal(e, lifecycle.shift());
-          if (e === 'end') {
-            done();
-          }
+          if (e === 'end') return done();
         };
       }
 
       angular
-        // Start event, emitted right before "running" the generator.
-        .on('start', assertEvent('start'))
-        // End event, emitted after the generation process, when every generator method and hooks are executed
+        // Run event, emitted right before running the generator.
+        .on('run', assertEvent('run'))
+        // End event, emitted after the generation process, when every generator
+        // methods are executed (hooks are executed after)
         .on('end', assertEvent('end'))
-        // Emitted when a conflict is detected, right after the prompt happens.
-        // .on('conflict', assertEvent('conflict'))
-        // Emitted on every prompt, both for conflict state and generators one.
-        // .on('prompt', assertEvent('prompt'))
-        // Emitted right before a hook is invoked
-        // .on('hook', assertEvent('hook'))
-        // Emitted on each generator method
-        .on('createSomething', assertEvent('createSomething'))
-        .on('createSomethingElse', assertEvent('createSomethingElse'));
+        .on('method:createSomething', assertEvent('method:createSomething'))
+        .on('method:createSomethingElse', assertEvent('method:createSomethingElse'));
 
       angular.run();
     });
@@ -902,6 +894,28 @@ describe('generators.Base', function () {
       });
 
       generatorOnce.run();
+    });
+
+    it('triggers end event after all generators methods are runned (#709)', function (done) {
+      var endSpy = sinon.spy();
+      var GeneratorEnd = generators.Base.extend({
+        constructor: function () {
+          generators.Base.apply(this, arguments);
+          this.on('end', function () {
+            sinon.assert.calledOnce(endSpy);
+            done();
+          });
+        },
+
+        end: endSpy
+      });
+
+      var generatorEnd = new GeneratorEnd([], {
+        env: yeoman.createEnv([], {}, new TestAdapter()),
+        resolved: __filename,
+        'skip-install': true
+      });
+      generatorEnd.run();
     });
   });
 
