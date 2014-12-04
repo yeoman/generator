@@ -41,6 +41,7 @@ gulp.task('test', function (cb) {
   .pipe(istanbul({
     includeUntested: true
   }))
+  .pipe(istanbul.hookRequire())
   .on('finish', function () {
     gulp.src(['test/*.js'])
       .pipe(plumber())
