@@ -195,6 +195,28 @@ describe('RunContext', function () {
     });
   });
 
+  describe('#inTmpDir', function () {
+    it('call helpers.testDirectory()', function () {
+      sinon.spy(helpers, 'testDirectory');
+      this.ctx.inTmpDir();
+      sinon.assert.calledOnce(helpers.testDirectory);
+      helpers.testDirectory.restore();
+    });
+
+    it('is chainable', function () {
+      assert.equal(this.ctx.inTmpDir(), this.ctx);
+    });
+
+    it('accepts optional `cb` to be invoked with resolved `dir`', function (done) {
+      var ctx = this.ctx;
+      var cb = sinon.spy(function (dir) {
+        assert.equal(this, ctx);
+        assert(dir.indexOf(os.tmpdir()) > -1);
+      });
+      this.ctx.inTmpDir(cb).on('end', done);
+    });
+  });
+
   describe('#withArguments()', function () {
     it('provide arguments to the generator when passed as Array', function (done) {
       this.ctx.withArguments(['one', 'two']);
