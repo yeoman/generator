@@ -81,6 +81,21 @@ describe('RunContext', function () {
       }.bind(this));
     });
 
+    it('allows an option to not automatically run in tmpdir', function (done) {
+      var cwd = process.cwd();
+      this.ctx.settings.tmpdir = false;
+      this.ctx.on('end', function (err) {
+        assert.equal(cwd, process.cwd());
+        done();
+      });
+    });
+
+    it('accepts settings', function () {
+      var Dummy = helpers.createDummyGenerator();
+      var ctx = new RunContext(Dummy, { tmpdir: false });
+      assert.equal(ctx.settings.tmpdir, false);
+    });
+
     it('only run a generator once', function (done) {
       this.ctx.on('end', function () {
         sinon.assert.calledOnce(this.execSpy);
