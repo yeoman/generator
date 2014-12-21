@@ -231,5 +231,10 @@ describe('generators.test', function () {
     it('return a RunContext object', function () {
       assert(helpers.run(helpers.createDummyGenerator()) instanceof RunContext);
     });
+
+    it('pass settings to RunContext', function () {
+      var runContext = helpers.run(helpers.createDummyGenerator(), { foo: 1 });
+      assert.equal(runContext.settings.foo, 1);
+    });
   });
 });
