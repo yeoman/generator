@@ -1,0 +1,14 @@
+{
+  "author": "",
+  "name": "custom-generator-with-dependencies",
+  "version": "0.0.0",
+  "main": "support/scaffold/main.js",
+  "dependencies": {
+    "underscore": "^1.7.0"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
