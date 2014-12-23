@@ -386,6 +386,31 @@ describe('generators.Base', function () {
       }.bind(this));
     });
 
+    it('needs dependencies installation', function (done) {
+      var action = { action: 'skip' };
+      var filepath = path.join(__dirname, '/fixtures/package.json');
+      assert(fs.existsSync(filepath));
+      this.TestGenerator.prototype.writing = function () {
+        var json = path.join(this.destinationRoot(), 'package.json');
+        this.fs.write(json, fs.readFileSync(filepath));
+      };
+      var env = yeoman.createEnv([], { 'skip-install': false }, new TestAdapter(action));
+      var testGen = new this.TestGenerator([], {
+        resolved: 'generator/app/index.js',
+        namespace: 'dummy',
+        env: env
+      });
+      testGen.on('end', function () {
+        this.installDependencies({
+          callback: function () {
+            assert(fs.existsSync(path.join(path.normalize(process.cwd()), 'node_modules', 'underscore')));
+            done();
+          }
+        });
+      });
+      testGen.run();
+    });
+
     it('does not pass config file to conflicter', function (done) {
       this.TestGenerator.prototype.writing = function () {
         fs.writeFileSync(this.destinationPath('.yo-rc.json'), '{"foo": 3}');
