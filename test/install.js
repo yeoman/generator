@@ -26,7 +26,7 @@ describe('generators.Base (actions/install mixin)', function () {
     this.spawnCommandStub.returns(asyncStub);
   });
 
-  describe('#runInstall()', function () {
+  describe('#scheduleInstall()', function () {
     it('takes a config object and passes it to the spawned process', function (done) {
       var spawnEnv = {
         env: {
@@ -35,7 +35,7 @@ describe('generators.Base (actions/install mixin)', function () {
       };
       var callbackSpy = sinon.spy();
       //args: installer, paths, options, cb
-      this.dummy.runInstall('nestedScript', ['path1', 'path2'], spawnEnv, callbackSpy);
+      this.dummy.scheduleInstall('nestedScript', ['path1', 'path2'], spawnEnv, callbackSpy);
       this.dummy.run(function () {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
@@ -49,10 +49,10 @@ describe('generators.Base (actions/install mixin)', function () {
     });
   });
 
-  describe('#bowerInstall()', function () {
+  describe('#bowerSchedule()', function () {
     it('spawn a bower process once per commands', function (done) {
-      this.dummy.bowerInstall();
-      this.dummy.bowerInstall();
+      this.dummy.bowerSchedule();
+      this.dummy.bowerSchedule();
       this.dummy.run(function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
@@ -61,7 +61,7 @@ describe('generators.Base (actions/install mixin)', function () {
     });
 
     it('spawn a bower process with formatted options', function (done) {
-      this.dummy.bowerInstall('jquery', { saveDev: true }, function () {
+      this.dummy.bowerSchedule('jquery', { saveDev: true }, function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
@@ -75,10 +75,10 @@ describe('generators.Base (actions/install mixin)', function () {
     });
   });
 
-  describe('#npmInstall()', function () {
+  describe('#npmSchedule()', function () {
     it('spawn an install process once per commands', function (done) {
-      this.dummy.npmInstall();
-      this.dummy.npmInstall();
+      this.dummy.npmSchedule();
+      this.dummy.npmSchedule();
       this.dummy.run(function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install'], {});
@@ -87,7 +87,7 @@ describe('generators.Base (actions/install mixin)', function () {
     });
 
     it('run without callback', function (done) {
-      this.dummy.npmInstall('yo', { save: true });
+      this.dummy.npmSchedule('yo', { save: true });
       this.dummy.run(function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
         done();
@@ -95,7 +95,7 @@ describe('generators.Base (actions/install mixin)', function () {
     });
 
     it('run with callback', function (done) {
-      this.dummy.npmInstall('yo', { save: true }, function () {
+      this.dummy.npmSchedule('yo', { save: true }, function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
         done();
       }.bind(this));
