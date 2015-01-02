@@ -27,10 +27,10 @@ gulp.task('static', function () {
   .pipe(jshint.reporter('jshint-stylish'))
   .pipe(jshint.reporter('fail'))
   .pipe(jscs())
-  .on('error', handleErr)
-  .pipe(eslint())
-  .pipe(eslint.format())
-  .pipe(eslint.failOnError());
+  .on('error', handleErr);
+  // .pipe(eslint())
+  // .pipe(eslint.format())
+  // .pipe(eslint.failOnError());
 });
 
 gulp.task('test', function (cb) {
