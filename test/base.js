@@ -227,20 +227,6 @@ describe('generators.Base', function () {
       this.testGen.run(done);
     });
 
-    it('pass an array of arguments to the called methods', function (done) {
-      this.testGen.run(['some', 'args'], function () {
-        assert(this.execSpy.withArgs('some', 'args').calledOnce);
-        done();
-      }.bind(this));
-    });
-
-    it('pass string of arguments to the called methods', function (done) {
-      this.testGen.run('some args', function () {
-        assert(this.execSpy.withArgs('some', 'args').calledOnce);
-        done();
-      }.bind(this));
-    });
-
     it('pass instance .args property to the called methods', function (done) {
       this.testGen.args = ['2', 'args'];
       this.testGen.run(function () {
@@ -250,7 +236,7 @@ describe('generators.Base', function () {
     });
 
     it('resolve conflicts after it ran', function (done) {
-      this.testGen.run({}, function () {
+      this.testGen.run(function () {
         assert.equal(this.resolveSpy.callCount, 1);
         done();
       }.bind(this));
