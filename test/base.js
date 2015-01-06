@@ -5,6 +5,7 @@ var os = require('os');
 var path = require('path');
 var util = require('util');
 var sinon = require('sinon');
+var mkdirp = require('mkdirp');
 var mockery = require('mockery');
 var rimraf = require('rimraf');
 var through = require('through2');
@@ -19,6 +20,7 @@ var generators = require('..');
 var helpers = generators.test;
 var assert = generators.assert;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-base');
+var resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 
 describe('generators.Base', function () {
   before(helpers.setUpTestDirectory(tmpdir));
@@ -26,6 +28,7 @@ describe('generators.Base', function () {
   beforeEach(function () {
     this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
 
+    mkdirp.sync(resolveddir);
     var Dummy = this.Dummy = helpers.createDummyGenerator();
 
     this.env.registerStub(Dummy, 'ember:all');
@@ -40,7 +43,7 @@ describe('generators.Base', function () {
       foo: false,
       something: 'else',
       // mandatory options, created by the env#create() helper
-      resolved: 'ember:all',
+      resolved: resolveddir,
       namespace: 'dummy',
       env: this.env,
       'skip-install': true
@@ -119,7 +122,7 @@ describe('generators.Base', function () {
   });
 
   describe('prototype', function () {
-    it('methods does\'nt conflict with Env#runQueue', function () {
+    it('methods doesn\'t conflict with Env#runQueue', function () {
       assert.notImplement(generators.Base.prototype, this.env.runLoop.queueNames);
     });
   });
@@ -143,12 +146,18 @@ describe('generators.Base', function () {
     });
 
     it('returns appname from bower.json', function () {
-      fs.writeFileSync('bower.json', '{ "name": "app-name" }');
+      this.dummy.fs.write(
+        this.dummy.destinationPath('bower.json'),
+        '{ "name": "app-name" }'
+      );
       assert.equal(this.dummy.determineAppname(), 'app name');
     });
 
     it('returns appname from package.json', function () {
-      fs.writeFileSync('package.json', '{ "name": "package_app-name" }');
+      this.dummy.fs.write(
+        this.dummy.destinationPath('package.json'),
+        '{ "name": "package_app-name" }'
+      );
       assert.equal(this.dummy.determineAppname(), 'package_app name');
     });
 
@@ -925,7 +934,7 @@ describe('generators.Base', function () {
 
   describe('#rootGeneratorName', function () {
     afterEach(function () {
-      rimraf.sync('package.json');
+      rimraf.sync(path.join(resolveddir, 'package.json'));
     });
 
     it('returns the default name', function () {
@@ -933,14 +942,14 @@ describe('generators.Base', function () {
     });
 
     it('returns generator name', function () {
-      fs.writeFileSync('package.json', '{ "name": "generator-name" }');
+      fs.writeFileSync(path.join(resolveddir, 'package.json'), '{ "name": "generator-name" }');
       assert.equal(this.dummy.rootGeneratorName(), 'generator-name');
     });
   });
 
   describe('#rootGeneratorVersion', function () {
     afterEach(function () {
-      rimraf.sync('package.json');
+      rimraf.sync(path.join(resolveddir, 'package.json'));
     });
 
     it('returns the default version', function () {
@@ -948,7 +957,7 @@ describe('generators.Base', function () {
     });
 
     it('returns generator version', function () {
-      fs.writeFileSync('package.json', '{ "version": "1.0.0" }');
+      fs.writeFileSync(path.join(resolveddir, 'package.json'), '{ "version": "1.0.0" }');
       assert.equal(this.dummy.rootGeneratorVersion(), '1.0.0');
     });
   });
