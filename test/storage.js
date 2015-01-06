@@ -54,13 +54,10 @@ describe('Storage', function () {
     assert.equal(this.store.get('foo'), 'bar');
   });
 
-  it('defaults store path to `.yo-rc.json`', function () {
-    process.chdir(tmpdir);
-    var store = new Storage('yo', this.fs);
-    store.set('foo', 'bar');
-
-    var fileContent = this.fs.readJSON('.yo-rc.json');
-    assert.equal(fileContent.yo.foo, 'bar');
+  it('a config path is required', function () {
+    assert.throws(function () {
+      new Storage('yo', this.fs);
+    });
   });
 
   describe('#get()', function () {
