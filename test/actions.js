@@ -250,41 +250,6 @@ describe('generators.Base (actions/actions)', function () {
         assert.textEqual(body, '<version>bar</version> <%= foo %>;\n');
       });
     });
-
-    describe('with custom tags', function () {
-      beforeEach(function (done) {
-        this.src = 'custom-template-setting.xml';
-        this.dest = 'write/to/custom-template-setting.xml';
-        this.spy = sinon.spy();
-
-        var oldEngineOptions = this.dummy.options.engine.options;
-
-        this.dummy.options.engine.options = {
-          detecter: /\{\{?[^\}]+\}\}/,
-          matcher: /\{\{\{([^\}]+)\}\}/g,
-          start: '{{',
-          end: '}}'
-        };
-
-        this.dummy.template(this.src, this.dest, {
-          foo: 'bar',
-          spy: this.spy
-        }, {
-          evaluate: /\{\{([\s\S]+?)\}\}/g,
-          interpolate: /\{\{=([\s\S]+?)\}\}/g,
-          escape: /\{\{-([\s\S]+?)\}\}/g
-        });
-
-        this.dummy.options.engine.options = oldEngineOptions;
-        this.dummy._writeFiles(done);
-      });
-
-      it('uses tags specified in option and engine', function () {
-        var body = fs.readFileSync(this.dest, 'utf8');
-        assert.textEqual(body, '<version>bar</version>\n');
-        sinon.assert.calledOnce(this.spy);
-      });
-    });
   });
 
   describe('#directory()', function () {
