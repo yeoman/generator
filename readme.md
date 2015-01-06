@@ -34,14 +34,14 @@ node --debug `which yo` <generator> [arguments]
 node --debug <path to yo binary> <generator> [arguments]
 ```
 
-Yeoman generators also use a debug mode to log relevant informations. You can activate it by setting the `DEBUG` environment variable to the desired scope (for the generator system scope is `generators:*`).
+Yeoman generators also use a debug mode to log relevant lifecycle informations. You can activate it by setting the `DEBUG` environment variable to the desired scope (the scope of the generator system is `yeoman:generator`).
 
 ```sh
 # OS X / Linux
-DEBUG=generators/*
+DEBUG=yeoman:generator
 
 # Windows
-set DEBUG=generators/*
+set DEBUG=yeoman:generator
 ```
 
 
