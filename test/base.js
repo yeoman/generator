@@ -276,19 +276,19 @@ describe('generators.Base', function () {
 
     it('run methods in series', function (done) {
       var async1Running = false;
-      var async1Runned = false;
+      var async1Ran = false;
       this.TestGenerator.prototype.async1 = function () {
         async1Running = true;
         var cb = this.async();
         setTimeout(function () {
           async1Running = false;
-          async1Runned = true;
+          async1Ran = true;
           cb();
         }, 10);
       };
       this.TestGenerator.prototype.async2 = function () {
         assert(!async1Running);
-        assert(async1Runned);
+        assert(async1Ran);
         done();
       };
       this.testGen.run();
@@ -580,7 +580,7 @@ describe('generators.Base', function () {
       this.dummy.composeWith('composed:gen');
       var runSpy = sinon.spy(this.dummy, 'run');
       // I use a setTimeout here just to make sure composeWith() doesn't start the
-      // generator before the base one is runned.
+      // generator before the base one is ran.
       setTimeout(function () {
         this.dummy.run(function () {
           assert(this.spy.calledAfter(runSpy));
@@ -909,7 +909,7 @@ describe('generators.Base', function () {
       generatorOnce.run();
     });
 
-    it('triggers end event after all generators methods are runned (#709)', function (done) {
+    it('triggers end event after all generators methods are ran (#709)', function (done) {
       var endSpy = sinon.spy();
       var GeneratorEnd = generators.Base.extend({
         constructor: function () {
