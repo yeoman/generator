@@ -17,7 +17,7 @@ describe('generators.Base#invoke()', function () {
       'skip-install': true
     });
     this.SubGen = generators.Base.extend({
-      exec: function () { this.stubGenRunned = true; }
+      exec: function () { this.stubGenRan = true; }
     });
     this.env.registerStub(this.SubGen, 'foo:bar');
   });
@@ -27,7 +27,7 @@ describe('generators.Base#invoke()', function () {
       options: { 'skip-install': true }
     });
     invoked.on('end', function () {
-      assert(invoked.stubGenRunned);
+      assert(invoked.stubGenRan);
       done();
     });
   });
@@ -36,7 +36,7 @@ describe('generators.Base#invoke()', function () {
     var invoked = this.gen.invoke('foo:bar', {
       options: { 'skip-install': true }
     }, function () {
-      assert(invoked.stubGenRunned);
+      assert(invoked.stubGenRan);
       done();
     });
   });
@@ -64,7 +64,7 @@ describe('generators.Base#invoke()', function () {
         options: { 'skip-install': true }
       }, function () {
         stubGenFinished = true;
-        assert(invoked.stubGenRunned, 'Stub generator should have runned');
+        assert(invoked.stubGenRan, 'Stub generator should have ran');
         cb();
       });
     };
