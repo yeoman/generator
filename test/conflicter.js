@@ -126,5 +126,63 @@ describe('Conflicter', function () {
         done();
       });
     });
+
+    it('displays default diff for text files', function (done) {
+      var testAdapter = new TestAdapter({ action: 'diff' });
+      var conflicter = new Conflicter(testAdapter);
+      var _prompt = testAdapter.prompt.bind(testAdapter);
+
+      var promptStub = sinon.stub(testAdapter, 'prompt', function (prompts, resultHandler) {
+        if (promptStub.calledTwice) {
+          var stubbedResultHandler = function (result) {
+            result.action = 'write';
+            return resultHandler(result);
+          };
+          return _prompt(prompts, stubbedResultHandler);
+        } else {
+          return _prompt(prompts, resultHandler);
+        }
+      });
+
+      conflicter.collision({
+        path: path.join(__dirname, 'fixtures/foo.js'),
+        contents: fs.readFileSync(path.join(__dirname, 'fixtures/foo-template.js'))
+      }, function () {
+        sinon.assert.neverCalledWithMatch(testAdapter.log.writeln, /Existing.*Replacement.*Diff/);
+        sinon.assert.called(testAdapter.diff);
+
+        done();
+      });
+
+    });
+
+    it('displays custom diff for binary files', function (done) {
+      var testAdapter = new TestAdapter({ action: 'diff' });
+      var conflicter = new Conflicter(testAdapter);
+      var _prompt = testAdapter.prompt.bind(testAdapter);
+
+      var promptStub = sinon.stub(testAdapter, 'prompt', function (prompts, resultHandler) {
+        if (promptStub.calledTwice) {
+          var stubbedResultHandler = function (result) {
+            result.action = 'write';
+            return resultHandler(result);
+          };
+          return _prompt(prompts, stubbedResultHandler);
+        } else {
+          return _prompt(prompts, resultHandler);
+        }
+      });
+
+      conflicter.collision({
+        path: path.join(__dirname, 'fixtures/yeoman-logo.png'),
+        contents: fs.readFileSync(path.join(__dirname, 'fixtures/testFile.tar.gz'))
+      }, function () {
+        sinon.assert.calledWithMatch(testAdapter.log.writeln, /Existing.*Replacement.*Diff/);
+        sinon.assert.notCalled(testAdapter.diff);
+
+        done();
+      });
+
+    });
   });
 });
