@@ -45,7 +45,7 @@
     "glob": "^4.3.2",
     "gruntfile-editor": "^0.2.0",
     "inquirer": "^0.8.0",
-    "isbinaryfile": "^2.0.0",
+    "istextorbinary": "^1.0.2",
     "lodash": "^2.4.1",
     "mem-fs-editor": "^1.0.0",
     "mime": "^1.2.9",
