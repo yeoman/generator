@@ -677,7 +677,7 @@ describe('generators.Base', function () {
         'A new desc for this generator',
         '',
         'Options:',
-        '-h, --help # Print generator\'s options and usage',
+        '-h, --help # Print the generator\'s options and usage',
         '--skip-cache # Do not remember prompt answers Default: false',
         '--hook1 # Hook1 to be invoked',
         '--hook2 # Hook2 to be invoked',
