@@ -28,6 +28,10 @@
     "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000",
     "prepublish": "nsp audit-package"
   },
+  "files": [
+    "index.js",
+    "lib"
+  ],
   "dependencies": {
     "async": "^0.9.0",
     "chalk": "^0.5.1",

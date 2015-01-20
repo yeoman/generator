@@ -1,9 +1,0 @@
-test/
-doc/
-.npmignore
-.editorconfig
-.travis.yml
-.jshintrc
-.gitattributes
-contributing.md
-doc.js
