@@ -5,10 +5,10 @@ var path = require('path');
 var tmpdir = require('os').tmpdir();
 var nock = require('nock');
 var yeoman = require('yeoman-environment');
-var generators = require('..');
-var assert = generators.assert;
 var fetch = require('../lib/actions/fetch');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var generators = require('../');
+var assert = generators.assert;
 
 var tmp = path.join(tmpdir, 'yeoman-fetch');
 
@@ -51,5 +51,4 @@ describe('generators.Base (actions/fetch)', function () {
       });
     });
   });
-
 });

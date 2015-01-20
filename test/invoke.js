@@ -1,8 +1,8 @@
 /*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
 var yeoman = require('yeoman-environment');
-var generators = require('..');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var generators = require('../');
 var helpers = generators.test;
 var assert = generators.assert;
 

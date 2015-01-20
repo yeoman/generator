@@ -4,9 +4,9 @@ var util = require('util');
 var path = require('path');
 var assert = require('assert');
 var sinon = require('sinon');
-var yeoman = require('..');
-var helpers = yeoman.test;
 var RunContext = require('../lib/test/run-context');
+var yeoman = require('../');
+var helpers = yeoman.test;
 var env = yeoman();
 
 describe('generators.test', function () {

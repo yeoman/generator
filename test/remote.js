@@ -6,8 +6,8 @@ var fs = require('fs');
 var assert = require('assert');
 var yeoman = require('yeoman-environment');
 var nock = require('nock');
-var generators = require('..');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var generators = require('../');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-remote');
 
 describe('generators.Base#remote()', function () {

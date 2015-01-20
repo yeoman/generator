@@ -11,12 +11,14 @@ var rimraf = require('rimraf');
 var through = require('through2');
 var yeoman = require('yeoman-environment');
 var userHome = require('user-home');
+
 mockery.enable({
   warnOnReplace: false,
   warnOnUnregistered: false
 });
+
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
-var generators = require('..');
+var generators = require('../');
 var helpers = generators.test;
 var assert = generators.assert;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-base');

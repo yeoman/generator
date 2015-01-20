@@ -6,11 +6,10 @@ var path = require('path');
 var assert = require('assert');
 var sinon = require('sinon');
 var inquirer = require('inquirer');
-var yo = require('..');
-var helpers = yo.test;
-var tmpdir = path.join(os.tmpdir(), 'yeoman-run-context');
-
 var RunContext = require('../lib/test/run-context');
+var yo = require('../');
+var tmpdir = path.join(os.tmpdir(), 'yeoman-run-context');
+var helpers = yo.test;
 
 describe('RunContext', function () {
   beforeEach(function () {

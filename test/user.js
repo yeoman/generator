@@ -1,16 +1,16 @@
 /*global describe, before, it, after, before, beforeEach, afterEach */
 'use strict';
 var assert = require('assert');
-var mkdirp = require('mkdirp');
-var nock = require('nock');
 var os = require('os');
 var path = require('path');
+var mkdirp = require('mkdirp');
+var nock = require('nock');
 var proxyquire = require('proxyquire');
 var rimraf = require('rimraf');
 var shell = require('shelljs');
 var sinon = require('sinon');
+var generators = require('../');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-user');
-var generators = require('..');
 
 describe('generators.Base#user', function () {
   before(function () {
@@ -47,7 +47,6 @@ describe('generators.Base#user', function () {
   });
 
   describe('.git', function () {
-
     describe('.name()', function () {
       it('is the name used by git', function () {
         assert.equal(this.user.git.name(), 'Yeoman');
@@ -112,7 +111,5 @@ describe('generators.Base#user', function () {
         });
       });
     });
-
   });
-
 });

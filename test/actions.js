@@ -4,11 +4,11 @@ var fs = require('fs');
 var os = require('os');
 var path = require('path');
 var sinon = require('sinon');
-var generators = require('..');
+var tmpdir = path.join(os.tmpdir(), 'yeoman-actions');
+var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var generators = require('../');
 var helpers = generators.test;
 var assert = generators.assert;
-var TestAdapter = require('../lib/test/adapter').TestAdapter;
-var tmpdir = path.join(os.tmpdir(), 'yeoman-actions');
 
 describe('generators.Base (actions/actions)', function () {
   before(helpers.setUpTestDirectory(tmpdir));
@@ -17,7 +17,6 @@ describe('generators.Base (actions/actions)', function () {
     var env = this.env = generators([], {}, new TestAdapter());
     env.registerStub(helpers.createDummyGenerator(), 'dummy');
     this.dummy = env.create('dummy');
-
     this.fixtures = path.join(__dirname, 'fixtures');
     this.dummy.sourceRoot(this.fixtures);
     this.dummy.foo = 'bar';

@@ -1,6 +1,6 @@
-# Generator [![Build Status](https://secure.travis-ci.org/yeoman/generator.svg?branch=master)](http://travis-ci.org/yeoman/generator) [![Coverage Status](https://coveralls.io/repos/yeoman/generator/badge.png)](https://coveralls.io/r/yeoman/generator)
+# Generator [![Build Status](https://travis-ci.org/yeoman/generator.svg?branch=master)](https://travis-ci.org/yeoman/generator) [![Coverage Status](https://coveralls.io/repos/yeoman/generator/badge.png)](https://coveralls.io/r/yeoman/generator)
 
-> A Rails-inspired generator system that provides scaffolding for your apps.
+> Rails-inspired generator system that provides scaffolding for your apps
 
 
 ### [Getting Started](http://yeoman.io/authoring/getting-started.html)&nbsp;&nbsp;&nbsp;[API Documentation](http://yeoman.github.io/generator/)

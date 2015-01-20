@@ -1,10 +1,10 @@
 /*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
 var yeoman = require('yeoman-environment');
-var generators = require('..');
-var helpers = generators.test;
-var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var sinon = require('sinon');
+var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var generators = require('../');
+var helpers = generators.test;
 
 var asyncStub = {
   on: function (key, cb) {

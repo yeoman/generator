@@ -3,7 +3,7 @@
 var path = require('path');
 var fs = require('fs');
 var wiring = require('../lib/actions/wiring');
-var yeoman = require('..');
+var yeoman = require('../');
 var assert = yeoman.assert;
 
 describe('generators.Base (actions/wiring)', function () {

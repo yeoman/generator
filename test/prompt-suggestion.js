@@ -3,12 +3,12 @@
 var path = require('path');
 var assert = require('assert');
 var os = require('os');
-var Storage = require('../lib/util/storage');
-var promptSuggestion = require('../lib/util/prompt-suggestion');
 var rimraf = require('rimraf');
 var inquirer = require('inquirer');
 var env = require('yeoman-environment');
 var FileEditor = require('mem-fs-editor');
+var Storage = require('../lib/util/storage');
+var promptSuggestion = require('../lib/util/prompt-suggestion');
 
 describe('PromptSuggestion', function () {
   beforeEach(function () {

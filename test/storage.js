@@ -8,7 +8,7 @@ var path = require('path');
 var sinon = require('sinon');
 var env = require('yeoman-environment');
 var Storage = require('../lib/util/storage');
-var generators = require('..');
+var generators = require('../');
 var helpers = generators.test;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 
@@ -239,5 +239,4 @@ describe('Storage', function () {
       });
     });
   });
-
 });
