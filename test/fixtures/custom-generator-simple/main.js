@@ -1,4 +1,4 @@
-
+var generators = require('../../..');
 
 // Example of a simple generator.
 //
@@ -13,9 +13,9 @@
 // stuff, extend from Generator.Base and defines your generator steps
 // in several methods.
 
-module.exports = function(args, options) {
-  console.log('Executing generator with', args, options);
-};
+module.exports = generators.Base.extend({
+  exec: function () {}
+});
 
 module.exports.name = 'You can name your generator';
 module.exports.description = 'And add a custom description by adding a `description` property to your function.';

@@ -37,9 +37,12 @@ describe('generators.Base', function () {
     this.env.registerStub(Dummy, 'hook1:ember');
     this.env.registerStub(Dummy, 'hook2:ember:all');
     this.env.registerStub(Dummy, 'hook3');
-    this.env.registerStub(function () {
-      this.write(path.join(tmpdir, 'app/scripts/models/application-model.js'), '// ...');
-    }, 'hook4');
+
+    this.env.registerStub(generators.Base.extend({
+      writing: function () {
+        this.write(path.join(tmpdir, 'app/scripts/models/application-model.js'), '// ...');
+      }
+    }), 'hook4');
 
     this.dummy = new Dummy(['bar', 'baz', 'bom'], {
       foo: false,
@@ -70,7 +73,7 @@ describe('generators.Base', function () {
     });
 
     it('use the environment options', function () {
-      this.env.registerStub(function () {}, 'ember:model');
+      this.env.registerStub(generators.Base.extend(), 'ember:model');
       var generator = this.env.create('ember:model', {
         options: {
           'test-framework': 'jasmine'

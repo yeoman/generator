@@ -7,18 +7,20 @@ var assert = require('assert');
 var sinon = require('sinon');
 var inquirer = require('inquirer');
 var RunContext = require('../lib/test/run-context');
-var yo = require('../');
+var generators = require('..');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-run-context');
-var helpers = yo.test;
+var helpers = generators.test;
 
 describe('RunContext', function () {
   beforeEach(function () {
     process.chdir(__dirname);
     this.defaultInput = inquirer.prompts.input;
-    var Dummy = this.Dummy = helpers.createDummyGenerator();
+
     this.execSpy = sinon.spy();
-    Dummy.prototype.exec = this.execSpy;
-    this.ctx = new RunContext(Dummy);
+    this.Dummy = generators.Base.extend({
+      exec: this.execSpy
+    });
+    this.ctx = new RunContext(this.Dummy);
   });
 
   afterEach(function (done) {
