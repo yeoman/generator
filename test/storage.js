@@ -28,7 +28,6 @@ describe('Storage', function () {
     this.fs = FileEditor.create(this.memFs);
     this.store = new Storage('test', this.fs, this.storePath);
     this.store.set('foo', 'bar');
-    this.saveSpy = sinon.spy(this.store, 'save');
   });
 
   afterEach(function () {
@@ -90,9 +89,9 @@ describe('Storage', function () {
 
     it('save on each changes', function () {
       this.store.set('foo', 'bar');
-      assert.equal(this.saveSpy.callCount, 1);
+      assert.equal(this.fs.readJSON(this.storePath).test.foo, 'bar');
       this.store.set('foo', 'oo');
-      assert.equal(this.saveSpy.callCount, 2);
+      assert.equal(this.fs.readJSON(this.storePath).test.foo, 'oo');
     });
 
     describe('@return', function () {
@@ -124,6 +123,40 @@ describe('Storage', function () {
         );
       });
     });
+
+    describe('when multiples instances share the same file', function () {
+      beforeEach(function () {
+        this.store = new Storage('test', this.fs, this.storePath);
+        this.store.set('foo', 'bar');
+        this.store2 = new Storage('test2', this.fs, this.storePath);
+      });
+
+      it('only update modified namespace', function () {
+        this.store2.set('bar', 'foo');
+        this.store.set('foo', 'bar');
+
+        var json = this.fs.readJSON(this.storePath);
+        assert.equal(json.test.foo, 'bar');
+        assert.equal(json.test2.bar, 'foo');
+      });
+    });
+
+    describe('when multiples instances share the same namespace', function () {
+      beforeEach(function () {
+        this.store = new Storage('test', this.fs, this.storePath);
+        this.store.set('foo', 'bar');
+        this.store2 = new Storage('test', this.fs, this.storePath);
+      });
+
+      it('only update modified namespace', function () {
+        this.store2.set('bar', 'foo');
+        this.store.set('foo', 'bar');
+
+        var json = this.fs.readJSON(this.storePath);
+        assert.equal(json.test.foo, 'bar');
+        assert.equal(json.test.bar, 'foo');
+      });
+    });
   });
 
   describe('#getAll()', function () {
@@ -149,46 +182,6 @@ describe('Storage', function () {
     it('delete value', function () {
       this.store.delete('name');
       assert.equal(this.store.get('name'), undefined);
-    });
-  });
-
-  describe('#save()', function () {
-    beforeEach(function () {
-      this.saveStorePath = path.join(tmpdir, 'save.json');
-      rm(this.saveStorePath);
-      this.store = new Storage('test', this.fs, this.saveStorePath);
-      this.store.set('foo', 'bar');
-      this.saveSpy = sinon.spy(this.store, 'save');
-    });
-
-    describe('when multiples instances share the same file', function () {
-      beforeEach(function () {
-        this.store2 = new Storage('test2', this.fs, this.saveStorePath);
-      });
-
-      it('only update modified namespace', function () {
-        this.store2.set('bar', 'foo');
-        this.store.set('foo', 'bar');
-
-        var json = this.fs.readJSON(this.saveStorePath);
-        assert.equal(json.test.foo, 'bar');
-        assert.equal(json.test2.bar, 'foo');
-      });
-    });
-
-    describe('when multiples instances share the same namespace', function () {
-      beforeEach(function () {
-        this.store2 = new Storage('test', this.fs, this.saveStorePath);
-      });
-
-      it('only update modified namespace', function () {
-        this.store2.set('bar', 'foo');
-        this.store.set('foo', 'bar');
-
-        var json = this.fs.readJSON(this.saveStorePath);
-        assert.equal(json.test.foo, 'bar');
-        assert.equal(json.test.bar, 'foo');
-      });
     });
   });
 
