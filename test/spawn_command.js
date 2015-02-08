@@ -1,3 +1,4 @@
+/*global it, describe, before, beforeEach, afterEach */
 'use strict';
 
 var assert = require('assert');
