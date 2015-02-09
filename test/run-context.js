@@ -383,4 +383,17 @@ describe('RunContext', function () {
       }.bind(this));
     });
   });
+
+  describe('#withLocalConfig()', function () {
+    it('provides config to the generator', function (done) {
+      this.ctx.withLocalConfig({
+        some: true,
+        data: 'here'
+      }).on('ready', function () {
+        assert.equal(this.ctx.generator.config.get('some'), true);
+        assert.equal(this.ctx.generator.config.get('data'), 'here');
+        done();
+      }.bind(this));
+    });
+  });
 });
