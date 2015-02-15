@@ -81,6 +81,7 @@
     "gulp-jshint": "^1.5.3",
     "gulp-mocha": "^2.0.0",
     "gulp-plumber": "^0.6.6",
+    "jsdoc": "^3.3.0-beta1",
     "jshint-stylish": "^1.0.0",
     "mockery": "^1.4.0",
     "nock": "^0.56.0",
