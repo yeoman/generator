@@ -395,6 +395,17 @@ describe('generators.Base', function () {
       };
       this.testGen.run(done);
     });
+
+    it('allows file writes in any priorities', function (done) {
+      this.TestGenerator.prototype.end = function () {
+        this.fs.write(this.destinationPath('foo.txt'), 'test');
+      };
+
+      this.testGen.run(function () {
+        assert(fs.existsSync(this.testGen.destinationPath('foo.txt')));
+        done();
+      }.bind(this));
+    });
   });
 
   describe('#_', function () {
