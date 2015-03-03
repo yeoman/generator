@@ -308,6 +308,27 @@ describe('generators.Base', function () {
       assert.throws(gen.run.bind(gen));
     });
 
+    it('will run non-enumerable methods', function (done) {
+      var Generator = function () {
+        generators.Base.apply(this, arguments);
+      };
+      Generator.prototype = Object.create(generators.Base.prototype);
+      Object.defineProperty(Generator.prototype, 'nonenumerable', {
+        value: sinon.spy(),
+        configurable: true,
+        writable: true
+      });
+      var gen = new Generator([], {
+        resolved: 'dummy',
+        namespace: 'dummy',
+        env: this.env
+      });
+      gen.run(function () {
+        assert(gen.nonenumerable.called);
+        done();
+      });
+    });
+
     it('ignore underscore prefixed method', function (done) {
       this.testGen.run(function () {
         assert(this.TestGenerator.prototype._private.notCalled);
