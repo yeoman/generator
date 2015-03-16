@@ -429,12 +429,6 @@ describe('generators.Base', function () {
     });
   });
 
-  describe('#_', function () {
-    it('expose the Underscore String API', function () {
-      assert.implement(this.dummy._, require('underscore.string').exports());
-    });
-  });
-
   describe('#argument()', function () {
     it('add a new argument to the generator instance', function () {
       assert.equal(this.dummy._arguments.length, 0);
