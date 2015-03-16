@@ -38,12 +38,6 @@ var yeoman = module.exports = function createEnv() {
   return Environment.createEnv.apply(Environment, arguments);
 };
 
-/**
- * Global file helpers methods
- * {@link https://github.com/SBoudrias/file-utils}
- */
-yeoman.file = require('file-utils');
-
 // hoist up top level class the generator extend
 yeoman.Base = require('./lib/base');
 yeoman.NamedBase = require('./lib/named-base');

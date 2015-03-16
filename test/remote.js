@@ -106,26 +106,6 @@ describe('generators.Base#remote()', function () {
         assert.equal(data, 'var <%= foo %> = \'<%= foo %>\';\n');
       });
     });
-
-    describe('callback argument remote fileUtils Environment instances', function () {
-      beforeEach(function (done) {
-        this.cachePath = path.join(this.dummy.cacheRoot(), 'yeoman/generator/master');
-        this.dummy.remote('yeoman', 'generator', 'master', function (err, remote) {
-          this.remoteArg = remote;
-          done();
-        }.bind(this));
-      });
-
-      it('.src is scoped to cachePath', function () {
-        assert.equal(this.remoteArg.src.fromBase('.'), this.cachePath);
-        assert.equal(this.remoteArg.src.fromDestBase('.'), this.dummy.destinationRoot());
-      });
-
-      it('.dest is scoped to destinationRoot', function () {
-        assert.equal(this.remoteArg.dest.fromBase('.'), this.dummy.destinationRoot());
-        assert.equal(this.remoteArg.dest.fromDestBase('.'), this.cachePath);
-      });
-    });
   });
 
   describe('absolute', function () {
@@ -192,32 +172,6 @@ describe('generators.Base#remote()', function () {
       it('doesn\'t process templates on bulkDirectory', function () {
         var data = fs.readFileSync('remote-absolute/fixtures/foo-template.js');
         assert.equal(data, 'var <%= foo %> = \'<%= foo %>\';\n');
-      });
-    });
-
-    describe('callback argument remote fileUtils Environment instances', function () {
-      beforeEach(function (done) {
-        this.cachePath = path.join(
-          this.dummy.cacheRoot(),
-          'httpsgithubcomyeomangeneratorarchivemastertargz'
-        );
-        this.dummy.remote(
-          'https://github.com/yeoman/generator/archive/master.tar.gz',
-          function (err, remote) {
-            this.remoteArg = remote;
-            done();
-          }.bind(this)
-        );
-      });
-
-      it('.src is scoped to cachePath', function () {
-        assert.equal(this.remoteArg.src.fromBase('.'), this.cachePath);
-        assert.equal(this.remoteArg.src.fromDestBase('.'), this.dummy.destinationRoot());
-      });
-
-      it('.dest is scoped to destinationRoot', function () {
-        assert.equal(this.remoteArg.dest.fromBase('.'), this.dummy.destinationRoot());
-        assert.equal(this.remoteArg.dest.fromDestBase('.'), this.cachePath);
       });
     });
   });

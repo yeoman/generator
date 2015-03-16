@@ -778,30 +778,32 @@ describe('generators.Base', function () {
 
   describe('#gruntfile', function () {
     beforeEach(function () {
-      this.dummy = new this.Dummy([], {
+      this.GruntfileGenerator = generators.Base.extend({
+        grunt: function () {
+          this.gruntfile.insertConfig('foo', '{}');
+        }
+      });
+      this.gruntGenerator = new this.GruntfileGenerator([], {
         resolved: 'unknown',
         namespace: 'dummy',
         env: this.env,
-        'skip-install': true
+        'skip-install': true,
+        force: true
       });
     });
 
     it('expose the gruntfile editor API', function () {
-      assert(this.dummy.gruntfile instanceof require('gruntfile-editor'));
+      assert(this.gruntGenerator.gruntfile instanceof require('gruntfile-editor'));
     });
 
     it('uses the gruntfile editor of the Env if available', function () {
-      this.dummy.env.gruntfile = 'foo';
-      assert.equal(this.dummy.gruntfile, 'foo');
+      this.gruntGenerator.env.gruntfile = 'foo';
+      assert.equal(this.gruntGenerator.gruntfile, 'foo');
     });
 
     it('schedule gruntfile writing on the write Queue', function (done) {
-      this.Dummy.prototype.grunt = function () {
-        this.dest.delete('Gruntfile.js', { force: true });
-        this.gruntfile.insertConfig('foo', '{}');
-      };
-      this.dummy.run(function () {
-        var gruntfile = this.dummy.dest.read('Gruntfile.js');
+      this.gruntGenerator.run(function () {
+        var gruntfile = this.dummy.fs.read(this.dummy.destinationPath('Gruntfile.js'));
         assert(gruntfile.indexOf('foo:') > 0);
         done();
       }.bind(this));
