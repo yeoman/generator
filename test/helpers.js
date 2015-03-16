@@ -55,77 +55,6 @@ describe('generators.test', function () {
     });
   });
 
-  describe('.decorate()', function () {
-    beforeEach(function () {
-      this.spy = sinon.stub().returns(1);
-      this.spyStub = sinon.stub().returns(2);
-      this.execSpy = sinon.stub().returns(3);
-      this.execStubSpy = sinon.stub().returns(4);
-      this.ctx = {
-        exec: this.execSpy,
-        execStub: this.execStubSpy
-      };
-
-      helpers.decorate(this.ctx, 'exec', this.spy);
-      helpers.decorate(this.ctx, 'execStub', this.spyStub, { stub: true });
-      this.execResult = this.ctx.exec('foo', 'bar');
-      this.execStubResult = this.ctx.execStub();
-    });
-
-    it('wraps a method', function () {
-      assert(this.spy.calledBefore(this.execSpy));
-    });
-
-    it('passes arguments of the original methods', function () {
-      assert(this.spy.calledWith('foo', 'bar'));
-    });
-
-    it('skip original methods if stub: true', function () {
-      assert(this.execStubSpy.notCalled);
-    });
-
-    it('returns original methods if stub: false', function () {
-      assert.equal(this.execResult, 3);
-    });
-
-    it('returns stub methods if stub: true', function () {
-      assert.equal(this.execStubResult, 2);
-    });
-  });
-
-  describe('.stub()', function () {
-    beforeEach(function () {
-      this.spy = sinon.spy();
-      this.initialExec = sinon.spy();
-      this.ctx = {
-        exec: this.initialExec
-      };
-      helpers.stub(this.ctx, 'exec', this.spy);
-    });
-
-    it('replace initial method', function () {
-      this.ctx.exec();
-      assert(this.initialExec.notCalled);
-      assert(this.spy.calledOnce);
-    });
-  });
-
-  describe('.restore()', function () {
-    beforeEach(function () {
-      this.initialExec = function () {};
-      this.ctx = {
-        exec: this.initialExec
-      };
-      helpers.decorate(this.ctx, 'exec', function () {});
-    });
-
-    it('restore decorated methods', function () {
-      assert.notEqual(this.ctx.exec, this.initialExec);
-      helpers.restore();
-      assert.equal(this.ctx.exec, this.initialExec);
-    });
-  });
-
   describe('.mockPrompt()', function () {
     beforeEach(function () {
       this.generator = env.instantiate(helpers.createDummyGenerator());
@@ -212,18 +141,6 @@ describe('generators.test', function () {
         done();
       });
       spy();
-    });
-  });
-
-  describe('.before()', function () {
-    afterEach(function () {
-      helpers.restore();
-    });
-
-    it('alias .setUpTestDirectory()', function () {
-      var spy = sinon.spy(helpers, 'setUpTestDirectory');
-      helpers.before('dir');
-      sinon.assert.calledWith(spy, 'dir');
     });
   });
 

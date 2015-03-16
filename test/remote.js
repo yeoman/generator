@@ -197,11 +197,17 @@ describe('generators.Base#remote()', function () {
 
     describe('callback argument remote fileUtils Environment instances', function () {
       beforeEach(function (done) {
-        this.cachePath = path.join(this.dummy.cacheRoot(), 'httpsgithubcomyeomangeneratorarchivemastertargz');
-        this.dummy.remote('https://github.com/yeoman/generator/archive/master.tar.gz', function (err, remote) {
-          this.remoteArg = remote;
-          done();
-        }.bind(this));
+        this.cachePath = path.join(
+          this.dummy.cacheRoot(),
+          'httpsgithubcomyeomangeneratorarchivemastertargz'
+        );
+        this.dummy.remote(
+          'https://github.com/yeoman/generator/archive/master.tar.gz',
+          function (err, remote) {
+            this.remoteArg = remote;
+            done();
+          }.bind(this)
+        );
       });
 
       it('.src is scoped to cachePath', function () {
