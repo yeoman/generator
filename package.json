@@ -25,7 +25,6 @@
   "scripts": {
     "test": "gulp",
     "doc": "jsdoc -c ./jsdoc.json ./readme.md",
-    "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000",
     "prepublish": "nsp audit-package"
   },
   "files": [
