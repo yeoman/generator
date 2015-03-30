@@ -47,6 +47,33 @@ describe('generators.Base (actions/install mixin)', function () {
         done();
       }.bind(this));
     });
+
+    describe('with --skip-install', function () {
+      beforeEach(function () {
+        this.dummy = this.env.create('dummy', {
+          options: {
+            skipInstall: true
+          }
+        });
+      });
+
+      it('does not spawn anything with skipInstall', function (done) {
+        this.dummy.runInstall('npm', ['install']);
+        this.dummy.run(function () {
+          sinon.assert.notCalled(this.spawnCommandStub);
+          done();
+        }.bind(this));
+      });
+
+      it('call callback if skipInstall', function (done) {
+        var spy = sinon.spy();
+        this.dummy.runInstall('npm', ['install'], spy);
+        this.dummy.run(function () {
+          sinon.assert.calledOnce(spy);
+          done();
+        });
+      });
+    });
   });
 
   describe('#bowerInstall()', function () {
@@ -111,19 +138,6 @@ describe('generators.Base (actions/install mixin)', function () {
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install'], {});
         done();
       }.bind(this));
-      this.dummy.run();
-    });
-
-    it('does not spawn anything with skipInstall', function (done) {
-      this.dummy.installDependencies({ skipInstall: true });
-      this.dummy.run(function () {
-        sinon.assert.notCalled(this.spawnCommandStub);
-        done();
-      }.bind(this));
-    });
-
-    it('call callback if skipInstall', function (done) {
-      this.dummy.installDependencies({ skipInstall: true, callback: done });
       this.dummy.run();
     });
 
