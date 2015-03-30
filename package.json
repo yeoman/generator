@@ -35,7 +35,6 @@
   "dependencies": {
     "async": "^0.9.0",
     "chalk": "^1.0.0",
-    "cheerio": "^0.18.0",
     "class-extend": "^0.1.0",
     "cli-table": "^0.3.1",
     "cross-spawn": "^0.2.6",
@@ -49,6 +48,7 @@
     "github-username": "^1.0.0",
     "glob": "^5.0.3",
     "gruntfile-editor": "^1.0.0",
+    "html-wiring": "^1.0.0",
     "inquirer": "^0.8.0",
     "istextorbinary": "^1.0.2",
     "lodash": "^3.5.0",
