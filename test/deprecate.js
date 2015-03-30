@@ -1,6 +1,7 @@
 /*global describe, before, beforeEach, after, afterEach, it */
 'use strict';
 
+var assert = require('assert');
 var chalk = require('chalk');
 var sinon = require('sinon');
 var deprecate = require('../lib/util/deprecate');
@@ -21,5 +22,23 @@ describe('deprecate()', function () {
     wrapped('bar', 2);
     sinon.assert.calledWith(console.log, chalk.yellow('(!) ') + 'foo');
     sinon.assert.calledWith(func, 'bar', 2);
+  });
+
+  describe('.object()', function () {
+    it('wrap an object and log a message', function () {
+      var dummy = {
+        foo: 1,
+        func: sinon.spy()
+      };
+      var wrapped = deprecate.object('<%= name %> is deprecated', dummy);
+
+      // Keep values
+      assert.equal(wrapped.foo, 1);
+
+      // Wrap methods
+      wrapped.func(2);
+      sinon.assert.calledWith(dummy.func, 2);
+      sinon.assert.calledWith(console.log, chalk.yellow('(!) ') + 'func is deprecated');
+    });
   });
 });
