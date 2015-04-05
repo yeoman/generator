@@ -2,24 +2,17 @@
 
 > Rails-inspired generator system that provides scaffolding for your apps
 
-
-### [Getting Started](http://yeoman.io/authoring/getting-started.html)&nbsp;&nbsp;&nbsp;[API Documentation](http://yeoman.github.io/generator/)
-
-
-![Generator output](https://img.skitch.com/20120923-jxbn2njgk5dp7ttk94i1tx9ek2.png)
-
-![Generator diff](https://img.skitch.com/20120922-kpjs68bgkshtsru4cwnb64fn82.png)
-
+![](https://raw.githubusercontent.com/yeoman/yeoman.io/master/media/optimized/yeoman-masthead.png)
 
 ## Getting Started
 
-If you're interested in writing your own Yeoman generator we recommend reading [the official getting started guide](http://yeoman.io/authoring/).
+If you're interested in writing your own Yeoman generator we recommend reading [the official getting started guide](http://yeoman.io/authoring/). The guide covers all the basics you need to get started.
 
-There are typically two types of generators - simple boilerplate 'copiers' and more advanced generators which can use custom prompts, remote dependencies, wiring and much more.
+A generator can be as complex as you want it to be. It can simply copy a bunch of boilerplate file, or it can be more advanced asking the user's preferences to scaffold a tailor made project. This decision is up to you.
 
-The docs cover how to create generators from scratch as well as recommending command-line generators for making other generators.
+The fastest way to get started is to use  [generator-generator](https://github.com/yeoman/generator-generator), a Yeoman generator to generate a Yeoman generator.
 
-For deeper research, read the code source or visit our [API documentation](http://yeoman.github.io/generator/).
+After reading the getting started guide, you might want to read the code source or visit our [API documentation](http://yeoman.github.io/generator/) for a list of all methods available.
 
 
 ### Debugging
@@ -31,10 +24,14 @@ To debug a generator, you can pass Node.js debug's flags by running it like this
 node --debug `which yo` <generator> [arguments]
 
 # Windows
+# Find the path to the yo binary
+where yo
+
+# Use this path to run it with the debug flag
 node --debug <path to yo binary> <generator> [arguments]
 ```
 
-Yeoman generators also use a debug mode to log relevant lifecycle informations. You can activate it by setting the `DEBUG` environment variable to the desired scope (the scope of the generator system is `yeoman:generator`).
+Yeoman generators also provide a debug mode to log relevant lifecycle informations. You can activate it by setting the `DEBUG` environment variable to the desired scope (the scope of the generator system is `yeoman:generator`).
 
 ```sh
 # OS X / Linux
@@ -44,6 +41,9 @@ DEBUG=yeoman:generator
 set DEBUG=yeoman:generator
 ```
 
+## Contributing
+
+We love contributors! See our [contribution guideline](http://yeoman.io/contributing/) to get started.
 
 ## License
 

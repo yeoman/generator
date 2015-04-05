@@ -73,8 +73,8 @@
   "devDependencies": {
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.0",
-    "gulp-eslint": "^0.7.0",
-    "gulp-istanbul": "^0.7.0",
+    "gulp-eslint": "^0.8.0",
+    "gulp-istanbul": "^0.8.1",
     "gulp-jscs": "^1.1.0",
     "gulp-jshint": "^1.5.3",
     "gulp-mocha": "^2.0.0",
