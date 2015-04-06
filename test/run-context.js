@@ -274,7 +274,7 @@ describe('RunContext', function () {
 
     it('set skip-install by default', function (done) {
       this.ctx.on('end', function () {
-        assert.equal(this.execSpy.firstCall.thisValue.options['skip-install'], true);
+        assert.equal(this.execSpy.firstCall.thisValue.options.skipInstall, true);
         done();
       }.bind(this));
     });
@@ -282,7 +282,25 @@ describe('RunContext', function () {
     it('allow skip-install to be overriden', function (done) {
       this.ctx.withOptions({ 'skip-install': false });
       this.ctx.on('end', function () {
-        assert.equal(this.execSpy.firstCall.thisValue.options['skip-install'], false);
+        assert.equal(this.execSpy.firstCall.thisValue.options.skipInstall, false);
+        done();
+      }.bind(this));
+    });
+
+    it('camel case options', function (done) {
+      this.ctx.withOptions({ 'foo-bar': false });
+      this.ctx.on('end', function () {
+        assert.equal(this.execSpy.firstCall.thisValue.options['foo-bar'], false);
+        assert.equal(this.execSpy.firstCall.thisValue.options.fooBar, false);
+        done();
+      }.bind(this));
+    });
+
+    it('kebab case options', function (done) {
+      this.ctx.withOptions({ barFoo: false });
+      this.ctx.on('end', function () {
+        assert.equal(this.execSpy.firstCall.thisValue.options['bar-foo'], false);
+        assert.equal(this.execSpy.firstCall.thisValue.options.barFoo, false);
         done();
       }.bind(this));
     });
