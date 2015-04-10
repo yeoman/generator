@@ -5,12 +5,11 @@ var fs = require('fs');
 var os = require('os');
 var events = require('events');
 var sinon = require('sinon');
+var Environment = require('yeoman-environment');
 var generators = require('../');
 var assert = generators.assert;
 var helpers = generators.test;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-generators');
-
-var Environment = require('yeoman-environment');
 
 describe('Generators module', function () {
   before(helpers.setUpTestDirectory(tmpdir));

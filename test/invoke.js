@@ -16,9 +16,11 @@ describe('generators.Base#invoke()', function () {
       env: this.env,
       'skip-install': true
     });
+
     this.SubGen = generators.Base.extend({
       exec: function () { this.stubGenRan = true; }
     });
+
     this.env.registerStub(this.SubGen, 'foo:bar');
   });
 
@@ -26,6 +28,7 @@ describe('generators.Base#invoke()', function () {
     var invoked = this.gen.invoke('foo:bar', {
       options: { 'skip-install': true }
     });
+
     invoked.on('end', function () {
       assert(invoked.stubGenRan);
       done();
@@ -44,7 +47,6 @@ describe('generators.Base#invoke()', function () {
   it('works when invoked from runLoop', function (done) {
     var stubGenFinished = false;
     var running = 0;
-
     var asyncFunc = function () {
       var cb = this.async();
       running++;
@@ -57,7 +59,6 @@ describe('generators.Base#invoke()', function () {
 
     this.SubGen.prototype.asyncFunc = asyncFunc;
     this.gen.constructor.prototype.asyncFunc = asyncFunc;
-
     this.gen.constructor.prototype.initializing = function () {
       var cb = this.async();
       var invoked = this.invoke('foo:bar', {

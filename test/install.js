@@ -11,6 +11,7 @@ var asyncStub = {
     if (key === 'exit') {
       cb();
     }
+
     return asyncStub;
   }
 };
@@ -28,12 +29,13 @@ describe('generators.Base (actions/install mixin)', function () {
 
   describe('#runInstall()', function () {
     it('takes a config object and passes it to the spawned process', function (done) {
+      var callbackSpy = sinon.spy();
       var spawnEnv = {
         env: {
           PATH: '/path/to/bin'
         }
       };
-      var callbackSpy = sinon.spy();
+
       //args: installer, paths, options, cb
       this.dummy.runInstall('nestedScript', ['path1', 'path2'], spawnEnv, callbackSpy);
       this.dummy.run(function () {
@@ -43,6 +45,7 @@ describe('generators.Base (actions/install mixin)', function () {
           ['install', 'path1', 'path2'],
           spawnEnv
         );
+
         sinon.assert.calledOnce(callbackSpy);
         done();
       }.bind(this));
@@ -96,6 +99,7 @@ describe('generators.Base (actions/install mixin)', function () {
           ['install', 'jquery', '--save-dev'],
           { saveDev: true }
         );
+
         done();
       }.bind(this));
       this.dummy.run();

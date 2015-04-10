@@ -29,7 +29,6 @@ describe('generators.Base', function () {
 
   beforeEach(function () {
     this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
-
     mkdirp.sync(resolveddir);
     var Dummy = this.Dummy = helpers.createDummyGenerator();
 
@@ -65,20 +64,24 @@ describe('generators.Base', function () {
     it('set the CWD where `.yo-rc.json` is found', function () {
       var projectDir = path.join(__dirname, 'fixtures/dummy-project');
       process.chdir(path.join(projectDir, 'subdir'));
+
       new this.Dummy(['foo'], {
         resolved: 'ember/all',
         env: this.env
       });
+
       assert.equal(process.cwd(), projectDir);
     });
 
     it('use the environment options', function () {
       this.env.registerStub(generators.Base.extend(), 'ember:model');
+
       var generator = this.env.create('ember:model', {
         options: {
           'test-framework': 'jasmine'
         }
       });
+
       assert.equal(generator.options['test-framework'], 'jasmine');
     });
 
@@ -88,6 +91,7 @@ describe('generators.Base', function () {
         resolved: 'test',
         'test-framework': 'mocha'
       });
+
       assert.equal(generator.options['test-framework'], 'mocha');
     });
 
@@ -96,6 +100,7 @@ describe('generators.Base', function () {
         env: this.env,
         resolved: 'test'
       });
+
       assert.equal(generator.options.foo, true);
     });
 
@@ -104,6 +109,7 @@ describe('generators.Base', function () {
         env: this.env,
         resolved: 'test'
       });
+
       generator.argument('baz');
       assert.equal(generator.baz, 'bar');
     });
@@ -122,6 +128,7 @@ describe('generators.Base', function () {
         env: this.env,
         resolved: 'test'
       });
+
       assert(generator.fs);
     });
   });
@@ -155,6 +162,7 @@ describe('generators.Base', function () {
         this.dummy.destinationPath('bower.json'),
         '{ "name": "app-name" }'
       );
+
       assert.equal(this.dummy.determineAppname(), 'app name');
     });
 
@@ -163,6 +171,7 @@ describe('generators.Base', function () {
         this.dummy.destinationPath('package.json'),
         '{ "name": "package_app-name" }'
       );
+
       assert.equal(this.dummy.determineAppname(), 'package_app name');
     });
 
@@ -209,12 +218,14 @@ describe('generators.Base', function () {
         prop: 'foo'
       };
       this.TestGenerator.prototype.initializing = sinon.spy();
+
       this.testGen = new this.TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
         env: this.env,
         'skip-install': true
       });
+
       this.resolveSpy = sinon.spy(this.testGen.conflicter, 'resolve');
     });
 
@@ -260,42 +271,51 @@ describe('generators.Base', function () {
       this.TestGenerator.prototype.throwing = function () {
         this.async()('some error');
       };
+
       this.testGen.on('error', function (err) {
         assert.equal(err, 'some error');
         done();
       });
+
       this.testGen.run();
     });
 
     it('can emit error from sync methods', function (done) {
       var error = new Error();
+
       this.TestGenerator.prototype.throwing = function () {
         throw error;
       };
+
       this.testGen.on('error', function (err) {
         assert.equal(err, error);
         done();
       });
+
       this.testGen.run();
     });
 
     it('run methods in series', function (done) {
       var async1Running = false;
       var async1Ran = false;
+
       this.TestGenerator.prototype.async1 = function () {
         async1Running = true;
         var cb = this.async();
+
         setTimeout(function () {
           async1Running = false;
           async1Ran = true;
           cb();
         }, 10);
       };
+
       this.TestGenerator.prototype.async2 = function () {
         assert(!async1Running);
         assert(async1Ran);
         done();
       };
+
       this.testGen.run();
     });
 
@@ -305,6 +325,7 @@ describe('generators.Base', function () {
         namespace: 'dummy',
         env: this.env
       });
+
       assert.throws(gen.run.bind(gen));
     });
 
@@ -312,17 +333,20 @@ describe('generators.Base', function () {
       var Generator = function () {
         generators.Base.apply(this, arguments);
       };
+
       Generator.prototype = Object.create(generators.Base.prototype);
       Object.defineProperty(Generator.prototype, 'nonenumerable', {
         value: sinon.spy(),
         configurable: true,
         writable: true
       });
+
       var gen = new Generator([], {
         resolved: 'dummy',
         namespace: 'dummy',
         env: this.env
       });
+
       gen.run(function () {
         assert(gen.nonenumerable.called);
         done();
@@ -354,6 +378,7 @@ describe('generators.Base', function () {
     it('run named queued methods in order', function (done) {
       var initSpy = this.TestGenerator.prototype.initializing;
       var promptSpy = this.TestGenerator.prototype.prompting.m1;
+
       this.testGen.run(function () {
         assert(initSpy.calledBefore(promptSpy));
         done();
@@ -363,6 +388,7 @@ describe('generators.Base', function () {
     it('run queued methods in order even if not in order in prototype', function (done) {
       var initSpy = this.TestGenerator.prototype.initializing;
       var execSpy = this.TestGenerator.prototype.exec;
+
       this.testGen.run(function () {
         assert(initSpy.calledBefore(execSpy));
         done();
@@ -372,6 +398,7 @@ describe('generators.Base', function () {
     it('commit mem-fs to disk', function (done) {
       var filepath;
       var oldFilePath;
+
       this.TestGenerator.prototype.writing = function () {
         oldFilePath = path.join(this.destinationRoot(), 'old-system.txt');
         // Just ensure we don't have issue if both old and new system run.
@@ -381,6 +408,7 @@ describe('generators.Base', function () {
           'generated'
         );
       };
+
       this.testGen.run(function () {
         assert(fs.existsSync(oldFilePath));
         assert(fs.existsSync(filepath));
@@ -392,15 +420,18 @@ describe('generators.Base', function () {
       var action = { action: 'skip' };
       var filepath = path.join(__dirname, '/fixtures/conflict.js');
       assert(fs.existsSync(filepath));
+
       this.TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'some new content');
       };
+
       var env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter(action));
       var testGen = new this.TestGenerator([], {
         resolved: 'generator/app/index.js',
         namespace: 'dummy',
         env: env
       });
+
       testGen.run(function () {
         assert.equal(fs.readFileSync(filepath, 'utf8'), 'var a = 1;\n');
         done();
@@ -414,6 +445,7 @@ describe('generators.Base', function () {
         this.config.set('bar', 1);
         this._globalConfig.set('bar', 1);
       };
+
       this.testGen.run(done);
     });
 
@@ -514,9 +546,11 @@ describe('generators.Base', function () {
         env: this.env,
         resolved: 'test'
       });
+
       this.dummy.option('foo', {
         type: String
       });
+
       this.dummy.option('shortOpt', {
         type: String,
         alias: 's'
@@ -543,6 +577,7 @@ describe('generators.Base', function () {
         env: this.env,
         resolved: 'test'
       });
+
       dummy.option('foo', {
         type: String
       });
@@ -572,6 +607,7 @@ describe('generators.Base', function () {
     it('create the matching option', function () {
       this.dummy._running = false;
       this.dummy.hookFor('something');
+
       assert.deepEqual(this.dummy._options.something, {
         desc: 'Something to be invoked',
         name: 'something',
@@ -602,6 +638,7 @@ describe('generators.Base', function () {
         env: this.env,
         'skip-install': true
       });
+
       this.spy = sinon.spy();
       this.GenCompose = generators.Base.extend({ exec: this.spy });
       this.env.registerStub(this.GenCompose, 'composed:gen');
@@ -610,6 +647,7 @@ describe('generators.Base', function () {
     it('runs the composed generators', function (done) {
       this.dummy.composeWith('composed:gen');
       var runSpy = sinon.spy(this.dummy, 'run');
+
       // I use a setTimeout here just to make sure composeWith() doesn't start the
       // generator before the base one is ran.
       setTimeout(function () {
@@ -624,6 +662,7 @@ describe('generators.Base', function () {
       this.Dummy.prototype.writing = function () {
         this.composeWith('composed:gen');
       };
+
       this.dummy.run(function () {
         assert(this.spy.called);
         done();
@@ -635,6 +674,7 @@ describe('generators.Base', function () {
         options: { foo: 'bar', 'skip-install': true },
         arguments: ['foo']
       });
+
       this.dummy.run(function () {
         assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
         assert.deepEqual(this.spy.firstCall.thisValue.args, ['foo']);
@@ -663,6 +703,7 @@ describe('generators.Base', function () {
           options: { foo: 'bar', 'skip-install': true },
           arguments: ['foo']
         }, { local: this.stubPath });
+
         this.dummy.run(function () {
           assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
           assert.deepEqual(this.spy.firstCall.thisValue.args, ['foo']);
@@ -700,6 +741,7 @@ describe('generators.Base', function () {
         desc: 'definition; explanation; summary'
       });
       this.dummy.desc('A new desc for this generator');
+
       var help = this.dummy.help();
       var expected = [
         'Usage:',
@@ -735,6 +777,7 @@ describe('generators.Base', function () {
         type: Number,
         required: false
       });
+
       var usage = this.dummy.usage();
       assert.equal(usage.trim(), 'yo dummy [options] [<baz>]');
     });
@@ -777,6 +820,7 @@ describe('generators.Base', function () {
           this.gruntfile.insertConfig('foo', '{}');
         }
       });
+
       this.gruntGenerator = new this.GruntfileGenerator([], {
         resolved: 'unknown',
         namespace: 'dummy',
@@ -874,7 +918,6 @@ describe('generators.Base', function () {
       };
 
       Generator.namespace = 'angular:app';
-
       util.inherits(Generator, generators.Base);
 
       Generator.prototype.createSomething = function () {};
@@ -893,7 +936,11 @@ describe('generators.Base', function () {
       function assertEvent(e) {
         return function () {
           assert.equal(e, lifecycle.shift());
-          if (e === 'end') return done();
+
+          if (e === 'end') {
+            done();
+            return;
+          }
         };
       }
 
@@ -923,19 +970,20 @@ describe('generators.Base', function () {
         this.copy('foo-copy.js');
       };
 
+      var isFirstEndEvent = true;
       var generatorOnce = new GeneratorOnce([], {
         env: yeoman.createEnv([], {}, new TestAdapter()),
         resolved: __filename,
         'skip-install': true
       });
 
-      var isFirstEndEvent = true;
-
       generatorOnce.on('end', function () {
         assert.ok(isFirstEndEvent);
+
         if (isFirstEndEvent) {
           done();
         }
+
         isFirstEndEvent = false;
       });
 
@@ -961,6 +1009,7 @@ describe('generators.Base', function () {
         resolved: __filename,
         'skip-install': true
       });
+
       generatorEnd.run();
     });
   });

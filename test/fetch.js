@@ -9,7 +9,6 @@ var fetch = require('../lib/actions/fetch');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var generators = require('../');
 var assert = generators.assert;
-
 var tmp = path.join(tmpdir, 'yeoman-fetch');
 
 describe('generators.Base (actions/fetch)', function () {
@@ -27,7 +26,11 @@ describe('generators.Base (actions/fetch)', function () {
         .replyWithFile(200, path.join(__dirname, 'fixtures/testFile.tar.gz'));
 
       this.dummy.tarball('http://example.com/f.tar.gz', tmp, function (err) {
-        if (err) return done(err);
+        if (err) {
+          done(err);
+          return;
+        }
+
         assert.noFile(path.join(tmp, 'f.tar.gz'));
         assert(scope.isDone());
         done();
@@ -46,7 +49,11 @@ describe('generators.Base (actions/fetch)', function () {
         .replyWithFile(200, path.join(__dirname, 'fixtures/help.txt'));
 
       this.dummy.fetch('http://example.com/f.txt', tmp, function (err) {
-        if (err) return done(err);
+        if (err) {
+          done(err);
+          return;
+        }
+
         assert(scope.isDone());
         fs.stat(path.join(tmp, 'f.txt'), done);
       });

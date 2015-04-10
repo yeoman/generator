@@ -17,8 +17,8 @@ describe('Conflicter', function () {
     var spy = sinon.spy();
     var contents = fs.readFileSync(__filename, 'utf8');
     this.conflicter.checkForCollision(__filename, contents, spy);
-
     var conflict = this.conflicter.conflicts.pop();
+
     assert.deepEqual(conflict.file.path, __filename);
     assert.deepEqual(conflict.file.contents, fs.readFileSync(__filename, 'utf8'));
     assert.deepEqual(conflict.callback, spy);
@@ -31,11 +31,10 @@ describe('Conflicter', function () {
 
     it('with a conflict', function (done) {
       var spy = sinon.spy();
-      this.conflicter.force = true;
 
+      this.conflicter.force = true;
       this.conflicter.checkForCollision(__filename, fs.readFileSync(__filename), spy);
       this.conflicter.checkForCollision('foo.js', 'var foo = "foo";\n', spy);
-
       this.conflicter.resolve(function () {
         assert.equal(spy.callCount, 2);
         assert.equal(this.conflicter.conflicts.length, 0, 'Expected conflicter to be empty after running');
@@ -51,6 +50,7 @@ describe('Conflicter', function () {
 
     it('identical status', function (done) {
       var me = fs.readFileSync(__filename, 'utf8');
+
       this.conflicter.collision({
         path: __filename,
         contents: me
@@ -72,6 +72,7 @@ describe('Conflicter', function () {
 
     it('user choose "yes"', function (done) {
       var conflicter = new Conflicter(new TestAdapter({ action: 'write' }));
+
       conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'force');
         done();
@@ -80,6 +81,7 @@ describe('Conflicter', function () {
 
     it('user choose "skip"', function (done) {
       var conflicter = new Conflicter(new TestAdapter({ action: 'skip' }));
+
       conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'skip');
         done();
@@ -88,6 +90,7 @@ describe('Conflicter', function () {
 
     it('user choose "force"', function (done) {
       var conflicter = new Conflicter(new TestAdapter({ action: 'force' }));
+
       conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'force');
         done();
@@ -131,13 +134,13 @@ describe('Conflicter', function () {
       var testAdapter = new TestAdapter({ action: 'diff' });
       var conflicter = new Conflicter(testAdapter);
       var _prompt = testAdapter.prompt.bind(testAdapter);
-
       var promptStub = sinon.stub(testAdapter, 'prompt', function (prompts, resultHandler) {
         if (promptStub.calledTwice) {
           var stubbedResultHandler = function (result) {
             result.action = 'write';
             return resultHandler(result);
           };
+
           return _prompt(prompts, stubbedResultHandler);
         } else {
           return _prompt(prompts, resultHandler);
@@ -150,23 +153,21 @@ describe('Conflicter', function () {
       }, function () {
         sinon.assert.neverCalledWithMatch(testAdapter.log.writeln, /Existing.*Replacement.*Diff/);
         sinon.assert.called(testAdapter.diff);
-
         done();
       });
-
     });
 
     it('displays custom diff for binary files', function (done) {
       var testAdapter = new TestAdapter({ action: 'diff' });
       var conflicter = new Conflicter(testAdapter);
       var _prompt = testAdapter.prompt.bind(testAdapter);
-
       var promptStub = sinon.stub(testAdapter, 'prompt', function (prompts, resultHandler) {
         if (promptStub.calledTwice) {
           var stubbedResultHandler = function (result) {
             result.action = 'write';
             return resultHandler(result);
           };
+
           return _prompt(prompts, stubbedResultHandler);
         } else {
           return _prompt(prompts, resultHandler);
@@ -179,10 +180,8 @@ describe('Conflicter', function () {
       }, function () {
         sinon.assert.calledWithMatch(testAdapter.log.writeln, /Existing.*Replacement.*Diff/);
         sinon.assert.notCalled(testAdapter.diff);
-
         done();
       });
-
     });
   });
 });

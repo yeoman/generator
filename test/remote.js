@@ -34,7 +34,10 @@ describe('generators.Base#remote()', function () {
 
   it('invoke `cb` with a remote object to interract with the downloaded package', function (done) {
     this.dummy.remote('yeoman', 'generator', function (err, remote) {
-      if (err) return done(err);
+      if (err) {
+        done(err);
+        return;
+      }
 
       assert.implement(remote, ['copy', 'template', 'directory']);
       done();

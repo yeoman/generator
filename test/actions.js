@@ -60,7 +60,6 @@ describe('generators.Base (actions/actions)', function () {
       this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents) {
         contents = contents.replace('foo', 'bar');
         contents = contents.replace('\r\n', '\n');
-
         return contents;
       });
 
@@ -93,10 +92,16 @@ describe('generators.Base (actions/actions)', function () {
 
     it('retains executable mode on copied files', function (done) {
       // Don't run on windows
-      if (process.platform === 'win32') return done();
+      if (process.platform === 'win32') {
+        done();
+        return;
+      }
 
       fs.stat('write/to/bar.js', function (err, stats) {
-        if (err) throw err;
+        if (err) {
+          throw err;
+        }
+
         assert(stats.mode & 1 === 1, 'File be executable.');
         done();
       });
@@ -104,7 +109,10 @@ describe('generators.Base (actions/actions)', function () {
 
     it('process source contents via function', function (done) {
       fs.readFile('write/to/foo-process.js', function (err, data) {
-        if (err) throw err;
+        if (err) {
+          throw err;
+        }
+
         assert.textEqual(String(data), 'var bar = \'foo\';\n');
         done();
       });
@@ -119,7 +127,10 @@ describe('generators.Base (actions/actions)', function () {
 
     it('copy a file', function (done) {
       fs.readFile('write/to/foo.js', function (err, data) {
-        if (err) throw err;
+        if (err) {
+          throw err;
+        }
+
         assert.textEqual(String(data), 'var foo = \'foo\';\n');
         done();
       });
@@ -173,16 +184,20 @@ describe('generators.Base (actions/actions)', function () {
         this.dummy.template('foo-template.js', 'write/to/from-template.js');
         this.dummy.template('foo-template.js');
         this.dummy.template('<%=foo%>-file.js');
+
         this.dummy.template('foo-template.js', 'write/to/<%=foo%>-directory/from-template.js', {
           foo: 'bar'
         });
+
         this.dummy.template('foo-template.js', 'write/to/from-template-bar.js', {
           foo: 'bar'
         });
+
         this.dummy.template('template-tags.jst', 'write/to/template-tags.js', {
           foo: 'bar',
           bar: 'foo'
         });
+
         this.dummy._writeFiles(done);
       });
 
@@ -229,7 +244,6 @@ describe('generators.Base (actions/actions)', function () {
         var bodyStat = fs.statSync('write/to/perm-test.js');
         assert.equal(originFileStat.mode, bodyStat.mode);
       });
-
     });
 
     describe('with options', function () {
@@ -269,8 +283,10 @@ describe('generators.Base (actions/actions)', function () {
     it('copy and process source files to destination', function (done) {
       fs.stat('directory/foo-template.js', function (err) {
         if (err) {
-          return done(err);
+          done(err);
+          return;
         }
+
         fs.stat('directory/foo.js', done);
       });
     });
@@ -278,8 +294,10 @@ describe('generators.Base (actions/actions)', function () {
     it('defaults the destination to the source filepath value, relative to "destinationRoot" value', function (done) {
       fs.stat('dir-fixtures/foo-template.js', function (err) {
         if (err) {
-          return done(err);
+          done(err);
+          return;
         }
+
         fs.stat('dir-fixtures/foo.js', done);
       });
     });
@@ -294,7 +312,6 @@ describe('generators.Base (actions/actions)', function () {
       var body = fs.readFileSync('directory-processed/foo-process.js', 'utf8');
       assert.textEqual(body, 'var bar = \'foo\';\n');
     });
-
   });
 
   describe('#bulkDirectory()', function () {
@@ -305,6 +322,7 @@ describe('generators.Base (actions/actions)', function () {
       // Create temp bulk operation files
       // These cannot just be in the repo or the other directory tests fail
       require('mkdirp').sync(this.fixtures + '/bulk-operation');
+
       for (var i = 0; i < 1000; i++) {
         fs.writeFileSync(this.fixtures + '/bulk-operation/' + i + '.js', i);
       }
@@ -319,12 +337,16 @@ describe('generators.Base (actions/actions)', function () {
       for (var i = 0; i < 1000; i++) {
         fs.unlinkSync(this.fixtures + '/bulk-operation/' + i + '.js');
       }
+
       fs.rmdirSync(this.fixtures + '/bulk-operation');
     });
 
     it('bulk copy one thousand files', function (done) {
       fs.readFile('bulk-operation/999.js', function (err, data) {
-        if (err) throw err;
+        if (err) {
+          throw err;
+        }
+
         assert.equal(data, '999');
         done();
       });
@@ -342,10 +364,12 @@ describe('generators.Base (actions/actions)', function () {
       this.dummy.copy('foo.js', 'write/abc/abc.js');
       this.dummy._writeFiles(done);
     });
+
     it('returns expand files', function () {
       var files = this.dummy.expandFiles('write/abc/**');
       assert.deepEqual(files, ['write/abc/abc.js']);
     });
+
     it('returns expand files', function () {
       var files = this.dummy.expandFiles('abc/**', { cwd: './write' });
       assert.deepEqual(files, ['abc/abc.js']);

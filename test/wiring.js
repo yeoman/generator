@@ -13,6 +13,7 @@ describe('generators.Base (wiring)', function () {
       namespace: 'bar',
       env: yeoman.createEnv()
     });
+
     assert.implement(dummy, wiring);
   });
 });

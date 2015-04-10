@@ -1,10 +1,10 @@
 /*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
 var assert = require('assert');
-var FileEditor = require('mem-fs-editor');
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
+var FileEditor = require('mem-fs-editor');
 var sinon = require('sinon');
 var env = require('yeoman-environment');
 var Storage = require('../lib/util/storage');
