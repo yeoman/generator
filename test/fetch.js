@@ -28,6 +28,7 @@ describe('generators.Base (actions/fetch)', function () {
 
       this.dummy.tarball('http://example.com/f.tar.gz', tmp, function (err) {
         if (err) return done(err);
+        assert.noFile(path.join(tmp, 'f.tar.gz'));
         assert(scope.isDone());
         done();
       });
