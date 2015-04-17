@@ -43,7 +43,6 @@ describe('PromptSuggestion', function () {
         store: true
       };
       var result = promptSuggestion.prefillQuestions(this.store, question)[0];
-
       assert.equal(result.default, 'foo');
     });
 
@@ -54,7 +53,6 @@ describe('PromptSuggestion', function () {
         store: true
       }];
       var result = promptSuggestion.prefillQuestions(this.store, question)[0];
-
       assert.equal(result.default, 'foo');
     });
 
@@ -119,6 +117,7 @@ describe('PromptSuggestion', function () {
         result.choices.forEach(function (choice) {
           assert.equal(choice.checked, false);
         });
+
         assert.deepEqual(result.default, ['foo']);
       });
 
@@ -131,7 +130,6 @@ describe('PromptSuggestion', function () {
           choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
         };
         var result = promptSuggestion.prefillQuestions(this.store, question)[0];
-
         assert.deepEqual(result.default, ['foo']);
       });
 
@@ -164,6 +162,7 @@ describe('PromptSuggestion', function () {
           result.choices.forEach(function (choice) {
             assert.equal(choice.checked, false);
           });
+
           assert.deepEqual(result.default, ['foo', 'bar']);
         });
 
@@ -176,7 +175,6 @@ describe('PromptSuggestion', function () {
             choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
           };
           var result = promptSuggestion.prefillQuestions(this.store, question)[0];
-
           assert.deepEqual(result.default, ['foo', 'bar']);
         });
       });
@@ -207,7 +205,6 @@ describe('PromptSuggestion', function () {
           }]
         };
         var result = promptSuggestion.prefillQuestions(this.store, question)[0];
-
         assert.equal(result.default, 2);
       });
 
@@ -220,7 +217,6 @@ describe('PromptSuggestion', function () {
           choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
         };
         var result = promptSuggestion.prefillQuestions(this.store, question)[0];
-
         assert.equal(result.default, 2);
       });
     });
@@ -253,12 +249,13 @@ describe('PromptSuggestion', function () {
         default: 'bar',
         store: true
       };
+
       var mockAnswers = {
         respuesta: 'baz'
       };
+
       promptSuggestion.prefillQuestions(this.store, question);
       promptSuggestion.storeAnswers(this.store, question, mockAnswers);
-
       assert.equal(this.store.get('promptValues').respuesta, 'baz');
     });
 
@@ -268,9 +265,11 @@ describe('PromptSuggestion', function () {
         default: 'bar',
         store: false
       };
+
       var mockAnswers = {
         respuesta: 'baz'
       };
+
       promptSuggestion.prefillQuestions(this.store, question);
       promptSuggestion.storeAnswers(this.store, question, mockAnswers);
       assert.equal(this.store.get('promptValues').respuesta, 'foo');
@@ -284,9 +283,11 @@ describe('PromptSuggestion', function () {
         store: true,
         choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
       };
+
       var mockAnswers = {
         respuesta: 'baz'
       };
+
       promptSuggestion.prefillQuestions(this.store, question);
       promptSuggestion.storeAnswers(this.store, question, mockAnswers);
       assert.equal(this.store.get('promptValues').respuesta, 'baz');

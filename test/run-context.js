@@ -14,24 +14,31 @@ var helpers = generators.test;
 describe('RunContext', function () {
   beforeEach(function () {
     process.chdir(__dirname);
-    this.defaultInput = inquirer.prompts.input;
 
+    this.defaultInput = inquirer.prompts.input;
     this.execSpy = sinon.spy();
     this.Dummy = generators.Base.extend({
       exec: this.execSpy
     });
+
     this.ctx = new RunContext(this.Dummy);
   });
 
   afterEach(function (done) {
     process.chdir(__dirname);
-    if (this.ctx.completed) return done();
+
+    if (this.ctx.completed) {
+      done();
+      return;
+    }
+
     this.ctx.on('end', done);
   });
 
   describe('constructor', function () {
     it('accept path parameter', function (done) {
       var ctx = new RunContext(path.join(__dirname, './fixtures/custom-generator-simple'));
+
       ctx
         .on('ready', function () {
           assert(ctx.env.get('simple:app'));
@@ -45,6 +52,7 @@ describe('RunContext', function () {
       var execSpy = sinon.stub().throws(error);
       Dummy.prototype.exec = execSpy;
       var ctx = new RunContext(Dummy);
+
       ctx.on('error', function (err) {
         sinon.assert.calledOnce(execSpy);
         assert.equal(err, error);
@@ -102,15 +110,18 @@ describe('RunContext', function () {
         sinon.assert.calledOnce(this.execSpy);
         done();
       }.bind(this));
+
       this.ctx._run();
       this.ctx._run();
     });
   });
 
   describe('error handling', function () {
-
     function removeListeners(host, handlerName) {
-      if (!host) return;
+      if (!host) {
+        return;
+      }
+
       // store the original handlers for the host
       var originalHandlers = host.listeners(handlerName);
       // remove the current handlers for the host
@@ -119,12 +130,18 @@ describe('RunContext', function () {
     }
 
     function setListeners(host, handlerName, handlers) {
-      if (!host) return;
+      if (!host) {
+        return;
+      }
+
       handlers.forEach(host.on.bind(host, handlerName));
     }
 
     function processError(host, handlerName, cb) {
-      if (!host) return;
+      if (!host) {
+        return;
+      }
+
       host.once(handlerName, cb);
     }
 
@@ -141,7 +158,6 @@ describe('RunContext', function () {
     it('throw an error when no listener is present', function (done) {
       var error = new Error('dummy exception');
       var execSpy = sinon.stub().throws(error);
-
       var errorHandler = function (err) {
         sinon.assert.calledOnce(execSpy);
         assert.equal(err, error);
@@ -161,9 +177,7 @@ describe('RunContext', function () {
       setImmediate(function () {
         new RunContext(Dummy);
       });
-
     });
-
   });
 
   describe('#inDir()', function () {
@@ -190,6 +204,7 @@ describe('RunContext', function () {
         sinon.assert.calledOn(cb, ctx);
         sinon.assert.calledWith(cb, path.resolve(this.tmp));
       }.bind(this));
+
       ctx.inDir(this.tmp, cb).on('end', done);
     });
 
@@ -198,11 +213,13 @@ describe('RunContext', function () {
       var delayed = false;
       var cb = sinon.spy(function () {
         var release = this.async();
+
         setTimeout(function () {
           delayed = true;
           release();
         }.bind(this), 1);
       });
+
       ctx.inDir(this.tmp, cb)
         .on('ready', function () {
           assert(delayed);
@@ -229,6 +246,7 @@ describe('RunContext', function () {
         assert.equal(this, ctx);
         assert(dir.indexOf(os.tmpdir()) > -1);
       });
+
       this.ctx.inTmpDir(cb).on('end', done);
     });
   });
@@ -328,6 +346,7 @@ describe('RunContext', function () {
           assert.equal(answers.yeoman, 'pass');
         });
       };
+
       this.ctx.on('end', done);
     });
 
@@ -341,6 +360,7 @@ describe('RunContext', function () {
           assert.equal(answers.yeoman, 'yes please');
         });
       };
+
       this.ctx
         .withPrompts({ yeoman: 'yes please' })
         .on('end', done);
@@ -363,6 +383,7 @@ describe('RunContext', function () {
           cb();
         });
       };
+
       this.ctx
         .withPrompts({ yeoman: 'yes please' })
         .withPrompts({ yo: 'yo man' })

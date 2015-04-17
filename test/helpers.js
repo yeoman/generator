@@ -13,10 +13,12 @@ describe('generators.test', function () {
   beforeEach(function () {
     process.chdir(path.join(__dirname, './fixtures'));
     var self = this;
+
     this.StubGenerator = function (args, options) {
       self.args = args;
       self.options = options;
     };
+
     util.inherits(this.StubGenerator, yeoman.Base);
   });
 
@@ -37,6 +39,7 @@ describe('generators.test', function () {
       var generator = helpers.createGenerator('unicorn:app', [
         [this.StubGenerator, 'unicorn:app']
       ]);
+
       assert.ok(generator instanceof this.StubGenerator);
     });
 
@@ -44,6 +47,7 @@ describe('generators.test', function () {
       helpers.createGenerator('unicorn:app', [
         [this.StubGenerator, 'unicorn:app']
       ], ['temp']);
+
       assert.deepEqual(this.args, ['temp']);
     });
 
@@ -51,6 +55,7 @@ describe('generators.test', function () {
       helpers.createGenerator('unicorn:app', [
         [this.StubGenerator, 'unicorn:app']
       ], ['temp'], { ui: 'tdd' });
+
       assert.equal(this.options.ui, 'tdd');
     });
   });
@@ -79,9 +84,11 @@ describe('generators.test', function () {
 
     it('supports `null` answer for `list` type', function (done) {
       var generator = env.instantiate(helpers.createDummyGenerator());
+
       helpers.mockPrompt(generator, {
         respuesta: null
       });
+
       generator.prompt([{ name: 'respuesta', message: 'foo', type: 'list', default: 'bar' }], function (answers) {
         assert.equal(answers.respuesta, null);
         done();
@@ -90,9 +97,11 @@ describe('generators.test', function () {
 
     it('treats `null` as no answer for `input` type', function (done) {
       var generator = env.instantiate(helpers.createDummyGenerator());
+
       helpers.mockPrompt(generator, {
         respuesta: null
       });
+
       generator.prompt([{ name: 'respuesta', message: 'foo', type: 'input', default: 'bar' }], function (answers) {
         assert.equal(answers.respuesta, 'bar');
         done();
@@ -136,10 +145,12 @@ describe('generators.test', function () {
 
     it('keep prompt method asynchronous', function (done) {
       var spy = sinon.spy();
+
       this.generator.prompt({ name: 'answer', type: 'input' }, function () {
         sinon.assert.called(spy);
         done();
       });
+
       spy();
     });
   });

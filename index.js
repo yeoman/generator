@@ -3,7 +3,6 @@
  */
 
 'use strict';
-
 var Environment = require('yeoman-environment');
 
 /**
@@ -59,7 +58,6 @@ yeoman.assert = require('yeoman-assert');
  * @enum generators
  */
 yeoman.generators = {
-
   /**
    * Base Generator
    * {@link Base}
