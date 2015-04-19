@@ -2,7 +2,7 @@
 
 > Rails-inspired generator system that provides scaffolding for your apps
 
-![](https://raw.githubusercontent.com/yeoman/yeoman.io/master/media/optimized/yeoman-masthead.png)
+![](https://raw.githubusercontent.com/yeoman/media/master/optimized/yeoman-masthead.png)
 
 ## Getting Started
 
