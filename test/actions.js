@@ -51,17 +51,11 @@ describe('generators.Base (actions/actions)', function () {
   });
 
   describe('#copy()', function () {
-    before(function (done) {
+    beforeEach(function (done) {
       this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
       this.dummy.copy('foo.js', 'write/to/foo.js');
       this.dummy.copy('foo-copy.js');
       this.dummy.copy('yeoman-logo.png');
-      this.dummy.copy(path.join(__dirname, 'fixtures/lodash-copy.js'), 'write/to/lodash.js');
-      this.dummy.copy('foo-process.js', 'write/to/foo-process.js', function (contents) {
-        contents = contents.replace('foo', 'bar');
-        contents = contents.replace('\r\n', '\n');
-        return contents;
-      });
 
       var oldDestRoot = this.dummy.destinationRoot();
       this.dummy.destinationRoot('write/to');
@@ -82,12 +76,9 @@ describe('generators.Base (actions/actions)', function () {
       fs.stat('write/to/bar.js', done);
     });
 
-    it('allow to copy without using the templating (conficting with lodash/underscore)', function (done) {
-      fs.stat('write/to/lodash.js', done);
-    });
-
-    it('defaults the destination to the source filepath value', function (done) {
-      fs.stat('foo-copy.js', done);
+    it('defaults the destination to the source filepath value', function () {
+      assert(fs.statSync(this.dummy.destinationPath('foo-copy.js')));
+      assert(fs.statSync('yeoman-logo.png'));
     });
 
     it('retains executable mode on copied files', function (done) {
@@ -103,17 +94,6 @@ describe('generators.Base (actions/actions)', function () {
         }
 
         assert(stats.mode & 1 === 1, 'File be executable.');
-        done();
-      });
-    });
-
-    it('process source contents via function', function (done) {
-      fs.readFile('write/to/foo-process.js', function (err, data) {
-        if (err) {
-          throw err;
-        }
-
-        assert.textEqual(String(data), 'var bar = \'foo\';\n');
         done();
       });
     });
@@ -174,7 +154,7 @@ describe('generators.Base (actions/actions)', function () {
 
   describe('#template()', function () {
     describe('without options', function () {
-      before(function (done) {
+      beforeEach(function (done) {
         // Create file with weird permission for testing
         var permFileName = this.fixtures + '/perm-test.js';
         fs.writeFileSync(permFileName, 'var foo;', { mode: parseInt(733, 8) });
@@ -182,20 +162,10 @@ describe('generators.Base (actions/actions)', function () {
         this.dummy.foo = 'fooooooo';
         this.dummy.template('perm-test.js', 'write/to/perm-test.js');
         this.dummy.template('foo-template.js', 'write/to/from-template.js');
-        this.dummy.template('foo-template.js');
-        this.dummy.template('<%=foo%>-file.js');
-
-        this.dummy.template('foo-template.js', 'write/to/<%=foo%>-directory/from-template.js', {
-          foo: 'bar'
-        });
+        this.dummy.template('foo-template.js', { foo: 'bar' });
 
         this.dummy.template('foo-template.js', 'write/to/from-template-bar.js', {
           foo: 'bar'
-        });
-
-        this.dummy.template('template-tags.jst', 'write/to/template-tags.js', {
-          foo: 'bar',
-          bar: 'foo'
         });
 
         this.dummy._writeFiles(done);
@@ -211,7 +181,7 @@ describe('generators.Base (actions/actions)', function () {
 
       it('defaults the destination to the source filepath value, relative to "destinationRoot" value', function () {
         var body = fs.readFileSync('foo-template.js', 'utf8');
-        assert.textEqual(body, 'var fooooooo = \'fooooooo\';\n<%= extra %>\n');
+        assert.textEqual(body, 'var bar = \'bar\';\n<%= extra %>\n');
       });
 
       it('process underscore templates with the passed-in data', function () {
@@ -222,21 +192,6 @@ describe('generators.Base (actions/actions)', function () {
       it('process underscore templates with the actual generator instance, when no data is given', function () {
         var body = fs.readFileSync('write/to/from-template.js', 'utf8');
         assert.textEqual(body, 'var fooooooo = \'fooooooo\';\n<%= extra %>\n');
-      });
-
-      it('parses `${}` tags', function () {
-        var body = fs.readFileSync('write/to/template-tags.js', 'utf8');
-        assert.textEqual(body, 'foo = bar\n');
-      });
-
-      it('process underscode templates in destination filename', function () {
-        var body = fs.readFileSync('fooooooo-file.js', 'utf8');
-        assert.textEqual(body, 'var fooooooo = \'fooooooo\';\n');
-      });
-
-      it('process underscore templates in destination path', function () {
-        var body = fs.readFileSync('write/to/bar-directory/from-template.js', 'utf8');
-        assert.textEqual(body, 'var bar = \'bar\';\n<%= extra %>\n');
       });
 
       it('keep file mode', function () {
@@ -251,9 +206,7 @@ describe('generators.Base (actions/actions)', function () {
         this.src = 'template-setting.xml';
         this.dest = 'write/to/template-setting.xml';
         this.dummy.template(this.src, this.dest, { foo: 'bar' }, {
-          evaluate: /\{\{([\s\S]+?)\}\}/g,
-          interpolate: /\{\{=([\s\S]+?)\}\}/g,
-          escape: /\{\{-([\s\S]+?)\}\}/g
+          delimiter: '?'
         });
         this.dummy._writeFiles(done);
       });
@@ -269,14 +222,6 @@ describe('generators.Base (actions/actions)', function () {
     before(function (done) {
       this.dummy.directory('./dir-fixtures', 'directory');
       this.dummy.directory('./dir-fixtures');
-      this.dummy.directory('./dir-fixtures', 'directory-processed', function (contents, source) {
-        if (source.indexOf('foo-process.js') !== -1) {
-          contents = contents.replace('foo', 'bar');
-          contents = contents.replace('\r\n', '\n');
-        }
-
-        return contents;
-      });
       this.dummy._writeFiles(done);
     });
 
@@ -306,11 +251,6 @@ describe('generators.Base (actions/actions)', function () {
       var body = fs.readFileSync('directory/foo-template.js', 'utf8');
       var foo = this.dummy.foo;
       assert.textEqual(body, 'var ' + foo + ' = \'' + foo + '\';\n');
-    });
-
-    it('process source contents via function', function () {
-      var body = fs.readFileSync('directory-processed/foo-process.js', 'utf8');
-      assert.textEqual(body, 'var bar = \'foo\';\n');
     });
   });
 
