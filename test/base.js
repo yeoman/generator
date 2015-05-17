@@ -752,6 +752,7 @@ describe('generators.Base', function () {
         'Options:',
         '-h, --help # Print the generator\'s options and usage',
         '--skip-cache # Do not remember prompt answers Default: false',
+        '--skip-install # Do not automatically install dependencies Default: false',
         '--hook1 # Hook1 to be invoked',
         '--hook2 # Hook2 to be invoked',
         '--hook3 # Hook3 to be invoked',
