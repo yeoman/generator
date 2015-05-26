@@ -292,5 +292,21 @@ describe('PromptSuggestion', function () {
       promptSuggestion.storeAnswers(this.store, question, mockAnswers);
       assert.equal(this.store.get('promptValues').respuesta, 'baz');
     });
+
+    it('store falsy answer (but not undefined) in global store', function () {
+      var question = {
+        name: 'respuesta',
+        default: true,
+        store: true
+      };
+
+      var mockAnswers = {
+        respuesta: false
+      };
+
+      promptSuggestion.prefillQuestions(this.store, question);
+      promptSuggestion.storeAnswers(this.store, question, mockAnswers);
+      assert.equal(this.store.get('promptValues').respuesta, false);
+    });
   });
 });
