@@ -9,6 +9,7 @@ var mkdirp = require('mkdirp');
 var mockery = require('mockery');
 var rimraf = require('rimraf');
 var through = require('through2');
+var pathExists = require('path-exists');
 var yeoman = require('yeoman-environment');
 var userHome = require('user-home');
 
@@ -410,8 +411,8 @@ describe('generators.Base', function () {
       };
 
       this.testGen.run(function () {
-        assert(fs.existsSync(oldFilePath));
-        assert(fs.existsSync(filepath));
+        assert(pathExists.sync(oldFilePath));
+        assert(pathExists.sync(filepath));
         done();
       }.bind(this));
     });
@@ -419,7 +420,7 @@ describe('generators.Base', function () {
     it('allow skipping file writes to disk', function (done) {
       var action = { action: 'skip' };
       var filepath = path.join(__dirname, '/fixtures/conflict.js');
-      assert(fs.existsSync(filepath));
+      assert(pathExists.sync(filepath));
 
       this.TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'some new content');
@@ -455,7 +456,7 @@ describe('generators.Base', function () {
       };
 
       this.testGen.run(function () {
-        assert(fs.existsSync(this.testGen.destinationPath('foo.txt')));
+        assert(pathExists.sync(this.testGen.destinationPath('foo.txt')));
         done();
       }.bind(this));
     });
