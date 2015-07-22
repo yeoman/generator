@@ -1,12 +1,14 @@
 'use strict';
 var path = require('path');
 var gulp = require('gulp');
+var excludeGitignore = require('gulp-exclude-gitignore');
 var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
 var istanbul = require('gulp-istanbul');
-var coveralls = require('gulp-coveralls');
+var nsp = require('gulp-nsp');
 var plumber = require('gulp-plumber');
+var coveralls = require('gulp-coveralls');
 
 var handleErr = function (err) {
   console.log(err.message);
@@ -15,45 +17,43 @@ var handleErr = function (err) {
 
 gulp.task('static', function () {
   return gulp.src([
-    'test/*.js',
-    'lib/**/*.js',
-    'benchmark/**/*.js',
-    'index.js',
-    'doc.js',
-    'gulpfile.js'
-  ])
-  .pipe(jshint('.jshintrc'))
-  .pipe(jshint.reporter('jshint-stylish'))
-  .pipe(jshint.reporter('fail'))
-  .pipe(jscs())
-  .on('error', handleErr);
+      '**/*.js',
+      '!test/fixtures/**'
+    ])
+    .pipe(excludeGitignore())
+    .pipe(jshint('.jshintrc'))
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'))
+    .pipe(jscs())
+    .on('error', handleErr);
 });
 
-gulp.task('test', function (cb) {
+gulp.task('nsp', function (cb) {
+  nsp('package.json', cb);
+});
+
+gulp.task('pre-test', function () {
+  return gulp.src([
+      'index.js',
+      'lib/**/*.js'
+    ])
+    .pipe(istanbul({includeUntested: true}))
+    .pipe(istanbul.hookRequire());
+});
+
+gulp.task('test', ['pre-test'], function (cb) {
   var mochaErr;
 
-  gulp.src([
-    'lib/**/*.js',
-    'index.js'
-  ])
-  .pipe(istanbul({
-    includeUntested: true
-  }))
-  .pipe(istanbul.hookRequire())
-  .on('finish', function () {
-    gulp.src(['test/*.js'])
-      .pipe(plumber())
-      .pipe(mocha({
-        reporter: 'spec'
-      }))
-      .on('error', function (err) {
-        mochaErr = err;
-      })
-      .pipe(istanbul.writeReports())
-      .on('end', function () {
-        cb(mochaErr);
-      });
-  });
+  gulp.src('test/*.js')
+    .pipe(plumber())
+    .pipe(mocha({reporter: 'spec'}))
+    .on('error', function (err) {
+      mochaErr = err;
+    })
+    .pipe(istanbul.writeReports())
+    .on('end', function () {
+      cb(mochaErr);
+    });
 });
 
 gulp.task('coveralls', ['test'], function () {
@@ -65,4 +65,5 @@ gulp.task('coveralls', ['test'], function () {
     .pipe(coveralls());
 });
 
+gulp.task('prepublish', ['nsp']);
 gulp.task('default', ['static', 'test', 'coveralls']);

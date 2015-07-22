@@ -5,7 +5,6 @@
     "beforeOpeningCurlyBrace": true
   },
   "disallowMultipleVarDecl": true,
-  "requireSpacesInsideObjectBrackets": "allButNested",
   "disallowSpacesInsideArrayBrackets": true,
   "disallowSpacesInsideParentheses": true,
   "disallowSpaceAfterObjectKeys": true,
@@ -23,6 +22,6 @@
   "disallowMultipleLineBreaks": true,
   "disallowKeywordsOnNewLine": ["else"],
   "requireLineFeedAtFileEnd": true,
-  "excludeFiles": ["node_modules/**", "bower_components/**"],
+  "excludeFiles": ["node_modules/**"],
   "validateIndentation": 2
 }

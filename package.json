@@ -2,7 +2,14 @@
   "name": "yeoman-generator",
   "version": "0.20.2",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
-  "license": "BSD-2-Clause",
+  "homepage": "http://yeoman.io",
+  "repository": "yeoman/generator",
+  "author": "Yeoman team",
+  "files": [
+    "index.js",
+    "lib"
+  ],
+  "main": "index.js",
   "keywords": [
     "development",
     "dev",
@@ -16,21 +23,15 @@
     "yeoman",
     "app"
   ],
-  "homepage": "http://yeoman.io",
-  "author": "Yeoman",
-  "repository": "yeoman/generator",
+  "license": "BSD-2-Clause",
   "engines": {
     "node": ">=0.10.0"
   },
   "scripts": {
     "test": "gulp",
     "doc": "jsdoc -c ./jsdoc.json ./readme.md",
-    "prepublish": "nsp audit-package"
+    "prepublish": "gulp prepublish"
   },
-  "files": [
-    "index.js",
-    "lib"
-  ],
   "dependencies": {
     "async": "^0.9.0",
     "chalk": "^1.0.0",
@@ -75,10 +76,12 @@
   "devDependencies": {
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.0",
-    "gulp-istanbul": "^0.9.0",
+    "gulp-exclude-gitignore": "^1.0.0",
+    "gulp-istanbul": "^0.8.1",
     "gulp-jscs": "^1.1.0",
     "gulp-jshint": "^1.5.3",
     "gulp-mocha": "^2.0.0",
+    "gulp-nsp": "^0.4.5",
     "gulp-plumber": "^1.0.0",
     "jsdoc": "^3.3.0-beta1",
     "jshint-stylish": "^1.0.0",
