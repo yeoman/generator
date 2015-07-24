@@ -17,29 +17,7 @@ After reading the getting started guide, you might want to read the code source 
 
 ### Debugging
 
-To debug a generator, you can pass Node.js debug's flags by running it like this:
-
-```sh
-# OS X / Linux
-node --debug `which yo` <generator> [arguments]
-
-# Windows
-# Find the path to the yo binary
-where yo
-
-# Use this path to run it with the debug flag
-node --debug <path to yo binary> <generator> [arguments]
-```
-
-Yeoman generators also provide a debug mode to log relevant lifecycle informations. You can activate it by setting the `DEBUG` environment variable to the desired scope (the scope of the generator system is `yeoman:generator`).
-
-```sh
-# OS X / Linux
-DEBUG=yeoman:generator
-
-# Windows
-set DEBUG=yeoman:generator
-```
+See the [debugging guide](http://yeoman.io/authoring/debugging.html).
 
 ## Contributing
 
