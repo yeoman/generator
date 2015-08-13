@@ -439,6 +439,30 @@ describe('generators.Base', function () {
       }.bind(this));
     });
 
+    it('does not prompt again for skipped files', function (done) {
+      var action = { action: 'skip' };
+      var filepath = path.join(__dirname, '/fixtures/conflict.js');
+      assert(pathExists.sync(filepath));
+
+      this.TestGenerator.prototype.writing = function () {
+        this.fs.write(filepath, 'some new content');
+      };
+
+      var env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter(action));
+      var testGen = new this.TestGenerator([], {
+        resolved: 'generator/app/index.js',
+        namespace: 'dummy',
+        env: env
+      });
+
+      var writeSpy = sinon.spy(testGen, '_writeFiles');
+
+      testGen.run(function () {
+        assert(writeSpy.calledOnce);
+        done();
+      }.bind(this));
+    });
+
     it('does not pass config file to conflicter', function (done) {
       this.TestGenerator.prototype.writing = function () {
         fs.writeFileSync(this.destinationPath('.yo-rc.json'), '{"foo": 3}');
