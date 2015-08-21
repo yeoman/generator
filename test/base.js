@@ -19,6 +19,7 @@ mockery.enable({
 });
 
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var Conflicter = require('../lib/util/conflicter');
 var generators = require('../');
 var helpers = generators.test;
 var assert = generators.assert;
@@ -442,23 +443,32 @@ describe('generators.Base', function () {
     it('does not prompt again for skipped files', function (done) {
       var action = { action: 'skip' };
       var filepath = path.join(__dirname, '/fixtures/conflict.js');
-      assert(pathExists.sync(filepath));
+      var filepath2 = path.join(__dirname, '/fixtures/file-conflict.txt');
+
+      sinon.spy(Conflicter.prototype, 'checkForCollision');
+      var env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter(action));
+      env.registerStub(this.Dummy, 'dummy:app');
+
+      // The composed generator need to write at least one file for it to go through it's
+      // file writing cycle
+      this.Dummy.prototype.writing = function () {
+        this.fs.write(filepath2, 'foo');
+      };
 
       this.TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'some new content');
+        this.composeWith('dummy:app');
       };
 
-      var env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter(action));
       var testGen = new this.TestGenerator([], {
         resolved: 'generator/app/index.js',
         namespace: 'dummy',
         env: env
       });
 
-      var writeSpy = sinon.spy(testGen, '_writeFiles');
-
       testGen.run(function () {
-        assert(writeSpy.calledOnce);
+        assert.equal(Conflicter.prototype.checkForCollision.callCount, 2);
+        Conflicter.prototype.checkForCollision.restore();
         done();
       }.bind(this));
     });
