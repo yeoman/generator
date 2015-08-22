@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/yeoman/generator.png?label=ready&title=Ready)](https://waffle.io/yeoman/generator)
 # Generator [![npm](https://badge.fury.io/js/yeoman-generator.svg)](http://badge.fury.io/js/yeoman-generator) [![Build Status](https://travis-ci.org/yeoman/generator.svg?branch=master)](https://travis-ci.org/yeoman/generator) [![Coverage Status](https://coveralls.io/repos/yeoman/generator/badge.svg)](https://coveralls.io/r/yeoman/generator)
 
 > Rails-inspired generator system that provides scaffolding for your apps
