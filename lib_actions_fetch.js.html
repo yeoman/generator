@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: index.js</title>
+    <title>JSDoc: Source: lib/actions/fetch.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: index.js</h1>
+    <h1 class="page-title">Source: lib/actions/fetch.js</h1>
 
     
 
@@ -26,78 +26,90 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @module yeoman-generator
- */
-
-'use strict';
-var Environment = require('yeoman-environment');
+            <pre class="prettyprint source linenums"><code>'use strict';
+var _ = require('lodash');
+var Download = require('download');
+var chalk = require('chalk');
 
 /**
- * The generator system is a framework for node to author reusable and
- * composable Generators, for a vast majority of use-case.
+ * @mixin
+ * @alias actions/fetch
+ */
+var fetch = module.exports;
+
+/**
+ * Download a file to a given destination.
  *
- * Inspired and based off the work done on Thor and Rails 3 Generators, we try
- * to provide the same kind of infrastructure.
- *
- * Generators are registered by namespace, where namespaces are mapping the
- * structure of the file system with `:` being simply converted to `/`.
- *
- * Generators are standard node modules, they are simply required as usual, and
- * they can be shipped into reusable npm packages.
- *
- * The lookup is done depending on the configured load path, which is by
- * default `lib/generators` in every generators package installed (ie.
- * `node_modules/yeoman-backbone/lib/generators`)
- *
- * @example
- *    var yeoman = require('yeoman-generators');
- *
- *    var env = yeoman('angular:model')
- *      .run(function(err) {
- *        console.log('done!');
- *      });
- *
- * @alias module:yeoman-generator
+ * @param {String} url
+ * @param {String} destination
+ * @param {Function} cb
  */
 
-var yeoman = module.exports = function createEnv() {
-  return Environment.createEnv.apply(Environment, arguments);
+fetch.fetch = function _fetch(url, destination, cb) {
+  var log = this.log('... Fetching %s ...', url);
+  var download = new Download()
+    .get(url)
+    .dest(destination)
+    .use(function (res) {
+      res.on('data', function () {
+        log.write('.');
+      });
+    });
+
+  download.run(function (err) {
+    if (err) {
+      cb(err);
+      return;
+    }
+
+    log.ok('Done in ' + destination).write();
+    cb();
+  });
 };
 
-// hoist up top level class the generator extend
-yeoman.Base = require('./lib/base');
-yeoman.NamedBase = require('./lib/named-base');
-
 /**
- * Test helpers
- * {@link module:test/helpers}
+ * Fetch an archive and extract it to a given destination.
+ *
+ * @param {String} archive
+ * @param {String} destination
+ * @param {Object} opts
+ * @param {Function} cb
  */
-yeoman.test = require('./lib/test/helpers');
 
-/**
- * Test assertions helpers
- * {@link https://github.com/yeoman/yeoman-assert}
- */
-yeoman.assert = require('yeoman-assert');
+fetch.extract = function _extract(archive, destination, opts, cb) {
+  if (_.isFunction(opts) &amp;&amp; !cb) {
+    cb = opts;
+    opts = { extract: true };
+  }
 
-/**
- * Yeoman base's generators
- * @enum generators
- */
-yeoman.generators = {
-  /**
-   * Base Generator
-   * {@link Base}
-   */
-  Base: yeoman.Base,
+  opts = _.assign({ extract: true }, opts);
 
-  /**
-   * Named Base Generator
-   * {@link NamedBase}
-   */
-  NamedBase: yeoman.NamedBase
+  var log = this.log.write()
+    .info('... Fetching %s ...', archive)
+    .info(chalk.yellow('This might take a few moments'));
+
+  var download = new Download(opts)
+    .get(archive)
+    .dest(destination)
+    .use(function (res) {
+      res.on('readable', function () {
+        log.write('.');
+      });
+    });
+
+  download.run(function (err) {
+    if (err) {
+      cb(err);
+      return;
+    }
+
+    log.write().ok('Done in ' + destination).write();
+    cb();
+  });
 };
+
+/** @alias fetch.extract */
+fetch.tarball = fetch.extract;
 </code></pre>
         </article>
     </section>

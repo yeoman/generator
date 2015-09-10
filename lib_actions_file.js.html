@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: index.js</title>
+    <title>JSDoc: Source: lib/actions/file.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: index.js</h1>
+    <h1 class="page-title">Source: lib/actions/file.js</h1>
 
     
 
@@ -26,78 +26,78 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @module yeoman-generator
- */
-
-'use strict';
-var Environment = require('yeoman-environment');
-
-/**
- * The generator system is a framework for node to author reusable and
- * composable Generators, for a vast majority of use-case.
- *
- * Inspired and based off the work done on Thor and Rails 3 Generators, we try
- * to provide the same kind of infrastructure.
- *
- * Generators are registered by namespace, where namespaces are mapping the
- * structure of the file system with `:` being simply converted to `/`.
- *
- * Generators are standard node modules, they are simply required as usual, and
- * they can be shipped into reusable npm packages.
- *
- * The lookup is done depending on the configured load path, which is by
- * default `lib/generators` in every generators package installed (ie.
- * `node_modules/yeoman-backbone/lib/generators`)
- *
- * @example
- *    var yeoman = require('yeoman-generators');
- *
- *    var env = yeoman('angular:model')
- *      .run(function(err) {
- *        console.log('done!');
- *      });
- *
- * @alias module:yeoman-generator
- */
-
-var yeoman = module.exports = function createEnv() {
-  return Environment.createEnv.apply(Environment, arguments);
-};
-
-// hoist up top level class the generator extend
-yeoman.Base = require('./lib/base');
-yeoman.NamedBase = require('./lib/named-base');
+            <pre class="prettyprint source linenums"><code>'use strict';
+var fs = require('fs');
+var path = require('path');
+var glob = require('glob');
+var mkdirp = require('mkdirp');
+var deprecate = require('../util/deprecate');
 
 /**
- * Test helpers
- * {@link module:test/helpers}
+ * @mixin
+ * @alias actions/file
  */
-yeoman.test = require('./lib/test/helpers');
+var file = module.exports;
 
 /**
- * Test assertions helpers
- * {@link https://github.com/yeoman/yeoman-assert}
+ * Performs a glob search with the provided pattern and optional Hash of
+ * options. Options can be any option supported by
+ * [glob](https://github.com/isaacs/node-glob#options)
+ *
+ * @deprecated
+ * @param {String} pattern
+ * @param {Object} options
  */
-yeoman.assert = require('yeoman-assert');
+
+file.expand = deprecate(
+  '#expand() is deprecated. Use the glob module.',
+  function (pattern, options) {
+    return glob.sync(pattern, options);
+  }
+);
 
 /**
- * Yeoman base's generators
- * @enum generators
+ * Performs a glob search with the provided pattern and optional Hash of
+ * options, filtering results to only return files (not directories). Options
+ * can be any option supported by
+ * [glob](https://github.com/isaacs/node-glob#options)
+ *
+ * @deprecated
+ * @param {String} pattern
+ * @param {Object} options
  */
-yeoman.generators = {
-  /**
-   * Base Generator
-   * {@link Base}
-   */
-  Base: yeoman.Base,
 
-  /**
-   * Named Base Generator
-   * {@link NamedBase}
-   */
-  NamedBase: yeoman.NamedBase
-};
+file.expandFiles = deprecate(
+  '#expandFiles() is deprecated. Use the glob module.',
+  function (pattern, options) {
+    options = options || {};
+    var cwd = options.cwd || process.cwd();
+
+    return this.expand(pattern, options).filter(function (filepath) {
+      return fs.statSync(path.join(cwd, filepath)).isFile();
+    });
+  }
+);
+
+/**
+ * Checks a given file path being absolute or not.
+ * Borrowed from grunt's file API.
+ * @deprecated
+ */
+
+file.isPathAbsolute = deprecate(
+  '#isPathAbsolute() is deprecated.',
+  function () {
+    var filepath = path.join.apply(path, arguments);
+    return path.resolve(filepath) === filepath;
+  }
+);
+
+/** @deprecated */
+file.mkdir = deprecate(
+  '#mkdir() is deprecated. Use mkdirp module instead. https://www.npmjs.com/package/mkdirp',
+  mkdirp.sync.bind(mkdirp)
+);
 </code></pre>
         </article>
     </section>

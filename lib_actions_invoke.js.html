@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: index.js</title>
+    <title>JSDoc: Source: lib/actions/invoke.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: index.js</h1>
+    <h1 class="page-title">Source: lib/actions/invoke.js</h1>
 
     
 
@@ -26,77 +26,43 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @module yeoman-generator
- */
-
-'use strict';
-var Environment = require('yeoman-environment');
+            <pre class="prettyprint source linenums"><code>'use strict';
 
 /**
- * The generator system is a framework for node to author reusable and
- * composable Generators, for a vast majority of use-case.
+ * Receives a `namespace`, and an Hash of `options` to invoke a given
+ * generator. The usual list of arguments can be set with `options.args`
+ * (ex. nopt's argv.remain array)
  *
- * Inspired and based off the work done on Thor and Rails 3 Generators, we try
- * to provide the same kind of infrastructure.
+ * @deprecated As of version 0.17.0, `invoke()` should be replaced by `composeWith()`.
  *
- * Generators are registered by namespace, where namespaces are mapping the
- * structure of the file system with `:` being simply converted to `/`.
+ * @param {String} namespace
+ * @param {Object} options
+ * @param {Function} cb
  *
- * Generators are standard node modules, they are simply required as usual, and
- * they can be shipped into reusable npm packages.
- *
- * The lookup is done depending on the configured load path, which is by
- * default `lib/generators` in every generators package installed (ie.
- * `node_modules/yeoman-backbone/lib/generators`)
- *
- * @example
- *    var yeoman = require('yeoman-generators');
- *
- *    var env = yeoman('angular:model')
- *      .run(function(err) {
- *        console.log('done!');
- *      });
- *
- * @alias module:yeoman-generator
+ * @mixin
+ * @alias actions/invoke
  */
 
-var yeoman = module.exports = function createEnv() {
-  return Environment.createEnv.apply(Environment, arguments);
-};
+module.exports = function invoke(namespace, options, cb) {
+  cb = cb || function () {};
+  options = options || {};
+  options.args = options.args || [];
 
-// hoist up top level class the generator extend
-yeoman.Base = require('./lib/base');
-yeoman.NamedBase = require('./lib/named-base');
+  // Hack: create a clone of the environment because we don't want to share
+  // the runLoop
+  var env = require('yeoman-environment').util.duplicateEnv(this.env);
+  var generator = env.create(namespace, options);
 
-/**
- * Test helpers
- * {@link module:test/helpers}
- */
-yeoman.test = require('./lib/test/helpers');
+  this.log.emit('up');
+  this.log.invoke(namespace);
+  this.log.emit('up');
 
-/**
- * Test assertions helpers
- * {@link https://github.com/yeoman/yeoman-assert}
- */
-yeoman.assert = require('yeoman-assert');
+  generator.once('end', function () {
+    this.log.emit('down');
+    this.log.emit('down');
+  }.bind(this));
 
-/**
- * Yeoman base's generators
- * @enum generators
- */
-yeoman.generators = {
-  /**
-   * Base Generator
-   * {@link Base}
-   */
-  Base: yeoman.Base,
-
-  /**
-   * Named Base Generator
-   * {@link NamedBase}
-   */
-  NamedBase: yeoman.NamedBase
+  return generator.run(cb);
 };
 </code></pre>
         </article>
