@@ -23,42 +23,46 @@
 
 
 
+
 <section>
 
 <header>
-    <h2>
-    Storage
-    </h2>
+    
+        <h2>
+        Storage
+        </h2>
+        
     
 </header>
 
 <article>
     <div class="container-overview">
     
-
-    
         
-<dt>
-    <h4 class="name" id="Storage"><span class="type-signature"></span>new Storage<span class="signature">(name, configPath)</span><span class="type-signature"></span></h4>
 
     
-</dt>
-<dd>
+
+    <h4 class="name" id="Storage"><span class="type-signature"></span>new Storage<span class="signature">(name, fs, configPath)</span><span class="type-signature"></span></h4>
 
     
-    <div class="description">
-        <p>Storage instances handle a json file where Generator authors can store data.</p>
+
+
+
+<div class="description">
+    <p>Storage instances handle a json file where Generator authors can store data.</p>
 <p><code>Base</code> instantiate the storage as <code>config</code> by default.</p>
-    </div>
-    
+</div>
 
-    
 
-    
 
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -105,6 +109,29 @@
 
         <tr>
             
+                <td class="name"><code>fs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">mem-fs-editor</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A mem-fs editor instance</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>configPath</code></td>
             
 
@@ -121,17 +148,26 @@
 
             
 
-            <td class="description last"><p>The filepath used as a storage. <code>.yo-rc.json</code> is used
-                            by default</p></td>
+            <td class="description last"><p>The filepath used as a storage.</p></td>
         </tr>
 
     
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -153,7 +189,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="storage.js.html">lib/util/storage.js</a>, <a href="storage.js.html#line27">line 27</a>
+        <a href="lib_util_storage.js.html">lib/util/storage.js</a>, <a href="lib_util_storage.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -165,34 +201,31 @@
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
 
+
+
+
+
+
+
+
+    <h5>Example</h5>
     
-        <h5>Example</h5>
-        
     <pre class="prettyprint"><code>var MyGenerator = yeoman.generators.base.extend({
   config: function() {
     this.config.set('coffeescript', false);
   }
 });</code></pre>
 
-    
-</dd>
+
 
     
     </div>
-
-    
 
     
 
@@ -209,29 +242,163 @@
     
         <h3 class="subsection-title">Methods</h3>
 
-        <dl>
+        
             
-<dt>
+
+    
+
+    <h4 class="name" id="_persist"><span class="type-signature"></span>_persist<span class="signature">(val)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Persist a configuration to disk</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>val</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>current configuration values</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_util_storage.js.html">lib/util/storage.js</a>, <a href="lib_util_storage.js.html#line47">line 47</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="defaults"><span class="type-signature"></span>defaults<span class="signature">(defaults)</span><span class="type-signature"> &rarr; {*}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Setup the store with defaults value and schedule a save.
+
+
+<div class="description">
+    <p>Setup the store with defaults value and schedule a save.
 If keys already exist, the initial value is kept.</p>
-    </div>
-    
+</div>
 
-    
 
-    
 
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -277,10 +444,20 @@ If keys already exist, the initial value is kept.</p>
     
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -302,7 +479,7 @@ If keys already exist, the initial value is kept.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="storage.js.html">lib/util/storage.js</a>, <a href="storage.js.html#line123">line 123</a>
+        <a href="lib_util_storage.js.html">lib/util/storage.js</a>, <a href="lib_util_storage.js.html#line133">line 133</a>
     </li></ul></dd>
     
 
@@ -314,20 +491,20 @@ If keys already exist, the initial value is kept.</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
     <p>val  Returns the merged options.</p>
 </div>
@@ -346,33 +523,35 @@ If keys already exist, the initial value is kept.</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="delete"><span class="type-signature"></span>delete<span class="signature">(key)</span><span class="type-signature"> &rarr; {null}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Delete a key from the store and schedule a save.</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Delete a key from the store and schedule a save.</p>
+</div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -418,10 +597,20 @@ If keys already exist, the initial value is kept.</p>
     
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -443,7 +632,7 @@ If keys already exist, the initial value is kept.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="storage.js.html">lib/util/storage.js</a>, <a href="storage.js.html#line111">line 111</a>
+        <a href="lib_util_storage.js.html">lib/util/storage.js</a>, <a href="lib_util_storage.js.html#line120">line 120</a>
     </li></ul></dd>
     
 
@@ -455,20 +644,20 @@ If keys already exist, the initial value is kept.</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
@@ -483,34 +672,45 @@ If keys already exist, the initial value is kept.</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="forceSave"><span class="type-signature"></span>forceSave<span class="signature">()</span><span class="type-signature"> &rarr; {null}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Force save (synchronously write the store to disk).</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Alias to save.</p>
+</div>
 
-    
 
-    
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
+
+    
+
+    
+
+    
+
     
 
     
@@ -519,6 +719,8 @@ If keys already exist, the initial value is kept.</p>
 
     
 
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>don't use save yourself.</li></ul></dd>
     
 
     
@@ -532,7 +734,7 @@ If keys already exist, the initial value is kept.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="storage.js.html">lib/util/storage.js</a>, <a href="storage.js.html#line59">line 59</a>
+        <a href="lib_util_storage.js.html">lib/util/storage.js</a>, <a href="lib_util_storage.js.html#line69">line 69</a>
     </li></ul></dd>
     
 
@@ -544,20 +746,20 @@ If keys already exist, the initial value is kept.</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
@@ -572,33 +774,35 @@ If keys already exist, the initial value is kept.</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(key)</span><span class="type-signature"> &rarr; {*}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Get a stored value</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Get a stored value</p>
+</div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -644,10 +848,20 @@ If keys already exist, the initial value is kept.</p>
     
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -669,7 +883,7 @@ If keys already exist, the initial value is kept.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="storage.js.html">lib/util/storage.js</a>, <a href="storage.js.html#line73">line 73</a>
+        <a href="lib_util_storage.js.html">lib/util/storage.js</a>, <a href="lib_util_storage.js.html#line79">line 79</a>
     </li></ul></dd>
     
 
@@ -681,20 +895,20 @@ If keys already exist, the initial value is kept.</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
     <p>The stored value. Any JSON valid type could be returned</p>
 </div>
@@ -713,34 +927,45 @@ If keys already exist, the initial value is kept.</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="getAll"><span class="type-signature"></span>getAll<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Get all the stored values</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Get all the stored values</p>
+</div>
 
-    
 
-    
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
+
+    
+
+    
+
+    
+
     
 
     
@@ -762,7 +987,7 @@ If keys already exist, the initial value is kept.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="storage.js.html">lib/util/storage.js</a>, <a href="storage.js.html#line82">line 82</a>
+        <a href="lib_util_storage.js.html">lib/util/storage.js</a>, <a href="lib_util_storage.js.html#line88">line 88</a>
     </li></ul></dd>
     
 
@@ -774,20 +999,20 @@ If keys already exist, the initial value is kept.</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
     <p>key-value object</p>
 </div>
@@ -806,35 +1031,94 @@ If keys already exist, the initial value is kept.</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="save"><span class="type-signature"></span>save<span class="signature">()</span><span class="type-signature"> &rarr; {null}</span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Schedule a save to happen sometime on a future tick.
-Note: This method is actually defined at runtime in the constructor function.</p>
-    </div>
-    
 
     
 
-    
+    <h4 class="name" id="save"><span class="type-signature"></span>save<span class="signature">(val)</span><span class="type-signature"> &rarr; {null}</span></h4>
 
     
 
+
+
+<div class="description">
+    <p>Save a new object of values</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>val</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Store new state</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
 <dl class="details">
+
+    
+
+    
+
+    
+
     
 
     
@@ -856,7 +1140,7 @@ Note: This method is actually defined at runtime in the constructor function.</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="storage.js.html">lib/util/storage.js</a>, <a href="storage.js.html#line49">line 49</a>
+        <a href="lib_util_storage.js.html">lib/util/storage.js</a>, <a href="lib_util_storage.js.html#line59">line 59</a>
     </li></ul></dd>
     
 
@@ -868,20 +1152,20 @@ Note: This method is actually defined at runtime in the constructor function.</p
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
@@ -896,33 +1180,35 @@ Note: This method is actually defined at runtime in the constructor function.</p
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(key, val)</span><span class="type-signature"> &rarr; {*}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Assign a key to a value and schedule a save.</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Assign a key to a value and schedule a save.</p>
+</div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -991,10 +1277,20 @@ Note: This method is actually defined at runtime in the constructor function.</p
     
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -1016,7 +1312,7 @@ Note: This method is actually defined at runtime in the constructor function.</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="storage.js.html">lib/util/storage.js</a>, <a href="storage.js.html#line93">line 93</a>
+        <a href="lib_util_storage.js.html">lib/util/storage.js</a>, <a href="lib_util_storage.js.html#line99">line 99</a>
     </li></ul></dd>
     
 
@@ -1028,20 +1324,20 @@ Note: This method is actually defined at runtime in the constructor function.</p
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
     <p>val  Whatever was passed in as val.</p>
 </div>
@@ -1060,12 +1356,11 @@ Note: This method is actually defined at runtime in the constructor function.</p
     </dd>
 </dl>
 
-        
-
     
-</dd>
 
-        </dl>
+
+
+        
     
 
     
@@ -1081,13 +1376,13 @@ Note: This method is actually defined at runtime in the constructor function.</p
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="remote.html">actions/remote</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-test_helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Conflicter.html">Conflicter</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li></ul><h3>Mixins</h3><ul><li><a href="actions_actions.html">actions/actions</a></li><li><a href="actions_fetch.html">actions/fetch</a></li><li><a href="actions_file.html">actions/file</a></li><li><a href="actions_help.html">actions/help</a></li><li><a href="actions_install.html">actions/install</a></li><li><a href="actions_invoke.html">actions/invoke</a></li><li><a href="actions_remote.html">actions/remote</a></li><li><a href="actions_spawn_command.html">actions/spawn_command</a></li><li><a href="actions_user.html">actions/user</a></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a></li></ul>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha8</a> on Sat Sep 13 2014 22:25:43 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Sep 10 2015 16:30:59 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>

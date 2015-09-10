@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: index.js</title>
+    <title>JSDoc: Source: lib/actions/user.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: index.js</h1>
+    <h1 class="page-title">Source: lib/actions/user.js</h1>
 
     
 
@@ -26,77 +26,70 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @module yeoman-generator
- */
-
-'use strict';
-var Environment = require('yeoman-environment');
+            <pre class="prettyprint source linenums"><code>'use strict';
+var _ = require('lodash');
+var shell = require('shelljs');
+var githubUsername = require('github-username');
+var nameCache = {};
+var emailCache = {};
 
 /**
- * The generator system is a framework for node to author reusable and
- * composable Generators, for a vast majority of use-case.
- *
- * Inspired and based off the work done on Thor and Rails 3 Generators, we try
- * to provide the same kind of infrastructure.
- *
- * Generators are registered by namespace, where namespaces are mapping the
- * structure of the file system with `:` being simply converted to `/`.
- *
- * Generators are standard node modules, they are simply required as usual, and
- * they can be shipped into reusable npm packages.
- *
- * The lookup is done depending on the configured load path, which is by
- * default `lib/generators` in every generators package installed (ie.
- * `node_modules/yeoman-backbone/lib/generators`)
- *
- * @example
- *    var yeoman = require('yeoman-generators');
- *
- *    var env = yeoman('angular:model')
- *      .run(function(err) {
- *        console.log('done!');
- *      });
- *
- * @alias module:yeoman-generator
+ * @mixin
+ * @alias actions/user
+ */
+var user = module.exports;
+
+user.git = {};
+user.github = {};
+
+/**
+ * Retrieves user's name from Git in the global scope or the project scope
+ * (it'll take what Git will use in the current context)
  */
 
-var yeoman = module.exports = function createEnv() {
-  return Environment.createEnv.apply(Environment, arguments);
+user.git.name = function () {
+  var name = nameCache[process.cwd()];
+
+  if (name) {
+    return name;
+  }
+
+  if (shell.which('git')) {
+    name = shell.exec('git config --get user.name', { silent: true }).output.trim();
+    nameCache[process.cwd()] = name;
+  }
+
+  return name;
 };
 
-// hoist up top level class the generator extend
-yeoman.Base = require('./lib/base');
-yeoman.NamedBase = require('./lib/named-base');
+/**
+ * Retrieves user's email from Git in the global scope or the project scope
+ * (it'll take what Git will use in the current context)
+ */
+
+user.git.email = function () {
+  var email = emailCache[process.cwd()];
+
+  if (email) {
+    return email;
+  }
+
+  if (shell.which('git')) {
+    email = shell.exec('git config --get user.email', { silent: true }).output.trim();
+    emailCache[process.cwd()] = email;
+  }
+
+  return email;
+};
 
 /**
- * Test helpers
- * {@link module:test/helpers}
+ * Retrieves GitHub's username from the GitHub API.
  */
-yeoman.test = require('./lib/test/helpers');
 
-/**
- * Test assertions helpers
- * {@link https://github.com/yeoman/yeoman-assert}
- */
-yeoman.assert = require('yeoman-assert');
-
-/**
- * Yeoman base's generators
- * @enum generators
- */
-yeoman.generators = {
-  /**
-   * Base Generator
-   * {@link Base}
-   */
-  Base: yeoman.Base,
-
-  /**
-   * Named Base Generator
-   * {@link NamedBase}
-   */
-  NamedBase: yeoman.NamedBase
+user.github.username = function () {
+  var args = _.toArray(arguments);
+  args.unshift(user.git.email());
+  return githubUsername.apply(null, args);
 };
 </code></pre>
         </article>

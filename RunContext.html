@@ -23,42 +23,46 @@
 
 
 
+
 <section>
 
 <header>
-    <h2>
-    RunContext
-    </h2>
+    
+        <h2>
+        RunContext
+        </h2>
+        
     
 </header>
 
 <article>
     <div class="container-overview">
     
-
-    
         
-<dt>
-    <h4 class="name" id="RunContext"><span class="type-signature"></span>new RunContext<span class="signature">(Generator)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
-</dt>
-<dd>
+
+    <h4 class="name" id="RunContext"><span class="type-signature"></span>new RunContext<span class="signature">(Generator, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
-    <div class="description">
-        <p>This class provide a run context object to façade the complexity involved in setting
+
+
+
+<div class="description">
+    <p>This class provide a run context object to façade the complexity involved in setting
 up a generator for testing</p>
-    </div>
-    
+</div>
 
-    
 
-    
 
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -69,6 +73,8 @@ up a generator for testing</p>
 
         <th>Type</th>
 
+        
+        <th>Attributes</th>
         
 
         
@@ -98,6 +104,14 @@ up a generator for testing</p>
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -107,12 +121,124 @@ up a generator for testing</p>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>settings</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tmpdir</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Automatically run this generator in a tmp dir</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -134,7 +260,7 @@ up a generator for testing</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="run-context.js.html">lib/test/run-context.js</a>, <a href="run-context.js.html#line20">line 20</a>
+        <a href="lib_test_run-context.js.html">lib/test/run-context.js</a>, <a href="lib_test_run-context.js.html#line25">line 25</a>
     </li></ul></dd>
     
 
@@ -146,20 +272,20 @@ up a generator for testing</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
@@ -174,15 +300,12 @@ up a generator for testing</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
     
     </div>
-
-    
 
     
 
@@ -195,91 +318,45 @@ up a generator for testing</p>
     
 
     
-        <h3 class="subsection-title">Members</h3>
-
-        <dl>
-            
-<dt>
-    <h4 class="name" id="withPrompts"><span class="type-signature"></span>withPrompts<span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="run-context.js.html">lib/test/run-context.js</a>, <a href="run-context.js.html#line135">line 135</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-</dd>
-
-        </dl>
-    
 
     
         <h3 class="subsection-title">Methods</h3>
 
-        <dl>
+        
             
-<dt>
+
+    
+
     <h4 class="name" id="async"><span class="type-signature"></span>async<span class="signature">()</span><span class="type-signature"> &rarr; {function}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Hold the execution until the returned callback is triggered</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Hold the execution until the returned callback is triggered</p>
+</div>
 
-    
 
-    
+
+
+
+
+
+
+
+
+
+
+
 <dl class="details">
+
+    
+
+    
+
+    
+
     
 
     
@@ -301,7 +378,7 @@ up a generator for testing</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="run-context.js.html">lib/test/run-context.js</a>, <a href="run-context.js.html#line38">line 38</a>
+        <a href="lib_test_run-context.js.html">lib/test/run-context.js</a>, <a href="lib_test_run-context.js.html#line47">line 47</a>
     </li></ul></dd>
     
 
@@ -313,20 +390,20 @@ up a generator for testing</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 <div class="param-desc">
     <p>Callback to notify the normal execution can resume</p>
 </div>
@@ -345,33 +422,35 @@ up a generator for testing</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="inDir"><span class="type-signature"></span>inDir<span class="signature">(dirPath)</span><span class="type-signature"> &rarr; {this}</span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Clean the provided directory, then change directory into it</p>
-    </div>
-    
 
     
 
-    
+    <h4 class="name" id="inDir"><span class="type-signature"></span>inDir<span class="signature">(dirPath, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
-        <h5>Parameters:</h5>
-        
+
+
+
+<div class="description">
+    <p>Clean the provided directory, then change directory into it</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
 
 <table class="params">
     <thead>
@@ -382,6 +461,8 @@ up a generator for testing</p>
 
         <th>Type</th>
 
+        
+        <th>Attributes</th>
         
 
         
@@ -408,6 +489,14 @@ up a generator for testing</p>
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -416,12 +505,55 @@ up a generator for testing</p>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>callback who'll receive the folder path as argument</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -443,7 +575,7 @@ up a generator for testing</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="run-context.js.html">lib/test/run-context.js</a>, <a href="run-context.js.html#line88">line 88</a>
+        <a href="lib_test_run-context.js.html">lib/test/run-context.js</a>, <a href="lib_test_run-context.js.html#line114">line 114</a>
     </li></ul></dd>
     
 
@@ -455,20 +587,24 @@ up a generator for testing</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>run context instance</p>
+</div>
+
 
 
 <dl>
@@ -483,33 +619,37 @@ up a generator for testing</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="onEnd"><span class="type-signature"></span>onEnd<span class="signature">(callback)</span><span class="type-signature"> &rarr; {this}</span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Add a callback to be called after the generator has ran</p>
-    </div>
-    
 
     
 
-    
+    <h4 class="name" id="inTmpDir"><span class="type-signature"></span>inTmpDir<span class="signature">(cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
-        <h5>Parameters:</h5>
-        
+
+
+
+<div class="description">
+    <p>Cleanup a temporary directy and change the CWD into it</p>
+<p>This method is called automatically when creating a RunContext. Only use it if you need
+to use the callback.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
 
 <table class="params">
     <thead>
@@ -520,6 +660,8 @@ up a generator for testing</p>
 
         <th>Type</th>
 
+        
+        <th>Attributes</th>
         
 
         
@@ -533,7 +675,7 @@ up a generator for testing</p>
 
         <tr>
             
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>cb</code></td>
             
 
             <td class="type">
@@ -546,20 +688,32 @@ up a generator for testing</p>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>callback who'll receive the folder path as argument</p></td>
         </tr>
 
     
     </tbody>
 </table>
-    
 
-    
+
+
+
+
+
 <dl class="details">
-    
 
     
 
@@ -568,7 +722,13 @@ up a generator for testing</p>
     
 
     
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>`onEnd` is deprecated, use .on('end', onEndHandler) instead.</li><ul></dd>
+
+    
+
+    
+
+    
+
     
 
     
@@ -582,7 +742,7 @@ up a generator for testing</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="run-context.js.html">lib/test/run-context.js</a>, <a href="run-context.js.html#line171">line 171</a>
+        <a href="lib_test_run-context.js.html">lib/test/run-context.js</a>, <a href="lib_test_run-context.js.html#line131">line 131</a>
     </li></ul></dd>
     
 
@@ -594,20 +754,24 @@ up a generator for testing</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>run context instance</p>
+</div>
+
 
 
 <dl>
@@ -622,33 +786,35 @@ up a generator for testing</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="withArguments"><span class="type-signature"></span>withArguments<span class="signature">(args)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Provide arguments to the run context</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Provide arguments to the run context</p>
+</div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -697,10 +863,20 @@ up a generator for testing</p>
     
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -722,7 +898,7 @@ up a generator for testing</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="run-context.js.html">lib/test/run-context.js</a>, <a href="run-context.js.html#line101">line 101</a>
+        <a href="lib_test_run-context.js.html">lib/test/run-context.js</a>, <a href="lib_test_run-context.js.html#line142">line 142</a>
     </li></ul></dd>
     
 
@@ -734,20 +910,20 @@ up a generator for testing</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
@@ -762,33 +938,35 @@ up a generator for testing</p>
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="withGenerators"><span class="type-signature"></span>withGenerators<span class="signature">(dependencies)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Provide dependent generators</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Provide dependent generators</p>
+</div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -834,10 +1012,20 @@ up a generator for testing</p>
     
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -859,7 +1047,7 @@ up a generator for testing</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="run-context.js.html">lib/test/run-context.js</a>, <a href="run-context.js.html#line158">line 158</a>
+        <a href="lib_test_run-context.js.html">lib/test/run-context.js</a>, <a href="lib_test_run-context.js.html#line195">line 195</a>
     </li></ul></dd>
     
 
@@ -871,20 +1059,20 @@ up a generator for testing</p>
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
@@ -899,51 +1087,198 @@ up a generator for testing</p>
     </dd>
 </dl>
 
-        
-
     
-        <h5>Example</h5>
-        
-    <pre class="prettyprint"><code>var deps = ['../../common',
-            '../../controller',
-            '../../main',
-            [helpers.createDummyGenerator(), 'testacular:app']
-          ];
-var angular = new RunContext('../../app');
-angular.withGenerator(deps);
-angular.withPrompt({
- compass: true,
- bootstrap: true
-});
-angular.onEnd(function () {
- // assert something
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>var angular = new RunContext('../../app');
+angular.withGenerators([
+  '../../common',
+  '../../controller',
+  '../../main',
+  [helpers.createDummyGenerator(), 'testacular:app']
+]);
+angular.on('end', function () {
+  // assert something
 });</code></pre>
 
-    
-</dd>
+
 
         
             
-<dt>
+
+    
+
+    <h4 class="name" id="withLocalConfig"><span class="type-signature"></span>withLocalConfig<span class="signature">(localConfig)</span><span class="type-signature"> &rarr; {this}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Mock the local configuration with the provided config</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>localConfig</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>should look just like if called config.getAll()</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_test_run-context.js.html">lib/test/run-context.js</a>, <a href="lib_test_run-context.js.html#line206">line 206</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">this</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="withOptions"><span class="type-signature"></span>withOptions<span class="signature">(options)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Provide options to the run context</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Provide options to the run context</p>
+</div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -989,10 +1324,20 @@ angular.onEnd(function () {
     
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -1014,7 +1359,7 @@ angular.onEnd(function () {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="run-context.js.html">lib/test/run-context.js</a>, <a href="run-context.js.html#line114">line 114</a>
+        <a href="lib_test_run-context.js.html">lib/test/run-context.js</a>, <a href="lib_test_run-context.js.html#line155">line 155</a>
     </li></ul></dd>
     
 
@@ -1026,20 +1371,20 @@ angular.onEnd(function () {
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
@@ -1054,33 +1399,35 @@ angular.onEnd(function () {
     </dd>
 </dl>
 
-        
-
     
-</dd>
+
+
 
         
             
-<dt>
+
+    
+
     <h4 class="name" id="withPrompts"><span class="type-signature"></span>withPrompts<span class="signature">(answers)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
-</dt>
-<dd>
 
-    
-    <div class="description">
-        <p>Mock the prompt with dummy answers</p>
-    </div>
-    
 
-    
 
-    
+<div class="description">
+    <p>Mock the prompt with dummy answers</p>
+</div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
@@ -1126,10 +1473,20 @@ angular.onEnd(function () {
     
     </tbody>
 </table>
+
+
+
+
+
+
+<dl class="details">
+
     
 
     
-<dl class="details">
+
+    
+
     
 
     
@@ -1151,7 +1508,7 @@ angular.onEnd(function () {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="run-context.js.html">lib/test/run-context.js</a>, <a href="run-context.js.html#line125">line 125</a>
+        <a href="lib_test_run-context.js.html">lib/test/run-context.js</a>, <a href="lib_test_run-context.js.html#line173">line 173</a>
     </li></ul></dd>
     
 
@@ -1163,20 +1520,20 @@ angular.onEnd(function () {
 </dl>
 
 
-    
 
-    
 
-    
 
-    
 
-    
 
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
@@ -1191,12 +1548,11 @@ angular.onEnd(function () {
     </dd>
 </dl>
 
-        
-
     
-</dd>
 
-        </dl>
+
+
+        
     
 
     
@@ -1212,13 +1568,13 @@ angular.onEnd(function () {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="assert.html">test/assert</a></li><li><a href="helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Environment.html">Environment</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="actions.html">actions/actions</a></li><li><a href="fetch.html">actions/fetch</a></li><li><a href="file.html">actions/file</a></li><li><a href="help.html">actions/help</a></li><li><a href="install.html">actions/install</a></li><li><a href="invoke.html">actions/invoke</a></li><li><a href="remote.html">actions/remote</a></li><li><a href="spawn_command.html">actions/spawn_command</a></li><li><a href="string.html">actions/string</a></li><li><a href="user.html">actions/user</a></li><li><a href="wiring.html">actions/wiring</a></li><li><a href="resolver.html">env/resolver</a></li><li><a href="common.html">util/common</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-test_helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Conflicter.html">Conflicter</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li></ul><h3>Mixins</h3><ul><li><a href="actions_actions.html">actions/actions</a></li><li><a href="actions_fetch.html">actions/fetch</a></li><li><a href="actions_file.html">actions/file</a></li><li><a href="actions_help.html">actions/help</a></li><li><a href="actions_install.html">actions/install</a></li><li><a href="actions_invoke.html">actions/invoke</a></li><li><a href="actions_remote.html">actions/remote</a></li><li><a href="actions_spawn_command.html">actions/spawn_command</a></li><li><a href="actions_user.html">actions/user</a></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a></li></ul>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha8</a> on Sat Sep 13 2014 22:25:43 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Sep 10 2015 16:30:59 GMT-0700 (MST)
 </footer>
 
 <script> prettyPrint(); </script>

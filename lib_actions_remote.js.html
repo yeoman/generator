@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/actions/remote.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/actions/remote.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+var fs = require('fs');
+var path = require('path');
+var _s = require('underscore.string');
+var rimraf = require('rimraf');
+var glob = require('glob');
+var deprecate = require('../util/deprecate');
+
+/**
+ * @mixin
+ * @alias actions/remote
+ */
+var remote = module.exports;
+
+/**
+ * Remotely fetch a package from github (or an archive), store this into a _cache
+ * folder, and provide a "remote" object as a facade API to ourself (part of
+ * generator API, copy, template, directory). It's possible to remove local cache,
+ * and force a new remote fetch of the package.
+ *
+ * ### Examples:
+ *
+ *     this.remote('user', 'repo', function(err, remote) {
+ *       remote.copy('.', 'vendors/user-repo');
+ *     });
+ *
+ *     this.remote('user', 'repo', 'branch', function(err, remote) {
+ *       remote.copy('.', 'vendors/user-repo');
+ *     });
+ *
+ *     this.remote('http://foo.com/bar.zip', function(err, remote) {
+ *       remote.copy('.', 'vendors/user-repo');
+ *     });
+ *
+ * When fetching from Github
+ * @param {String} username
+ * @param {String} repo
+ * @param {String} branch
+ * @param {Function} cb
+ * @param {Boolean} refresh
+ *
+ * @also
+ * When fetching an archive
+ * @param {String} url
+ * @param {Function} cb
+ * @param {Boolean} refresh
+ */
+
+remote.remote = function () {
+  var username;
+  var repo;
+  var branch;
+  var cb;
+  var refresh;
+  var url;
+  var cache;
+
+  if (arguments.length &lt;= 3 &amp;&amp; typeof arguments[2] !== 'function') {
+    url = arguments[0];
+    cb = arguments[1];
+    refresh = arguments[2];
+    cache = path.join(this.cacheRoot(), _s.slugify(url));
+  } else {
+    username = arguments[0];
+    repo = arguments[1];
+    branch = arguments[2];
+    cb = arguments[3];
+    refresh = arguments[4];
+
+    if (!cb) {
+      cb = branch;
+      branch = 'master';
+    }
+
+    cache = path.join(this.cacheRoot(), username, repo, branch);
+    url = 'https://github.com/' + [username, repo, 'archive', branch].join('/') + '.tar.gz';
+  }
+
+  var done = function (err) {
+    if (err) {
+      cb(err);
+      return;
+    }
+
+    this.remoteDir(cache, cb);
+  }.bind(this);
+
+  fs.stat(cache, function (err) {
+    // already cached
+    if (err) {
+      this.extract(url, cache, { strip: 1 }, done);
+      return;
+    }
+
+    // no refresh, so we can use this cache
+    if (!refresh) {
+      done();
+      return;
+    }
+
+    // otherwise, we need to remove it, to fetch it again
+    rimraf(cache, function (err) {
+      if (err) {
+        cb(err);
+        return;
+      }
+
+      this.extract(url, cache, { strip: 1 }, done);
+    }.bind(this));
+  }.bind(this));
+
+  return this;
+};
+
+/**
+ * Retrieve a stored directory and use as a remote reference. This is handy if
+ * you have files you want to move that may have been downloaded differently to
+ * using `this.remote()` (eg such as `node_modules` installed via `package.json`)
+ * @param  {String}   cache
+ * @param  {Function} cb
+ * @example
+ *  ### Examples
+ *
+ *     this.remoteDir('foo/bar', function(err, remote) {
+ *       remote.copy('.', 'vendors/user-repo');
+ *     });
+ */
+remote.remoteDir = function (cache, cb) {
+  var self = this;
+  var files = glob.sync('**', { cwd: cache, nodir: true, dot: true });
+
+  var remoteFs = {};
+  remoteFs.cachePath = cache;
+
+  // simple proxy to `.copy(source, destination)`
+  remoteFs.copy = function copy(source, destination) {
+    source = path.join(cache, source);
+    self.copy(source, destination);
+    return this;
+  };
+
+  // simple proxy to `.bulkCopy(source, destination)`
+  remoteFs.bulkCopy = function copy(source, destination) {
+    source = path.join(cache, source);
+    self.bulkCopy(source, destination);
+    return this;
+  };
+
+  // same as `.template(source, destination, data)`
+  remoteFs.template = function template(source, destination, data) {
+    data = data || self;
+    destination = destination || source;
+    source = path.join(cache, source);
+
+    var body = self.engine(self.read(source), data);
+    self.write(destination, body);
+  };
+
+  // same as `.template(source, destination)`
+  remoteFs.directory = function directory(source, destination) {
+    var root = self.sourceRoot();
+    self.sourceRoot(cache);
+    self.directory(source, destination);
+    self.sourceRoot(root);
+  };
+
+  // simple proxy to `.bulkDirectory(source, destination)`
+  remoteFs.bulkDirectory = function directory(source, destination) {
+    var root = self.sourceRoot();
+    self.sourceRoot(cache);
+    self.bulkDirectory(source, destination);
+    self.sourceRoot(root);
+  };
+
+  var deprecatedFileUtils = deprecate.log.bind(null, [
+    '#src() and #dest() are deprecated. Please read the documentation to learn about',
+    'the new ways of handling files. http://yeoman.io/authoring/file-system.html'
+  ].join('\n'));
+
+  Object.defineProperty(remoteFs, 'src', { get: deprecatedFileUtils });
+  Object.defineProperty(remoteFs, 'dest', { get: deprecatedFileUtils });
+
+  cb(null, remoteFs, files);
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-test_helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Conflicter.html">Conflicter</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li></ul><h3>Mixins</h3><ul><li><a href="actions_actions.html">actions/actions</a></li><li><a href="actions_fetch.html">actions/fetch</a></li><li><a href="actions_file.html">actions/file</a></li><li><a href="actions_help.html">actions/help</a></li><li><a href="actions_install.html">actions/install</a></li><li><a href="actions_invoke.html">actions/invoke</a></li><li><a href="actions_remote.html">actions/remote</a></li><li><a href="actions_spawn_command.html">actions/spawn_command</a></li><li><a href="actions_user.html">actions/user</a></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Sep 10 2015 16:30:59 GMT-0700 (MST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/util/storage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/util/storage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+var path = require('path');
+var assert = require('assert');
+var _ = require('lodash');
+
+/**
+ * Storage instances handle a json file where Generator authors can store data.
+ *
+ * `Base` instantiate the storage as `config` by default.
+ *
+ * @constructor
+ * @param {String} name       The name of the new storage (this is a namespace)
+ * @param {mem-fs-editor} fs  A mem-fs editor instance
+ * @param {String} configPath The filepath used as a storage.
+ *
+ * @example
+ * var MyGenerator = yeoman.generators.base.extend({
+ *   config: function() {
+ *     this.config.set('coffeescript', false);
+ *   }
+ * });
+ */
+
+var Storage = module.exports = function Storage(name, fs, configPath) {
+  assert(name, 'A name parameter is required to create a storage');
+  assert(configPath, 'A config filepath is required to create a storage');
+
+  this.path = configPath;
+  this.name = name;
+  this.fs = fs;
+  this.existed = Object.keys(this._store()).length > 0;
+};
+
+/**
+ * Return the current store as JSON object
+ * @private
+ * @return {Object} the store content
+ */
+Storage.prototype._store = function () {
+  return this.fs.readJSON(this.path, {})[this.name] || {};
+};
+
+/**
+ * Persist a configuration to disk
+ * @param {Object} val - current configuration values
+ */
+Storage.prototype._persist = function (val) {
+  var fullStore = this.fs.readJSON(this.path, {});
+  fullStore[this.name] = val;
+  this.fs.write(this.path, JSON.stringify(fullStore, null, '  '));
+};
+
+/**
+ * Save a new object of values
+ * @param {Object} val - Store new state
+ * @return {null}
+ */
+
+Storage.prototype.save = function () {
+  this._persist(this._store());
+};
+
+/**
+ * Alias to save.
+ * @deprecated don't use save yourself.
+ * @return {null}
+ */
+
+Storage.prototype.forceSave = function () {
+  this.save();
+};
+
+/**
+ * Get a stored value
+ * @param  {String} key  The key under which the value is stored.
+ * @return {*}           The stored value. Any JSON valid type could be returned
+ */
+
+Storage.prototype.get = function (key) {
+  return this._store()[key];
+};
+
+/**
+ * Get all the stored values
+ * @return {Object}  key-value object
+ */
+
+Storage.prototype.getAll = function () {
+  return _.cloneDeep(this._store());
+};
+
+/**
+ * Assign a key to a value and schedule a save.
+ * @param {String} key  The key under which the value is stored
+ * @param {*} val  Any valid JSON type value (String, Number, Array, Object).
+ * @return {*} val  Whatever was passed in as val.
+ */
+
+Storage.prototype.set = function (key, val) {
+  assert(!_.isFunction(val), 'Storage value can\'t be a function');
+
+  var store = this._store();
+
+  if (_.isObject(key)) {
+    val = _.extend(store, key);
+  } else {
+    store[key] = val;
+  }
+
+  this._persist(store);
+  return val;
+};
+
+/**
+ * Delete a key from the store and schedule a save.
+ * @param  {String} key  The key under which the value is stored.
+ * @return {null}
+ */
+
+Storage.prototype.delete = function (key) {
+  var store = this._store();
+  delete store[key];
+  this._persist(store);
+};
+
+/**
+ * Setup the store with defaults value and schedule a save.
+ * If keys already exist, the initial value is kept.
+ * @param  {Object} defaults  Key-value object to store.
+ * @return {*} val  Returns the merged options.
+ */
+
+Storage.prototype.defaults = function (defaults) {
+  assert(_.isObject(defaults), 'Storage `defaults` method only accept objects');
+  var val = _.defaults(this.getAll(), defaults);
+  this.set(val);
+  return val;
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-test_helpers.html">test/helpers</a></li><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Conflicter.html">Conflicter</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="RunContext.html">RunContext</a></li><li><a href="Storage.html">Storage</a></li></ul><h3>Mixins</h3><ul><li><a href="actions_actions.html">actions/actions</a></li><li><a href="actions_fetch.html">actions/fetch</a></li><li><a href="actions_file.html">actions/file</a></li><li><a href="actions_help.html">actions/help</a></li><li><a href="actions_install.html">actions/install</a></li><li><a href="actions_invoke.html">actions/invoke</a></li><li><a href="actions_remote.html">actions/remote</a></li><li><a href="actions_spawn_command.html">actions/spawn_command</a></li><li><a href="actions_user.html">actions/user</a></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Sep 10 2015 16:30:59 GMT-0700 (MST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
