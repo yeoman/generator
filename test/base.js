@@ -72,6 +72,7 @@ describe('generators.Base', function () {
     it('set the CWD where `.yo-rc.json` is found', function () {
       var projectDir = path.join(__dirname, 'fixtures/dummy-project');
       process.chdir(path.join(projectDir, 'subdir'));
+      this.env.cwd = process.cwd();
 
       new this.Dummy(['foo'], {
         resolved: 'ember/all',
