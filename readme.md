@@ -12,7 +12,7 @@ A generator can be as complex as you want it to be. It can simply copy a bunch o
 
 The fastest way to get started is to use  [generator-generator](https://github.com/yeoman/generator-generator), a Yeoman generator to generate a Yeoman generator.
 
-After reading the getting started guide, you might want to read the code source or visit our [API documentation](http://yeoman.github.io/generator/) for a list of all methods available.
+After reading the getting started guide, you might want to read the code source or visit our [API documentation](http://yeoman.io/generator/) for a list of all methods available.
 
 
 ### Debugging
