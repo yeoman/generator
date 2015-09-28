@@ -2,14 +2,22 @@
   "name": "yeoman-generator",
   "version": "0.20.3",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
-  "homepage": "http://yeoman.io",
+  "license": "BSD-2-Clause",
   "repository": "yeoman/generator",
-  "author": "Yeoman team",
+  "homepage": "http://yeoman.io",
+  "author": "Yeoman",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "gulp",
+    "doc": "jsdoc -c jsdoc.json readme.md",
+    "prepublish": "gulp prepublish"
+  },
   "files": [
     "index.js",
     "lib"
   ],
-  "main": "index.js",
   "keywords": [
     "development",
     "dev",
@@ -23,15 +31,6 @@
     "yeoman",
     "app"
   ],
-  "license": "BSD-2-Clause",
-  "engines": {
-    "node": ">=0.10.0"
-  },
-  "scripts": {
-    "test": "gulp",
-    "doc": "jsdoc -c ./jsdoc.json ./readme.md",
-    "prepublish": "gulp prepublish"
-  },
   "dependencies": {
     "async": "^1.4.2",
     "chalk": "^1.0.0",
