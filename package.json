@@ -1,6 +1,6 @@
 {
   "name": "yeoman-generator",
-  "version": "0.20.3",
+  "version": "0.21.0",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
   "license": "BSD-2-Clause",
   "repository": "yeoman/generator",
