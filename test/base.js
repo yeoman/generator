@@ -940,6 +940,30 @@ describe('generators.Base', function () {
             cb(null, file);
           }));
       };
+
+      this.testGen.run(function () {
+        assert.equal(fs.readFileSync(this.filepath, 'utf8'), 'ab');
+        done();
+      }.bind(this));
+    });
+
+    it('add multiple transform streams to the commit stream', function (done) {
+      var self = this;
+      this.TestGenerator.prototype.writing = function () {
+        this.fs.write(self.filepath, 'not correct');
+
+        this.registerTransformStream([
+          through.obj(function (file, enc, cb) {
+            file.contents = new Buffer('a');
+            cb(null, file);
+          }),
+          through.obj(function (file, enc, cb) {
+            file.contents = new Buffer(file.contents.toString() + 'b');
+            cb(null, file);
+          })
+        ]);
+      };
+
       this.testGen.run(function () {
         assert.equal(fs.readFileSync(this.filepath, 'utf8'), 'ab');
         done();
