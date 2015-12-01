@@ -1,7 +1,5 @@
 /*global it, describe, before, beforeEach, afterEach */
 'use strict';
-
-var assert = require('assert');
 var proxyquire = require('proxyquire');
 var sinon = require('sinon');
 
@@ -58,4 +56,3 @@ describe('generators.Base (actions/spawn_command)', function () {
     });
   });
 });
-

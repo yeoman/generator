@@ -87,13 +87,13 @@ describe('RunContext', function () {
         assert.notEqual(process.cwd(), __dirname);
         assert.equal(fs.realpathSync(os.tmpdir()), path.dirname(process.cwd()));
         done();
-      }.bind(this));
+      });
     });
 
     it('allows an option to not automatically run in tmpdir', function (done) {
       var cwd = process.cwd();
       this.ctx.settings.tmpdir = false;
-      this.ctx.on('end', function (err) {
+      this.ctx.on('end', function () {
         assert.equal(cwd, process.cwd());
         done();
       });
@@ -217,7 +217,7 @@ describe('RunContext', function () {
         setTimeout(function () {
           delayed = true;
           release();
-        }.bind(this), 1);
+        }, 1);
       });
 
       ctx.inDir(this.tmp, cb)

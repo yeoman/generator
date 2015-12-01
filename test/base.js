@@ -384,7 +384,7 @@ describe('generators.Base', function () {
       this.testGen.run(function () {
         assert(initSpy.calledBefore(promptSpy));
         done();
-      }.bind(this));
+      });
     });
 
     it('run queued methods in order even if not in order in prototype', function (done) {
@@ -394,7 +394,7 @@ describe('generators.Base', function () {
       this.testGen.run(function () {
         assert(initSpy.calledBefore(execSpy));
         done();
-      }.bind(this));
+      });
     });
 
     it('commit mem-fs to disk', function (done) {
@@ -415,7 +415,7 @@ describe('generators.Base', function () {
         assert(pathExists.sync(oldFilePath));
         assert(pathExists.sync(filepath));
         done();
-      }.bind(this));
+      });
     });
 
     it('allow skipping file writes to disk', function (done) {
@@ -437,7 +437,7 @@ describe('generators.Base', function () {
       testGen.run(function () {
         assert.equal(fs.readFileSync(filepath, 'utf8'), 'var a = 1;\n');
         done();
-      }.bind(this));
+      });
     });
 
     it('does not prompt again for skipped files', function (done) {
@@ -470,7 +470,7 @@ describe('generators.Base', function () {
         assert.equal(Conflicter.prototype.checkForCollision.callCount, 2);
         Conflicter.prototype.checkForCollision.restore();
         done();
-      }.bind(this));
+      });
     });
 
     it('does not pass config file to conflicter', function (done) {

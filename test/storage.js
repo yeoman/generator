@@ -5,7 +5,6 @@ var fs = require('fs');
 var os = require('os');
 var path = require('path');
 var FileEditor = require('mem-fs-editor');
-var sinon = require('sinon');
 var pathExists = require('path-exists');
 var env = require('yeoman-environment');
 var Storage = require('../lib/util/storage');
@@ -13,8 +12,8 @@ var generators = require('../');
 var helpers = generators.test;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 
-function rm(path) {
-  if (pathExists.sync(path)) {
+function rm(filepath) {
+  if (pathExists.sync(filepath)) {
     fs.unlinkSync(path);
   }
 }
@@ -38,7 +37,9 @@ describe('Storage', function () {
 
   describe('.constructor()', function () {
     it('require a name parameter', function () {
-      assert.throws(function () { new Storage(); });
+      assert.throws(function () {
+        new Storage();
+      });
     });
 
     it('take a path parameter', function () {

@@ -1,10 +1,8 @@
 /*global describe, before, beforeEach, it */
 'use strict';
 var path = require('path');
-var fs = require('fs');
 var os = require('os');
 var events = require('events');
-var sinon = require('sinon');
 var Environment = require('yeoman-environment');
 var generators = require('../');
 var assert = generators.assert;

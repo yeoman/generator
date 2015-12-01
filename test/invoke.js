@@ -18,7 +18,9 @@ describe('generators.Base#invoke()', function () {
     });
 
     this.SubGen = generators.Base.extend({
-      exec: function () { this.stubGenRan = true; }
+      exec: function () {
+        this.stubGenRan = true;
+      }
     });
 
     this.env.registerStub(this.SubGen, 'foo:bar');

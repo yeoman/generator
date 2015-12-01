@@ -3,7 +3,6 @@
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
-var sinon = require('sinon');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-actions');
 var TestAdapter = require('../lib/test/adapter').TestAdapter;
 var generators = require('../');

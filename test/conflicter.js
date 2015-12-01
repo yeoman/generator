@@ -112,7 +112,7 @@ describe('Conflicter', function () {
       }, function (status) {
         assert.equal(status, 'identical');
         done();
-      }.bind(this));
+      });
     });
 
     it('does not provide a diff option for directory', function (done) {
@@ -121,7 +121,7 @@ describe('Conflicter', function () {
       conflicter.collision({
         path: __dirname,
         contents: null
-      }, function (status) {
+      }, function () {
         assert.equal(
           _.where(spy.firstCall.args[0][0].choices, { value: 'diff' }).length,
           0
