@@ -43,6 +43,7 @@
     "debug": "^2.1.0",
     "detect-conflict": "^1.0.0",
     "download": "^4.1.2",
+    "error": "^7.0.2",
     "find-up": "^1.0.0",
     "github-username": "^2.0.0",
     "glob": "^6.0.1",
