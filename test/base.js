@@ -10,6 +10,7 @@ var mockery = require('mockery');
 var rimraf = require('rimraf');
 var through = require('through2');
 var pathExists = require('path-exists');
+var Promise = require('pinkie');
 var yeoman = require('yeoman-environment');
 var userHome = require('user-home');
 
@@ -291,6 +292,44 @@ describe('generators.Base', function () {
 
       this.testGen.on('error', function (err) {
         assert.equal(err, error);
+        done();
+      });
+
+      this.testGen.run();
+    });
+
+    it('handle function returning promises as asynchronous', function (done) {
+      var spy1 = sinon.spy();
+      var spy2 = sinon.spy();
+
+      this.TestGenerator.prototype.first = function () {
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            spy1();
+            resolve();
+          }, 10);
+        });
+      };
+
+      this.TestGenerator.prototype.second = function () {
+        spy2();
+      };
+
+      this.testGen.run(function () {
+        spy1.calledBefore(spy2);
+        done();
+      });
+    });
+
+    it('handle failing promises as errors', function (done) {
+      this.TestGenerator.prototype.failing = function () {
+        return new Promise(function (resolve, reject) {
+          reject('some error');
+        });
+      };
+
+      this.testGen.on('error', function (err) {
+        assert.equal(err, 'some error');
         done();
       });
 

@@ -61,6 +61,7 @@
     "read-chunk": "^1.0.1",
     "read-pkg-up": "^1.0.1",
     "rimraf": "^2.2.0",
+    "run-async": "^2.0.0",
     "shelljs": "^0.5.0",
     "sinon": "^1.9.1",
     "text-table": "^0.2.0",
@@ -75,6 +76,7 @@
   "devDependencies": {
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.0",
+    "gulp-eslint": "^1.0.0",
     "gulp-exclude-gitignore": "^1.0.0",
     "gulp-istanbul": "^0.10.0",
     "gulp-mocha": "^2.0.0",
@@ -83,7 +85,7 @@
     "jsdoc": "^3.3.0-beta1",
     "mockery": "^1.4.0",
     "nock": "^3.3.2",
-    "proxyquire": "^1.0.0",
-    "gulp-eslint": "^1.0.0"
+    "pinkie": "^2.0.1",
+    "proxyquire": "^1.0.0"
   }
 }
