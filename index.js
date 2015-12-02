@@ -4,6 +4,7 @@
 
 'use strict';
 var Environment = require('yeoman-environment');
+var deprecate = require('./lib/util/deprecate');
 
 /**
  * The generator system is a framework for node to author reusable and
@@ -40,6 +41,12 @@ var yeoman = module.exports = function createEnv() {
 // hoist up top level class the generator extend
 yeoman.Base = require('./lib/base');
 yeoman.NamedBase = require('./lib/named-base');
+
+deprecate.property(
+  'NamedBase constructor is deprecated. See https://github.com/yeoman/generator/issues/882',
+  yeoman,
+  'NamedBase'
+);
 
 /**
  * Test helpers

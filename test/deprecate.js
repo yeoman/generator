@@ -40,4 +40,19 @@ describe('deprecate()', function () {
       sinon.assert.calledWith(console.log, chalk.yellow('(!) ') + 'func is deprecated');
     });
   });
+
+  describe('.property()', function () {
+    it('wrap a property getter and log a message', function () {
+      var dummy = {
+        foo: 1
+      };
+      deprecate.property('foo is deprecated', dummy, 'foo');
+
+      // Keep values
+      assert.equal(dummy.foo, 1);
+
+      // Wrap methods
+      sinon.assert.calledWith(console.log, chalk.yellow('(!) ') + 'foo is deprecated');
+    });
+  });
 });
