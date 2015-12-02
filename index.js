@@ -59,6 +59,11 @@ yeoman.test = require('./lib/test/helpers');
  * {@link https://github.com/yeoman/yeoman-assert}
  */
 yeoman.assert = require('yeoman-assert');
+deprecate.property(
+  'yeoman.assert is deprecated. Instead `require(\'yeoman-assert\')`. See https://github.com/yeoman/generator/issues/883',
+  yeoman,
+  'assert'
+);
 
 /**
  * Yeoman base's generators
