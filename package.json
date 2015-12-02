@@ -85,7 +85,7 @@
     "jsdoc": "^3.3.0-beta1",
     "mockery": "^1.4.0",
     "nock": "^3.3.2",
-    "pinkie": "^2.0.1",
+    "pinkie-promise": "^2.0.0",
     "proxyquire": "^1.0.0"
   }
 }

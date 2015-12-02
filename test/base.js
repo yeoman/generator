@@ -10,7 +10,7 @@ var mockery = require('mockery');
 var rimraf = require('rimraf');
 var through = require('through2');
 var pathExists = require('path-exists');
-var Promise = require('pinkie');
+var Promise = require('pinkie-promise');
 var yeoman = require('yeoman-environment');
 var userHome = require('user-home');
 
