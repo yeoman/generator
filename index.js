@@ -82,3 +82,8 @@ yeoman.generators = {
    */
   NamedBase: yeoman.NamedBase
 };
+deprecate.property(
+  'require(\'yeoman-generator\').generators.Base is deprecated. Use require(\'yeoman-generator\').Base directly',
+  yeoman,
+  'generators'
+);
