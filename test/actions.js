@@ -4,17 +4,20 @@ var fs = require('fs');
 var os = require('os');
 var path = require('path');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-actions');
-var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
 var generators = require('../');
-var helpers = generators.test;
-var assert = generators.assert;
+var helpers = require('yeoman-test');
+var assert = require('yeoman-assert');
 
 describe('generators.Base (actions/actions)', function () {
   before(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
     var env = this.env = generators([], {}, new TestAdapter());
-    env.registerStub(helpers.createDummyGenerator(), 'dummy');
+    var Dummy = generators.Base.extend({
+      exec: function () {}
+    });
+    env.registerStub(Dummy, 'dummy');
     this.dummy = env.create('dummy');
     this.fixtures = path.join(__dirname, 'fixtures');
     this.dummy.sourceRoot(this.fixtures);

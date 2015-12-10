@@ -1,15 +1,16 @@
 /*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
 var yeoman = require('yeoman-environment');
-var TestAdapter = require('../lib/test/adapter').TestAdapter;
-var generators = require('../');
-var helpers = generators.test;
-var assert = generators.assert;
+var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
+var generators = require('..');
+var assert = require('yeoman-assert');
 
 describe('generators.Base#invoke()', function () {
   beforeEach(function () {
     this.env = yeoman.createEnv([], {}, new TestAdapter());
-    this.Generator = helpers.createDummyGenerator();
+    this.Generator = generators.Base.extend({
+      exec: function () {}
+    });
     this.gen = new this.Generator({
       namespace: 'foo:lab',
       resolved: 'path/',

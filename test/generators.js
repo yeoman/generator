@@ -5,8 +5,8 @@ var os = require('os');
 var events = require('events');
 var Environment = require('yeoman-environment');
 var generators = require('../');
-var assert = generators.assert;
-var helpers = generators.test;
+var assert = require('yeoman-assert');
+var helpers = require('yeoman-test');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-generators');
 
 describe('Generators module', function () {

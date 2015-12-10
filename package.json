@@ -63,7 +63,6 @@
     "rimraf": "^2.2.0",
     "run-async": "^2.0.0",
     "shelljs": "^0.5.0",
-    "sinon": "^1.9.1",
     "text-table": "^0.2.0",
     "through2": "^2.0.0",
     "underscore.string": "^3.0.3",
@@ -71,6 +70,7 @@
     "xdg-basedir": "^2.0.0",
     "yeoman-assert": "^2.0.0",
     "yeoman-environment": "^1.1.0",
+    "yeoman-test": "^1.0.0",
     "yeoman-welcome": "^1.0.0"
   },
   "devDependencies": {
@@ -86,6 +86,7 @@
     "mockery": "^1.4.0",
     "nock": "^3.3.2",
     "pinkie-promise": "^2.0.0",
-    "proxyquire": "^1.0.0"
+    "proxyquire": "^1.0.0",
+    "sinon": "^1.9.1"
   }
 }

@@ -6,16 +6,21 @@ var fs = require('fs');
 var assert = require('assert');
 var yeoman = require('yeoman-environment');
 var nock = require('nock');
-var TestAdapter = require('../lib/test/adapter').TestAdapter;
-var generators = require('../');
+var sinon = require('sinon');
+var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
 var tmpdir = path.join(os.tmpdir(), 'yeoman-remote');
+var helpers = require('yeoman-test');
+var generators = require('..');
 
 describe('generators.Base#remote()', function () {
-  before(generators.test.setUpTestDirectory(tmpdir));
+  before(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
     this.env = yeoman.createEnv([], {}, new TestAdapter());
-    this.env.registerStub(generators.test.createDummyGenerator(), 'dummy');
+    var Dummy = generators.Base.extend({
+      exec: sinon.spy()
+    });
+    this.env.registerStub(Dummy, 'dummy');
     this.dummy = this.env.create('dummy');
     nock('https://github.com')
       .get('/yeoman/generator/archive/master.tar.gz')

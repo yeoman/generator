@@ -8,8 +8,7 @@ var FileEditor = require('mem-fs-editor');
 var pathExists = require('path-exists');
 var env = require('yeoman-environment');
 var Storage = require('../lib/util/storage');
-var generators = require('../');
-var helpers = generators.test;
+var helpers = require('yeoman-test');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 
 function rm(filepath) {

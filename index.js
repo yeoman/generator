@@ -52,7 +52,12 @@ deprecate.property(
  * Test helpers
  * {@link module:test/helpers}
  */
-yeoman.test = require('./lib/test/helpers');
+Object.defineProperty(yeoman, 'test', {
+  get: function () {
+    deprecate.log('yeoman.test is deprecated. Instead `require(\'yeoman-test\')`.');
+    return require('yeoman-test');
+  }
+});
 
 /**
  * Test assertions helpers

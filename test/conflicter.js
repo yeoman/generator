@@ -6,7 +6,7 @@ var path = require('path');
 var _ = require('lodash');
 var sinon = require('sinon');
 var Conflicter = require('../lib/util/conflicter');
-var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
 
 describe('Conflicter', function () {
   beforeEach(function () {

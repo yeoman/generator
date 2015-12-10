@@ -6,9 +6,9 @@ var tmpdir = require('os').tmpdir();
 var nock = require('nock');
 var yeoman = require('yeoman-environment');
 var fetch = require('../lib/actions/fetch');
-var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
 var generators = require('../');
-var assert = generators.assert;
+var assert = require('yeoman-assert');
 var tmp = path.join(tmpdir, 'yeoman-fetch');
 
 describe('generators.Base (actions/fetch)', function () {

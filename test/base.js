@@ -19,11 +19,11 @@ mockery.enable({
   warnOnUnregistered: false
 });
 
-var TestAdapter = require('../lib/test/adapter').TestAdapter;
+var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
+var generators = require('..');
 var Conflicter = require('../lib/util/conflicter');
-var generators = require('../');
-var helpers = generators.test;
-var assert = generators.assert;
+var helpers = require('yeoman-test');
+var assert = require('yeoman-assert');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 var resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 
@@ -33,20 +33,25 @@ describe('generators.Base', function () {
   beforeEach(function () {
     this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
     mkdirp.sync(resolveddir);
-    var Dummy = this.Dummy = helpers.createDummyGenerator();
+    this.Dummy = generators.Base.extend({
+      exec: sinon.spy()
+    });
 
-    this.env.registerStub(Dummy, 'ember:all');
-    this.env.registerStub(Dummy, 'hook1:ember');
-    this.env.registerStub(Dummy, 'hook2:ember:all');
-    this.env.registerStub(Dummy, 'hook3');
+    this.env.registerStub(this.Dummy, 'ember:all');
+    this.env.registerStub(this.Dummy, 'hook1:ember');
+    this.env.registerStub(this.Dummy, 'hook2:ember:all');
+    this.env.registerStub(this.Dummy, 'hook3');
 
     this.env.registerStub(generators.Base.extend({
       writing: function () {
-        this.write(path.join(tmpdir, 'app/scripts/models/application-model.js'), '// ...');
+        this.fs.write(
+          path.join(tmpdir, 'app/scripts/models/application-model.js'),
+          '// ...'
+        );
       }
     }), 'hook4');
 
-    this.dummy = new Dummy(['bar', 'baz', 'bom'], {
+    this.dummy = new this.Dummy(['bar', 'baz', 'bom'], {
       foo: false,
       something: 'else',
       // mandatory options, created by the env#create() helper
@@ -209,18 +214,20 @@ describe('generators.Base', function () {
 
   describe('#run()', function () {
     beforeEach(function () {
-      this.TestGenerator = helpers.createDummyGenerator();
-      this.execSpy = this.TestGenerator.prototype.exec = sinon.spy();
-      this.TestGenerator.prototype.exec2 = sinon.spy();
-      this.TestGenerator.prototype.exec3 = sinon.spy();
-      this.TestGenerator.prototype._private = sinon.spy();
-      this.TestGenerator.prototype.prompting = {
-        m1: sinon.spy(),
-        m2: sinon.spy(),
+      this.TestGenerator = generators.Base.extend({
+        exec: sinon.spy(),
+        exec2: sinon.spy(),
+        exec3: sinon.spy(),
         _private: sinon.spy(),
-        prop: 'foo'
-      };
-      this.TestGenerator.prototype.initializing = sinon.spy();
+        prompting: {
+          m1: sinon.spy(),
+          m2: sinon.spy(),
+          _private: sinon.spy(),
+          prop: 'foo'
+        },
+        initializing: sinon.spy()
+      });
+      this.execSpy = this.TestGenerator.prototype.exec;
 
       this.testGen = new this.TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
@@ -506,7 +513,7 @@ describe('generators.Base', function () {
       });
 
       testGen.run(function () {
-        assert.equal(Conflicter.prototype.checkForCollision.callCount, 2);
+        sinon.assert.calledTwice(Conflicter.prototype.checkForCollision);
         Conflicter.prototype.checkForCollision.restore();
         done();
       });
@@ -952,7 +959,9 @@ describe('generators.Base', function () {
   describe('#registerTransformStream()', function () {
     beforeEach(function () {
       this.filepath = path.join(os.tmpdir(), '/yeoman-transform-stream/filea.txt');
-      this.TestGenerator = helpers.createDummyGenerator();
+      this.TestGenerator = generators.Base.extend({
+        exec: sinon.spy()
+      });
       this.testGen = new this.TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
