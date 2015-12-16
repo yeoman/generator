@@ -85,7 +85,7 @@ yeoman.generators = {
    * Named Base Generator
    * {@link NamedBase}
    */
-  NamedBase: yeoman.NamedBase
+  NamedBase: require('./lib/named-base')
 };
 deprecate.property(
   'require(\'yeoman-generator\').generators.Base is deprecated. Use require(\'yeoman-generator\').Base directly',
