@@ -620,6 +620,26 @@ describe('generators.Base', function () {
         hide: false
       });
     });
+
+    it('allow aliasing options', function () {
+      var Generator = generators.Base.extend({
+        constructor: function () {
+          generators.Base.apply(this, arguments);
+
+          this.option('long-name', {
+            alias: 'short-name'
+          });
+
+          assert.equal(this.options['long-name'], 'that value');
+        }
+      });
+
+      var gen = new Generator({
+        env: this.env,
+        resolved: 'test',
+        'short-name': 'that value'
+      });
+    });
   });
 
   describe('#parseOptions()', function () {
