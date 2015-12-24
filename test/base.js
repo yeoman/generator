@@ -616,7 +616,7 @@ describe('generators.Base', function () {
         desc: 'Description for foo',
         name: 'foo',
         type: Boolean,
-        defaults: undefined,
+        default: undefined,
         hide: false
       });
     });
@@ -694,7 +694,7 @@ describe('generators.Base', function () {
         desc: 'Something to be invoked',
         name: 'something',
         type: Boolean,
-        defaults: 'else',
+        default: 'else',
         hide: false
       });
     });
