@@ -629,8 +629,6 @@ describe('generators.Base', function () {
           this.option('long-name', {
             alias: 'short-name'
           });
-
-          assert.equal(this.options['long-name'], 'that value');
         }
       });
 
@@ -639,6 +637,8 @@ describe('generators.Base', function () {
         resolved: 'test',
         'short-name': 'that value'
       });
+
+      assert.equal(gen.options['long-name'], 'that value');
     });
   });
 
