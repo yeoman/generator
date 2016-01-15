@@ -1,4 +1,4 @@
-# Generator [![npm](https://badge.fury.io/js/yeoman-generator.svg)](http://badge.fury.io/js/yeoman-generator) [![Build Status](https://travis-ci.org/yeoman/generator.svg?branch=master)](https://travis-ci.org/yeoman/generator) [![Coverage Status](https://coveralls.io/repos/yeoman/generator/badge.svg)](https://coveralls.io/r/yeoman/generator)
+# Generator [![npm](https://badge.fury.io/js/yeoman-generator.svg)](http://badge.fury.io/js/yeoman-generator) [![Build Status](https://travis-ci.org/yeoman/generator.svg?branch=master)](https://travis-ci.org/yeoman/generator) [![Coverage Status](https://coveralls.io/repos/yeoman/generator/badge.svg)](https://coveralls.io/r/yeoman/generator) [![Gitter](https://img.shields.io/badge/Gitter-Join_the_Yeoman_chat_%E2%86%92-00d06f.svg)](https://gitter.im/yeoman/yeoman)
 
 > Rails-inspired generator system that provides scaffolding for your apps
 
