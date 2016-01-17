@@ -74,12 +74,13 @@ describe('generators.Base', function () {
       process.chdir(path.join(projectDir, 'subdir'));
       this.env.cwd = process.cwd();
 
-      new this.Dummy(['foo'], {
+      var dummy = new this.Dummy(['foo'], {
         resolved: 'ember/all',
         env: this.env
       });
 
       assert.equal(process.cwd(), projectDir);
+      assert.equal(dummy.destinationPath(), projectDir);
     });
 
     it('use the environment options', function () {
