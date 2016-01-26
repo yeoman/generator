@@ -8,7 +8,6 @@
     "index.js",
     "lib"
   ],
-  "main": "lib/index.js",
   "keywords": [
     "development",
     "dev",
