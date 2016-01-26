@@ -26,7 +26,6 @@ gulp.task('nsp', function (cb) {
 
 gulp.task('pre-test', function () {
   return gulp.src([
-    'index.js',
     'lib/**/*.js'
   ])
     .pipe(istanbul({includeUntested: true}))

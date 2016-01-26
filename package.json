@@ -5,7 +5,6 @@
   "homepage": "http://yeoman.io",
   "author": "Yeoman",
   "files": [
-    "index.js",
     "lib"
   ],
   "main": "lib/index.js",
