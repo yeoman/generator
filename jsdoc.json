@@ -1,6 +1,6 @@
 {
   "source": {
-    "include": ["readme.md", "index.js", "lib"],
+    "include": ["readme.md", "lib"],
     "includePattern": ".+\\.js(doc)?$"
   },
   "opts": {
