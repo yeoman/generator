@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: actions/help.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: actions/help.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+var path = require('path');
+var fs = require('fs');
+var _ = require('lodash');
+var table = require('text-table');
+var pathExists = require('path-exists');
+
+/**
+ * @mixin
+ * @alias actions/help
+ */
+var help = module.exports;
+
+/**
+ * Tries to get the description from a USAGE file one folder above the
+ * source root otherwise uses a default description.
+ */
+
+help.help = function help() {
+  var filepath = path.join(this.sourceRoot(), '../USAGE');
+  var exists = pathExists.sync(filepath);
+  var out = [
+    'Usage:',
+    '  ' + this.usage(),
+    ''
+  ];
+
+  // build options
+  if (Object.keys(this._options).length) {
+    out = out.concat([
+      'Options:',
+      this.optionsHelp(),
+      ''
+    ]);
+  }
+
+  // build arguments
+  if (this._arguments.length) {
+    out = out.concat([
+      'Arguments:',
+      this.argumentsHelp(),
+      ''
+    ]);
+  }
+
+  // append USAGE file is any
+  if (exists) {
+    out.push(fs.readFileSync(filepath, 'utf8'));
+  }
+
+  return out.join('\n');
+};
+
+function formatArg(argItem) {
+  var arg = '&lt;' + argItem.name + '>';
+
+  if (!argItem.config.required) {
+    arg = '[' + arg + ']';
+  }
+
+  return arg;
+}
+
+/**
+ * Output usage information for this given generator, depending on its arguments,
+ * options or hooks.
+ */
+
+help.usage = function usage() {
+  var options = Object.keys(this._options).length ? '[options]' : '';
+  var name = ' ' + this.options.namespace;
+  var args = '';
+
+  if (this._arguments.length) {
+    args = this._arguments.map(formatArg).join(' ');
+  }
+
+  name = name.replace(/^yeoman:/, '');
+  var out = 'yo' + name + ' ' + options + ' ' + args;
+
+  if (this.description) {
+    out += '\n\n' + this.description;
+  }
+
+  return out;
+};
+
+/**
+ * Simple setter for custom `description` to append on help output.
+ *
+ * @param {String} description
+ */
+
+help.desc = function desc(description) {
+  this.description = description || '';
+  return this;
+};
+
+/**
+ * Get help text for arguments
+ * @returns {String} Text of options in formatted table
+ */
+help.argumentsHelp = function argumentsHelp() {
+  var rows = this._arguments.map(function (arg) {
+    var config = arg.config;
+
+    return [
+      '',
+      arg.name ? arg.name : '',
+      config.desc ? '# ' + config.desc : '',
+      config.type ? 'Type: ' + config.type.name : '',
+      'Required: ' + config.required
+    ];
+  });
+
+  return table(rows);
+};
+
+/**
+ * Get help text for options
+ * @returns {String} Text of options in formatted table
+ */
+help.optionsHelp = function optionsHelp() {
+  var options = _.reject(this._options, function (el) {
+    return el.hide;
+  });
+
+  var hookOpts = this._hooks.map(function (hook) {
+    return hook.generator &amp;&amp; hook.generator._options;
+  }).reduce(function (a, b) {
+    a = a.concat(b);
+    return a;
+  }, []).filter(function (opts) {
+    return opts &amp;&amp; opts.name !== 'help';
+  });
+
+  var rows = options.concat(hookOpts).map(function (opt) {
+    var defaults = opt.default;
+
+    return [
+      '',
+      opt.alias ? '-' + opt.alias + ', ' : '',
+      '--' + opt.name,
+      opt.desc ? '# ' + opt.desc : '',
+      defaults == null || defaults === '' ? '' : 'Default: ' + defaults
+    ];
+  });
+
+  return table(rows);
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Conflicter.html">Conflicter</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li></ul><h3>Mixins</h3><ul><li><a href="actions_actions.html">actions/actions</a></li><li><a href="actions_fetch.html">actions/fetch</a></li><li><a href="actions_file.html">actions/file</a></li><li><a href="actions_help.html">actions/help</a></li><li><a href="actions_install.html">actions/install</a></li><li><a href="actions_invoke.html">actions/invoke</a></li><li><a href="actions_remote.html">actions/remote</a></li><li><a href="actions_spawn_command.html">actions/spawn_command</a></li><li><a href="actions_user.html">actions/user</a></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Feb 12 2016 22:19:36 GMT-0800 (PST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

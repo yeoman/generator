@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Mixin: actions/invoke</title>
+    <title>JSDoc: Source: actions/user.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,101 +17,83 @@
 
 <div id="main">
 
-    <h1 class="page-title">Mixin: actions/invoke</h1>
+    <h1 class="page-title">Source: actions/user.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>actions/invoke</h2>
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+var _ = require('lodash');
+var shell = require('shelljs');
+var githubUsername = require('github-username');
+var nameCache = {};
+var emailCache = {};
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description"><p>Receives a <code>namespace</code>, and an Hash of <code>options</code> to invoke a given
-generator. The usual list of arguments can be set with <code>options.args</code>
-(ex. nopt's argv.remain array)</p></div>
-        
+/**
+ * @mixin
+ * @alias actions/user
+ */
+var user = module.exports;
 
-        
+user.git = {};
+user.github = {};
 
+/**
+ * Retrieves user's name from Git in the global scope or the project scope
+ * (it'll take what Git will use in the current context)
+ */
 
-<dl class="details">
+user.git.name = function () {
+  var name = nameCache[process.cwd()];
 
-    
+  if (name) {
+    return name;
+  }
 
-    
+  if (shell.which('git')) {
+    name = shell.exec('git config --get user.name', { silent: true }).output.trim();
+    nameCache[process.cwd()] = name;
+  }
 
-    
+  return name;
+};
 
-    
+/**
+ * Retrieves user's email from Git in the global scope or the project scope
+ * (it'll take what Git will use in the current context)
+ */
 
-    
+user.git.email = function () {
+  var email = emailCache[process.cwd()];
 
-    
+  if (email) {
+    return email;
+  }
 
-    
+  if (shell.which('git')) {
+    email = shell.exec('git config --get user.email', { silent: true }).output.trim();
+    emailCache[process.cwd()] = email;
+  }
 
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>As of version 0.17.0, `invoke()` should be replaced by `composeWith()`.</li></ul></dd>
-    
+  return email;
+};
 
-    
+/**
+ * Retrieves GitHub's username from the GitHub API.
+ */
 
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions_invoke.js.html">actions/invoke.js</a>, <a href="actions_invoke.js.html#line18">line 18</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+user.github.username = function () {
+  var args = _.toArray(arguments);
+  args.unshift(user.git.email());
+  return githubUsername.apply(null, args);
+};
+</code></pre>
+        </article>
+    </section>
 
 
 
