@@ -324,6 +324,22 @@ describe('generators.Base', function () {
       });
     });
 
+    it('stop queue processing once an error is thrown and "error" event has no listeners', function (done) {
+      var error = new Error();
+      var spy = sinon.spy();
+
+      this.TestGenerator.prototype.throwing = function () {
+        throw error;
+      };
+      this.TestGenerator.prototype.afterError = spy;
+
+      this.testGen.run(function (err) {
+        assert.equal(err, error);
+        sinon.assert.notCalled(spy);
+        done();
+      });
+    });
+
     it('handle function returning promises as asynchronous', function (done) {
       var spy1 = sinon.spy();
       var spy2 = sinon.spy();
