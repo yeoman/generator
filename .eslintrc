@@ -43,21 +43,6 @@
       2,
       "single"
     ],
-    "space-after-keywords": [
-      2,
-      "always"
-    ],
-    "space-before-function-paren": [
-      2,
-      {
-        "anonymous": "always",
-        "named": "never"
-      }
-    ],
-    "space-in-parens": [
-      2,
-      "never"
-    ],
     "strict": [
       2,
       "global"
@@ -67,6 +52,7 @@
       "all"
     ],
     "eol-last": 2,
+    "keyword-spacing": 2,
     "key-spacing": [
       2,
       {
@@ -89,7 +75,6 @@
     ],
     "no-alert": 2,
     "no-caller": 2,
-    "no-empty-label": 2,
     "no-extend-native": 2,
     "no-extra-bind": 2,
     "no-implied-eval": 2,
@@ -128,7 +113,6 @@
         "before": false,
         "after": true
       }
-    ],
-    "space-return-throw-case": 2
+    ]
   }
 }
