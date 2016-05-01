@@ -123,7 +123,7 @@ describe('Conflicter', function () {
         contents: null
       }, function () {
         assert.equal(
-          _.where(spy.firstCall.args[0][0].choices, { value: 'diff' }).length,
+          _.filter(spy.firstCall.args[0][0].choices, { value: 'diff' }).length,
           0
         );
         done();

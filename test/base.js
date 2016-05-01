@@ -788,6 +788,7 @@ describe('generators.Base', function () {
       // generator before the base one is ran.
       setTimeout(function () {
         this.dummy.run(function () {
+          sinon.assert.callOrder(runSpy, this.spy);
           assert(this.spy.calledAfter(runSpy));
           done();
         }.bind(this));
