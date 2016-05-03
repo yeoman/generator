@@ -319,23 +319,7 @@ describe('generators.Base', function () {
       this.testGen.on('error', sinon.spy());
       this.testGen.run(function (err) {
         assert.equal(err, error);
-        sinon.assert.notCalled(spy);
-        done();
-      });
-    });
-
-    it('stop queue processing once an error is thrown and "error" event has no listeners', function (done) {
-      var error = new Error();
-      var spy = sinon.spy();
-
-      this.TestGenerator.prototype.throwing = function () {
-        throw error;
-      };
-      this.TestGenerator.prototype.afterError = spy;
-
-      this.testGen.run(function (err) {
-        assert.equal(err, error);
-        sinon.assert.notCalled(spy);
+        sinon.assert.called(spy);
         done();
       });
     });
