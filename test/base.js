@@ -319,7 +319,6 @@ describe('generators.Base', function () {
       this.testGen.on('error', sinon.spy());
       this.testGen.run(function (err) {
         assert.equal(err, error);
-        sinon.assert.called(spy);
         done();
       });
     });
