@@ -53,7 +53,7 @@
     "mem-fs-editor": "^2.0.0",
     "mkdirp": "^0.5.0",
     "nopt": "^3.0.0",
-    "path-exists": "^3.0.0",
+    "path-exists": "^2.0.0",
     "path-is-absolute": "^1.0.0",
     "pretty-bytes": "^3.0.1",
     "read-chunk": "^2.0.0",
