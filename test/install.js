@@ -38,13 +38,13 @@ describe('generators.Base (actions/install mixin)', function () {
         }
       };
 
-      //args: installer, paths, options, cb
+      // args: installer, paths, options, cb
       this.dummy.runInstall('nestedScript', ['path1', 'path2'], spawnEnv, callbackSpy);
       this.dummy.run(function () {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'nestedScript',
-          ['install', 'path1', 'path2'],
+          ['install', 'path1', 'path2', '--cache-min', 'Infinity'],
           spawnEnv
         );
 
