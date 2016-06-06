@@ -14,7 +14,7 @@ var Promise = require('pinkie-promise');
 var yeoman = require('yeoman-environment');
 var userHome = require('user-home');
 
-var LF = process.platform === 'win32' ? '\r\n' : '\n';
+var LF = require('os').EOL;
 
 mockery.enable({
   warnOnReplace: false,
