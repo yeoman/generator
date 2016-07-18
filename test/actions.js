@@ -46,12 +46,6 @@ describe('generators.Base (actions/actions)', function () {
     });
   });
 
-  describe('#cacheRoot()', function () {
-    it('returns the cache root where yeoman stores all temp files', function () {
-      assert(/yeoman$/.test(this.dummy.cacheRoot()));
-    });
-  });
-
   describe('#copy()', function () {
     beforeEach(function (done) {
       this.dummy.copy(path.join(__dirname, 'fixtures/foo.js'), 'write/to/bar.js');
