@@ -294,21 +294,4 @@ describe('generators.Base (actions/actions)', function () {
       this.dummy.conflicter.resolve(done);
     });
   });
-
-  describe('#expandFiles()', function () {
-    before(function (done) {
-      this.dummy.copy('foo.js', 'write/abc/abc.js');
-      this.dummy._writeFiles(done);
-    });
-
-    it('returns expand files', function () {
-      var files = this.dummy.expandFiles('write/abc/**');
-      assert.deepEqual(files, ['write/abc/abc.js']);
-    });
-
-    it('returns expand files', function () {
-      var files = this.dummy.expandFiles('abc/**', { cwd: './write' });
-      assert.deepEqual(files, ['abc/abc.js']);
-    });
-  });
 });

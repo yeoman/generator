@@ -39,20 +39,6 @@ describe('generators.Base', function () {
       exec: sinon.spy()
     });
 
-    this.env.registerStub(this.Dummy, 'ember:all');
-    this.env.registerStub(this.Dummy, 'hook1:ember');
-    this.env.registerStub(this.Dummy, 'hook2:ember:all');
-    this.env.registerStub(this.Dummy, 'hook3');
-
-    this.env.registerStub(generators.Base.extend({
-      writing: function () {
-        this.fs.write(
-          path.join(tmpdir, 'app/scripts/models/application-model.js'),
-          '// ...'
-        );
-      }
-    }), 'hook4');
-
     this.dummy = new this.Dummy(['bar', 'baz', 'bom'], {
       foo: false,
       something: 'else',
@@ -62,12 +48,6 @@ describe('generators.Base', function () {
       env: this.env,
       'skip-install': true
     });
-
-    this.dummy
-      .hookFor('hook1', { as: 'ember' })
-      .hookFor('hook2', { as: 'ember:all' })
-      .hookFor('hook3')
-      .hookFor('hook4');
   });
 
   describe('constructor', function () {
@@ -708,49 +688,6 @@ describe('generators.Base', function () {
     });
   });
 
-  describe('#runHooks()', function () {
-    it('go through all registered hooks, and invoke them in series', function (done) {
-      this.dummy.runHooks(function () {
-        fs.stat('app/scripts/models/application-model.js', done);
-      });
-    });
-  });
-
-  describe('#hookFor()', function () {
-    it('emit errors if called when running', function () {
-      try {
-        this.dummy.hookFor('maoow');
-      } catch (err) {
-        assert.equal(err.message, 'hookFor must be used within the constructor only');
-      }
-    });
-
-    it('create the matching option', function () {
-      this.dummy._running = false;
-      this.dummy.hookFor('something');
-
-      assert.deepEqual(this.dummy._options.something, {
-        desc: 'Something to be invoked',
-        name: 'something',
-        type: Boolean,
-        default: 'else',
-        hide: false
-      });
-    });
-
-    it('update the internal hooks holder', function () {
-      this.dummy.hookFor('something');
-      assert.deepEqual(this.dummy._hooks.pop(), { name: 'something' });
-    });
-  });
-
-  describe('#defaultFor()', function () {
-    it('return the value for the option name, doing lookup in options and Grunt config', function () {
-      var name = this.dummy.defaultFor('something');
-      assert.equal(name, 'else');
-    });
-  });
-
   describe('#composeWith()', function () {
     beforeEach(function () {
       this.dummy = new this.Dummy([], {
@@ -875,10 +812,6 @@ describe('generators.Base', function () {
         '-h, --help # Print the generator\'s options and usage',
         '--skip-cache # Do not remember prompt answers Default: false',
         '--skip-install # Do not automatically install dependencies Default: false',
-        '--hook1 # Hook1 to be invoked',
-        '--hook2 # Hook2 to be invoked',
-        '--hook3 # Hook3 to be invoked',
-        '--hook4 # Hook4 to be invoked',
         '--ooOoo # Description for ooOoo',
         '',
         'Arguments:',
@@ -1097,7 +1030,7 @@ describe('generators.Base', function () {
         // Run event, emitted right before running the generator.
         .on('run', assertEvent('run'))
         // End event, emitted after the generation process, when every generator
-        // methods are executed (hooks are executed after)
+        // methods are executed
         .on('end', assertEvent('end'))
         .on('method:createSomething', assertEvent('method:createSomething'))
         .on('method:createSomethingElse', assertEvent('method:createSomethingElse'));

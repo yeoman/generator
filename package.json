@@ -46,7 +46,6 @@
     "github-username": "^2.0.0",
     "glob": "^7.0.3",
     "gruntfile-editor": "^1.0.0",
-    "html-wiring": "^1.0.0",
     "istextorbinary": "^2.1.0",
     "lodash": "^4.11.1",
     "mem-fs-editor": "^2.0.0",
@@ -62,12 +61,8 @@
     "shelljs": "^0.7.0",
     "text-table": "^0.2.0",
     "through2": "^2.0.0",
-    "underscore.string": "^3.0.3",
     "user-home": "^2.0.0",
-    "yeoman-assert": "^2.0.0",
-    "yeoman-environment": "^1.1.0",
-    "yeoman-test": "^1.0.0",
-    "yeoman-welcome": "^1.0.0"
+    "yeoman-environment": "^1.1.0"
   },
   "devDependencies": {
     "gulp": "^3.6.0",
@@ -85,6 +80,8 @@
     "pinkie-promise": "^2.0.0",
     "proxyquire": "^1.0.0",
     "sinon": "^1.9.1",
-    "tui-jsdoc-template": "^1.0.4"
+    "tui-jsdoc-template": "^1.0.4",
+    "yeoman-assert": "^2.0.0",
+    "yeoman-test": "^1.0.0"
   }
 }

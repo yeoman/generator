@@ -9,9 +9,9 @@
 
 var yeoman = require('../../../');
 
-module.exports = yeoman.generators.Base.extend({
+module.exports = yeoman.Base.extend({
   constructor: function () {
-    yeoman.generators.Base.apply(this, arguments);
+    yeoman.Base.apply(this, arguments);
 
     // this.log('as passed in: ', this.options.testOption);
     this.option('testOption', {
