@@ -445,12 +445,8 @@ describe('generators.Base', function () {
 
     it('commit mem-fs to disk', function (done) {
       var filepath;
-      var oldFilePath;
 
       this.TestGenerator.prototype.writing = function () {
-        oldFilePath = path.join(this.destinationRoot(), 'old-system.txt');
-        // Just ensure we don't have issue if both old and new system run.
-        this.write(oldFilePath, 'hey');
         this.fs.write(
           filepath = path.join(this.destinationRoot(), 'fromfs.txt'),
           'generated'
@@ -458,7 +454,6 @@ describe('generators.Base', function () {
       };
 
       this.testGen.run(function () {
-        assert(pathExists.sync(oldFilePath));
         assert(pathExists.sync(filepath));
         done();
       });
@@ -1048,8 +1043,14 @@ describe('generators.Base', function () {
       util.inherits(GeneratorOnce, generators.Base);
 
       GeneratorOnce.prototype.createDuplicate = function () {
-        this.copy('foo-copy.js');
-        this.copy('foo-copy.js');
+        this.fs.copy(
+          this.templatePath('foo-copy.js'),
+          this.destinationPath('foo-copy.js')
+        );
+        this.fs.copy(
+          this.templatePath('foo-copy.js'),
+          this.destinationPath('foo-copy.js')
+        );
       };
 
       var isFirstEndEvent = true;
