@@ -3,6 +3,6 @@
 // var generators = require('yeoman-generators');
 var generators = require('../../../');
 
-module.exports = generators.NamedBase.extend({
+module.exports = generators.Base.extend({
   doStuff: function () {}
 });

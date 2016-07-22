@@ -27,16 +27,6 @@ describe('Generators module', function () {
     });
   });
 
-  describe('.generators', function () {
-    it('should have a Base object to extend from', function () {
-      assert.ok(generators.Base);
-    });
-
-    it('should have a NamedBase object to extend from', function () {
-      assert.ok(generators.NamedBase);
-    });
-  });
-
   describe('generators.Base', function () {
     beforeEach(function () {
       this.env = generators();
@@ -52,24 +42,6 @@ describe('Generators module', function () {
       assert.ok(typeof this.generator.emit === 'function');
       this.generator.on('yay-o-man', done);
       this.generator.emit('yay-o-man');
-    });
-  });
-
-  describe('generators.NamedBase', function () {
-    before(function () {
-      this.env = generators();
-      this.generator = new generators.NamedBase(['namedArg'], {
-        env: this.env,
-        resolved: 'namedbase:test'
-      });
-    });
-
-    it('extend Base generator', function () {
-      assert.ok(this.generator instanceof generators.Base);
-    });
-
-    it('have a name property', function () {
-      assert.equal(this.generator.name, 'namedArg');
     });
   });
 });
