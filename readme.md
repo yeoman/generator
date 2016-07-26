@@ -8,7 +8,7 @@
 
 If you're interested in writing your own Yeoman generator we recommend reading [the official getting started guide](http://yeoman.io/authoring/). The guide covers all the basics you need to get started.
 
-A generator can be as complex as you want it to be. It can simply copy a bunch of boilerplate file, or it can be more advanced asking the user's preferences to scaffold a tailor made project. This decision is up to you.
+A generator can be as complex as you want it to be. It can simply copy a bunch of boilerplate files, or it can be more advanced asking the user's preferences to scaffold a tailor made project. This decision is up to you.
 
 The fastest way to get started is to use  [generator-generator](https://github.com/yeoman/generator-generator), a Yeoman generator to generate a Yeoman generator.
 
