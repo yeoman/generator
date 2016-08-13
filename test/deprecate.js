@@ -7,7 +7,7 @@ var deprecate = require('../lib/util/deprecate');
 
 describe('deprecate()', function () {
   beforeEach(function () {
-    sinon.stub(console, 'log');
+    sinon.spy(console, 'log');
   });
 
   afterEach(function () {
