@@ -220,13 +220,21 @@ util.inherits(Base, events.EventEmitter);
 
 // Mixin the actions modules
 _.extend(Base.prototype, require('./actions/actions'));
-_.extend(Base.prototype, require('./actions/fetch'));
 _.extend(Base.prototype, require('./actions/file'));
 _.extend(Base.prototype, require('./actions/install'));
-_.extend(Base.prototype, require('./actions/remote'));
-_.extend(Base.prototype, deprecate.object('this.&lt;%= name %>() is deprecated. Use require("html-wiring").&lt;%= name %>() instead.', wiring));
 _.extend(Base.prototype, require('./actions/help'));
 _.extend(Base.prototype, require('./actions/spawn_command'));
+
+// Deprecated modules and functions
+_.extend(Base.prototype, deprecate.object('this.&lt;%= name %>() is deprecated. Use require("html-wiring").&lt;%= name %>() instead.', wiring));
+var deprecatedRemote = function () {
+  deprecate.log('Remotes functions are deprecated. See https://github.com/yeoman/generator/issues/949 for update guide.');
+};
+Base.prototype.remote = deprecatedRemote;
+Base.prototype.remoteDir = deprecatedRemote;
+Base.prototype.fetch = deprecatedRemote;
+Base.prototype.extract = deprecatedRemote;
+Base.prototype.tarball = deprecatedRemote;
 
 Base.prototype.user = require('./actions/user');
 Base.prototype.invoke = deprecate(
@@ -251,24 +259,20 @@ Base.prototype.welcome = deprecate(
  * user's answers as defaults.
  *
  * @param  {array} questions  Array of question descriptor objects. See {@link https://github.com/SBoudrias/Inquirer.js/blob/master/README.md Documentation}
- * @param  {Function} callback  Receive a question object
- * @return {this}
+ * @return {Promise}
  */
 
-Base.prototype.prompt = function (questions, callback) {
+Base.prototype.prompt = function (questions) {
   questions = promptSuggestion.prefillQuestions(this._globalConfig, questions);
 
-  this.env.adapter.prompt(questions, function (answers) {
+  return this.env.adapter.prompt(questions).then(function (answers) {
     if (!this.options['skip-cache']) {
       promptSuggestion.storeAnswers(this._globalConfig, questions, answers);
     }
 
-    if (_.isFunction(callback)) {
-      callback(answers);
-    }
+    return answers;
   }.bind(this));
 
-  return this;
 };
 
 /**
@@ -455,25 +459,22 @@ Base.prototype.run = function run(cb) {
       debug('Running ' + methodName);
       self.emit('method:' + methodName);
 
-      runAsync(
-        function () {
-          self.async = function () {
-            return this.async();
-          }.bind(this);
+      runAsync(function () {
+        self.async = function () {
+          return this.async();
+        }.bind(this);
 
-          return method.apply(self, self.args);
-        },
-        function (err) {
-          if (err) {
-            debug('An error occured while running ' + methodName, err);
-            self.emit('error', err);
-            cb(err);
-            return;
-          }
+        return method.apply(self, self.args);
+      })().then(completed).catch(function (err) {
+        debug('An error occured while running ' + methodName, err);
 
-          completed();
-        }
-      )();
+        // Ensure we emit the error event outside the promise context so it won't be
+        // swallowed when there's no listeners.
+        setImmediate(function () {
+          self.emit('error', err);
+          cb(err);
+        });
+      });
     });
   }
 
@@ -528,7 +529,7 @@ Base.prototype.run = function run(cb) {
     this.runHooks();
   });
 
-  _.invoke(this._composedWith, 'run');
+  _.invokeMap(this._composedWith, 'run');
   return this;
 };
 
@@ -889,13 +890,13 @@ Base.extend = require('class-extend').extend;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Conflicter.html">Conflicter</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li></ul><h3>Mixins</h3><ul><li><a href="actions_actions.html">actions/actions</a></li><li><a href="actions_fetch.html">actions/fetch</a></li><li><a href="actions_file.html">actions/file</a></li><li><a href="actions_help.html">actions/help</a></li><li><a href="actions_install.html">actions/install</a></li><li><a href="actions_invoke.html">actions/invoke</a></li><li><a href="actions_remote.html">actions/remote</a></li><li><a href="actions_spawn_command.html">actions/spawn_command</a></li><li><a href="actions_user.html">actions/user</a></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Conflicter.html">Conflicter</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li></ul><h3>Mixins</h3><ul><li><a href="actions_actions.html">actions/actions</a></li><li><a href="actions_file.html">actions/file</a></li><li><a href="actions_help.html">actions/help</a></li><li><a href="actions_install.html">actions/install</a></li><li><a href="actions_invoke.html">actions/invoke</a></li><li><a href="actions_spawn_command.html">actions/spawn_command</a></li><li><a href="actions_user.html">actions/user</a></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Feb 12 2016 22:19:36 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Thu Oct 13 2016 23:35:04 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>
