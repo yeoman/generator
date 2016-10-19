@@ -28,7 +28,7 @@
   },
   "scripts": {
     "test": "gulp",
-    "doc": "jsdoc -c jsdoc.json readme.md",
+    "doc": "jsdoc -c jsdoc.json",
     "prepublish": "gulp prepublish"
   },
   "dependencies": {
