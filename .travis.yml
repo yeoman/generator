@@ -6,3 +6,28 @@ node_js:
   - v4
   - v5
   - v6
+after_success: ./deploy.sh
+env:
+  global:
+  - COMMIT_AUTHOR_EMAIL: "yeoman@yeoman.io"
+  - COMMIT_AUTHOR_NAME: "yeoman"
+  - SOURCE_BRANCH: "master"
+  - TARGET_BRANCH: "gh-pages"
+  - DOCS_DIR: "../yeoman-generator-doc"
+  # GH_OAUTH_TOKEN is the oauth token generated as described at
+  # https://help.github.com/articles/creating-an-oauth-token-for-command-line-use
+  #
+  # `curl -u 'githubUserName' -d '{"scopes":["repo"],"note":"push to gh-pages from travis"}' https://api.github.com/authorizations`
+  #
+  # It returns a OAuth token which must be encrypted using the travis CLI:
+  # https://github.com/travis-ci/travis.rb#installation
+  #
+  # (Users with two-factor authentication enabled should set up an OAuth token
+  # through the web UI: https://github.com/settings/tokens)
+  #
+  # `travis encrypt GH_OAUTH_TOKEN=XXXXXXXXXXXXXXX`
+  #
+  # It returns encrypted key you must assign to the `secure` property below
+  - secure: encryptedOAuthToken
+  - GH_OWNER: yeoman
+  - GH_PROJECT_NAME: generator
