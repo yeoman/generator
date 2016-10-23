@@ -44,7 +44,7 @@ describe('generators.Base (actions/install mixin)', function () {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'nestedScript',
-          ['install', 'path1', 'path2', '--cache-min', 'Infinity'],
+          ['install', 'path1', 'path2'],
           spawnEnv
         );
 
@@ -114,7 +114,7 @@ describe('generators.Base (actions/install mixin)', function () {
       this.dummy.npmInstall();
       this.dummy.run(function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
-        sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install'], {});
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install', '--cache-min', 86400], {});
         done();
       }.bind(this));
     });
@@ -141,7 +141,7 @@ describe('generators.Base (actions/install mixin)', function () {
       this.dummy.installDependencies(function () {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
-        sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install'], {});
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install', '--cache-min', 86400], {});
         done();
       }.bind(this));
       this.dummy.run();
