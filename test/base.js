@@ -14,6 +14,8 @@ var Promise = require('pinkie-promise');
 var yeoman = require('yeoman-environment');
 var userHome = require('user-home');
 
+var LF = require('os').EOL;
+
 mockery.enable({
   warnOnReplace: false,
   warnOnUnregistered: false
@@ -499,7 +501,7 @@ describe('generators.Base', function () {
       });
 
       testGen.run(function () {
-        assert.equal(fs.readFileSync(filepath, 'utf8'), 'var a = 1;\n');
+        assert.equal(fs.readFileSync(filepath, 'utf8'), 'var a = 1;' + LF);
         done();
       });
     });
