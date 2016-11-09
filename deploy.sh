@@ -23,14 +23,14 @@ echo "Changed directory to: "
 pwd
 echo -e ""
 
-# Clean out existing contents
-rm -rf **
-echo -e "Cleaned out existing contents of $DOCS_DIR\n"
-
 # Clone the existing gh-pages into $DOCS_DIR
 git clone $REPO .
 echo -e "Cloned $REPO\n"
 git checkout $TARGET_BRANCH
+
+# Clean out existing contents
+rm -rf **
+echo -e "Cleaned out existing contents of $DOCS_DIR\n"
 
 # Generate docs in $TRAVIS_BUILD_DIR
 cd $TRAVIS_BUILD_DIR
@@ -40,12 +40,22 @@ echo -e "Generated docs\n"
 # Change directory to $DOCS_DIR
 cd $DOCS_DIR
 
+# Flatten content of $DOCS_DIR
+mv $PACKAGE_NAME/**/** ./
+rm -rf $PACKAGE_NAME
+
 # Git setup
 git config user.name $COMMIT_AUTHOR_NAME
 git config user.email $COMMIT_AUTHOR_EMAIL
 
+# Exit if there are no changes to the generated content
+if [ -z "$(git status --porcelain)" ]; then
+    echo "No changes to the output on this run; exiting."
+    exit 0
+fi
+
 # Commit the new of the new version
-git add .
+git add --all .
 git commit -m "Deploy docs to GitHub Pages ($TRAVIS_TAG)"
 echo -e "Comitted docs to $TARGET_BRANCH\n"
 
