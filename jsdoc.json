@@ -5,13 +5,7 @@
   },
   "opts": {
     "recurse": true,
-    "destination": "../yeoman-generator-doc/",
-    "package": "package.json"
-  },
-  "templates": {
-    "default": {
-      "includeDate": false
-    }
+    "destination": "../yeoman-generator-doc"
   },
   "plugins": [
     "plugins/markdown"
