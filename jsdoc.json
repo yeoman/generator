@@ -5,7 +5,13 @@
   },
   "opts": {
     "recurse": true,
-    "destination": "../yeoman-generator-doc/"
+    "destination": "../yeoman-generator-doc/",
+    "package": "package.json"
+  },
+  "templates": {
+    "default": {
+      "includeDate": false
+    }
   },
   "plugins": [
     "plugins/markdown"

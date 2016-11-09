@@ -14,7 +14,7 @@ env:
   - SOURCE_BRANCH: master
   - TARGET_BRANCH: gh-pages
   - DOCS_DIR: "../yeoman-generator-doc"
-  - secure: encryptedOAuthToken
   - GH_OWNER: yeoman
   - GH_PROJECT_NAME: generator
+  - PACKAGE_NAME: yeoman-generator
   - secure: Hv7gACQoYGtesz1NTJYRHjGCimEJEjj4bQP2iTpDUUbfAiYe/4QPemoyDEFjRxbu5m2uoYwMk0AQrW7DnQhNAhl7u24jYnRgQyd/2GOx3xZgjwnao27gsrTHss4IyXEaS2h3kRuIVSD+xibz/lwZm+erHOQ9VOwvCQkOKnILXW8=
