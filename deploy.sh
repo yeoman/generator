@@ -7,7 +7,13 @@ REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
-# Pull Only build and deploy docs when the current build is for a Git tag.
+# Only build and deploy docs on a specific node version
+if [[ $TRAVIS_NODE_VERSION != $DEPLOY_ON_NODE_VERSION ]]; then
+    echo "Current Node.js versions doesn’t match. Skipping generating and deploying the docs."
+    exit 0
+fi
+
+# Only build and deploy docs when the current build is for a Git tag.
 if [[ $TRAVIS_TAG == "" ]]; then
     echo "Not a build for a Git tag. Skipping generating and deploying the docs."
     exit 0
@@ -40,19 +46,15 @@ echo -e "Generated docs\n"
 # Change directory to $DOCS_DIR
 cd $DOCS_DIR
 
-# Flatten content of $DOCS_DIR
-mv $PACKAGE_NAME/**/** ./
-rm -rf $PACKAGE_NAME
-
-# Git setup
-git config user.name $COMMIT_AUTHOR_NAME
-git config user.email $COMMIT_AUTHOR_EMAIL
-
 # Exit if there are no changes to the generated content
 if [ -z "$(git status --porcelain)" ]; then
     echo "No changes to the output on this run; exiting."
     exit 0
 fi
+
+# Git setup
+git config user.name $COMMIT_AUTHOR_NAME
+git config user.email $COMMIT_AUTHOR_EMAIL
 
 # Commit the new of the new version
 git add --all .
