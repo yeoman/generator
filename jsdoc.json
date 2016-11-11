@@ -5,7 +5,17 @@
   },
   "opts": {
     "recurse": true,
-    "destination": "../yeoman-generator-doc"
+    "destination": "../yeoman-generator-doc",
+    "template": "node_modules/tui-jsdoc-template"
+  },
+  "templates": {
+    "logo": {
+        "url": "https://cloud.githubusercontent.com/assets/441011/20215255/4c2a7246-a813-11e6-826e-80a78b30e9e5.png",
+        "width": "127px",
+        "height": "14px"
+    },
+    "name": "Generator",
+    "footerText": "BSD license Copyright (c) Google"
   },
   "plugins": [
     "plugins/markdown"
