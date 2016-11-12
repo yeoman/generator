@@ -6,7 +6,8 @@
   "opts": {
     "recurse": true,
     "destination": "../yeoman-generator-doc",
-    "template": "node_modules/tui-jsdoc-template"
+    "template": "node_modules/tui-jsdoc-template",
+    "package": "package.json"
   },
   "templates": {
     "logo": {
