@@ -181,33 +181,26 @@ describe('generators.Base (actions/install mixin)', function () {
   });
 
   describe('#installDependencies()', function () {
-    it('spawn npm and bower', function (done) {
-
+    it('spawn npm', function (done) {
       this.dummy.installDependencies({ npm: true, callback: function () {
-        sinon.assert.calledTwice(this.spawnCommandStub);
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install', '--cache-min', 86400], {});
+        done();
+      }.bind(this)});
+      this.dummy.run();
+    });
+    it('spawn bower', function (done) {
+      this.dummy.installDependencies({ bower: true, callback: function () {
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
         done();
       }.bind(this)});
       this.dummy.run();
     });
 
-    it('spawn yarn and bower', function (done) {
+    it('spawn yarn', function (done) {
       this.dummy.installDependencies({ yarn: true, callback: function () {
-        sinon.assert.calledTwice(this.spawnCommandStub);
-        sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['install'], {});
         done();
       }.bind(this)});
-      this.dummy.run();
-    });
-    it('execute a callback after installs', function (done) {
-      this.dummy.installDependencies({ callback: done });
-      this.dummy.run();
-    });
-
-    it('accept and execute a function as its only argument', function (done) {
-
-      this.dummy.installDependencies(done);
       this.dummy.run();
     });
   });
