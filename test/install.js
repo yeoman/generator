@@ -188,6 +188,7 @@ describe('generators.Base (actions/install mixin)', function () {
       }.bind(this)});
       this.dummy.run();
     });
+
     it('spawn bower', function (done) {
       this.dummy.installDependencies({ bower: true, callback: function () {
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
