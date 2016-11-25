@@ -70,9 +70,26 @@ describe('generators.Base (actions/install mixin)', function () {
         }.bind(this));
       });
 
+      it('does not spawn anything with skipInstall', function (done) {
+        this.dummy.runInstall('yarn', ['install']);
+        this.dummy.run(function () {
+          sinon.assert.notCalled(this.spawnCommandStub);
+          done();
+        }.bind(this));
+      });
+
       it('call callback if skipInstall', function (done) {
         var spy = sinon.spy();
         this.dummy.runInstall('npm', ['install'], spy);
+        this.dummy.run(function () {
+          sinon.assert.calledOnce(spy);
+          done();
+        });
+      });
+
+      it('call callback if skipInstall', function (done) {
+        var spy = sinon.spy();
+        this.dummy.runInstall('yarn', ['install'], spy);
         this.dummy.run(function () {
           sinon.assert.calledOnce(spy);
           done();
@@ -135,25 +152,56 @@ describe('generators.Base (actions/install mixin)', function () {
       this.dummy.run();
     });
   });
+  describe('#yarnInstall()', function () {
+    it('spawn an install process once per commands', function (done) {
+      this.dummy.yarnInstall();
+      this.dummy.yarnInstall();
+      this.dummy.run(function () {
+        sinon.assert.calledOnce(this.spawnCommandStub);
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['install'], {});
+        done();
+      }.bind(this));
+    });
 
-  describe('#installDependencies()', function () {
-    it('spawn npm and bower', function (done) {
-      this.dummy.installDependencies(function () {
-        sinon.assert.calledTwice(this.spawnCommandStub);
-        sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
-        sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install', '--cache-min', 86400], {});
+    it('run without callback', function (done) {
+      this.dummy.yarnInstall('yo', { save: true });
+      this.dummy.run(function () {
+        sinon.assert.calledOnce(this.spawnCommandStub);
+        done();
+      }.bind(this));
+    });
+
+    it('run with callback', function (done) {
+      this.dummy.yarnInstall('yo', { save: true }, function () {
+        sinon.assert.calledOnce(this.spawnCommandStub);
         done();
       }.bind(this));
       this.dummy.run();
     });
+  });
 
-    it('execute a callback after installs', function (done) {
-      this.dummy.installDependencies({ callback: done });
+  describe('#installDependencies()', function () {
+    it('spawn npm', function (done) {
+      this.dummy.installDependencies({ npm: true, callback: function () {
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install', '--cache-min', 86400], {});
+        done();
+      }.bind(this)});
       this.dummy.run();
     });
 
-    it('accept and execute a function as its only argument', function (done) {
-      this.dummy.installDependencies(done);
+    it('spawn bower', function (done) {
+      this.dummy.installDependencies({ bower: true, callback: function () {
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
+        done();
+      }.bind(this)});
+      this.dummy.run();
+    });
+
+    it('spawn yarn', function (done) {
+      this.dummy.installDependencies({ yarn: true, callback: function () {
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['install'], {});
+        done();
+      }.bind(this)});
       this.dummy.run();
     });
   });
