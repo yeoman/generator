@@ -243,6 +243,10 @@ describe('PromptSuggestion', function () {
       promptSuggestion.storeAnswers(this.store, [], {});
     });
 
+    it('take a storeAll parameter', function () {
+      promptSuggestion.storeAnswers(this.store, [], {}, true);
+    });
+
     it('store answer in global store', function () {
       var question = {
         name: 'respuesta',
@@ -257,6 +261,40 @@ describe('PromptSuggestion', function () {
       promptSuggestion.prefillQuestions(this.store, question);
       promptSuggestion.storeAnswers(this.store, question, mockAnswers);
       assert.equal(this.store.get('promptValues').respuesta, 'baz');
+    });
+
+    it('don\`t store default answer in global store', function () {
+      var question = {
+        name: 'respuesta',
+        default: 'bar',
+        store: true
+      };
+
+      var mockAnswers = {
+        respuesta: 'bar'
+      };
+
+      this.store.delete('promptValues');
+      promptSuggestion.prefillQuestions(this.store, question);
+      promptSuggestion.storeAnswers(this.store, question, mockAnswers, false);
+      assert.equal(this.store.get('promptValues'), undefined);
+    });
+
+    it('force store default answer in global store', function () {
+      var question = {
+        name: 'respuesta',
+        default: 'bar',
+        store: true
+      };
+
+      var mockAnswers = {
+        respuesta: 'bar'
+      };
+
+      this.store.delete('promptValues');
+      promptSuggestion.prefillQuestions(this.store, question);
+      promptSuggestion.storeAnswers(this.store, question, mockAnswers, true);
+      assert.equal(this.store.get('promptValues').respuesta, 'bar');
     });
 
     it('don\'t store answer in global store', function () {
@@ -291,6 +329,47 @@ describe('PromptSuggestion', function () {
       promptSuggestion.prefillQuestions(this.store, question);
       promptSuggestion.storeAnswers(this.store, question, mockAnswers);
       assert.equal(this.store.get('promptValues').respuesta, 'baz');
+    });
+
+    describe('empty sotre', function () {
+      beforeEach(function () {
+        this.store.delete('promptValues');
+      });
+      it('don\`t store default answer from rawlist type', function () {
+        var question = {
+          type: 'rawlist',
+          name: 'respuesta',
+          default: 0,
+          store: true,
+          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+        };
+
+        var mockAnswers = {
+          respuesta: 'foo'
+        };
+
+        promptSuggestion.prefillQuestions(this.store, question);
+        promptSuggestion.storeAnswers(this.store, question, mockAnswers, false);
+        assert.equal(this.store.get('promptValues'), undefined);
+      });
+
+      it('force store default answer from rawlist type', function () {
+        var question = {
+          type: 'rawlist',
+          name: 'respuesta',
+          default: 0,
+          store: true,
+          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+        };
+
+        var mockAnswers = {
+          respuesta: 'foo'
+        };
+
+        promptSuggestion.prefillQuestions(this.store, question);
+        promptSuggestion.storeAnswers(this.store, question, mockAnswers, true);
+        assert.equal(this.store.get('promptValues').respuesta, 'foo');
+      });
     });
 
     it('store falsy answer (but not undefined) in global store', function () {
