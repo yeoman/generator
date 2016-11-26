@@ -164,16 +164,18 @@ describe('Base (actions/install mixin)', function () {
     });
 
     it('run without callback', function (done) {
-      this.dummy.yarnInstall('yo', { save: true });
+      this.dummy.yarnInstall('yo', {dev: true});
       this.dummy.run(function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['add', 'yo', '--dev'], {dev: true});
         done();
       }.bind(this));
     });
 
     it('run with callback', function (done) {
-      this.dummy.yarnInstall('yo', { save: true }, function () {
+      this.dummy.yarnInstall('yo', function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['add', 'yo'], {});
         done();
       }.bind(this));
       this.dummy.run();
