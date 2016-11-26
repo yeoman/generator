@@ -689,7 +689,7 @@ describe('Base', function () {
         resolved: 'unknown',
         namespace: 'dummy',
         env: this.env,
-        'skip-install': true
+        skipInstall: true
       });
 
       this.spy = sinon.spy();
@@ -706,6 +706,8 @@ describe('Base', function () {
       setTimeout(function () {
         this.dummy.run(function () {
           sinon.assert.callOrder(runSpy, this.spy);
+          assert.equal(this.spy.thisValues[0].options.skipInstall, true);
+          assert.equal(this.spy.thisValues[0].options['skip-install'], true);
           assert(this.spy.calledAfter(runSpy));
           done();
         }.bind(this));

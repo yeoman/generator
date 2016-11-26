@@ -152,6 +152,7 @@ describe('Base (actions/install mixin)', function () {
       this.dummy.run();
     });
   });
+
   describe('#yarnInstall()', function () {
     it('spawn an install process once per commands', function (done) {
       this.dummy.yarnInstall();
