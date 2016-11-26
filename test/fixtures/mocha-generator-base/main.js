@@ -1,8 +1,8 @@
 'use strict';
 // in real use case, users need to require `yeoman-generators`
 // var generators = require('yeoman-generators');
-var generators = require('../../../');
+var Base = require('../../../');
 
-module.exports = generators.Base.extend({
+module.exports = Base.extend({
   doStuff: function () {}
 });

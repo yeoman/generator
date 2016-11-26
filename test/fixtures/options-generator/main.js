@@ -7,11 +7,11 @@
 // object, which means that you can use the API as if you were extending
 // `Base`.
 
-var yeoman = require('../../../');
+var Base = require('../../../');
 
-module.exports = yeoman.Base.extend({
+module.exports = Base.extend({
   constructor: function () {
-    yeoman.Base.apply(this, arguments);
+    Base.apply(this, arguments);
 
     // this.log('as passed in: ', this.options.testOption);
     this.option('testOption', {

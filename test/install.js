@@ -3,7 +3,7 @@
 var yeoman = require('yeoman-environment');
 var sinon = require('sinon');
 var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
-var generators = require('..');
+var Base = require('..');
 
 var asyncStub = {
   on: function (key, cb) {
@@ -15,10 +15,10 @@ var asyncStub = {
   }
 };
 
-describe('generators.Base (actions/install mixin)', function () {
+describe('Base (actions/install mixin)', function () {
   beforeEach(function () {
     this.env = yeoman.createEnv([], {}, new TestAdapter());
-    var Dummy = generators.Base.extend({
+    var Dummy = Base.extend({
       exec: function () {}
     });
     this.env.registerStub(Dummy, 'dummy');

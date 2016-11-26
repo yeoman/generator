@@ -9,10 +9,10 @@ var proxyquire = require('proxyquire');
 var rimraf = require('rimraf');
 var shell = require('shelljs');
 var sinon = require('sinon');
-var generators = require('../');
+var Base = require('..');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 
-describe('generators.Base#user', function () {
+describe('Base#user', function () {
   before(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
@@ -43,7 +43,7 @@ describe('generators.Base#user', function () {
   });
 
   it('is exposed on the Base generator', function () {
-    assert.equal(require('../lib/actions/user'), generators.Base.prototype.user);
+    assert.equal(require('../lib/actions/user'), Base.prototype.user);
   });
 
   describe('.git', function () {

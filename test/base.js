@@ -22,20 +22,20 @@ mockery.enable({
 });
 
 var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
-var generators = require('..');
+var Base = require('..');
 var Conflicter = require('../lib/util/conflicter');
 var helpers = require('yeoman-test');
 var assert = require('yeoman-assert');
 var tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 var resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 
-describe('generators.Base', function () {
+describe('Base', function () {
   before(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
     this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
     mkdirp.sync(resolveddir);
-    this.Dummy = generators.Base.extend({
+    this.Dummy = Base.extend({
       exec: sinon.spy()
     });
 
@@ -66,7 +66,7 @@ describe('generators.Base', function () {
     });
 
     it('use the environment options', function () {
-      this.env.registerStub(generators.Base.extend(), 'ember:model');
+      this.env.registerStub(Base.extend(), 'ember:model');
 
       var generator = this.env.create('ember:model', {
         options: {
@@ -78,7 +78,7 @@ describe('generators.Base', function () {
     });
 
     it('set generator.options from constructor options', function () {
-      var generator = new generators.Base({
+      var generator = new Base({
         env: this.env,
         resolved: 'test',
         'test-framework': 'mocha'
@@ -88,7 +88,7 @@ describe('generators.Base', function () {
     });
 
     it('set options based on nopt arguments', function () {
-      var generator = new generators.Base(['--foo', 'bar'], {
+      var generator = new Base(['--foo', 'bar'], {
         env: this.env,
         resolved: 'test'
       });
@@ -97,7 +97,7 @@ describe('generators.Base', function () {
     });
 
     it('set arguments based on nopt arguments', function () {
-      var generator = new generators.Base(['--foo', 'bar'], {
+      var generator = new Base(['--foo', 'bar'], {
         env: this.env,
         resolved: 'test'
       });
@@ -116,7 +116,7 @@ describe('generators.Base', function () {
     });
 
     it('setup fs editor', function () {
-      var generator = new generators.Base([], {
+      var generator = new Base([], {
         env: this.env,
         resolved: 'test'
       });
@@ -127,7 +127,7 @@ describe('generators.Base', function () {
 
   describe('prototype', function () {
     it('methods doesn\'t conflict with Env#runQueue', function () {
-      assert.notImplement(generators.Base.prototype, this.env.runLoop.queueNames);
+      assert.notImplement(Base.prototype, this.env.runLoop.queueNames);
     });
   });
 
@@ -174,31 +174,31 @@ describe('generators.Base', function () {
 
   describe('.extend()', function () {
     it('create a new object inheriting the Generator', function () {
-      var gen = new (generators.Base.extend())([], { resolved: 'path/', env: this.env });
-      assert.ok(gen instanceof generators.Base);
+      var gen = new (Base.extend())([], { resolved: 'path/', env: this.env });
+      assert.ok(gen instanceof Base);
     });
 
     it('pass the extend method along', function () {
-      var Sub = generators.Base.extend();
-      assert.equal(Sub.extend, generators.Base.extend);
+      var Sub = Base.extend();
+      assert.equal(Sub.extend, Base.extend);
     });
 
     it('assign prototype methods', function () {
       var proto = { foo: function () {}};
-      var Sub = generators.Base.extend(proto);
+      var Sub = Base.extend(proto);
       assert.equal(Sub.prototype.foo, proto.foo);
     });
 
     it('assign static methods', function () {
       var staticProps = { foo: function () {}};
-      var Sub = generators.Base.extend({}, staticProps);
+      var Sub = Base.extend({}, staticProps);
       assert.equal(Sub.foo, staticProps.foo);
     });
   });
 
   describe('#run()', function () {
     beforeEach(function () {
-      this.TestGenerator = generators.Base.extend({
+      this.TestGenerator = Base.extend({
         exec: sinon.spy(),
         exec2: sinon.spy(),
         exec3: sinon.spy(),
@@ -368,7 +368,7 @@ describe('generators.Base', function () {
     });
 
     it('throws if no method is available', function () {
-      var gen = new (generators.Base.extend())([], {
+      var gen = new (Base.extend())([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
         env: this.env
@@ -379,10 +379,10 @@ describe('generators.Base', function () {
 
     it('will run non-enumerable methods', function (done) {
       var Generator = function () {
-        generators.Base.apply(this, arguments);
+        Base.apply(this, arguments);
       };
 
-      Generator.prototype = Object.create(generators.Base.prototype);
+      Generator.prototype = Object.create(Base.prototype);
       Object.defineProperty(Generator.prototype, 'nonenumerable', {
         value: sinon.spy(),
         configurable: true,
@@ -561,7 +561,7 @@ describe('generators.Base', function () {
     });
 
     it('raise an error if required arguments are not provided', function (done) {
-      var dummy = new generators.Base([], {
+      var dummy = new Base([], {
         env: this.env,
         resolved: 'dummy/all'
       }).on('error', function () {
@@ -572,7 +572,7 @@ describe('generators.Base', function () {
     });
 
     it('doesn\'t raise an error if required arguments are not provided, but the help option has been specified', function () {
-      var dummy = new generators.Base([], {
+      var dummy = new Base([], {
         env: this.env,
         resolved: 'dummy:all'
       });
@@ -585,7 +585,7 @@ describe('generators.Base', function () {
     });
 
     it('can be called before #option()', function () {
-      var dummy = new generators.Base(['--foo', 'bar', 'baz'], {
+      var dummy = new Base(['--foo', 'bar', 'baz'], {
         env: this.env,
         resolved: 'dummy/all'
       });
@@ -616,9 +616,9 @@ describe('generators.Base', function () {
     });
 
     it('allow aliasing options', function () {
-      var Generator = generators.Base.extend({
+      var Generator = Base.extend({
         constructor: function () {
-          generators.Base.apply(this, arguments);
+          Base.apply(this, arguments);
 
           this.option('long-name', {
             alias: 'short-name'
@@ -693,7 +693,7 @@ describe('generators.Base', function () {
       });
 
       this.spy = sinon.spy();
-      this.GenCompose = generators.Base.extend({ exec: this.spy });
+      this.GenCompose = Base.extend({ exec: this.spy });
       this.env.registerStub(this.GenCompose, 'composed:gen');
     });
 
@@ -740,7 +740,7 @@ describe('generators.Base', function () {
       beforeEach(function () {
         this.spy = sinon.spy();
         this.stubPath = path.join(__dirname, 'fixtures/mocha-generator');
-        this.LocalDummy = generators.Base.extend({ exec: this.spy });
+        this.LocalDummy = Base.extend({ exec: this.spy });
         mockery.registerMock(this.stubPath, this.LocalDummy);
       });
 
@@ -866,7 +866,7 @@ describe('generators.Base', function () {
 
   describe('#gruntfile', function () {
     beforeEach(function () {
-      this.GruntfileGenerator = generators.Base.extend({
+      this.GruntfileGenerator = Base.extend({
         grunt: function () {
           this.gruntfile.insertConfig('foo', '{}');
         }
@@ -928,7 +928,7 @@ describe('generators.Base', function () {
   describe('#registerTransformStream()', function () {
     beforeEach(function () {
       this.filepath = path.join(os.tmpdir(), '/yeoman-transform-stream/filea.txt');
-      this.TestGenerator = generators.Base.extend({
+      this.TestGenerator = Base.extend({
         exec: sinon.spy()
       });
       this.testGen = new this.TestGenerator([], {
@@ -991,11 +991,11 @@ describe('generators.Base', function () {
   describe('Events', function () {
     before(function () {
       var Generator = this.Generator = function () {
-        generators.Base.apply(this, arguments);
+        Base.apply(this, arguments);
       };
 
       Generator.namespace = 'angular:app';
-      util.inherits(Generator, generators.Base);
+      util.inherits(Generator, Base);
 
       Generator.prototype.createSomething = function () {};
       Generator.prototype.createSomethingElse = function () {};
@@ -1035,12 +1035,12 @@ describe('generators.Base', function () {
 
     it('only call the end event once (bug #402)', function (done) {
       function GeneratorOnce() {
-        generators.Base.apply(this, arguments);
+        Base.apply(this, arguments);
         this.sourceRoot(path.join(__dirname, 'fixtures'));
         this.destinationRoot(path.join(os.tmpdir(), 'yeoman-base-once'));
       }
 
-      util.inherits(GeneratorOnce, generators.Base);
+      util.inherits(GeneratorOnce, Base);
 
       GeneratorOnce.prototype.createDuplicate = function () {
         this.fs.copy(
@@ -1075,9 +1075,9 @@ describe('generators.Base', function () {
 
     it('triggers end event after all generators methods are ran (#709)', function (done) {
       var endSpy = sinon.spy();
-      var GeneratorEnd = generators.Base.extend({
+      var GeneratorEnd = Base.extend({
         constructor: function () {
-          generators.Base.apply(this, arguments);
+          Base.apply(this, arguments);
           this.on('end', function () {
             sinon.assert.calledOnce(endSpy);
             done();
