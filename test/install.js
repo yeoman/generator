@@ -32,6 +32,9 @@ describe('Base (actions/install mixin)', function () {
   describe('#runInstall()', function () {
     it('takes a config object and passes it to the spawned process', function (done) {
       var callbackSpy = sinon.spy();
+      var options = {
+        save: true
+      };
       var spawnEnv = {
         env: {
           PATH: '/path/to/bin'
@@ -39,12 +42,12 @@ describe('Base (actions/install mixin)', function () {
       };
 
       // args: installer, paths, options, cb
-      this.dummy.runInstall('nestedScript', ['path1', 'path2'], spawnEnv, callbackSpy);
+      this.dummy.runInstall('nestedScript', ['path1', 'path2'], options, callbackSpy, spawnEnv);
       this.dummy.run(function () {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'nestedScript',
-          ['install', 'path1', 'path2'],
+          ['install', 'path1', 'path2', '--save'],
           spawnEnv
         );
 
@@ -116,7 +119,7 @@ describe('Base (actions/install mixin)', function () {
           this.spawnCommandStub,
           'bower',
           ['install', 'jquery', '--save-dev'],
-          { saveDev: true }
+          {}
         );
 
         done();
@@ -168,7 +171,7 @@ describe('Base (actions/install mixin)', function () {
       this.dummy.yarnInstall('yo', {dev: true});
       this.dummy.run(function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
-        sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['add', 'yo', '--dev'], {dev: true});
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['add', 'yo', '--dev'], {});
         done();
       }.bind(this));
     });
@@ -195,7 +198,7 @@ describe('Base (actions/install mixin)', function () {
     });
 
     it('execute a callback after installs', function (done) {
-      this.dummy.installDependencies({ callback: done });
+      this.dummy.installDependencies({callback: done});
       this.dummy.run();
     });
 
