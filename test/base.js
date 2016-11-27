@@ -93,7 +93,9 @@ describe('Base', function () {
         resolved: 'test'
       });
 
+      generator.option('foo');
       assert.equal(generator.options.foo, true);
+      assert.deepEqual(generator.args, ['bar']);
     });
 
     it('set arguments based on nopt arguments', function () {
@@ -102,8 +104,9 @@ describe('Base', function () {
         resolved: 'test'
       });
 
+      generator.option('foo');
       generator.argument('baz');
-      assert.equal(generator.baz, 'bar');
+      assert.equal(generator.options.baz, 'bar');
     });
 
     it('set options with false values', function (done) {
@@ -546,18 +549,12 @@ describe('Base', function () {
 
     it('create the property specified with value from positional args', function () {
       this.dummy.argument('foo');
-      assert.equal(this.dummy.foo, 'bar');
-    });
-
-    it('can still be set as a property once defined', function () {
-      this.dummy.argument('foo');
-      this.dummy.foo = 'barbar';
-      assert.equal(this.dummy.foo, 'barbar');
+      assert.equal(this.dummy.options.foo, 'bar');
     });
 
     it('slice positional arguments when config.type is Array', function () {
       this.dummy.argument('bar', { type: Array });
-      assert.deepEqual(this.dummy.bar, ['bar', 'baz', 'bom']);
+      assert.deepEqual(this.dummy.options.bar, ['bar', 'baz', 'bom']);
     });
 
     it('raise an error if required arguments are not provided', function (done) {
@@ -593,7 +590,7 @@ describe('Base', function () {
       dummy.argument('baz');
       dummy.option('foo', { type: String });
 
-      assert.equal(dummy.baz, 'baz');
+      assert.equal(dummy.options.baz, 'baz');
     });
   });
 
@@ -621,7 +618,8 @@ describe('Base', function () {
           Base.apply(this, arguments);
 
           this.option('long-name', {
-            alias: 'short-name'
+            alias: 'short-name',
+            type: String
           });
         }
       });
