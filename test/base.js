@@ -53,7 +53,8 @@ describe('Base', function () {
   describe('constructor', function () {
     it('set the CWD where `.yo-rc.json` is found', function () {
       var projectDir = path.join(__dirname, 'fixtures/dummy-project');
-      process.chdir(path.join(projectDir, 'subdir'));
+      var subdir = path.join(projectDir, 'subdir');
+      process.chdir(subdir);
       this.env.cwd = process.cwd();
 
       var dummy = new this.Dummy(['foo'], {
@@ -63,6 +64,7 @@ describe('Base', function () {
 
       assert.equal(process.cwd(), projectDir);
       assert.equal(dummy.destinationPath(), projectDir);
+      assert.equal(dummy.contextRoot, subdir);
     });
 
     it('use the environment options', function () {
