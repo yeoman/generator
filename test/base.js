@@ -792,13 +792,13 @@ describe('Base', function () {
     describe('when passing a local path to a generator', function () {
       beforeEach(function () {
         this.spy = sinon.spy();
-        this.stubPath = path.join(__dirname, 'fixtures/mocha-generator');
+        this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
         this.LocalDummy = Base.extend({ exec: this.spy });
         mockery.registerMock(this.stubPath, this.LocalDummy);
       });
 
       it('runs the composed generator', function (done) {
-        this.dummy.composeWith('dumb', {}, { local: this.stubPath });
+        this.dummy.composeWith(this.stubPath, {});
         this.dummy.run(function () {
           assert(this.LocalDummy.prototype.exec.called);
           done();
@@ -806,11 +806,7 @@ describe('Base', function () {
       });
 
       it('pass options and arguments to the composed generators', function (done) {
-        this.dummy.composeWith(
-          'dumb',
-          { foo: 'bar', 'skip-install': true },
-          { local: this.stubPath }
-        );
+        this.dummy.composeWith(this.stubPath, { foo: 'bar', 'skip-install': true });
 
         this.dummy.run(function () {
           assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
@@ -819,9 +815,9 @@ describe('Base', function () {
       });
 
       it('sets correct metadata on the Generator constructor', function (done) {
-        this.dummy.composeWith('dumb', {}, { local: this.stubPath });
+        this.dummy.composeWith(this.stubPath, {});
         this.dummy.run(function () {
-          assert.equal(this.spy.firstCall.thisValue.options.namespace, 'dumb');
+          assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
           assert.equal(
             this.spy.firstCall.thisValue.options.resolved,
             require.resolve(this.stubPath)

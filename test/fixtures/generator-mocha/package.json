@@ -1,6 +1,6 @@
 {
   "author": "",
-  "name": "mocha-generator",
+  "name": "generator-mocha",
   "version": "0.0.0",
   "main": "main.js",
   "dependencies": {},
