@@ -913,41 +913,6 @@ describe('Base', function () {
     });
   });
 
-  describe('#gruntfile', function () {
-    beforeEach(function () {
-      this.GruntfileGenerator = Base.extend({
-        grunt: function () {
-          this.gruntfile.insertConfig('foo', '{}');
-        }
-      });
-
-      this.gruntGenerator = new this.GruntfileGenerator([], {
-        resolved: 'unknown',
-        namespace: 'dummy',
-        env: this.env,
-        'skip-install': true,
-        force: true
-      });
-    });
-
-    it('expose the gruntfile editor API', function () {
-      assert(this.gruntGenerator.gruntfile instanceof require('gruntfile-editor'));
-    });
-
-    it('uses the gruntfile editor of the Env if available', function () {
-      this.gruntGenerator.env.gruntfile = 'foo';
-      assert.equal(this.gruntGenerator.gruntfile, 'foo');
-    });
-
-    it('schedule gruntfile writing on the write Queue', function (done) {
-      this.gruntGenerator.run(function () {
-        var gruntfile = this.dummy.fs.read(this.dummy.destinationPath('Gruntfile.js'));
-        assert(gruntfile.indexOf('foo:') > 0);
-        done();
-      }.bind(this));
-    });
-  });
-
   describe('#templatePath()', function () {
     it('joins path to the source root', function () {
       assert.equal(
