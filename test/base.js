@@ -779,13 +779,12 @@ describe('Base', function () {
 
     it('pass options and arguments to the composed generators', function (done) {
       this.dummy.composeWith('composed:gen', {
-        options: { foo: 'bar', 'skip-install': true },
-        arguments: ['foo']
+        foo: 'bar',
+        'skip-install': true
       });
 
       this.dummy.run(function () {
         assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
-        assert.deepEqual(this.spy.firstCall.thisValue.args, ['foo']);
         done();
       }.bind(this));
     });
@@ -807,14 +806,14 @@ describe('Base', function () {
       });
 
       it('pass options and arguments to the composed generators', function (done) {
-        this.dummy.composeWith('dumb', {
-          options: { foo: 'bar', 'skip-install': true },
-          arguments: ['foo']
-        }, { local: this.stubPath });
+        this.dummy.composeWith(
+          'dumb',
+          { foo: 'bar', 'skip-install': true },
+          { local: this.stubPath }
+        );
 
         this.dummy.run(function () {
           assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
-          assert.deepEqual(this.spy.firstCall.thisValue.args, ['foo']);
           done();
         }.bind(this));
       });
