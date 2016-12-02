@@ -554,6 +554,58 @@ describe('Base', function () {
       assert.equal(this.dummy.options.foo, 'bar');
     });
 
+    it('allows specifying default argument values', function () {
+      var Generator = Base.extend({
+        constructor: function () {
+          Base.apply(this, arguments);
+
+          this.argument('bar', {default: 'baz'});
+        }
+      });
+
+      var gen = new Generator({
+        env: this.env,
+        resolved: 'test'
+      });
+
+      assert.equal(gen.options.bar, 'baz');
+    });
+
+    it('allows specifying default argument values', function () {
+      var Generator = Base.extend({
+        constructor: function () {
+          Base.apply(this, arguments);
+
+          this.argument('bar', {default: 'baz'});
+        }
+      });
+
+      var gen = new Generator({
+        env: this.env,
+        resolved: 'test'
+      });
+
+      assert.equal(gen.options.bar, 'baz');
+    });
+
+    it('properly uses arguments values passed from constructor', function () {
+      var Generator = Base.extend({
+        constructor: function () {
+          Base.apply(this, arguments);
+
+          this.argument('bar', {default: 'baz'});
+        }
+      });
+
+      var gen = new Generator({
+        env: this.env,
+        resolved: 'test',
+        bar: 'foo'
+      });
+
+      assert.equal(gen.options.bar, 'foo');
+    });
+
     it('slice positional arguments when config.type is Array', function () {
       this.dummy.argument('bar', { type: Array });
       assert.deepEqual(this.dummy.options.bar, ['bar', 'baz', 'bom']);
