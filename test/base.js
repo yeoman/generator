@@ -658,7 +658,7 @@ describe('Base', function () {
 
       generator.option('foo');
       assert.deepEqual(generator._options.foo, {
-        desc: 'Description for foo',
+        description: 'Description for foo',
         name: 'foo',
         type: Boolean,
         default: undefined,
