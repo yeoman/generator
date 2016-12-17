@@ -2,23 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Mixin: actions/install</title>
+    <title>Generator</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
 </head>
-
 <body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 127px; height: 14px">
+        <img src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Generator</a></h1>
+        
+            <span class="version">v1.0.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+    <div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Base.html">Base</a><div class="hidden" id="Base_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Base.html#.extend">extend</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Base.html#_writeFiles">_writeFiles</a></li><li><a href="Base.html#argument">argument</a></li><li><a href="Base.html#argumentsHelp">argumentsHelp</a></li><li><a href="Base.html#bowerInstall">bowerInstall</a></li><li><a href="Base.html#composeWith">composeWith</a></li><li><a href="Base.html#desc">desc</a></li><li><a href="Base.html#destinationPath">destinationPath</a></li><li><a href="Base.html#destinationRoot">destinationRoot</a></li><li><a href="Base.html#determineAppname">determineAppname</a></li><li><a href="Base.html#git.email">git.email</a></li><li><a href="Base.html#help">help</a></li><li><a href="Base.html#installDependencies">installDependencies</a></li><li><a href="Base.html#git.name">git.name</a></li><li><a href="Base.html#npmInstall">npmInstall</a></li><li><a href="Base.html#option">option</a></li><li><a href="Base.html#optionsHelp">optionsHelp</a></li><li><a href="Base.html#prompt">prompt</a></li><li><a href="Base.html#registerTransformStream">registerTransformStream</a></li><li><a href="Base.html#rootGeneratorName">rootGeneratorName</a></li><li><a href="Base.html#rootGeneratorVersion">rootGeneratorVersion</a></li><li><a href="Base.html#run">run</a></li><li><a href="Base.html#runInstall">runInstall</a></li><li><a href="Base.html#sourceRoot">sourceRoot</a></li><li><a href="Base.html#spawnCommand">spawnCommand</a></li><li><a href="Base.html#spawnCommandSync">spawnCommandSync</a></li><li><a href="Base.html#templatePath">templatePath</a></li><li><a href="Base.html#usage">usage</a></li><li><a href="Base.html#github.username">github.username</a></li><li><a href="Base.html#yarnInstall">yarnInstall</a></li></ul></div></li><li><a href="Conflicter.html">Conflicter</a><div class="hidden" id="Conflicter_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Conflicter.html#checkForCollision">checkForCollision</a></li><li><a href="Conflicter.html#collision">collision</a></li><li><a href="Conflicter.html#resolve">resolve</a></li></ul></div></li><li><a href="Storage.html">Storage</a><div class="hidden" id="Storage_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Storage.html#_persist">_persist</a></li><li><a href="Storage.html#defaults">defaults</a></li><li><a href="Storage.html#delete">delete</a></li><li><a href="Storage.html#get">get</a></li><li><a href="Storage.html#getAll">getAll</a></li><li><a href="Storage.html#save">save</a></li><li><a href="Storage.html#set">set</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Mixins</h3><ul><li><a href="actions_help.html">actions/help</a><div class="hidden" id="actions/help_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_help.html#.argumentsHelp">argumentsHelp</a></li><li><a href="actions_help.html#.desc">desc</a></li><li><a href="actions_help.html#.help">help</a></li><li><a href="actions_help.html#.optionsHelp">optionsHelp</a></li><li><a href="actions_help.html#.usage">usage</a></li></ul></div></li><li><a href="actions_install.html">actions/install</a><div class="hidden" id="actions/install_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_install.html#.bowerInstall">bowerInstall</a></li><li><a href="actions_install.html#.installDependencies">installDependencies</a></li><li><a href="actions_install.html#.npmInstall">npmInstall</a></li><li><a href="actions_install.html#.runInstall">runInstall</a></li><li><a href="actions_install.html#.yarnInstall">yarnInstall</a></li></ul></div></li><li><a href="actions_spawn_command.html">actions/spawn_command</a><div class="hidden" id="actions/spawn_command_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_spawn_command.html#.spawnCommand">spawnCommand</a></li><li><a href="actions_spawn_command.html#.spawnCommandSync">spawnCommandSync</a></li></ul></div></li><li><a href="actions_user.html">actions/user</a><div class="hidden" id="actions/user_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_user.html#.git.email">git.email</a></li><li><a href="actions_user.html#.git.name">git.name</a></li><li><a href="actions_user.html#.github.username">github.username</a></li></ul></div></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a><div class="hidden" id="util/prompt-suggestion_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="util_prompt-suggestion.html#.prefillQuestions">prefillQuestions</a></li><li><a href="util_prompt-suggestion.html#.storeAnswers">storeAnswers</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
 
-<div id="main">
-
-    <h1 class="page-title">Mixin: actions/install</h1>
-
+<div class="main" id="main">
     
 
 
@@ -68,13 +84,6 @@
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions_install.js.html">actions/install.js</a>, <a href="actions_install.js.html#line12">line 12</a>
-    </li></ul></dd>
-    
-
-    
 
     
 
@@ -101,33 +110,47 @@
     
         <h3 class="subsection-title">Methods</h3>
 
+        <dl>
+                
+
+<dt>
+
+    
         
+
+        <h4 class="name" id=".bowerInstall">
+            <span class="type-signature"><span class="icon green">static</span> </span>bowerInstall<span class="signature">(cmpnt<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>, spawnOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
             
+            <div class="container-source members">
+                <code><a href="actions_install.js.html">actions/install.js</a></code>,
+                <code><a href="actions_install.js.html#line161">line 161</a></code>
+            </div>
+            
+        </h4>
 
+        
     
 
-    <h4 class="name" id=".bowerInstall"><span class="type-signature">(static) </span>bowerInstall<span class="signature">(cmpnt<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+</dt>
+<dd>
 
     
-
-
-
-<div class="description">
-    <p>Receives a list of <code>components</code> and an <code>options</code> object to install through bower.</p>
+    <div class="description">
+        <p>Receives a list of <code>components</code> and an <code>options</code> object to install through bower.</p>
 <p>The installation will automatically run during the run loop <code>install</code> phase.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
 <table class="params">
     <thead>
     <tr>
@@ -214,7 +237,7 @@
 
             
 
-            <td class="description last"><p>Options to pass to <code>child_process.spawn</code> when invoking bower.</p></td>
+            <td class="description last"><p>Options to pass to <code>dargs</code> as arguments</p></td>
         </tr>
 
     
@@ -251,12 +274,58 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>spawnOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Options to pass <code>child_process.spawn</code>.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
+    </div>
+    
 
+    
 
+    
 
+    
+
+    
+
+    
+
+    
+
+    
 
 
 <dl class="details">
@@ -286,13 +355,6 @@
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions_install.js.html">actions/install.js</a>, <a href="actions_install.js.html#line144">line 144</a>
-    </li></ul></dd>
-    
-
-    
 
     
 
@@ -300,47 +362,51 @@
 </dl>
 
 
+    
 
+</dd>
 
+            
+                
 
+<dt>
 
+    
+        
 
-
-
-
-
-
-
-
-
+        <h4 class="name" id=".installDependencies">
+            <span class="type-signature"><span class="icon green">static</span> </span>installDependencies<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="actions_install.js.html">actions/install.js</a></code>,
+                <code><a href="actions_install.js.html#line98">line 98</a></code>
+            </div>
+            
+        </h4>
 
         
-            
-
     
 
-    <h4 class="name" id=".installDependencies"><span class="type-signature">(static) </span>installDependencies<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+</dt>
+<dd>
 
     
-
-
-
-<div class="description">
-    <p>Runs <code>npm</code> and <code>bower</code>, in sequence, in the generated directory and prints a
+    <div class="description">
+        <p>Runs <code>npm</code> and <code>bower</code>, in sequence, in the generated directory and prints a
 message to let the user know.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
 <table class="params">
     <thead>
     <tr>
@@ -394,7 +460,6 @@ message to let the user know.</p>
             <td class="description last">
                 <h6>Properties</h6>
                 
-
 <table class="params">
     <thead>
     <tr>
@@ -499,6 +564,45 @@ message to let the user know.</p>
 
         <tr>
             
+                <td class="name"><code>yarn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>whether to run <code>yarn install</code></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>skipMessage</code></td>
             
 
@@ -582,9 +686,22 @@ message to let the user know.</p>
     </tbody>
 </table>
 
+    </div>
+    
 
+    
 
+    
 
+    
+
+    
+
+    
+
+    
+
+    
 
 
 <dl class="details">
@@ -614,13 +731,6 @@ message to let the user know.</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions_install.js.html">actions/install.js</a>, <a href="actions_install.js.html#line83">line 83</a>
-    </li></ul></dd>
-    
-
-    
 
     
 
@@ -628,21 +738,9 @@ message to let the user know.</p>
 </dl>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Example</h5>
     
+        <h5>Example</h5>
+        
     <pre class="prettyprint"><code>this.installDependencies({
   bower: true,
   npm: true,
@@ -651,35 +749,51 @@ message to let the user know.</p>
   }
 });</code></pre>
 
+    
 
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id=".npmInstall">
+            <span class="type-signature"><span class="icon green">static</span> </span>npmInstall<span class="signature">(pkgs<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>, spawnOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="actions_install.js.html">actions/install.js</a></code>,
+                <code><a href="actions_install.js.html#line176">line 176</a></code>
+            </div>
+            
+        </h4>
 
         
-            
-
     
 
-    <h4 class="name" id=".npmInstall"><span class="type-signature">(static) </span>npmInstall<span class="signature">(pkgs<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+</dt>
+<dd>
 
     
-
-
-
-<div class="description">
-    <p>Receives a list of <code>packages</code> and an <code>options</code> object to install through npm.</p>
+    <div class="description">
+        <p>Receives a list of <code>packages</code> and an <code>options</code> object to install through npm.</p>
 <p>The installation will automatically run during the run loop <code>install</code> phase.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
 <table class="params">
     <thead>
     <tr>
@@ -766,7 +880,7 @@ message to let the user know.</p>
 
             
 
-            <td class="description last"><p>Options to pass to <code>child_process.spawn</code> when invoking npm.</p></td>
+            <td class="description last"><p>Options to pass to <code>dargs</code> as arguments</p></td>
         </tr>
 
     
@@ -803,12 +917,58 @@ message to let the user know.</p>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>spawnOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Options to pass <code>child_process.spawn</code>.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
+    </div>
+    
 
+    
 
+    
 
+    
+
+    
+
+    
+
+    
+
+    
 
 
 <dl class="details">
@@ -838,13 +998,6 @@ message to let the user know.</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions_install.js.html">actions/install.js</a>, <a href="actions_install.js.html#line158">line 158</a>
-    </li></ul></dd>
-    
-
-    
 
     
 
@@ -852,47 +1005,52 @@ message to let the user know.</p>
 </dl>
 
 
+    
 
+</dd>
 
+            
+                
 
+<dt>
 
+    
+        
 
-
-
-
-
-
-
-
-
+        <h4 class="name" id=".runInstall">
+            <span class="type-signature"><span class="icon green">static</span> </span>runInstall<span class="signature">(installer, paths<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>, spawnOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="actions_install.js.html">actions/install.js</a></code>,
+                <code><a href="actions_install.js.html#line28">line 28</a></code>
+            </div>
+            
+        </h4>
 
         
-            
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Combine package manager cmd line arguments and run the <code>install</code> command.</p>
+<p>During the <code>install</code> step, every command will be scheduled to run once, on the
+run loop. (So don't combine the callback with <code>this.async()</code>)</p>
+    </div>
+    
 
     
 
-    <h4 class="name" id=".runInstall"><span class="type-signature">(static) </span>runInstall<span class="signature">(installer, paths<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
 
     
 
-
-
-<div class="description">
-    <p>Combine package manager cmd line arguments and run the <code>install</code> command.</p>
-<p>During the <code>install</code> step, every command will be scheduled to run once, on the run loop. (So don't combine the callback with <code>this.async()</code>)</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
     
-
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
 <table class="params">
     <thead>
     <tr>
@@ -977,7 +1135,7 @@ message to let the user know.</p>
 
             
 
-            <td class="description last"><p>Packages to install.Use an empty string for <code>npm install</code></p></td>
+            <td class="description last"><p>Packages to install. Use an empty string for <code>npm install</code></p></td>
         </tr>
 
     
@@ -1010,7 +1168,7 @@ message to let the user know.</p>
 
             
 
-            <td class="description last"><p>Options to pass to <code>dargs</code> as arguments, then to <code>child_process.spawn</code></p></td>
+            <td class="description last"><p>Options to pass to <code>dargs</code> as arguments</p></td>
         </tr>
 
     
@@ -1047,12 +1205,59 @@ message to let the user know.</p>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>spawnOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Options to pass <code>child_process.spawn</code>. ref
+                               https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
+    </div>
+    
 
+    
 
+    
 
+    
+
+    
+
+    
+
+    
+
+    
 
 
 <dl class="details">
@@ -1082,10 +1287,259 @@ message to let the user know.</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="actions_install.js.html">actions/install.js</a>, <a href="actions_install.js.html#line25">line 25</a>
-    </li></ul></dd>
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id=".yarnInstall">
+            <span class="type-signature"><span class="icon green">static</span> </span>yarnInstall<span class="signature">(pkgs<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>, spawnOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="actions_install.js.html">actions/install.js</a></code>,
+                <code><a href="actions_install.js.html#line190">line 190</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Receives a list of <code>packages</code> and an <code>options</code> object to install through npm.</p>
+<p>The installation will automatically run during the run loop <code>install</code> phase.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>pkgs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Packages to install</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Options to pass to <code>dargs</code> as arguments</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>spawnOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Options to pass <code>child_process.spawn</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -1096,21 +1550,11 @@ message to let the user know.</p>
 </dl>
 
 
+    
 
+</dd>
 
-
-
-
-
-
-
-
-
-
-
-
-
-        
+            </dl>
     
 
     
@@ -1125,17 +1569,22 @@ message to let the user know.</p>
 
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-yeoman-generator.html">yeoman-generator</a></li></ul><h3>Classes</h3><ul><li><a href="Base.html">Base</a></li><li><a href="Conflicter.html">Conflicter</a></li><li><a href="NamedBase.html">NamedBase</a></li><li><a href="Storage.html">Storage</a></li></ul><h3>Mixins</h3><ul><li><a href="actions_actions.html">actions/actions</a></li><li><a href="actions_file.html">actions/file</a></li><li><a href="actions_help.html">actions/help</a></li><li><a href="actions_install.html">actions/install</a></li><li><a href="actions_invoke.html">actions/invoke</a></li><li><a href="actions_spawn_command.html">actions/spawn_command</a></li><li><a href="actions_user.html">actions/user</a></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a></li></ul>
-</nav>
-
-<br class="clear">
-
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> on Thu Oct 20 2016 05:51:17 GMT+0000 (UTC)
+    <img class="logo" src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png" style="width: 127px; height: 14px">
+    <div class="footer-text">BSD license Copyright (c) Google</div>
 </footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+    <script>
+        var id = 'actions/install_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
 </body>
 </html>
