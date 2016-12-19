@@ -625,10 +625,9 @@ describe('Base', function () {
     it('doesn\'t raise an error if required arguments are not provided, but the help option has been specified', function () {
       var dummy = new Base([], {
         env: this.env,
-        resolved: 'dummy:all'
+        resolved: 'dummy:all',
+        help: true
       });
-
-      dummy.options.help = true;
 
       assert.equal(dummy._arguments.length, 0);
       assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', { required: true }));
@@ -661,7 +660,6 @@ describe('Base', function () {
         description: 'Description for foo',
         name: 'foo',
         type: Boolean,
-        default: undefined,
         hide: false
       });
     });
@@ -685,6 +683,23 @@ describe('Base', function () {
       });
 
       assert.equal(gen.options['long-name'], 'that value');
+    });
+
+    it('allows Boolean options to be undefined', function () {
+      var Generator = Base.extend({
+        constructor: function () {
+          Base.apply(this, arguments);
+
+          this.option('undef', {type: Boolean});
+        }
+      });
+
+      var gen = new Generator({
+        env: this.env,
+        resolved: 'test'
+      });
+
+      assert.equal(gen.options.undef, undefined);
     });
   });
 
