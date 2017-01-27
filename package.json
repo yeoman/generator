@@ -47,7 +47,7 @@
     "glob": "^7.0.3",
     "istextorbinary": "^2.1.0",
     "lodash": "^4.11.1",
-    "mem-fs-editor": "^2.0.0",
+    "mem-fs-editor": "^3.0.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.0",
     "path-exists": "^2.0.0",
