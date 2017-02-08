@@ -701,6 +701,18 @@ describe('Base', function () {
 
       assert.equal(gen.options.undef, undefined);
     });
+
+    it('disallows Boolean options starting with no-', function () {
+      var generator = new this.Dummy([], {
+        env: this.env,
+        resolved: 'test'
+      });
+      var addWrongOp = function() {
+        generator.option('no-op');
+      };
+      assert.throws(addWrongOp, Error);
+    });
+
   });
 
   describe('#parseOptions()', function () {
