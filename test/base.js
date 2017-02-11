@@ -710,7 +710,7 @@ describe('Base', function () {
       var addWrongOp = function() {
         generator.option('no-op');
       };
-      assert.throws(addWrongOp, Error);
+      assert.throws(addWrongOp, /this\.option\('op', \{type: Boolean\}\)/);
     });
 
   });
