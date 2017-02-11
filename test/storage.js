@@ -4,7 +4,6 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const FileEditor = require('mem-fs-editor');
-const pathExists = require('path-exists');
 const env = require('yeoman-environment');
 const helpers = require('yeoman-test');
 const Storage = require('../lib/util/storage');
@@ -12,7 +11,7 @@ const Storage = require('../lib/util/storage');
 const tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 
 function rm(filepath) {
-  if (pathExists.sync(filepath)) {
+  if (fs.existsSync(filepath)) {
     fs.unlinkSync(path);
   }
 }

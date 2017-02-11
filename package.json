@@ -49,8 +49,6 @@
     "mem-fs-editor": "^3.0.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.0",
-    "path-exists": "^3.0.0",
-    "path-is-absolute": "^1.0.0",
     "pretty-bytes": "^4.0.2",
     "read-chunk": "^2.0.0",
     "read-pkg-up": "^2.0.0",
@@ -59,7 +57,6 @@
     "shelljs": "^0.7.0",
     "text-table": "^0.2.0",
     "through2": "^2.0.0",
-    "user-home": "^2.0.0",
     "yeoman-environment": "^1.1.0"
   },
   "devDependencies": {
@@ -73,7 +70,6 @@
     "jsdoc": "^3.3.0-beta1",
     "mockery": "^2.0.0",
     "nock": "^9.0.5",
-    "pinkie-promise": "^2.0.0",
     "proxyquire": "^1.0.0",
     "sinon": "^1.9.1",
     "tui-jsdoc-template": "^1.0.4",

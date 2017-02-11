@@ -9,10 +9,7 @@ const mkdirp = require('mkdirp');
 const mockery = require('mockery');
 const rimraf = require('rimraf');
 const through = require('through2');
-const pathExists = require('path-exists');
-const Promise = require('pinkie-promise');
 const yeoman = require('yeoman-environment');
-const userHome = require('user-home');
 
 mockery.enable({
   warnOnReplace: false,
@@ -458,7 +455,7 @@ describe('Base', () => {
       };
 
       this.testGen.run(() => {
-        assert(pathExists.sync(filepath));
+        assert(fs.existsSync(filepath));
         done();
       });
     });
@@ -466,7 +463,7 @@ describe('Base', () => {
     it('allow skipping file writes to disk', function (done) {
       const action = {action: 'skip'};
       const filepath = path.join(__dirname, '/fixtures/conflict.js');
-      assert(pathExists.sync(filepath));
+      assert(fs.existsSync(filepath));
 
       this.TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'some new content');
@@ -521,7 +518,7 @@ describe('Base', () => {
     it('does not pass config file to conflicter', function (done) {
       this.TestGenerator.prototype.writing = function () {
         fs.writeFileSync(this.destinationPath('.yo-rc.json'), '{"foo": 3}');
-        fs.writeFileSync(path.join(userHome, '.yo-rc-global.json'), '{"foo": 3}');
+        fs.writeFileSync(path.join(os.homedir(), '.yo-rc-global.json'), '{"foo": 3}');
         this.config.set('bar', 1);
         this._globalConfig.set('bar', 1);
       };
@@ -535,7 +532,7 @@ describe('Base', () => {
       };
 
       this.testGen.run(() => {
-        assert(pathExists.sync(this.testGen.destinationPath('foo.txt')));
+        assert(fs.existsSync(this.testGen.destinationPath('foo.txt')));
         done();
       });
     });
