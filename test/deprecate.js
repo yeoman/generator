@@ -1,4 +1,3 @@
-/*global describe, before, beforeEach, after, afterEach, it */
 'use strict';
 var assert = require('assert');
 var chalk = require('chalk');

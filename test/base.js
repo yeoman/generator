@@ -1,7 +1,7 @@
-/*global describe, before, beforeEach, after, afterEach, it */
 'use strict';
 var fs = require('fs');
 var os = require('os');
+var LF = require('os').EOL;
 var path = require('path');
 var util = require('util');
 var sinon = require('sinon');
@@ -14,18 +14,17 @@ var Promise = require('pinkie-promise');
 var yeoman = require('yeoman-environment');
 var userHome = require('user-home');
 
-var LF = require('os').EOL;
-
 mockery.enable({
   warnOnReplace: false,
   warnOnUnregistered: false
 });
 
+var assert = require('yeoman-assert');
+var helpers = require('yeoman-test');
 var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
 var Base = require('..');
 var Conflicter = require('../lib/util/conflicter');
-var helpers = require('yeoman-test');
-var assert = require('yeoman-assert');
+
 var tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 var resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 
@@ -33,7 +32,7 @@ describe('Base', function () {
   before(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+    this.env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter());
     mkdirp.sync(resolveddir);
     this.Dummy = Base.extend({
       exec: sinon.spy()
@@ -42,7 +41,7 @@ describe('Base', function () {
     this.dummy = new this.Dummy(['bar', 'baz', 'bom'], {
       foo: false,
       something: 'else',
-      // mandatory options, created by the env#create() helper
+      // Mandatory options, created by the env#create() helper
       resolved: resolveddir,
       namespace: 'dummy',
       env: this.env,
@@ -114,7 +113,7 @@ describe('Base', function () {
     it('set options with false values', function (done) {
       var generator = helpers
         .run(path.join(__dirname, './fixtures/options-generator'))
-        .withOptions({ testOption: false }).on('end', function () {
+        .withOptions({testOption: false}).on('end', function () {
           assert.equal(generator.options.testOption, false);
           done();
         });
@@ -179,7 +178,7 @@ describe('Base', function () {
 
   describe('.extend()', function () {
     it('create a new object inheriting the Generator', function () {
-      var gen = new (Base.extend())([], { resolved: 'path/', env: this.env });
+      var gen = new (Base.extend())([], {resolved: 'path/', env: this.env});
       assert.ok(gen instanceof Base);
     });
 
@@ -189,13 +188,13 @@ describe('Base', function () {
     });
 
     it('assign prototype methods', function () {
-      var proto = { foo: function () {}};
+      var proto = {foo: function () {}};
       var Sub = Base.extend(proto);
       assert.equal(Sub.prototype.foo, proto.foo);
     });
 
     it('assign static methods', function () {
-      var staticProps = { foo: function () {}};
+      var staticProps = {foo: function () {}};
       var Sub = Base.extend({}, staticProps);
       assert.equal(Sub.foo, staticProps.foo);
     });
@@ -465,7 +464,7 @@ describe('Base', function () {
     });
 
     it('allow skipping file writes to disk', function (done) {
-      var action = { action: 'skip' };
+      var action = {action: 'skip'};
       var filepath = path.join(__dirname, '/fixtures/conflict.js');
       assert(pathExists.sync(filepath));
 
@@ -473,7 +472,7 @@ describe('Base', function () {
         this.fs.write(filepath, 'some new content');
       };
 
-      var env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter(action));
+      var env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter(action));
       var testGen = new this.TestGenerator([], {
         resolved: 'generator/app/index.js',
         namespace: 'dummy',
@@ -487,12 +486,12 @@ describe('Base', function () {
     });
 
     it('does not prompt again for skipped files', function (done) {
-      var action = { action: 'skip' };
+      var action = {action: 'skip'};
       var filepath = path.join(__dirname, '/fixtures/conflict.js');
       var filepath2 = path.join(__dirname, '/fixtures/file-conflict.txt');
 
       sinon.spy(Conflicter.prototype, 'checkForCollision');
-      var env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter(action));
+      var env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter(action));
       env.registerStub(this.Dummy, 'dummy:app');
 
       // The composed generator need to write at least one file for it to go through it's
@@ -607,7 +606,7 @@ describe('Base', function () {
     });
 
     it('slice positional arguments when config.type is Array', function () {
-      this.dummy.argument('bar', { type: Array });
+      this.dummy.argument('bar', {type: Array});
       assert.deepEqual(this.dummy.options.bar, ['bar', 'baz', 'bom']);
     });
 
@@ -619,7 +618,7 @@ describe('Base', function () {
         done();
       });
 
-      dummy.argument('foo', { required: true });
+      dummy.argument('foo', {required: true});
     });
 
     it('doesn\'t raise an error if required arguments are not provided, but the help option has been specified', function () {
@@ -630,7 +629,7 @@ describe('Base', function () {
       });
 
       assert.equal(dummy._arguments.length, 0);
-      assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', { required: true }));
+      assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', {required: true}));
       assert.equal(dummy._arguments.length, 1);
     });
 
@@ -641,7 +640,7 @@ describe('Base', function () {
       });
 
       dummy.argument('baz');
-      dummy.option('foo', { type: String });
+      dummy.option('foo', {type: String});
 
       assert.equal(dummy.options.baz, 'baz');
     });
@@ -649,7 +648,7 @@ describe('Base', function () {
 
   describe('#option()', function () {
     it('add a new option to the set of generator expected options', function () {
-      // every generator have the --help options
+      // Every generator have the --help options
       var generator = new this.Dummy([], {
         env: this.env,
         resolved: 'test'
@@ -707,12 +706,11 @@ describe('Base', function () {
         env: this.env,
         resolved: 'test'
       });
-      var addWrongOp = function() {
+      var addWrongOp = function () {
         generator.option('no-op');
       };
       assert.throws(addWrongOp, /this\.option\('op', \{type: Boolean\}\)/);
     });
-
   });
 
   describe('#parseOptions()', function () {
@@ -772,7 +770,7 @@ describe('Base', function () {
       });
 
       this.spy = sinon.spy();
-      this.GenCompose = Base.extend({ exec: this.spy });
+      this.GenCompose = Base.extend({exec: this.spy});
       this.env.registerStub(this.GenCompose, 'composed:gen');
     });
 
@@ -820,7 +818,7 @@ describe('Base', function () {
       beforeEach(function () {
         this.spy = sinon.spy();
         this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
-        this.LocalDummy = Base.extend({ exec: this.spy });
+        this.LocalDummy = Base.extend({exec: this.spy});
         mockery.registerMock(this.stubPath, this.LocalDummy);
       });
 
@@ -833,7 +831,7 @@ describe('Base', function () {
       });
 
       it('pass options and arguments to the composed generators', function (done) {
-        this.dummy.composeWith(this.stubPath, { foo: 'bar', 'skip-install': true });
+        this.dummy.composeWith(this.stubPath, {foo: 'bar', 'skip-install': true});
 
         this.dummy.run(function () {
           assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
@@ -891,7 +889,7 @@ describe('Base', function () {
       ];
 
       help.split('\n').forEach(function (line, i) {
-        // do not test whitespace; we care about the content, not formatting.
+        // Do not test whitespace; we care about the content, not formatting.
         // formatting is best left up to the tests for module "text-table"
         assert.textEqual(line.trim().replace(/\s+/g, ' '), expected[i]);
       });
@@ -1057,7 +1055,6 @@ describe('Base', function () {
 
           if (e === 'end') {
             done();
-            return;
           }
         };
       }

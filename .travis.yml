@@ -1,18 +1,20 @@
 sudo: false
 language: node_js
 node_js:
-  - 4
-  - 6
-  - node
-after_success: "./deploy.sh"
+  - '6'
+  - '4'
+  - '0.12'
+  - '0.10'
+after_success: ./deploy.sh
 env:
   global:
-  - COMMIT_AUTHOR_EMAIL: yeoman@yeoman.io
-  - COMMIT_AUTHOR_NAME: yeoman
-  - SOURCE_BRANCH: master
-  - TARGET_BRANCH: gh-pages
-  - DOCS_DIR: "../yeoman-generator-doc"
-  - GH_OWNER: yeoman
-  - GH_PROJECT_NAME: generator
-  - DEPLOY_ON_NODE_VERSION: v6
-  - secure: Hv7gACQoYGtesz1NTJYRHjGCimEJEjj4bQP2iTpDUUbfAiYe/4QPemoyDEFjRxbu5m2uoYwMk0AQrW7DnQhNAhl7u24jYnRgQyd/2GOx3xZgjwnao27gsrTHss4IyXEaS2h3kRuIVSD+xibz/lwZm+erHOQ9VOwvCQkOKnILXW8=
+    - COMMIT_AUTHOR_EMAIL: yeoman@yeoman.io
+    - COMMIT_AUTHOR_NAME: yeoman
+    - SOURCE_BRANCH: master
+    - TARGET_BRANCH: gh-pages
+    - DOCS_DIR: ../yeoman-generator-doc
+    - GH_OWNER: yeoman
+    - GH_PROJECT_NAME: generator
+    - DEPLOY_ON_NODE_VERSION: v6
+    - secure: >-
+        Hv7gACQoYGtesz1NTJYRHjGCimEJEjj4bQP2iTpDUUbfAiYe/4QPemoyDEFjRxbu5m2uoYwMk0AQrW7DnQhNAhl7u24jYnRgQyd/2GOx3xZgjwnao27gsrTHss4IyXEaS2h3kRuIVSD+xibz/lwZm+erHOQ9VOwvCQkOKnILXW8=

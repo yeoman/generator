@@ -4,6 +4,7 @@
 
 ![](https://raw.githubusercontent.com/yeoman/media/master/optimized/yeoman-masthead.png)
 
+
 ## Getting Started
 
 If you're interested in writing your own Yeoman generator we recommend reading [the official getting started guide](http://yeoman.io/authoring/). The guide covers all the basics you need to get started.
@@ -117,6 +118,7 @@ Love Yeoman work and community? Help us keep it alive by donating funds to cover
   <a href="https://opencollective.com/yeoman/backers/29/website" target="_blank">
     <img src="https://opencollective.com/yeoman/backers/29/avatar">
   </a>
+
 
 ## License
 

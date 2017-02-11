@@ -1,4 +1,3 @@
-/*global describe, before, beforeEach, it */
 'use strict';
 var events = require('events');
 var Environment = require('yeoman-environment');

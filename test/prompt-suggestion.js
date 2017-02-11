@@ -1,4 +1,3 @@
-/*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
 var path = require('path');
 var assert = require('assert');
@@ -16,7 +15,7 @@ describe('PromptSuggestion', function () {
     this.fs = FileEditor.create(this.memFs);
     this.storePath = path.join(os.tmpdir(), 'suggestion-config.json');
     this.store = new Storage('suggestion', this.fs, this.storePath);
-    this.store.set('promptValues', { respuesta: 'foo' });
+    this.store.set('promptValues', {respuesta: 'foo'});
   });
 
   afterEach(function (done) {
@@ -224,7 +223,7 @@ describe('PromptSuggestion', function () {
 
   describe('.storeAnswers()', function () {
     beforeEach(function () {
-      this.store.set('promptValues', { respuesta: 'foo' });
+      this.store.set('promptValues', {respuesta: 'foo'});
     });
 
     it('require a store parameter', function () {
@@ -263,7 +262,7 @@ describe('PromptSuggestion', function () {
       assert.equal(this.store.get('promptValues').respuesta, 'baz');
     });
 
-    it('don\`t store default answer in global store', function () {
+    it('don\'t store default answer in global store', function () {
       var question = {
         name: 'respuesta',
         default: 'bar',
@@ -335,7 +334,7 @@ describe('PromptSuggestion', function () {
       beforeEach(function () {
         this.store.delete('promptValues');
       });
-      it('don\`t store default answer from rawlist type', function () {
+      it('don\'t store default answer from rawlist type', function () {
         var question = {
           type: 'rawlist',
           name: 'respuesta',

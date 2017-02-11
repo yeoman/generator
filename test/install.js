@@ -1,4 +1,3 @@
-/*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
 var yeoman = require('yeoman-environment');
 var sinon = require('sinon');
@@ -41,7 +40,7 @@ describe('Base (actions/install mixin)', function () {
         }
       };
 
-      // args: installer, paths, options, cb
+      // Args: installer, paths, options, cb
       this.dummy.runInstall('nestedScript', ['path1', 'path2'], options, callbackSpy, spawnEnv);
       this.dummy.run(function () {
         sinon.assert.calledWithExactly(
@@ -113,7 +112,7 @@ describe('Base (actions/install mixin)', function () {
     });
 
     it('spawn a bower process with formatted options', function (done) {
-      this.dummy.bowerInstall('jquery', { saveDev: true }, function () {
+      this.dummy.bowerInstall('jquery', {saveDev: true}, function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
@@ -140,7 +139,7 @@ describe('Base (actions/install mixin)', function () {
     });
 
     it('run without callback', function (done) {
-      this.dummy.npmInstall('yo', { save: true });
+      this.dummy.npmInstall('yo', {save: true});
       this.dummy.run(function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
         done();
@@ -148,7 +147,7 @@ describe('Base (actions/install mixin)', function () {
     });
 
     it('run with callback', function (done) {
-      this.dummy.npmInstall('yo', { save: true }, function () {
+      this.dummy.npmInstall('yo', {save: true}, function () {
         sinon.assert.calledOnce(this.spawnCommandStub);
         done();
       }.bind(this));
@@ -203,7 +202,7 @@ describe('Base (actions/install mixin)', function () {
     });
 
     it('spawn yarn', function (done) {
-      this.dummy.installDependencies({ yarn: true, npm: false, callback: function () {
+      this.dummy.installDependencies({yarn: true, npm: false, callback: function () {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['install'], {});

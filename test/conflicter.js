@@ -1,12 +1,11 @@
-/*global describe, before, after, it, beforeEach, afterEach */
 'use strict';
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var _ = require('lodash');
 var sinon = require('sinon');
-var Conflicter = require('../lib/util/conflicter');
 var TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
+var Conflicter = require('../lib/util/conflicter');
 
 describe('Conflicter', function () {
   beforeEach(function () {
@@ -45,7 +44,7 @@ describe('Conflicter', function () {
 
   describe('#collision()', function () {
     beforeEach(function () {
-      this.conflictingFile = { path: __filename, contents: '' };
+      this.conflictingFile = {path: __filename, contents: ''};
     });
 
     it('identical status', function (done) {
@@ -71,7 +70,7 @@ describe('Conflicter', function () {
     });
 
     it('user choose "yes"', function (done) {
-      var conflicter = new Conflicter(new TestAdapter({ action: 'write' }));
+      var conflicter = new Conflicter(new TestAdapter({action: 'write'}));
 
       conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'force');
@@ -80,7 +79,7 @@ describe('Conflicter', function () {
     });
 
     it('user choose "skip"', function (done) {
-      var conflicter = new Conflicter(new TestAdapter({ action: 'skip' }));
+      var conflicter = new Conflicter(new TestAdapter({action: 'skip'}));
 
       conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'skip');
@@ -89,7 +88,7 @@ describe('Conflicter', function () {
     });
 
     it('user choose "force"', function (done) {
-      var conflicter = new Conflicter(new TestAdapter({ action: 'force' }));
+      var conflicter = new Conflicter(new TestAdapter({action: 'force'}));
 
       conflicter.collision(this.conflictingFile, function (status) {
         assert.equal(status, 'force');
@@ -116,14 +115,14 @@ describe('Conflicter', function () {
     });
 
     it('does not provide a diff option for directory', function (done) {
-      var conflicter = new Conflicter(new TestAdapter({ action: 'write' }));
+      var conflicter = new Conflicter(new TestAdapter({action: 'write'}));
       var spy = sinon.spy(conflicter.adapter, 'prompt');
       conflicter.collision({
         path: __dirname,
         contents: null
       }, function () {
         assert.equal(
-          _.filter(spy.firstCall.args[0][0].choices, { value: 'diff' }).length,
+          _.filter(spy.firstCall.args[0][0].choices, {value: 'diff'}).length,
           0
         );
         done();
@@ -131,7 +130,7 @@ describe('Conflicter', function () {
     });
 
     it('displays default diff for text files', function (done) {
-      var testAdapter = new TestAdapter({ action: 'diff' });
+      var testAdapter = new TestAdapter({action: 'diff'});
       var conflicter = new Conflicter(testAdapter);
       var _prompt = testAdapter.prompt.bind(testAdapter);
       var promptStub = sinon.stub(testAdapter, 'prompt', function (prompts, resultHandler) {
@@ -142,9 +141,8 @@ describe('Conflicter', function () {
           };
 
           return _prompt(prompts, stubbedResultHandler);
-        } else {
-          return _prompt(prompts, resultHandler);
         }
+        return _prompt(prompts, resultHandler);
       });
 
       conflicter.collision({
@@ -158,7 +156,7 @@ describe('Conflicter', function () {
     });
 
     it('displays custom diff for binary files', function (done) {
-      var testAdapter = new TestAdapter({ action: 'diff' });
+      var testAdapter = new TestAdapter({action: 'diff'});
       var conflicter = new Conflicter(testAdapter);
       var _prompt = testAdapter.prompt.bind(testAdapter);
       var promptStub = sinon.stub(testAdapter, 'prompt', function (prompts, resultHandler) {
@@ -169,9 +167,8 @@ describe('Conflicter', function () {
           };
 
           return _prompt(prompts, stubbedResultHandler);
-        } else {
-          return _prompt(prompts, resultHandler);
         }
+        return _prompt(prompts, resultHandler);
       });
 
       conflicter.collision({

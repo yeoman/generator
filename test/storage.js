@@ -1,4 +1,3 @@
-/*global describe, it, before, after, beforeEach, afterEach */
 'use strict';
 var assert = require('assert');
 var fs = require('fs');
@@ -7,8 +6,9 @@ var path = require('path');
 var FileEditor = require('mem-fs-editor');
 var pathExists = require('path-exists');
 var env = require('yeoman-environment');
-var Storage = require('../lib/util/storage');
 var helpers = require('yeoman-test');
+var Storage = require('../lib/util/storage');
+
 var tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 
 function rm(filepath) {
@@ -37,7 +37,7 @@ describe('Storage', function () {
   describe('.constructor()', function () {
     it('require a name parameter', function () {
       assert.throws(function () {
-        new Storage();
+        new Storage(); // eslint-disable-line no-new
       });
     });
 
@@ -56,7 +56,7 @@ describe('Storage', function () {
 
   it('a config path is required', function () {
     assert.throws(function () {
-      new Storage('yo', this.fs);
+      new Storage('yo', this.fs); // eslint-disable-line no-new
     });
   });
 
@@ -79,7 +79,7 @@ describe('Storage', function () {
     });
 
     it('set multipe values at once', function () {
-      this.store.set({ foo: 'bar', john: 'doe' });
+      this.store.set({foo: 'bar', john: 'doe'});
       assert.equal(this.store.get('foo'), 'bar');
       assert.equal(this.store.get('john'), 'doe');
     });
@@ -111,16 +111,16 @@ describe('Storage', function () {
 
       it('the saved value (without key)', function () {
         assert.deepEqual(
-          this.store.set({ foo: 'bar', john: 'doe' }),
-          { foo: 'bar', john: 'doe' }
+          this.store.set({foo: 'bar', john: 'doe'}),
+          {foo: 'bar', john: 'doe'}
         );
       });
 
       it('the saved value (update values)', function () {
-        this.store.set({ foo: 'bar', john: 'doe' });
+        this.store.set({foo: 'bar', john: 'doe'});
         assert.deepEqual(
-          this.store.set({ foo: 'moo' }),
-          { foo: 'moo', john: 'doe' }
+          this.store.set({foo: 'moo'}),
+          {foo: 'moo', john: 'doe'}
         );
       });
     });
@@ -162,7 +162,7 @@ describe('Storage', function () {
 
   describe('#getAll()', function () {
     beforeEach(function () {
-      this.store.set({ foo: 'bar', john: 'doe' });
+      this.store.set({foo: 'bar', john: 'doe'});
     });
 
     it('get all values', function () {
@@ -192,7 +192,7 @@ describe('Storage', function () {
     });
 
     it('set defaults values if not predefined', function () {
-      this.store.defaults({ val1: 3, val2: 4 });
+      this.store.defaults({val1: 3, val2: 4});
 
       assert.equal(this.store.get('val1'), 1);
       assert.equal(this.store.get('val2'), 4);
@@ -215,20 +215,20 @@ describe('Storage', function () {
       });
 
       it('the saved value when passed an empty object', function () {
-        assert.deepEqual(this.store.defaults({}), { foo: 'bar', val1: 1 });
+        assert.deepEqual(this.store.defaults({}), {foo: 'bar', val1: 1});
       });
 
       it('the saved value when passed the same key', function () {
         assert.deepEqual(
-          this.store.defaults({ foo: 'baz' }),
-          { foo: 'bar', val1: 1 }
+          this.store.defaults({foo: 'baz'}),
+          {foo: 'bar', val1: 1}
         );
       });
 
       it('the saved value when passed new key', function () {
         assert.deepEqual(
-          this.store.defaults({ food: 'pizza' }),
-          { foo: 'bar', val1: 1, food: 'pizza' }
+          this.store.defaults({food: 'pizza'}),
+          {foo: 'bar', val1: 1, food: 'pizza'}
         );
       });
     });

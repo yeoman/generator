@@ -2,12 +2,22 @@
   "name": "yeoman-generator",
   "version": "1.1.0",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
+  "license": "BSD-2-Clause",
+  "repository": "yeoman/generator",
   "homepage": "http://yeoman.io",
   "author": "Yeoman",
+  "main": "lib",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "xo && gulp",
+    "doc": "jsdoc -c jsdoc.json",
+    "prepublish": "gulp prepublish"
+  },
   "files": [
     "lib"
   ],
-  "main": "lib/index.js",
   "keywords": [
     "development",
     "dev",
@@ -21,16 +31,6 @@
     "yeoman",
     "app"
   ],
-  "license": "BSD-2-Clause",
-  "repository": "yeoman/generator",
-  "engines": {
-    "node": ">=0.10.0"
-  },
-  "scripts": {
-    "test": "gulp",
-    "doc": "jsdoc -c jsdoc.json",
-    "prepublish": "gulp prepublish"
-  },
   "dependencies": {
     "async": "^2.0.0",
     "chalk": "^1.0.0",
@@ -64,11 +64,8 @@
     "yeoman-environment": "^1.1.0"
   },
   "devDependencies": {
-    "eslint": "^3.15.0",
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.0",
-    "gulp-eslint": "^3.0.1",
-    "gulp-exclude-gitignore": "^1.0.0",
     "gulp-istanbul": "^1.0.0",
     "gulp-mocha": "^3.0.1",
     "gulp-nsp": "^2.1.0",
@@ -81,7 +78,25 @@
     "proxyquire": "^1.0.0",
     "sinon": "^1.9.1",
     "tui-jsdoc-template": "^1.0.4",
+    "xo": "^0.16.0",
     "yeoman-assert": "^3.0.0",
     "yeoman-test": "^1.0.0"
+  },
+  "xo": {
+    "esnext": false,
+    "space": true,
+    "rules": {
+      "quote-props": "off",
+      "import/newline-after-import": "off"
+    },
+    "overrides": [
+      {
+        "files": "test/**",
+        "envs": [
+          "node",
+          "mocha"
+        ]
+      }
+    ]
   }
 }

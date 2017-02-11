@@ -1,4 +1,3 @@
-/*global describe, before, it, after, before, beforeEach, afterEach */
 'use strict';
 var assert = require('assert');
 var os = require('os');
@@ -10,6 +9,7 @@ var rimraf = require('rimraf');
 var shell = require('shelljs');
 var sinon = require('sinon');
 var Base = require('..');
+
 var tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 
 describe('Base#user', function () {
@@ -95,7 +95,7 @@ describe('Base#user', function () {
           .times(1)
           .reply(200, {
             items: [
-              { login: 'mockname' }
+              {login: 'mockname'}
             ]
           });
       });
