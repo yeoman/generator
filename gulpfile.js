@@ -11,13 +11,13 @@ gulp.task('nsp', cb => {
   nsp({package: path.resolve('package.json')}, cb);
 });
 
-gulp.task('pre-test', () => {
-  return gulp.src([
+gulp.task('pre-test', () =>
+  gulp.src([
     'lib/**/*.js'
   ])
     .pipe(istanbul({includeUntested: true}))
-    .pipe(istanbul.hookRequire());
-});
+    .pipe(istanbul.hookRequire())
+);
 
 gulp.task('test', ['pre-test'], cb => {
   let mochaErr;

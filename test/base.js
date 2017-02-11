@@ -111,7 +111,7 @@ describe('Base', () => {
     });
 
     it('set options with false values', done => {
-      var generator = helpers
+      const generator = helpers
         .run(path.join(__dirname, './fixtures/options-generator'))
         .withOptions({testOption: false}).on('end', () => {
           assert.equal(generator.options.testOption, false);

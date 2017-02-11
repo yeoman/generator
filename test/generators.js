@@ -1,8 +1,8 @@
 'use strict';
-const events = require('events');
+const EventEmitter = require('events');
 const Environment = require('yeoman-environment');
-const Base = require('..');
 const assert = require('yeoman-assert');
+const Base = require('..');
 
 describe('Generators module', () => {
   describe('Base', () => {
@@ -15,9 +15,9 @@ describe('Generators module', () => {
     });
 
     it('is an EventEmitter', function (done) {
-      assert.ok(this.generator instanceof events.EventEmitter);
-      assert.ok(typeof this.generator.on === 'function');
-      assert.ok(typeof this.generator.emit === 'function');
+      assert.ok(this.generator instanceof EventEmitter);
+      assert.strictEqual(typeof this.generator.on, 'function');
+      assert.strictEqual(typeof this.generator.emit, 'function');
       this.generator.on('yay-o-man', done);
       this.generator.emit('yay-o-man');
     });
