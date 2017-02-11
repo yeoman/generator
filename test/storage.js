@@ -1,15 +1,15 @@
 'use strict';
-var assert = require('assert');
-var fs = require('fs');
-var os = require('os');
-var path = require('path');
-var FileEditor = require('mem-fs-editor');
-var pathExists = require('path-exists');
-var env = require('yeoman-environment');
-var helpers = require('yeoman-test');
-var Storage = require('../lib/util/storage');
+const assert = require('assert');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const FileEditor = require('mem-fs-editor');
+const pathExists = require('path-exists');
+const env = require('yeoman-environment');
+const helpers = require('yeoman-test');
+const Storage = require('../lib/util/storage');
 
-var tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
+const tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 
 function rm(filepath) {
   if (pathExists.sync(filepath)) {
@@ -17,7 +17,7 @@ function rm(filepath) {
   }
 }
 
-describe('Storage', function () {
+describe('Storage', () => {
   before(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
@@ -34,33 +34,33 @@ describe('Storage', function () {
     process.chdir(this.beforeDir);
   });
 
-  describe('.constructor()', function () {
-    it('require a name parameter', function () {
-      assert.throws(function () {
+  describe('.constructor()', () => {
+    it('require a name parameter', () => {
+      assert.throws(() => {
         new Storage(); // eslint-disable-line no-new
       });
     });
 
     it('take a path parameter', function () {
-      var store = new Storage('test', this.fs, path.join(__dirname, './fixtures/config.json'));
+      const store = new Storage('test', this.fs, path.join(__dirname, './fixtures/config.json'));
       assert.equal(store.get('testFramework'), 'mocha');
       assert.ok(store.existed);
     });
   });
 
   it('namespace each store sharing the same store file', function () {
-    var store = new Storage('foobar', this.fs, this.storePath);
+    const store = new Storage('foobar', this.fs, this.storePath);
     store.set('foo', 'something else');
     assert.equal(this.store.get('foo'), 'bar');
   });
 
-  it('a config path is required', function () {
+  it('a config path is required', () => {
     assert.throws(function () {
       new Storage('yo', this.fs); // eslint-disable-line no-new
     });
   });
 
-  describe('#get()', function () {
+  describe('#get()', () => {
     beforeEach(function () {
       this.store.set('testFramework', 'mocha');
       this.store.set('name', 'test');
@@ -72,7 +72,7 @@ describe('Storage', function () {
     });
   });
 
-  describe('#set()', function () {
+  describe('#set()', () => {
     it('set values', function () {
       this.store.set('name', 'Yeoman!');
       assert.equal(this.store.get('name'), 'Yeoman!');
@@ -85,7 +85,7 @@ describe('Storage', function () {
     });
 
     it('throws when invalid JSON values are passed', function () {
-      assert.throws(this.store.set.bind(this, 'foo', function () {}));
+      assert.throws(this.store.set.bind(this, 'foo', () => {}));
     });
 
     it('save on each changes', function () {
@@ -95,7 +95,7 @@ describe('Storage', function () {
       assert.equal(this.fs.readJSON(this.storePath).test.foo, 'oo');
     });
 
-    describe('@return', function () {
+    describe('@return', () => {
       beforeEach(function () {
         this.storePath = path.join(tmpdir, 'setreturn.json');
         this.store = new Storage('test', this.fs, this.storePath);
@@ -125,7 +125,7 @@ describe('Storage', function () {
       });
     });
 
-    describe('when multiples instances share the same file', function () {
+    describe('when multiples instances share the same file', () => {
       beforeEach(function () {
         this.store = new Storage('test', this.fs, this.storePath);
         this.store.set('foo', 'bar');
@@ -136,13 +136,13 @@ describe('Storage', function () {
         this.store2.set('bar', 'foo');
         this.store.set('foo', 'bar');
 
-        var json = this.fs.readJSON(this.storePath);
+        const json = this.fs.readJSON(this.storePath);
         assert.equal(json.test.foo, 'bar');
         assert.equal(json.test2.bar, 'foo');
       });
     });
 
-    describe('when multiples instances share the same namespace', function () {
+    describe('when multiples instances share the same namespace', () => {
       beforeEach(function () {
         this.store = new Storage('test', this.fs, this.storePath);
         this.store.set('foo', 'bar');
@@ -153,14 +153,14 @@ describe('Storage', function () {
         this.store2.set('bar', 'foo');
         this.store.set('foo', 'bar');
 
-        var json = this.fs.readJSON(this.storePath);
+        const json = this.fs.readJSON(this.storePath);
         assert.equal(json.test.foo, 'bar');
         assert.equal(json.test.bar, 'foo');
       });
     });
   });
 
-  describe('#getAll()', function () {
+  describe('#getAll()', () => {
     beforeEach(function () {
       this.store.set({foo: 'bar', john: 'doe'});
     });
@@ -175,7 +175,7 @@ describe('Storage', function () {
     });
   });
 
-  describe('#delete()', function () {
+  describe('#delete()', () => {
     beforeEach(function () {
       this.store.set('name', 'test');
     });
@@ -186,7 +186,7 @@ describe('Storage', function () {
     });
   });
 
-  describe('#defaults()', function () {
+  describe('#defaults()', () => {
     beforeEach(function () {
       this.store.set('val1', 1);
     });
@@ -202,7 +202,7 @@ describe('Storage', function () {
       assert.throws(this.store.defaults.bind(this.store, 'foo'));
     });
 
-    describe('@return', function () {
+    describe('@return', () => {
       beforeEach(function () {
         this.storePath = path.join(tmpdir, 'defaultreturn.json');
         this.store = new Storage('test', this.fs, this.storePath);

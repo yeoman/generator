@@ -8,7 +8,7 @@
   "author": "Yeoman",
   "main": "lib",
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4"
   },
   "scripts": {
     "test": "xo && gulp",
@@ -78,16 +78,14 @@
     "proxyquire": "^1.0.0",
     "sinon": "^1.9.1",
     "tui-jsdoc-template": "^1.0.4",
-    "xo": "^0.16.0",
+    "xo": "^0.17.0",
     "yeoman-assert": "^3.0.0",
     "yeoman-test": "^1.0.0"
   },
   "xo": {
-    "esnext": false,
     "space": true,
     "rules": {
-      "quote-props": "off",
-      "import/newline-after-import": "off"
+      "promise/no-callback-in-promise": "off"
     },
     "overrides": [
       {

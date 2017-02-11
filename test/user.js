@@ -1,18 +1,18 @@
 'use strict';
-var assert = require('assert');
-var os = require('os');
-var path = require('path');
-var mkdirp = require('mkdirp');
-var nock = require('nock');
-var proxyquire = require('proxyquire');
-var rimraf = require('rimraf');
-var shell = require('shelljs');
-var sinon = require('sinon');
-var Base = require('..');
+const assert = require('assert');
+const os = require('os');
+const path = require('path');
+const mkdirp = require('mkdirp');
+const nock = require('nock');
+const proxyquire = require('proxyquire');
+const rimraf = require('rimraf');
+const shell = require('shelljs');
+const sinon = require('sinon');
+const Base = require('..');
 
-var tmpdir = path.join(os.tmpdir(), 'yeoman-user');
+const tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 
-describe('Base#user', function () {
+describe('Base#user', () => {
   before(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
@@ -42,12 +42,12 @@ describe('Base#user', function () {
     this.shell.exec.restore();
   });
 
-  it('is exposed on the Base generator', function () {
+  it('is exposed on the Base generator', () => {
     assert.equal(require('../lib/actions/user'), Base.prototype.user);
   });
 
-  describe('.git', function () {
-    describe('.name()', function () {
+  describe('.git', () => {
+    describe('.name()', () => {
       it('is the name used by git', function () {
         assert.equal(this.user.git.name(), 'Yeoman');
       });
@@ -66,7 +66,7 @@ describe('Base#user', function () {
       });
     });
 
-    describe('.email()', function () {
+    describe('.email()', () => {
       it('is the email used by git', function () {
         assert.equal(this.user.git.email(), 'yo@yeoman.io');
       });
@@ -86,9 +86,9 @@ describe('Base#user', function () {
     });
   });
 
-  describe('.github', function () {
-    describe('.username()', function () {
-      beforeEach(function () {
+  describe('.github', () => {
+    describe('.username()', () => {
+      beforeEach(() => {
         nock('https://api.github.com')
           .filteringPath(/q=[^&]*/g, 'q=XXX')
           .get('/search/users?q=XXX')
@@ -100,12 +100,12 @@ describe('Base#user', function () {
           });
       });
 
-      afterEach(function () {
+      afterEach(() => {
         nock.restore();
       });
 
       it('is the username used by GitHub', function (done) {
-        this.user.github.username(function (err, res) {
+        this.user.github.username((_, res) => {
           assert.equal(res, 'mockname');
           done();
         });

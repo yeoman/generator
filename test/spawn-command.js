@@ -1,8 +1,8 @@
 'use strict';
-var proxyquire = require('proxyquire');
-var sinon = require('sinon');
+const proxyquire = require('proxyquire');
+const sinon = require('sinon');
 
-describe('generators.Base (actions/spawn-command)', function () {
+describe('generators.Base (actions/spawn-command)', () => {
   beforeEach(function () {
     this.crossSpawn = sinon.spy();
     this.crossSpawn.sync = sinon.spy();
@@ -11,7 +11,7 @@ describe('generators.Base (actions/spawn-command)', function () {
     });
   });
 
-  describe('#spawnCommand()', function () {
+  describe('#spawnCommand()', () => {
     it('provide default options', function () {
       this.spawn.spawnCommand('foo');
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {stdio: 'inherit'});
@@ -33,7 +33,7 @@ describe('generators.Base (actions/spawn-command)', function () {
     });
   });
 
-  describe('#spawnCommandSync()', function () {
+  describe('#spawnCommandSync()', () => {
     it('provide default options', function () {
       this.spawn.spawnCommandSync('foo');
       sinon.assert.calledWith(this.crossSpawn.sync, 'foo', undefined, {stdio: 'inherit'});

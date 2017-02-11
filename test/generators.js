@@ -1,11 +1,11 @@
 'use strict';
-var events = require('events');
-var Environment = require('yeoman-environment');
-var Base = require('..');
-var assert = require('yeoman-assert');
+const events = require('events');
+const Environment = require('yeoman-environment');
+const Base = require('..');
+const assert = require('yeoman-assert');
 
-describe('Generators module', function () {
-  describe('Base', function () {
+describe('Generators module', () => {
+  describe('Base', () => {
     beforeEach(function () {
       this.env = Environment.createEnv();
       this.generator = new Base({

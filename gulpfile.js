@@ -1,17 +1,17 @@
 'use strict';
-var path = require('path');
-var gulp = require('gulp');
-var mocha = require('gulp-mocha');
-var istanbul = require('gulp-istanbul');
-var nsp = require('gulp-nsp');
-var plumber = require('gulp-plumber');
-var coveralls = require('gulp-coveralls');
+const path = require('path');
+const gulp = require('gulp');
+const mocha = require('gulp-mocha');
+const istanbul = require('gulp-istanbul');
+const nsp = require('gulp-nsp');
+const plumber = require('gulp-plumber');
+const coveralls = require('gulp-coveralls');
 
-gulp.task('nsp', function (cb) {
+gulp.task('nsp', cb => {
   nsp({package: path.resolve('package.json')}, cb);
 });
 
-gulp.task('pre-test', function () {
+gulp.task('pre-test', () => {
   return gulp.src([
     'lib/**/*.js'
   ])
@@ -19,22 +19,22 @@ gulp.task('pre-test', function () {
     .pipe(istanbul.hookRequire());
 });
 
-gulp.task('test', ['pre-test'], function (cb) {
-  var mochaErr;
+gulp.task('test', ['pre-test'], cb => {
+  let mochaErr;
 
   gulp.src('test/*.js')
     .pipe(plumber())
     .pipe(mocha({reporter: 'spec', timeout: 3000}))
-    .on('error', function (err) {
+    .on('error', err => {
       mochaErr = err;
     })
     .pipe(istanbul.writeReports())
-    .on('end', function () {
+    .on('end', () => {
       cb(mochaErr);
     });
 });
 
-gulp.task('coveralls', ['test'], function () {
+gulp.task('coveralls', ['test'], () => {
   if (!process.env.CI) {
     return;
   }
