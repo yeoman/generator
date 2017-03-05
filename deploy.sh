@@ -9,7 +9,7 @@ SHA=`git rev-parse --verify HEAD`
 
 # Only build and deploy docs on a specific node version
 if [[ $TRAVIS_NODE_VERSION != $DEPLOY_ON_NODE_VERSION ]]; then
-    echo "Current Node.js versions doesn’t match. Skipping generating and deploying the docs."
+    echo "Current Node.js versions doesn’t match ($TRAVIS_NODE_VERSION != $DEPLOY_ON_NODE_VERSION). Skipping generating and deploying the docs."
     exit 0
 fi
 
