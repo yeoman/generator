@@ -131,7 +131,7 @@ function onKeyupEnter() {
 
 function moveToPage(url) {
     if (url) {
-        location = url;
+        window.location = url;
     }
     clear();
 }
@@ -185,19 +185,16 @@ function removeWhiteSpace(value) {
 }
 
 /*************** TOOGLE SUB NAV ***************/
-$(function() {
+function toggleSubNav(e) {
+    $(e.currentTarget).next().toggleClass('hidden');
+    $(e.currentTarget).find('.glyphicon').toggleClass('glyphicon-plus glyphicon-minus');
+}
 
-    function toggleSubNav(e) {
-        e.preventDefault();
-        $(e.target).blur().next().slideToggle(100);
-    }
-
-    $lnb.find('.lnb-api').each(function() {
-        $(this).find('> ul > li > a').filter(function() {
-            return $(this).next('.hidden').length === 0;
+$lnb.find('.lnb-api').each(function() {
+    $(this).find('.toggle-subnav')
+        .filter(function() {
+            return $(this).next(':empty').length === 0;
         }).each(function() {
-            $(this).on('click', toggleSubNav);
+            $(this).removeClass('hidden').on('click', toggleSubNav);
         });
-    });
-
 });

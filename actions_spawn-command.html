@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Generator</title>
+    <title>Mixin: actions/spawn-command | Generator</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -13,6 +13,8 @@
     <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
     <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
 </head>
 <body>
 <nav class="lnb" id="lnb">
@@ -22,7 +24,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
         
-            <span class="version">v1.0.0</span>
+            <span class="version">v1.1.1</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -30,7 +32,7 @@
         <ul></ul>
     </div>
     
-    <div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Base.html">Base</a><div class="hidden" id="Base_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Base.html#.extend">extend</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Base.html#_writeFiles">_writeFiles</a></li><li><a href="Base.html#argument">argument</a></li><li><a href="Base.html#argumentsHelp">argumentsHelp</a></li><li><a href="Base.html#bowerInstall">bowerInstall</a></li><li><a href="Base.html#composeWith">composeWith</a></li><li><a href="Base.html#desc">desc</a></li><li><a href="Base.html#destinationPath">destinationPath</a></li><li><a href="Base.html#destinationRoot">destinationRoot</a></li><li><a href="Base.html#determineAppname">determineAppname</a></li><li><a href="Base.html#git.email">git.email</a></li><li><a href="Base.html#help">help</a></li><li><a href="Base.html#installDependencies">installDependencies</a></li><li><a href="Base.html#git.name">git.name</a></li><li><a href="Base.html#npmInstall">npmInstall</a></li><li><a href="Base.html#option">option</a></li><li><a href="Base.html#optionsHelp">optionsHelp</a></li><li><a href="Base.html#prompt">prompt</a></li><li><a href="Base.html#registerTransformStream">registerTransformStream</a></li><li><a href="Base.html#rootGeneratorName">rootGeneratorName</a></li><li><a href="Base.html#rootGeneratorVersion">rootGeneratorVersion</a></li><li><a href="Base.html#run">run</a></li><li><a href="Base.html#runInstall">runInstall</a></li><li><a href="Base.html#sourceRoot">sourceRoot</a></li><li><a href="Base.html#spawnCommand">spawnCommand</a></li><li><a href="Base.html#spawnCommandSync">spawnCommandSync</a></li><li><a href="Base.html#templatePath">templatePath</a></li><li><a href="Base.html#usage">usage</a></li><li><a href="Base.html#github.username">github.username</a></li><li><a href="Base.html#yarnInstall">yarnInstall</a></li></ul></div></li><li><a href="Conflicter.html">Conflicter</a><div class="hidden" id="Conflicter_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Conflicter.html#checkForCollision">checkForCollision</a></li><li><a href="Conflicter.html#collision">collision</a></li><li><a href="Conflicter.html#resolve">resolve</a></li></ul></div></li><li><a href="Storage.html">Storage</a><div class="hidden" id="Storage_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Storage.html#_persist">_persist</a></li><li><a href="Storage.html#defaults">defaults</a></li><li><a href="Storage.html#delete">delete</a></li><li><a href="Storage.html#get">get</a></li><li><a href="Storage.html#getAll">getAll</a></li><li><a href="Storage.html#save">save</a></li><li><a href="Storage.html#set">set</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Mixins</h3><ul><li><a href="actions_help.html">actions/help</a><div class="hidden" id="actions/help_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_help.html#.argumentsHelp">argumentsHelp</a></li><li><a href="actions_help.html#.desc">desc</a></li><li><a href="actions_help.html#.help">help</a></li><li><a href="actions_help.html#.optionsHelp">optionsHelp</a></li><li><a href="actions_help.html#.usage">usage</a></li></ul></div></li><li><a href="actions_install.html">actions/install</a><div class="hidden" id="actions/install_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_install.html#.bowerInstall">bowerInstall</a></li><li><a href="actions_install.html#.installDependencies">installDependencies</a></li><li><a href="actions_install.html#.npmInstall">npmInstall</a></li><li><a href="actions_install.html#.runInstall">runInstall</a></li><li><a href="actions_install.html#.yarnInstall">yarnInstall</a></li></ul></div></li><li><a href="actions_spawn_command.html">actions/spawn_command</a><div class="hidden" id="actions/spawn_command_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_spawn_command.html#.spawnCommand">spawnCommand</a></li><li><a href="actions_spawn_command.html#.spawnCommandSync">spawnCommandSync</a></li></ul></div></li><li><a href="actions_user.html">actions/user</a><div class="hidden" id="actions/user_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_user.html#.git.email">git.email</a></li><li><a href="actions_user.html#.git.name">git.name</a></li><li><a href="actions_user.html#.github.username">github.username</a></li></ul></div></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a><div class="hidden" id="util/prompt-suggestion_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="util_prompt-suggestion.html#.prefillQuestions">prefillQuestions</a></li><li><a href="util_prompt-suggestion.html#.storeAnswers">storeAnswers</a></li></ul></div></li></ul></div>
+    <div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Base.html">Base</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Base_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Base.html#.extend">extend</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Base.html#_writeFiles">_writeFiles</a></li><li><a href="Base.html#argument">argument</a></li><li><a href="Base.html#argumentsHelp">argumentsHelp</a></li><li><a href="Base.html#bowerInstall">bowerInstall</a></li><li><a href="Base.html#composeWith">composeWith</a></li><li><a href="Base.html#desc">desc</a></li><li><a href="Base.html#destinationPath">destinationPath</a></li><li><a href="Base.html#destinationRoot">destinationRoot</a></li><li><a href="Base.html#determineAppname">determineAppname</a></li><li><a href="Base.html#git.email">git.email</a></li><li><a href="Base.html#help">help</a></li><li><a href="Base.html#installDependencies">installDependencies</a></li><li><a href="Base.html#git.name">git.name</a></li><li><a href="Base.html#npmInstall">npmInstall</a></li><li><a href="Base.html#option">option</a></li><li><a href="Base.html#optionsHelp">optionsHelp</a></li><li><a href="Base.html#registerTransformStream">registerTransformStream</a></li><li><a href="Base.html#rootGeneratorName">rootGeneratorName</a></li><li><a href="Base.html#rootGeneratorVersion">rootGeneratorVersion</a></li><li><a href="Base.html#run">run</a></li><li><a href="Base.html#runInstall">runInstall</a></li><li><a href="Base.html#sourceRoot">sourceRoot</a></li><li><a href="Base.html#spawnCommand">spawnCommand</a></li><li><a href="Base.html#spawnCommandSync">spawnCommandSync</a></li><li><a href="Base.html#templatePath">templatePath</a></li><li><a href="Base.html#usage">usage</a></li><li><a href="Base.html#github.username">github.username</a></li><li><a href="Base.html#yarnInstall">yarnInstall</a></li></ul></div></li><li><a href="Conflicter.html">Conflicter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Conflicter_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Conflicter.html#checkForCollision">checkForCollision</a></li><li><a href="Conflicter.html#collision">collision</a></li><li><a href="Conflicter.html#resolve">resolve</a></li></ul></div></li><li><a href="Storage.html">Storage</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Storage_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Storage.html#_persist">_persist</a></li><li><a href="Storage.html#defaults">defaults</a></li><li><a href="Storage.html#delete">delete</a></li><li><a href="Storage.html#get">get</a></li><li><a href="Storage.html#getAll">getAll</a></li><li><a href="Storage.html#save">save</a></li><li><a href="Storage.html#set">set</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Mixins</h3><ul><li><a href="actions_help.html">actions/help</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="actions/help_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_help.html#.argumentsHelp">argumentsHelp</a></li><li><a href="actions_help.html#.desc">desc</a></li><li><a href="actions_help.html#.help">help</a></li><li><a href="actions_help.html#.optionsHelp">optionsHelp</a></li><li><a href="actions_help.html#.usage">usage</a></li></ul></div></li><li><a href="actions_install.html">actions/install</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="actions/install_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_install.html#.bowerInstall">bowerInstall</a></li><li><a href="actions_install.html#.installDependencies">installDependencies</a></li><li><a href="actions_install.html#.npmInstall">npmInstall</a></li><li><a href="actions_install.html#.runInstall">runInstall</a></li><li><a href="actions_install.html#.yarnInstall">yarnInstall</a></li></ul></div></li><li><a href="actions_spawn-command.html">actions/spawn-command</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="actions/spawn-command_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_spawn-command.html#.spawnCommand">spawnCommand</a></li><li><a href="actions_spawn-command.html#.spawnCommandSync">spawnCommandSync</a></li></ul></div></li><li><a href="actions_user.html">actions/user</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="actions/user_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="actions_user.html#.git.email">git.email</a></li><li><a href="actions_user.html#.git.name">git.name</a></li><li><a href="actions_user.html#.github.username">github.username</a></li></ul></div></li><li><a href="util_prompt-suggestion.html">util/prompt-suggestion</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="util/prompt-suggestion_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="util_prompt-suggestion.html#.prefillQuestions">prefillQuestions</a></li><li><a href="util_prompt-suggestion.html#.storeAnswers">storeAnswers</a></li></ul></div></li></ul></div>
 </nav>
 <div id="resizer"></div>
 
@@ -44,7 +46,7 @@
 
 <header>
     
-        <h2>actions/spawn_command</h2>
+        <h2>actions/spawn-command</h2>
         
     
 </header>
@@ -122,8 +124,8 @@
             <span class="type-signature"><span class="icon green">static</span> </span>spawnCommand<span class="signature">(command, args, opt<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
             
             <div class="container-source members">
-                <code><a href="actions_spawn_command.js.html">actions/spawn_command.js</a></code>,
-                <code><a href="actions_spawn_command.js.html#line18">line 18</a></code>
+                <code><a href="actions_spawn-command.js.html">actions/spawn-command.js</a></code>,
+                <code><a href="actions_spawn-command.js.html#line18">line 18</a></code>
             </div>
             
         </h4>
@@ -337,8 +339,8 @@
             <span class="type-signature"><span class="icon green">static</span> </span>spawnCommandSync<span class="signature">(command, args, opt<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
             
             <div class="container-source members">
-                <code><a href="actions_spawn_command.js.html">actions/spawn_command.js</a></code>,
-                <code><a href="actions_spawn_command.js.html#line30">line 30</a></code>
+                <code><a href="actions_spawn-command.js.html">actions/spawn-command.js</a></code>,
+                <code><a href="actions_spawn-command.js.html#line30">line 30</a></code>
             </div>
             
         </h4>
@@ -565,10 +567,12 @@
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = 'actions/spawn_command_sub'.replace(/"/g, '_');
-        var element = document.getElementById(id); // do not use jquery selector
+        var id = 'actions/spawn-command_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
 
-        $(element).removeClass('hidden');
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
         showLnbApi();
     </script>
 

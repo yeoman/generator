@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: actions/help.js | Generator</title>
+    <title>Source: actions/spawn-command.js | Generator</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -47,137 +47,37 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
-const path = require('path');
-const fs = require('fs');
 const _ = require('lodash');
-const table = require('text-table');
+const spawn = require('cross-spawn');
 
 /**
  * @mixin
- * @alias actions/help
+ * @alias actions/spawn-command
  */
-const help = module.exports;
+const spawnCommand = module.exports;
 
 /**
- * Tries to get the description from a USAGE file one folder above the
- * source root otherwise uses a default description
- */
-help.help = function () {
-  const filepath = path.resolve(this.sourceRoot(), '../USAGE');
-  const exists = fs.existsSync(filepath);
-
-  let out = [
-    'Usage:',
-    '  ' + this.usage(),
-    ''
-  ];
-
-  // Build options
-  if (Object.keys(this._options).length > 0) {
-    out = out.concat([
-      'Options:',
-      this.optionsHelp(),
-      ''
-    ]);
-  }
-
-  // Build arguments
-  if (this._arguments.length > 0) {
-    out = out.concat([
-      'Arguments:',
-      this.argumentsHelp(),
-      ''
-    ]);
-  }
-
-  // Append USAGE file is any
-  if (exists) {
-    out.push(fs.readFileSync(filepath, 'utf8'));
-  }
-
-  return out.join('\n');
-};
-
-function formatArg(config) {
-  let arg = `&lt;${config.name}>`;
-
-  if (!config.required) {
-    arg = `[${arg}]`;
-  }
-
-  return arg;
-}
-
-/**
- * Output usage information for this given generator, depending on its arguments
- * or options
- */
-help.usage = function () {
-  const options = Object.keys(this._options).length ? '[options]' : '';
-  let name = this.options.namespace;
-  let args = '';
-
-  if (this._arguments.length > 0) {
-    args = this._arguments.map(formatArg).join(' ');
-  }
-
-  name = name.replace(/^yeoman:/, '');
-  let out = `yo ${name} ${options} ${args}`;
-
-  if (this.description) {
-    out += '\n\n' + this.description;
-  }
-
-  return out;
-};
-
-/**
- * Simple setter for custom `description` to append on help output.
+ * Normalize a command across OS and spawn it (asynchronously).
  *
- * @param {String} description
+ * @param {String} command
+ * @param {Array} args
+ * @param {object} [opt]
  */
-
-help.desc = function (description) {
-  this.description = description || '';
-  return this;
+spawnCommand.spawnCommand = (command, args, opt) => {
+  opt = opt || {};
+  return spawn(command, args, _.defaults(opt, {stdio: 'inherit'}));
 };
 
 /**
- * Get help text for arguments
- * @returns {String} Text of options in formatted table
+ * Normalize a command across OS and spawn it (synchronously).
+ *
+ * @param {String} command
+ * @param {Array} args
+ * @param {object} [opt]
  */
-help.argumentsHelp = function () {
-  const rows = this._arguments.map(config => {
-    return [
-      '',
-      config.name ? config.name : '',
-      config.description ? `# ${config.description}` : '',
-      config.type ? `Type: ${config.type.name}` : '',
-      `Required: ${config.required}`
-    ];
-  });
-
-  return table(rows);
-};
-
-/**
- * Get help text for options
- * @returns {String} Text of options in formatted table
- */
-help.optionsHelp = function () {
-  const options = _.reject(this._options, x => x.hide);
-
-  const rows = options.map(opt => {
-    return [
-      '',
-      opt.alias ? `-${opt.alias}, ` : '',
-      `--${opt.name}`,
-      opt.description ? `# ${opt.description}` : '',
-      (opt.default !== undefined &amp;&amp; opt.default !== '') ? 'Default: ' + opt.default : ''
-    ];
-  });
-
-  return table(rows);
+spawnCommand.spawnCommandSync = (command, args, opt) => {
+  opt = opt || {};
+  return spawn.sync(command, args, _.defaults(opt, {stdio: 'inherit'}));
 };
 </code></pre>
         </article>
