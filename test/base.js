@@ -4,6 +4,7 @@ const os = require('os');
 const LF = require('os').EOL;
 const path = require('path');
 const util = require('util');
+const _ = require('lodash');
 const sinon = require('sinon');
 const mkdirp = require('mkdirp');
 const mockery = require('mockery');
@@ -31,9 +32,8 @@ describe('Base', () => {
   beforeEach(function () {
     this.env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter());
     mkdirp.sync(resolveddir);
-    this.Dummy = Base.extend({
-      exec: sinon.spy()
-    });
+    this.Dummy = class extends Base {};
+    this.Dummy.prototype.exec = sinon.spy();
 
     this.dummy = new this.Dummy(['bar', 'baz', 'bom'], {
       foo: false,
@@ -64,7 +64,7 @@ describe('Base', () => {
     });
 
     it('use the environment options', function () {
-      this.env.registerStub(Base.extend(), 'ember:model');
+      this.env.registerStub(class extends Base {}, 'ember:model');
 
       const generator = this.env.create('ember:model', {
         options: {
@@ -173,33 +173,10 @@ describe('Base', () => {
     });
   });
 
-  describe('.extend()', () => {
-    it('create a new object inheriting the Generator', function () {
-      const gen = new (Base.extend())([], {resolved: 'path/', env: this.env});
-      assert.ok(gen instanceof Base);
-    });
-
-    it('pass the extend method along', () => {
-      const Sub = Base.extend();
-      assert.equal(Sub.extend, Base.extend);
-    });
-
-    it('assign prototype methods', () => {
-      const proto = {foo() {}};
-      const Sub = Base.extend(proto);
-      assert.equal(Sub.prototype.foo, proto.foo);
-    });
-
-    it('assign static methods', () => {
-      const staticProps = {foo() {}};
-      const Sub = Base.extend({}, staticProps);
-      assert.equal(Sub.foo, staticProps.foo);
-    });
-  });
-
   describe('#run()', () => {
     beforeEach(function () {
-      this.TestGenerator = Base.extend({
+      this.TestGenerator = class extends Base {};
+      _.extend(this.TestGenerator.prototype, {
         exec: sinon.spy(),
         exec2: sinon.spy(),
         exec3: sinon.spy(),
@@ -369,7 +346,7 @@ describe('Base', () => {
     });
 
     it('throws if no method is available', function () {
-      const gen = new (Base.extend())([], {
+      const gen = new (class extends Base {})([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
         env: this.env
@@ -551,13 +528,13 @@ describe('Base', () => {
     });
 
     it('allows specifying default argument values', function () {
-      const Generator = Base.extend({
-        constructor: function () {
-          Base.apply(this, arguments);
+      const Generator = class extends Base {
+        constructor(args, opts) {
+          super(args, opts);
 
           this.argument('bar', {default: 'baz'});
         }
-      });
+      };
 
       const gen = new Generator({
         env: this.env,
@@ -568,13 +545,13 @@ describe('Base', () => {
     });
 
     it('allows specifying default argument values', function () {
-      const Generator = Base.extend({
-        constructor: function () {
-          Base.apply(this, arguments);
+      const Generator = class extends Base {
+        constructor(args, opts) {
+          super(args, opts);
 
           this.argument('bar', {default: 'baz'});
         }
-      });
+      };
 
       const gen = new Generator({
         env: this.env,
@@ -585,13 +562,13 @@ describe('Base', () => {
     });
 
     it('properly uses arguments values passed from constructor', function () {
-      const Generator = Base.extend({
-        constructor: function () {
-          Base.apply(this, arguments);
+      const Generator = class extends Base {
+        constructor(args, opts) {
+          super(args, opts);
 
           this.argument('bar', {default: 'baz'});
         }
-      });
+      };
 
       const gen = new Generator({
         env: this.env,
@@ -661,16 +638,16 @@ describe('Base', () => {
     });
 
     it('allow aliasing options', function () {
-      const Generator = Base.extend({
-        constructor: function () {
-          Base.apply(this, arguments);
+      const Generator = class extends Base {
+        constructor(args, opts) {
+          super(args, opts);
 
           this.option('long-name', {
             alias: 'short-name',
             type: String
           });
         }
-      });
+      };
 
       const gen = new Generator({
         env: this.env,
@@ -682,13 +659,13 @@ describe('Base', () => {
     });
 
     it('allows Boolean options to be undefined', function () {
-      const Generator = Base.extend({
-        constructor: function () {
-          Base.apply(this, arguments);
+      const Generator = class extends Base {
+        constructor(args, opts) {
+          super(args, opts);
 
           this.option('undef', {type: Boolean});
         }
-      });
+      };
 
       const gen = new Generator({
         env: this.env,
@@ -767,7 +744,8 @@ describe('Base', () => {
       });
 
       this.spy = sinon.spy();
-      this.GenCompose = Base.extend({exec: this.spy});
+      this.GenCompose = class extends Base {};
+      this.GenCompose.prototype.exec = this.spy;
       this.env.registerStub(this.GenCompose, 'composed:gen');
     });
 
@@ -815,7 +793,8 @@ describe('Base', () => {
       beforeEach(function () {
         this.spy = sinon.spy();
         this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
-        this.LocalDummy = Base.extend({exec: this.spy});
+        this.LocalDummy = class extends Base {};
+        this.LocalDummy.prototype.exec = this.spy;
         mockery.registerMock(this.stubPath, this.LocalDummy);
       });
 
@@ -964,9 +943,8 @@ describe('Base', () => {
   describe('#registerTransformStream()', () => {
     beforeEach(function () {
       this.filepath = path.join(os.tmpdir(), '/yeoman-transform-stream/filea.txt');
-      this.TestGenerator = Base.extend({
-        exec: sinon.spy()
-      });
+      this.TestGenerator = class extends Base {};
+      this.TestGenerator.prototype.exec = sinon.spy();
       this.testGen = new this.TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
@@ -1110,17 +1088,19 @@ describe('Base', () => {
 
     it('triggers end event after all generators methods are ran (#709)', done => {
       const endSpy = sinon.spy();
-      const GeneratorEnd = Base.extend({
-        constructor: function () {
-          Base.apply(this, arguments);
+      const GeneratorEnd = class extends Base {
+        constructor(args, opts) {
+          super(args, opts);
           this.on('end', () => {
             sinon.assert.calledOnce(endSpy);
             done();
           });
-        },
+        }
 
-        end: endSpy
-      });
+        end() {
+          endSpy();
+        }
+      };
 
       const generatorEnd = new GeneratorEnd([], {
         env: yeoman.createEnv([], {}, new TestAdapter()),

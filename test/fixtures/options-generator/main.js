@@ -9,21 +9,20 @@
 
 var Base = require('../../../');
 
-module.exports = Base.extend({
-  constructor: function () {
-    Base.apply(this, arguments);
+module.exports = class extends Base {
+  constructor(args, opts) {
+    super(args, opts);
 
-    // this.log('as passed in: ', this.options.testOption);
     this.option('testOption', {
       type: Boolean,
       desc: 'Testing falsey values for option',
       defaults: true
     });
-  },
-
-  testOption: function () {
-    // this.log('as rendered: ', this.options.testOption);
   }
-});
+
+  testOption() {
+    return 'foo';
+  }
+};
 
 module.exports.namespace = 'options:generator';

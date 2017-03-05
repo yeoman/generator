@@ -17,9 +17,9 @@ const asyncStub = {
 describe('Base (actions/install mixin)', () => {
   beforeEach(function () {
     this.env = yeoman.createEnv([], {}, new TestAdapter());
-    const Dummy = Base.extend({
+    const Dummy = class extends Base {
       exec() {}
-    });
+    };
     this.env.registerStub(Dummy, 'dummy');
     this.dummy = this.env.create('dummy');
 

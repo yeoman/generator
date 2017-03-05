@@ -34,7 +34,6 @@
   "dependencies": {
     "async": "^2.0.0",
     "chalk": "^1.0.0",
-    "class-extend": "^0.1.0",
     "cli-table": "^0.3.1",
     "cross-spawn": "^5.0.1",
     "dargs": "^5.1.0",
