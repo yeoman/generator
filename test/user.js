@@ -104,10 +104,9 @@ describe('Base#user', () => {
         nock.restore();
       });
 
-      it('is the username used by GitHub', function (done) {
-        this.user.github.username((_, res) => {
+      it('is the username used by GitHub', function () {
+        return this.user.github.username().then(res => {
           assert.equal(res, 'mockname');
-          done();
         });
       });
     });
