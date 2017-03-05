@@ -29,8 +29,7 @@ describe('Base (actions/install mixin)', () => {
   });
 
   describe('#runInstall()', () => {
-    it('takes a config object and passes it to the spawned process', function (done) {
-      const callbackSpy = sinon.spy();
+    it('takes a config object and passes it to the spawned process', function () {
       const options = {
         save: true
       };
@@ -41,18 +40,18 @@ describe('Base (actions/install mixin)', () => {
       };
 
       // Args: installer, paths, options, cb
-      this.dummy.runInstall('nestedScript', ['path1', 'path2'], options, callbackSpy, spawnEnv);
-      this.dummy.run(() => {
-        sinon.assert.calledWithExactly(
-          this.spawnCommandStub,
-          'nestedScript',
-          ['install', 'path1', 'path2', '--save'],
-          spawnEnv
-        );
-
-        sinon.assert.calledOnce(callbackSpy);
-        done();
-      });
+      var promise = this.dummy
+        .runInstall('nestedScript', ['path1', 'path2'], options, spawnEnv)
+        .then(() => {
+          sinon.assert.calledWithExactly(
+            this.spawnCommandStub,
+            'nestedScript',
+            ['install', 'path1', 'path2', '--save'],
+            spawnEnv
+          );
+        });
+      this.dummy.run();
+      return promise;
     });
 
     describe('with --skip-install', () => {
@@ -80,22 +79,10 @@ describe('Base (actions/install mixin)', () => {
         });
       });
 
-      it('call callback if skipInstall', function (done) {
-        const spy = sinon.spy();
-        this.dummy.runInstall('npm', ['install'], spy);
-        this.dummy.run(() => {
-          sinon.assert.calledOnce(spy);
-          done();
-        });
-      });
-
-      it('call callback if skipInstall', function (done) {
-        const spy = sinon.spy();
-        this.dummy.runInstall('yarn', ['install'], spy);
-        this.dummy.run(() => {
-          sinon.assert.calledOnce(spy);
-          done();
-        });
+      it('resolve Promise if skipInstall', function () {
+        var promise = this.dummy.runInstall('npm', ['install']);
+        this.dummy.run();
+        return promise;
       });
     });
   });
@@ -111,8 +98,8 @@ describe('Base (actions/install mixin)', () => {
       });
     });
 
-    it('spawn a bower process with formatted options', function (done) {
-      this.dummy.bowerInstall('jquery', {saveDev: true}, () => {
+    it('spawn a bower process with formatted options', function () {
+      var promise = this.dummy.bowerInstall('jquery', {saveDev: true}).then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
@@ -120,10 +107,9 @@ describe('Base (actions/install mixin)', () => {
           ['install', 'jquery', '--save-dev'],
           {}
         );
-
-        done();
       });
       this.dummy.run();
+      return promise;
     });
   });
 
@@ -138,20 +124,20 @@ describe('Base (actions/install mixin)', () => {
       });
     });
 
-    it('run without callback', function (done) {
+    it('run with options', function (done) {
       this.dummy.npmInstall('yo', {save: true});
       this.dummy.run(() => {
-        sinon.assert.calledOnce(this.spawnCommandStub);
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install', 'yo', '--save', '--cache-min', 86400], {});
         done();
       });
     });
 
-    it('run with callback', function (done) {
-      this.dummy.npmInstall('yo', {save: true}, () => {
+    it('resolve Promise on success', function () {
+      var promise = this.dummy.npmInstall('yo').then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
-        done();
       });
       this.dummy.run();
+      return promise;
     });
   });
 
@@ -166,7 +152,7 @@ describe('Base (actions/install mixin)', () => {
       });
     });
 
-    it('run without callback', function (done) {
+    it('run with options', function (done) {
       this.dummy.yarnInstall('yo', {dev: true});
       this.dummy.run(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
@@ -175,40 +161,35 @@ describe('Base (actions/install mixin)', () => {
       });
     });
 
-    it('run with callback', function (done) {
-      this.dummy.yarnInstall('yo', () => {
+    it('resolve promise on success', function () {
+      var promise = this.dummy.yarnInstall('yo').then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['add', 'yo'], {});
-        done();
       });
       this.dummy.run();
+      return promise;
     });
   });
 
   describe('#installDependencies()', () => {
-    it('spawn npm and bower', function (done) {
-      this.dummy.installDependencies(() => {
+    it('spawn npm and bower', function () {
+      var promise = this.dummy.installDependencies().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'npm', ['install', '--cache-min', 86400], {});
-        done();
       });
       this.dummy.run();
+      return promise;
     });
 
-    it('execute a callback after installs', function (done) {
-      this.dummy.installDependencies({callback: done});
-      this.dummy.run();
-    });
-
-    it('spawn yarn', function (done) {
-      this.dummy.installDependencies({yarn: true, npm: false, callback: function () {
+    it('spawn yarn', function () {
+      var promise = this.dummy.installDependencies({yarn: true, npm: false}).then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['install'], {});
-        done();
-      }.bind(this)});
+      });
       this.dummy.run();
+      return promise;
     });
   });
 });
