@@ -3,7 +3,6 @@ const fs = require('fs');
 const os = require('os');
 const LF = require('os').EOL;
 const path = require('path');
-const util = require('util');
 const _ = require('lodash');
 const sinon = require('sinon');
 const mkdirp = require('mkdirp');
@@ -356,11 +355,8 @@ describe('Base', () => {
     });
 
     it('will run non-enumerable methods', function (done) {
-      const Generator = function () {
-        Base.apply(this, arguments);
-      };
+      class Generator extends Base {}
 
-      Generator.prototype = Object.create(Base.prototype);
       Object.defineProperty(Generator.prototype, 'nonenumerable', {
         value: sinon.spy(),
         configurable: true,
@@ -1004,13 +1000,9 @@ describe('Base', () => {
 
   describe('Events', () => {
     before(function () {
-      const Generator = this.Generator = function () {
-        Base.apply(this, arguments);
-      };
-
+      class Generator extends Base {}
+      this.Generator = Generator;
       Generator.namespace = 'angular:app';
-      util.inherits(Generator, Base);
-
       Generator.prototype.createSomething = function () {};
       Generator.prototype.createSomethingElse = function () {};
     });
@@ -1047,24 +1039,24 @@ describe('Base', () => {
     });
 
     it('only call the end event once (bug #402)', done => {
-      function GeneratorOnce() {
-        Base.apply(this, arguments);
-        this.sourceRoot(path.join(__dirname, 'fixtures'));
-        this.destinationRoot(path.join(os.tmpdir(), 'yeoman-base-once'));
+      class GeneratorOnce extends Base {
+        constructor(args, opts) {
+          super(args, opts);
+          this.sourceRoot(path.join(__dirname, 'fixtures'));
+          this.destinationRoot(path.join(os.tmpdir(), 'yeoman-base-once'));
+        }
+
+        createDuplicate() {
+          this.fs.copy(
+            this.templatePath('foo-copy.js'),
+            this.destinationPath('foo-copy.js')
+          );
+          this.fs.copy(
+            this.templatePath('foo-copy.js'),
+            this.destinationPath('foo-copy.js')
+          );
+        }
       }
-
-      util.inherits(GeneratorOnce, Base);
-
-      GeneratorOnce.prototype.createDuplicate = function () {
-        this.fs.copy(
-          this.templatePath('foo-copy.js'),
-          this.destinationPath('foo-copy.js')
-        );
-        this.fs.copy(
-          this.templatePath('foo-copy.js'),
-          this.destinationPath('foo-copy.js')
-        );
-      };
 
       let isFirstEndEvent = true;
       const generatorOnce = new GeneratorOnce([], {
