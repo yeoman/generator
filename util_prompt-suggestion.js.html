@@ -47,50 +47,57 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
-const assert = require('assert');
-const _ = require('lodash');
+var assert = require('assert');
+var _ = require('lodash');
 
 /**
  * @mixin
  * @alias util/prompt-suggestion
  */
-const promptSuggestion = module.exports;
+var promptSuggestion = module.exports;
 
 /**
- * Returns the default value for a checkbox
+ * Returns the default value for a checkbox.
  *
  * @param  {Object} question Inquirer prompt item
  * @param  {*} defaultValue  The stored default value
  * @return {*}               Default value to set
  * @private
  */
-const getCheckboxDefault = (question, defaultValue) => {
-  // For simplicity we uncheck all boxes and use .default to set the active ones
-  for (const choice of question.choices) {
+var getCheckboxDefault = function (question, defaultValue) {
+  // For simplicity we uncheck all boxes and
+  // use .default to set the active ones.
+  _.each(question.choices, function (choice) {
     if (typeof choice === 'object') {
       choice.checked = false;
     }
-  }
+  });
 
   return defaultValue;
 };
 
 /**
- * Returns the default value for a list
+ * Returns the default value for a list.
  *
  * @param  {Object} question    Inquirer prompt item
  * @param  {*} defaultValue     The stored default value
  * @return {*}                  Default value to set
  * @private
  */
-const getListDefault = (question, defaultValue) => {
-  const choiceValues = question.choices.map(choice => typeof choice === 'object' ? choice.value : choice);
+var getListDefault = function (question, defaultValue) {
+  var choiceValues = _.map(question.choices, function (choice) {
+    if (typeof choice === 'object') {
+      return choice.value;
+    }
+    return choice;
+  });
+
   return choiceValues.indexOf(defaultValue);
 };
 
 /**
  * Return true if the answer should be store in
- * the global store, otherwise false
+ * the global store, otherwise false.
  *
  * @param  {Object}       question Inquirer prompt item
  * @param  {String|Array} answer   The inquirer answer
@@ -98,16 +105,14 @@ const getListDefault = (question, defaultValue) => {
  * @return {Boolean}               Answer to be stored
  * @private
  */
-const storeListAnswer = (question, answer, storeAll) => {
-  const choiceValues = question.choices.map(choice => {
+var storeListAnswer = function (question, answer, storeAll) {
+  var choiceValues = _.map(question.choices, function (choice) {
     if (Object.prototype.hasOwnProperty.call(choice, 'value')) {
       return choice.value;
     }
-
     return choice;
   });
-
-  const choiceIndex = choiceValues.indexOf(answer);
+  var choiceIndex = choiceValues.indexOf(answer);
 
   // Check if answer is not equal to default value
   if (storeAll || question.default !== choiceIndex) {
@@ -119,7 +124,7 @@ const storeListAnswer = (question, answer, storeAll) => {
 
 /**
  * Return true if the answer should be store in
- * the global store, otherwise false
+ * the global store, otherwise false.
  *
  * @param  {Object}       question Inquirer prompt item
  * @param  {String|Array} answer   The inquirer answer
@@ -127,7 +132,7 @@ const storeListAnswer = (question, answer, storeAll) => {
  * @return {Boolean}               Answer to be stored
  * @private
  */
-const storeAnswer = (question, answer, storeAll) => {
+var storeAnswer = function (question, answer, storeAll) {
   // Check if answer is not equal to default value or is undefined
   if (answer !== undefined &amp;&amp; (storeAll || question.default !== answer)) {
     return true;
@@ -137,17 +142,17 @@ const storeAnswer = (question, answer, storeAll) => {
 };
 
 /**
- * Prefill the defaults with values from the global store
+ * Prefill the defaults with values from the global store.
  *
  * @param  {Store}        store     `.yo-rc-global` global config
  * @param  {Array|Object} questions Original prompt questions
  * @return {Array}                  Prompt questions array with prefilled values.
  */
-promptSuggestion.prefillQuestions = (store, questions) => {
+promptSuggestion.prefillQuestions = function (store, questions) {
   assert(store, 'A store parameter is required');
   assert(questions, 'A questions parameter is required');
 
-  const promptValues = store.get('promptValues') || {};
+  var promptValues = store.get('promptValues') || {};
 
   if (!Array.isArray(questions)) {
     questions = [questions];
@@ -156,12 +161,12 @@ promptSuggestion.prefillQuestions = (store, questions) => {
   questions = questions.map(_.clone);
 
   // Write user defaults back to prompt
-  return questions.map(question => {
+  return questions.map(function (question) {
     if (question.store !== true) {
       return question;
     }
 
-    const storedValue = promptValues[question.name];
+    var storedValue = promptValues[question.name];
 
     if (storedValue === undefined) {
       return question;
@@ -186,34 +191,34 @@ promptSuggestion.prefillQuestions = (store, questions) => {
 };
 
 /**
- * Store the answers in the global store
+ * Store the answers in the global store.
  *
  * @param  {Store}        store     `.yo-rc-global` global config
  * @param  {Array|Object} questions Original prompt questions
  * @param  {Object}       answers   The inquirer answers
  * @param  {Boolean}      storeAll  Should store default values
  */
-promptSuggestion.storeAnswers = (store, questions, answers, storeAll) => {
+promptSuggestion.storeAnswers = function (store, questions, answers, storeAll) {
   assert(store, 'A store parameter is required');
   assert(answers, 'A answers parameter is required');
   assert(questions, 'A questions parameter is required');
   assert.ok(_.isObject(answers), 'answers must be a object');
 
   storeAll = storeAll || false;
-  const promptValues = store.get('promptValues') || {};
+  var promptValues = store.get('promptValues') || {};
 
   if (!Array.isArray(questions)) {
     questions = [questions];
   }
 
-  _.each(questions, question => {
+  _.each(questions, function (question) {
     if (question.store !== true) {
       return;
     }
 
-    let saveAnswer;
-    const key = question.name;
-    const answer = answers[key];
+    var saveAnswer;
+    var key = question.name;
+    var answer = answers[key];
 
     switch (question.type) {
       case 'rawlist':
@@ -231,7 +236,7 @@ promptSuggestion.storeAnswers = (store, questions, answers, storeAll) => {
     }
   });
 
-  if (Object.keys(promptValues).length > 0) {
+  if (Object.keys(promptValues).length) {
     store.set('promptValues', promptValues);
   }
 };

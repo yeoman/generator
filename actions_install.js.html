@@ -47,17 +47,17 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
-const assert = require('assert');
-const _ = require('lodash');
-const dargs = require('dargs');
-const async = require('async');
-const chalk = require('chalk');
+var assert = require('assert');
+var _ = require('lodash');
+var dargs = require('dargs');
+var async = require('async');
+var chalk = require('chalk');
 
 /**
  * @mixin
  * @alias actions/install
  */
-const install = module.exports;
+var install = module.exports;
 
 /**
  * Combine package manager cmd line arguments and run the `install` command.
@@ -81,12 +81,12 @@ install.runInstall = function (installer, paths, options, cb, spawnOptions) {
 
   options = options || {};
   spawnOptions = spawnOptions || {};
-  cb = cb || (() => {});
+  cb = cb || function () {};
   paths = Array.isArray(paths) ? paths : (paths &amp;&amp; paths.split(' ')) || [];
 
-  let args = ['install'].concat(paths).concat(dargs(options));
+  var args = ['install'].concat(paths).concat(dargs(options));
 
-  // Yarn uses the `add` command to specifically add a package to a project
+  // Yarn uses the `add` command to specifically add a package to a project.
   if (installer === 'yarn' &amp;&amp; paths.length > 0) {
     args[0] = 'add';
   }
@@ -96,31 +96,28 @@ install.runInstall = function (installer, paths, options, cb, spawnOptions) {
     args = args.concat(['--cache-min', 24 * 60 * 60]);
   }
 
-  // Return early if we're skipping installation
+  // Return early if we're skipping installation.
   if (this.options.skipInstall) {
     cb();
     return this;
   }
 
-  this.env.runLoop.add('install', done => {
-    this.emit(`${installer}Install`, paths);
+  this.env.runLoop.add('install', function (done) {
+    this.emit(installer + 'Install', paths);
     this.spawnCommand(installer, args, spawnOptions)
-      .on('error', err => {
+      .on('error', function (err) {
         console.log(chalk.red('Could not finish installation. \n') +
           'Please install ' + installer + ' with ' +
           chalk.yellow('npm install -g ' + installer) + ' and try again.'
         );
         cb(err);
       })
-      .on('exit', err => {
-        this.emit(`${installer}Install:end`, paths);
+      .on('exit', function (err) {
+        this.emit(installer + 'Install:end', paths);
         cb(err);
         done();
-      });
-  }, {
-    once: installer + ' ' + args.join(' '),
-    run: false
-  });
+      }.bind(this));
+  }.bind(this), {once: installer + ' ' + args.join(' '), run: false});
 
   return this;
 };
@@ -145,10 +142,11 @@ install.runInstall = function (installer, paths, options, cb, spawnOptions) {
  * @param {Boolean} [options.skipMessage=false] - whether to log the used commands
  * @param {Function} [options.callback] - call once all commands have run
  */
+
 install.installDependencies = function (options) {
   options = options || {};
-  const commands = [];
-  const msg = {
+  var commands = [];
+  var msg = {
     commands: [],
     template: _.template('\n\nI\'m all done. ' +
     '&lt;%= skipInstall ? "Just run" : "Running" %> &lt;%= commands %> ' +
@@ -164,29 +162,29 @@ install.installDependencies = function (options) {
 
   if (options.npm !== false) {
     msg.commands.push('npm install');
-    commands.push(cb => {
+    commands.push(function (cb) {
       this.npmInstall(null, null, cb);
-    });
+    }.bind(this));
   }
 
   if (options.yarn === true) {
     msg.commands.push('yarn install');
-    commands.push(cb => {
+    commands.push(function (cb) {
       this.yarnInstall(null, null, cb);
-    });
+    }.bind(this));
   }
 
   if (options.bower !== false) {
     msg.commands.push('bower install');
-    commands.push(cb => {
+    commands.push(function (cb) {
       this.bowerInstall(null, null, cb);
-    });
+    }.bind(this));
   }
 
   assert(msg.commands.length, 'installDependencies needs at least one of `npm`, `bower` or `yarn` to run.');
 
   if (!options.skipMessage) {
-    const tplValues = _.extend({
+    var tplValues = _.extend({
       skipInstall: false
     }, this.options, {
       commands: chalk.yellow.bold(msg.commands.join(' &amp;&amp; '))
@@ -207,6 +205,7 @@ install.installDependencies = function (options) {
  * @param {Function} [cb]
  * @param {Object} [spawnOptions] Options to pass `child_process.spawn`.
  */
+
 install.bowerInstall = function (cmpnt, options, cb, spawnOptions) {
   return this.runInstall('bower', cmpnt, options, cb, spawnOptions);
 };
@@ -221,10 +220,10 @@ install.bowerInstall = function (cmpnt, options, cb, spawnOptions) {
  * @param {Function} [cb]
  * @param {Object} [spawnOptions] Options to pass `child_process.spawn`.
  */
+
 install.npmInstall = function (pkgs, options, cb, spawnOptions) {
   return this.runInstall('npm', pkgs, options, cb, spawnOptions);
 };
-
 /**
  * Receives a list of `packages` and an `options` object to install through npm.
  *
@@ -235,6 +234,7 @@ install.npmInstall = function (pkgs, options, cb, spawnOptions) {
  * @param {Function} [cb]
  * @param {Object} [spawnOptions] Options to pass `child_process.spawn`.
  */
+
 install.yarnInstall = function (pkgs, options, cb, spawnOptions) {
   return this.runInstall('yarn', pkgs, options, cb, spawnOptions);
 };

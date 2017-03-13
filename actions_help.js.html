@@ -47,26 +47,27 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
-const path = require('path');
-const fs = require('fs');
-const _ = require('lodash');
-const table = require('text-table');
+var path = require('path');
+var fs = require('fs');
+var _ = require('lodash');
+var table = require('text-table');
+var pathExists = require('path-exists');
 
 /**
  * @mixin
  * @alias actions/help
  */
-const help = module.exports;
+var help = module.exports;
 
 /**
  * Tries to get the description from a USAGE file one folder above the
- * source root otherwise uses a default description
+ * source root otherwise uses a default description.
  */
-help.help = function () {
-  const filepath = path.resolve(this.sourceRoot(), '../USAGE');
-  const exists = fs.existsSync(filepath);
 
-  let out = [
+help.help = function () {
+  var filepath = path.join(this.sourceRoot(), '../USAGE');
+  var exists = pathExists.sync(filepath);
+  var out = [
     'Usage:',
     '  ' + this.usage(),
     ''
@@ -99,10 +100,10 @@ help.help = function () {
 };
 
 function formatArg(config) {
-  let arg = `&lt;${config.name}>`;
+  var arg = '&lt;' + config.name + '>';
 
   if (!config.required) {
-    arg = `[${arg}]`;
+    arg = '[' + arg + ']';
   }
 
   return arg;
@@ -110,19 +111,20 @@ function formatArg(config) {
 
 /**
  * Output usage information for this given generator, depending on its arguments
- * or options
+ * or options.
  */
+
 help.usage = function () {
-  const options = Object.keys(this._options).length ? '[options]' : '';
-  let name = this.options.namespace;
-  let args = '';
+  var options = Object.keys(this._options).length ? '[options]' : '';
+  var name = ' ' + this.options.namespace;
+  var args = '';
 
   if (this._arguments.length > 0) {
     args = this._arguments.map(formatArg).join(' ');
   }
 
   name = name.replace(/^yeoman:/, '');
-  let out = `yo ${name} ${options} ${args}`;
+  var out = 'yo' + name + ' ' + options + ' ' + args;
 
   if (this.description) {
     out += '\n\n' + this.description;
@@ -147,13 +149,13 @@ help.desc = function (description) {
  * @returns {String} Text of options in formatted table
  */
 help.argumentsHelp = function () {
-  const rows = this._arguments.map(config => {
+  var rows = this._arguments.map(function (config) {
     return [
       '',
       config.name ? config.name : '',
-      config.description ? `# ${config.description}` : '',
-      config.type ? `Type: ${config.type.name}` : '',
-      `Required: ${config.required}`
+      config.description ? '# ' + config.description : '',
+      config.type ? 'Type: ' + config.type.name : '',
+      'Required: ' + config.required
     ];
   });
 
@@ -165,15 +167,17 @@ help.argumentsHelp = function () {
  * @returns {String} Text of options in formatted table
  */
 help.optionsHelp = function () {
-  const options = _.reject(this._options, x => x.hide);
+  var options = _.reject(this._options, function (el) {
+    return el.hide;
+  });
 
-  const rows = options.map(opt => {
+  var rows = options.map(function (opt) {
     return [
       '',
-      opt.alias ? `-${opt.alias}, ` : '',
-      `--${opt.name}`,
-      opt.description ? `# ${opt.description}` : '',
-      (opt.default !== undefined &amp;&amp; opt.default !== '') ? 'Default: ' + opt.default : ''
+      opt.alias ? '-' + opt.alias + ', ' : '',
+      '--' + opt.name,
+      opt.description ? '# ' + opt.description : '',
+      (opt.default !== undefined &amp;&amp; opt.default !== null &amp;&amp; opt.default !== '') ? 'Default: ' + opt.default : ''
     ];
   });
 

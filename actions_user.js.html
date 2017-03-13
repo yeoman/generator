@@ -47,17 +47,17 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
-const shell = require('shelljs');
-const githubUsername = require('github-username');
+var shell = require('shelljs');
+var githubUsername = require('github-username');
 
-const nameCache = new Map();
-const emailCache = new Map();
+var nameCache = {};
+var emailCache = {};
 
 /**
  * @mixin
  * @alias actions/user
  */
-const user = module.exports;
+var user = module.exports;
 
 user.git = {};
 user.github = {};
@@ -66,8 +66,9 @@ user.github = {};
  * Retrieves user's name from Git in the global scope or the project scope
  * (it'll take what Git will use in the current context)
  */
-user.git.name = () => {
-  let name = nameCache.get(process.cwd());
+
+user.git.name = function () {
+  var name = nameCache[process.cwd()];
 
   if (name) {
     return name;
@@ -75,7 +76,7 @@ user.git.name = () => {
 
   if (shell.which('git')) {
     name = shell.exec('git config --get user.name', {silent: true}).stdout.trim();
-    nameCache.set(process.cwd(), name);
+    nameCache[process.cwd()] = name;
   }
 
   return name;
@@ -85,8 +86,9 @@ user.git.name = () => {
  * Retrieves user's email from Git in the global scope or the project scope
  * (it'll take what Git will use in the current context)
  */
-user.git.email = () => {
-  let email = emailCache.get(process.cwd());
+
+user.git.email = function () {
+  var email = emailCache[process.cwd()];
 
   if (email) {
     return email;
@@ -94,17 +96,18 @@ user.git.email = () => {
 
   if (shell.which('git')) {
     email = shell.exec('git config --get user.email', {silent: true}).stdout.trim();
-    emailCache.set(process.cwd(), email);
+    emailCache[process.cwd()] = email;
   }
 
   return email;
 };
 
 /**
- * Retrieves GitHub's username from the GitHub API
+ * Retrieves GitHub's username from the GitHub API.
  */
-user.github.username = cb => {
-  const promise = githubUsername(user.git.email());
+
+user.github.username = function (cb) {
+  var promise = githubUsername(user.git.email());
 
   if (cb) {
     promise.then(

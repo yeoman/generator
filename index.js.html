@@ -47,27 +47,28 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
-const util = require('util');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const EventEmitter = require('events');
-const assert = require('assert');
-const _ = require('lodash');
-const findUp = require('find-up');
-const readPkgUp = require('read-pkg-up');
-const chalk = require('chalk');
-const mkdirp = require('mkdirp');
-const minimist = require('minimist');
-const runAsync = require('run-async');
-const through = require('through2');
-const FileEditor = require('mem-fs-editor');
-const debug = require('debug')('yeoman:generator');
-const Conflicter = require('./util/conflicter');
-const Storage = require('./util/storage');
-const promptSuggestion = require('./util/prompt-suggestion');
+var util = require('util');
+var path = require('path');
+var events = require('events');
+var assert = require('assert');
+var _ = require('lodash');
+var findUp = require('find-up');
+var readPkgUp = require('read-pkg-up');
+var chalk = require('chalk');
+var mkdirp = require('mkdirp');
+var minimist = require('minimist');
+var runAsync = require('run-async');
+var through = require('through2');
+var userHome = require('user-home');
+var FileEditor = require('mem-fs-editor');
+var pathIsAbsolute = require('path-is-absolute');
+var pathExists = require('path-exists');
+var debug = require('debug')('yeoman:generator');
+var Conflicter = require('./util/conflicter');
+var Storage = require('./util/storage');
+var promptSuggestion = require('./util/prompt-suggestion');
 
-const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
+var EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
 
 /**
  * The `Base` class provides the common API shared by all generators.
@@ -105,8 +106,8 @@ const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
  * };
  */
 
-const Base = function (args, options) {
-  EventEmitter.call(this);
+var Base = module.exports = function (args, options) {
+  events.EventEmitter.call(this);
 
   if (!Array.isArray(args)) {
     options = args;
@@ -167,7 +168,7 @@ const Base = function (args, options) {
   // Determine the app root
   this.contextRoot = this.env.cwd;
 
-  let rootPath = findUp.sync('.yo-rc.json', {
+  var rootPath = findUp.sync('.yo-rc.json', {
     cwd: this.env.cwd
   });
   rootPath = rootPath ? path.dirname(rootPath) : this.env.cwd;
@@ -189,7 +190,7 @@ const Base = function (args, options) {
   this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
 };
 
-util.inherits(Base, EventEmitter);
+util.inherits(Base, events.EventEmitter);
 
 // Mixin the actions modules
 _.extend(Base.prototype, require('./actions/install'));
@@ -212,14 +213,14 @@ Base.prototype.prompt = function (questions) {
   questions = promptSuggestion.prefillQuestions(this._globalConfig, questions);
   questions = promptSuggestion.prefillQuestions(this.config, questions);
 
-  return this.env.adapter.prompt(questions).then(answers => {
+  return this.env.adapter.prompt(questions).then(function (answers) {
     if (!this.options['skip-cache']) {
       promptSuggestion.storeAnswers(this._globalConfig, questions, answers, false);
       promptSuggestion.storeAnswers(this.config, questions, answers, true);
     }
 
     return answers;
-  });
+  }.bind(this));
 };
 
 /**
@@ -249,16 +250,16 @@ Base.prototype.option = function (name, config) {
   config.description = config.description || config.desc;
 
   _.defaults(config, {
-    name,
+    name: name,
     description: 'Description for ' + name,
     type: Boolean,
     hide: false
   });
 
   // Check whether boolean option is invalid (starts with no-)
-  const boolOptionRegex = /^no-/;
+  var boolOptionRegex = /^no-/;
   if (config.type === Boolean &amp;&amp; name.match(boolOptionRegex)) {
-    const simpleName = name.replace(boolOptionRegex, '');
+    let simpleName = name.replace(boolOptionRegex, '');
     return this.emit('error', new Error([
       `Option name ${chalk.yellow(name)} cannot start with ${chalk.red('no-')}\n`,
       `Option name prefixed by ${chalk.yellow('--no')} are parsed as implicit`,
@@ -307,7 +308,7 @@ Base.prototype.argument = function (name, config) {
   config.description = config.description || config.desc;
 
   _.defaults(config, {
-    name,
+    name: name,
     required: config.default === null || config.default === undefined,
     type: String
   });
@@ -319,14 +320,14 @@ Base.prototype.argument = function (name, config) {
 };
 
 Base.prototype.parseOptions = function () {
-  const minimistDef = {
+  var minimistDef = {
     string: [],
     boolean: [],
     alias: {},
     default: {}
   };
 
-  _.each(this._options, option => {
+  _.each(this._options, function (option) {
     if (option.type === Boolean) {
       minimistDef.boolean.push(option.name);
       if (!('default' in option) &amp;&amp; !option.required) {
@@ -349,12 +350,12 @@ Base.prototype.parseOptions = function () {
     } else if ('default' in option) {
       minimistDef.default[option.name] = option.default;
     }
-  });
+  }.bind(this));
 
-  const parsedOpts = minimist(this._args, minimistDef);
+  var parsedOpts = minimist(this._args, minimistDef);
 
   // Parse options to the desired type
-  _.each(parsedOpts, (option, name) => {
+  _.each(parsedOpts, function (option, name) {
     // Manually set value as undefined if it should be.
     if (option === EMPTY) {
       parsedOpts[name] = undefined;
@@ -363,11 +364,11 @@ Base.prototype.parseOptions = function () {
     if (this._options[name] &amp;&amp; option !== undefined) {
       parsedOpts[name] = this._options[name].type(option);
     }
-  });
+  }.bind(this));
 
   // Parse positional arguments to valid options
-  this._arguments.forEach((config, index) => {
-    let value;
+  this._arguments.forEach(function (config, index) {
+    var value;
     if (index >= parsedOpts._.length) {
       if (config.name in this._initOptions) {
         value = this._initOptions[config.name];
@@ -383,12 +384,11 @@ Base.prototype.parseOptions = function () {
     }
 
     parsedOpts[config.name] = value;
-  });
+  }.bind(this));
 
   // Make the parsed options available to the instance
   _.extend(this.options, parsedOpts);
-  this.args = parsedOpts._;
-  this.arguments = parsedOpts._;
+  this.args = this.arguments = parsedOpts._;
 
   // Make sure required args are all present
   this.checkRequiredArgs();
@@ -432,18 +432,18 @@ Base.prototype.checkRequiredArgs = function () {
 Base.prototype.run = function (cb) {
   cb = cb || function () {};
 
-  const self = this;
+  var self = this;
   this._running = true;
   this.emit('run');
 
-  const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
-  const validMethods = methods.filter(methodIsValid);
+  var methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
+  var validMethods = methods.filter(methodIsValid);
   assert(validMethods.length, 'This Generator is empty. Add at least one method for it to run.');
 
-  this.env.runLoop.once('end', () => {
+  this.env.runLoop.once('end', function () {
     this.emit('end');
     cb();
-  });
+  }.bind(this));
 
   // Ensure a prototype method is a candidate run by default
   function methodIsValid(name) {
@@ -453,7 +453,7 @@ Base.prototype.run = function (cb) {
   function addMethod(method, methodName, queueName) {
     queueName = queueName || 'default';
     debug('Queueing ' + methodName + ' in ' + queueName);
-    self.env.runLoop.add(queueName, completed => {
+    self.env.runLoop.add(queueName, function (completed) {
       debug('Running ' + methodName);
       self.emit('method:' + methodName);
 
@@ -463,12 +463,12 @@ Base.prototype.run = function (cb) {
         }.bind(this);
 
         return method.apply(self, self.args);
-      })().then(completed).catch(err => {
+      })().then(completed).catch(function (err) {
         debug('An error occured while running ' + methodName, err);
 
         // Ensure we emit the error event outside the promise context so it won't be
         // swallowed when there's no listeners.
-        setImmediate(() => {
+        setImmediate(function () {
           self.emit('error', err);
           cb(err);
         });
@@ -477,8 +477,8 @@ Base.prototype.run = function (cb) {
   }
 
   function addInQueue(name) {
-    const item = Object.getPrototypeOf(self)[name];
-    const queueName = self.env.runLoop.queueNames.indexOf(name) === -1 ? null : name;
+    var item = Object.getPrototypeOf(self)[name];
+    var queueName = self.env.runLoop.queueNames.indexOf(name) === -1 ? null : name;
 
     // Name points to a function; run it!
     if (_.isFunction(item)) {
@@ -491,7 +491,7 @@ Base.prototype.run = function (cb) {
     }
 
     // Run each queue items
-    _.each(item, (method, methodName) => {
+    _.each(item, function (method, methodName) {
       if (!_.isFunction(method) || !methodIsValid(methodName)) {
         return;
       }
@@ -502,7 +502,7 @@ Base.prototype.run = function (cb) {
 
   validMethods.forEach(addInQueue);
 
-  const writeFiles = function () {
+  var writeFiles = function () {
     this.env.runLoop.add('conflicts', this._writeFiles.bind(this), {
       once: 'write memory fs to disk'
     });
@@ -512,15 +512,15 @@ Base.prototype.run = function (cb) {
   writeFiles();
 
   // Add the default conflicts handling
-  this.env.runLoop.add('conflicts', done => {
-    this.conflicter.resolve(err => {
+  this.env.runLoop.add('conflicts', function (done) {
+    this.conflicter.resolve(function (err) {
       if (err) {
         this.emit('error', err);
       }
 
       done();
-    });
-  });
+    }.bind(this));
+  }.bind(this));
 
   _.invokeMap(this._composedWith, 'run');
   return this;
@@ -545,7 +545,7 @@ Base.prototype.run = function (cb) {
  */
 
 Base.prototype.composeWith = function (modulePath, options) {
-  let generator;
+  var generator;
   options = options || {};
 
   // Pass down the default options so they're correclty mirrored down the chain.
@@ -557,17 +557,17 @@ Base.prototype.composeWith = function (modulePath, options) {
   }, options);
 
   try {
-    const Generator = require(modulePath); // eslint-disable-line import/no-dynamic-require
+    var Generator = require(modulePath); // eslint-disable-line import/no-dynamic-require
     Generator.resolved = require.resolve(modulePath);
     Generator.namespace = this.env.namespace(modulePath);
     generator = this.env.instantiate(Generator, {
-      options,
+      options: options,
       arguments: options.arguments
     });
   } catch (err) {
     if (err.code === 'MODULE_NOT_FOUND') {
       generator = this.env.create(modulePath, {
-        options,
+        options: options,
         arguments: options.arguments
       });
     } else {
@@ -590,7 +590,7 @@ Base.prototype.composeWith = function (modulePath, options) {
  */
 
 Base.prototype.rootGeneratorName = function () {
-  const pkg = readPkgUp.sync({cwd: this.resolved}).pkg;
+  var pkg = readPkgUp.sync({cwd: this.resolved}).pkg;
   return pkg ? pkg.name : '*';
 };
 
@@ -600,7 +600,7 @@ Base.prototype.rootGeneratorName = function () {
  */
 
 Base.prototype.rootGeneratorVersion = function () {
-  const pkg = readPkgUp.sync({cwd: this.resolved}).pkg;
+  var pkg = readPkgUp.sync({cwd: this.resolved}).pkg;
   return pkg ? pkg.version : '0.0.0';
 };
 
@@ -611,7 +611,7 @@ Base.prototype.rootGeneratorVersion = function () {
  */
 
 Base.prototype._getStorage = function () {
-  const storePath = path.join(this.destinationRoot(), '.yo-rc.json');
+  var storePath = path.join(this.destinationRoot(), '.yo-rc.json');
   return new Storage(this.rootGeneratorName(), this.fs, storePath);
 };
 
@@ -622,8 +622,8 @@ Base.prototype._getStorage = function () {
  */
 
 Base.prototype._getGlobalStorage = function () {
-  const storePath = path.join(os.homedir(), '.yo-rc-global.json');
-  const storeName = util.format('%s:%s', this.rootGeneratorName(), this.rootGeneratorVersion());
+  var storePath = path.join(userHome, '.yo-rc-global.json');
+  var storeName = util.format('%s:%s', this.rootGeneratorName(), this.rootGeneratorVersion());
   return new Storage(storeName, this.fs, storePath);
 };
 
@@ -639,7 +639,7 @@ Base.prototype.destinationRoot = function (rootPath) {
   if (_.isString(rootPath)) {
     this._destinationRoot = path.resolve(rootPath);
 
-    if (!fs.existsSync(rootPath)) {
+    if (!pathExists.sync(rootPath)) {
       mkdirp.sync(rootPath);
     }
 
@@ -675,9 +675,9 @@ Base.prototype.sourceRoot = function (rootPath) {
  */
 
 Base.prototype.templatePath = function () {
-  let filepath = path.join.apply(path, arguments);
+  var filepath = path.join.apply(path, arguments);
 
-  if (!path.isAbsolute(filepath)) {
+  if (!pathIsAbsolute(filepath)) {
     filepath = path.join(this.sourceRoot(), filepath);
   }
 
@@ -691,9 +691,9 @@ Base.prototype.templatePath = function () {
  */
 
 Base.prototype.destinationPath = function () {
-  let filepath = path.join.apply(path, arguments);
+  var filepath = path.join.apply(path, arguments);
 
-  if (!path.isAbsolute(filepath)) {
+  if (!pathIsAbsolute(filepath)) {
     filepath = path.join(this.destinationRoot(), filepath);
   }
 
@@ -709,7 +709,7 @@ Base.prototype.destinationPath = function () {
  * @return {String} The name of the application
  */
 Base.prototype.determineAppname = function () {
-  let appname = this.fs.readJSON(this.destinationPath('bower.json'), {}).name;
+  var appname = this.fs.readJSON(this.destinationPath('bower.json'), {}).name;
 
   if (!appname) {
     appname = this.fs.readJSON(this.destinationPath('package.json'), {}).name;
@@ -745,10 +745,10 @@ Base.prototype.registerTransformStream = function (streams) {
  * @param {Function} done - callback once files are written
  */
 Base.prototype._writeFiles = function (done) {
-  const self = this;
+  var self = this;
 
-  const conflictChecker = through.obj(function (file, enc, cb) {
-    const stream = this;
+  var conflictChecker = through.obj(function (file, enc, cb) {
+    var stream = this;
 
     // If the file has no state requiring action, move on
     if (file.state === null) {
@@ -756,14 +756,14 @@ Base.prototype._writeFiles = function (done) {
     }
 
     // Config file should not be processed by the conflicter. Just pass through
-    const filename = path.basename(file.path);
+    var filename = path.basename(file.path);
 
     if (filename === '.yo-rc.json' || filename === '.yo-rc-global.json') {
       this.push(file);
       return cb();
     }
 
-    self.conflicter.checkForCollision(file.path, file.contents, (err, status) => {
+    self.conflicter.checkForCollision(file.path, file.contents, function (err, status) {
       if (err) {
         cb(err);
         return;
@@ -780,8 +780,8 @@ Base.prototype._writeFiles = function (done) {
     self.conflicter.resolve();
   });
 
-  const transformStreams = this._transformStreams.concat([conflictChecker]);
-  this.fs.commit(transformStreams, () => {
+  var transformStreams = this._transformStreams.concat([conflictChecker]);
+  this.fs.commit(transformStreams, function () {
     done();
   });
 };
@@ -800,8 +800,6 @@ Base.prototype._writeFiles = function (done) {
  * });
  */
 Base.extend = require('class-extend').extend;
-
-module.exports = Base;
 </code></pre>
         </article>
     </section>

@@ -48,12 +48,6 @@
     
         <h2>Conflicter</h2>
         
-            <div class="class-description"><p>The Conflicter is a module that can be used to detect conflict between files. Each
-Generator file system helpers pass files through this module to make sure they don't
-break a user file.</p>
-<p>When a potential conflict is detected, we prompt the user and ask them for
-confirmation before proceeding with the actual write.</p></div>
-        
     
 </header>
 
@@ -66,15 +60,13 @@ confirmation before proceeding with the actual write.</p></div>
 
     
         
-        <h2>Constructor</h2>
-        
 
         <h4 class="name" id="Conflicter">
             <span class="type-signature"></span>new Conflicter<span class="signature">(adapter, force)</span><span class="type-signature"></span>
             
             <div class="container-source members">
                 <code><a href="util_conflicter.js.html">util/conflicter.js</a></code>,
-                <code><a href="util_conflicter.js.html#line30">line 30</a></code>
+                <code><a href="util_conflicter.js.html#line31">line 31</a></code>
             </div>
             
         </h4>
@@ -85,6 +77,14 @@ confirmation before proceeding with the actual write.</p></div>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>The Conflicter is a module that can be used to detect conflict between files. Each
+Generator file system helpers pass files through this module to make sure they don't
+break a user file.</p>
+<p>When a potential conflict is detected, we prompt the user and ask them for
+confirmation before proceeding with the actual write.</p>
+    </div>
     
 
     
@@ -318,7 +318,7 @@ confirmation before proceeding with the actual write.</p></div>
 
     
     <div class="description">
-        <p>Add a file to conflicter queue</p>
+        <p>Add a file to conflicter queue.</p>
     </div>
     
 
@@ -493,7 +493,7 @@ confirmation before proceeding with the actual write.</p></div>
             
             <div class="container-source members">
                 <code><a href="util_conflicter.js.html">util/conflicter.js</a></code>,
-                <code><a href="util_conflicter.js.html#line108">line 108</a></code>
+                <code><a href="util_conflicter.js.html#line109">line 109</a></code>
             </div>
             
         </h4>
@@ -506,7 +506,7 @@ confirmation before proceeding with the actual write.</p></div>
 
     
     <div class="description">
-        <p>Check if a file conflict with the current version on the user disk</p>
+        <p>Check if a file conflict with the current version on the user disk.</p>
 <p>A basic check is done to see if the file exists, if it does:</p>
 <ol>
 <li>Read its content from  <code>fs</code></li>
@@ -700,7 +700,7 @@ confirmation before proceeding with the actual write.</p></div>
     
     <div class="description">
         <p>Process the <em>potential conflict</em> queue and ask the user to resolve conflict when they
-occur</p>
+occur.</p>
 <p>The user is presented with the following options:</p>
 <ul>
 <li><code>Y</code> Yes, overwrite</li>

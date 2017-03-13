@@ -47,14 +47,14 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
-const _ = require('lodash');
-const spawn = require('cross-spawn');
+var _ = require('lodash');
+var spawn = require('cross-spawn');
 
 /**
  * @mixin
  * @alias actions/spawn-command
  */
-const spawnCommand = module.exports;
+var spawnCommand = module.exports;
 
 /**
  * Normalize a command across OS and spawn it (asynchronously).
@@ -63,7 +63,7 @@ const spawnCommand = module.exports;
  * @param {Array} args
  * @param {object} [opt]
  */
-spawnCommand.spawnCommand = (command, args, opt) => {
+spawnCommand.spawnCommand = function (command, args, opt) {
   opt = opt || {};
   return spawn(command, args, _.defaults(opt, {stdio: 'inherit'}));
 };
@@ -75,7 +75,7 @@ spawnCommand.spawnCommand = (command, args, opt) => {
  * @param {Array} args
  * @param {object} [opt]
  */
-spawnCommand.spawnCommandSync = (command, args, opt) => {
+spawnCommand.spawnCommandSync = function (command, args, opt) {
   opt = opt || {};
   return spawn.sync(command, args, _.defaults(opt, {stdio: 'inherit'}));
 };
