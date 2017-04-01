@@ -254,7 +254,7 @@ describe('Base', () => {
     it('can emit error from sync methods', function (done) {
       const error = new Error();
 
-      this.TestGenerator.prototype.throwing = function () {
+      this.TestGenerator.prototype.throwing = () => {
         throw error;
       };
 
@@ -270,7 +270,7 @@ describe('Base', () => {
       const error = new Error();
       const spy = sinon.spy();
 
-      this.TestGenerator.prototype.throwing = function () {
+      this.TestGenerator.prototype.throwing = () => {
         throw error;
       };
       this.TestGenerator.prototype.afterError = spy;
@@ -286,7 +286,7 @@ describe('Base', () => {
       const spy1 = sinon.spy();
       const spy2 = sinon.spy();
 
-      this.TestGenerator.prototype.first = function () {
+      this.TestGenerator.prototype.first = () => {
         return new Promise(resolve => {
           setTimeout(() => {
             spy1();
@@ -295,7 +295,7 @@ describe('Base', () => {
         });
       };
 
-      this.TestGenerator.prototype.second = function () {
+      this.TestGenerator.prototype.second = () => {
         spy2();
       };
 
@@ -306,14 +306,14 @@ describe('Base', () => {
     });
 
     it('handle failing promises as errors', function (done) {
-      this.TestGenerator.prototype.failing = function () {
+      this.TestGenerator.prototype.failing = () => {
         return new Promise((resolve, reject) => {
-          reject('some error');
+          reject(new Error('some error'));
         });
       };
 
       this.testGen.on('error', err => {
-        assert.equal(err, 'some error');
+        assert.equal(err.message, 'some error');
         done();
       });
 
@@ -335,7 +335,7 @@ describe('Base', () => {
         }, 10);
       };
 
-      this.TestGenerator.prototype.async2 = function () {
+      this.TestGenerator.prototype.async2 = () => {
         assert(!async1Running);
         assert(async1Ran);
         done();
@@ -676,7 +676,7 @@ describe('Base', () => {
         env: this.env,
         resolved: 'test'
       });
-      const addWrongOp = function () {
+      const addWrongOp = () => {
         generator.option('no-op');
       };
       assert.throws(addWrongOp, /this\.option\('op', \{type: Boolean\}\)/);
@@ -1003,8 +1003,8 @@ describe('Base', () => {
       class Generator extends Base {}
       this.Generator = Generator;
       Generator.namespace = 'angular:app';
-      Generator.prototype.createSomething = function () {};
-      Generator.prototype.createSomethingElse = function () {};
+      Generator.prototype.createSomething = () => {};
+      Generator.prototype.createSomethingElse = () => {};
     });
 
     it('emits the series of event on a specific generator', function (done) {

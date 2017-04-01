@@ -72,7 +72,7 @@
     "proxyquire": "^1.0.0",
     "sinon": "^2.1.0",
     "tui-jsdoc-template": "^1.0.4",
-    "xo": "^0.17.0",
+    "xo": "^0.18.1",
     "yeoman-assert": "^3.0.0",
     "yeoman-test": "^1.0.0"
   },

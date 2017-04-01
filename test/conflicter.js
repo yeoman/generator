@@ -135,7 +135,7 @@ describe('Conflicter', () => {
       const _prompt = testAdapter.prompt.bind(testAdapter);
       const promptStub = sinon.stub(testAdapter, 'prompt', (prompts, resultHandler) => {
         if (promptStub.calledTwice) {
-          const stubbedResultHandler = function (result) {
+          const stubbedResultHandler = result => {
             result.action = 'write';
             return resultHandler(result);
           };
@@ -161,7 +161,7 @@ describe('Conflicter', () => {
       const _prompt = testAdapter.prompt.bind(testAdapter);
       const promptStub = sinon.stub(testAdapter, 'prompt', (prompts, resultHandler) => {
         if (promptStub.calledTwice) {
-          const stubbedResultHandler = function (result) {
+          const stubbedResultHandler = result => {
             result.action = 'write';
             return resultHandler(result);
           };
