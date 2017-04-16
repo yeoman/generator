@@ -191,5 +191,15 @@ describe('Base (actions/install mixin)', () => {
       this.dummy.run();
       return promise;
     });
+
+    it('spawn yarn and bower with options', function () {
+      const promise = this.dummy.installDependencies({yarn: {force: true}, bower: {depth: 0}, npm: false}).then(() => {
+        sinon.assert.calledTwice(this.spawnCommandStub);
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install', '--depth=0'], {});
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['install', '--force'], {});
+      });
+      this.dummy.run();
+      return promise;
+    });
   });
 });
