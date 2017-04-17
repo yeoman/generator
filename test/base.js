@@ -762,6 +762,17 @@ describe('Base', () => {
       }, 100);
     });
 
+    it('runs composed generator steps before the generator they are composed with', function (done) {
+      this.Dummy.prototype.writing = sinon.spy();
+      this.GenCompose.prototype.writing = sinon.spy();
+      this.dummy.composeWith('composed:gen');
+
+      this.dummy.run(() => {
+        assert(this.Dummy.prototype.writing.calledAfter(this.GenCompose.prototype.writing));
+        done();
+      });
+    });
+
     it('run the composed generator even if main generator is already running.', function (done) {
       this.Dummy.prototype.writing = function () {
         this.composeWith('composed:gen');
