@@ -2,7 +2,7 @@
 const assert = require('assert');
 const os = require('os');
 const path = require('path');
-const mkdirp = require('mkdirp');
+const makeDir = require('make-dir');
 const nock = require('nock');
 const proxyquire = require('proxyquire');
 const rimraf = require('rimraf');
@@ -16,7 +16,7 @@ describe('Base#user', () => {
   before(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
-    mkdirp.sync(path.join(tmpdir, 'subdir'));
+    makeDir.sync(path.join(tmpdir, 'subdir'));
     process.chdir(tmpdir);
     shell.exec('git init --quiet');
     shell.exec('git config --local user.name Yeoman');

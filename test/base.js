@@ -5,7 +5,7 @@ const LF = require('os').EOL;
 const path = require('path');
 const _ = require('lodash');
 const sinon = require('sinon');
-const mkdirp = require('mkdirp');
+const makeDir = require('make-dir');
 const mockery = require('mockery');
 const rimraf = require('rimraf');
 const through = require('through2');
@@ -30,7 +30,7 @@ describe('Base', () => {
 
   beforeEach(function () {
     this.env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter());
-    mkdirp.sync(resolveddir);
+    makeDir.sync(resolveddir);
     this.Dummy = class extends Base {};
     this.Dummy.prototype.exec = sinon.spy();
 
