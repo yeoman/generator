@@ -155,6 +155,32 @@ describe('Conflicter', () => {
       });
     });
 
+    it('shows old content for deleted text files', done => {
+      const testAdapter = new TestAdapter({action: 'diff'});
+      const conflicter = new Conflicter(testAdapter);
+      const _prompt = testAdapter.prompt.bind(testAdapter);
+      const promptStub = sinon.stub(testAdapter, 'prompt', (prompts, resultHandler) => {
+        if (promptStub.calledTwice) {
+          const stubbedResultHandler = result => {
+            result.action = 'write';
+            return resultHandler(result);
+          };
+
+          return _prompt(prompts, stubbedResultHandler);
+        }
+        return _prompt(prompts, resultHandler);
+      });
+
+      conflicter.collision({
+        path: path.join(__dirname, 'fixtures/foo.js'),
+        contents: null
+      }, () => {
+        sinon.assert.neverCalledWithMatch(testAdapter.log.writeln, /Existing.*Replacement.*Diff/);
+        sinon.assert.called(testAdapter.diff);
+        done();
+      });
+    });
+
     it('displays custom diff for binary files', done => {
       const testAdapter = new TestAdapter({action: 'diff'});
       const conflicter = new Conflicter(testAdapter);
@@ -174,6 +200,32 @@ describe('Conflicter', () => {
       conflicter.collision({
         path: path.join(__dirname, 'fixtures/yeoman-logo.png'),
         contents: fs.readFileSync(path.join(__dirname, 'fixtures/testFile.tar.gz'))
+      }, () => {
+        sinon.assert.calledWithMatch(testAdapter.log.writeln, /Existing.*Replacement.*Diff/);
+        sinon.assert.notCalled(testAdapter.diff);
+        done();
+      });
+    });
+
+    it('displays custom diff for deleted binary files', done => {
+      const testAdapter = new TestAdapter({action: 'diff'});
+      const conflicter = new Conflicter(testAdapter);
+      const _prompt = testAdapter.prompt.bind(testAdapter);
+      const promptStub = sinon.stub(testAdapter, 'prompt', (prompts, resultHandler) => {
+        if (promptStub.calledTwice) {
+          const stubbedResultHandler = result => {
+            result.action = 'write';
+            return resultHandler(result);
+          };
+
+          return _prompt(prompts, stubbedResultHandler);
+        }
+        return _prompt(prompts, resultHandler);
+      });
+
+      conflicter.collision({
+        path: path.join(__dirname, 'fixtures/yeoman-logo.png'),
+        contents: null
       }, () => {
         sinon.assert.calledWithMatch(testAdapter.log.writeln, /Existing.*Replacement.*Diff/);
         sinon.assert.notCalled(testAdapter.diff);
