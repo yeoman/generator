@@ -13,7 +13,7 @@ const Base = require('..');
 const tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 
 describe('Base#user', () => {
-  before(function () {
+  beforeEach(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
     makeDir.sync(path.join(tmpdir, 'subdir'));
@@ -23,7 +23,7 @@ describe('Base#user', () => {
     shell.exec('git config --local user.email yo@yeoman.io');
   });
 
-  after(function (done) {
+  afterEach(function (done) {
     process.chdir(this.prevCwd);
     rimraf(tmpdir, done);
   });

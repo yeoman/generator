@@ -26,7 +26,7 @@ const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 
 describe('Base', () => {
-  before(helpers.setUpTestDirectory(tmpdir));
+  beforeEach(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
     this.env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter());
@@ -999,7 +999,7 @@ describe('Base', () => {
   });
 
   describe('Events', () => {
-    before(function () {
+    beforeEach(function () {
       class Generator extends Base {}
       this.Generator = Generator;
       Generator.namespace = 'angular:app';

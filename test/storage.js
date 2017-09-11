@@ -17,7 +17,7 @@ function rm(filepath) {
 }
 
 describe('Storage', () => {
-  before(helpers.setUpTestDirectory(tmpdir));
+  beforeEach(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
     this.beforeDir = process.cwd();
