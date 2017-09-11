@@ -62,7 +62,7 @@
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.0",
     "gulp-istanbul": "^1.0.0",
-    "gulp-mocha": "^3.0.1",
+    "gulp-mocha": "^4.3.1",
     "gulp-nsp": "^2.1.0",
     "gulp-plumber": "^1.0.0",
     "inquirer": "^3.0.1",
