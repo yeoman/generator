@@ -12,9 +12,10 @@
   },
   "scripts": {
     "pretest": "xo",
-    "test": "gulp",
+    "test": "nyc mocha",
     "doc": "jsdoc -c jsdoc.json",
-    "prepublish": "nsp check"
+    "prepublish": "nsp check",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "files": [
     "lib"
@@ -60,16 +61,13 @@
     "yeoman-environment": "^1.1.0"
   },
   "devDependencies": {
-    "gulp": "^3.6.0",
-    "gulp-coveralls": "^0.1.0",
-    "gulp-istanbul": "^1.0.0",
-    "gulp-mocha": "^3.0.1",
-    "gulp-plumber": "^1.0.0",
+    "coveralls": "^2.13.1",
     "inquirer": "^3.0.1",
     "jsdoc": "^3.3.0-beta1",
     "mockery": "^2.0.0",
     "nock": "^9.0.5",
     "nsp": "^2.8.0",
+    "nyc": "^11.2.1",
     "proxyquire": "^1.0.0",
     "sinon": "^2.1.0",
     "tui-jsdoc-template": "^1.0.4",

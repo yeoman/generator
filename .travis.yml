@@ -4,7 +4,9 @@ node_js:
   - 4
   - 6
   - node
-after_success: ./deploy.sh
+after_success:
+  - npm run coverage
+  - ./deploy.sh
 env:
   global:
     - COMMIT_AUTHOR_EMAIL: yeoman@yeoman.io
