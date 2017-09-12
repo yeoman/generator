@@ -133,7 +133,7 @@ describe('Conflicter', () => {
       const testAdapter = new TestAdapter({action: 'diff'});
       const conflicter = new Conflicter(testAdapter);
       const _prompt = testAdapter.prompt.bind(testAdapter);
-      const promptStub = sinon.stub(testAdapter, 'prompt', (prompts, resultHandler) => {
+      const promptStub = sinon.stub(testAdapter, 'prompt').callsFake((prompts, resultHandler) => {
         if (promptStub.calledTwice) {
           const stubbedResultHandler = result => {
             result.action = 'write';
@@ -159,7 +159,7 @@ describe('Conflicter', () => {
       const testAdapter = new TestAdapter({action: 'diff'});
       const conflicter = new Conflicter(testAdapter);
       const _prompt = testAdapter.prompt.bind(testAdapter);
-      const promptStub = sinon.stub(testAdapter, 'prompt', (prompts, resultHandler) => {
+      const promptStub = sinon.stub(testAdapter, 'prompt').callsFake((prompts, resultHandler) => {
         if (promptStub.calledTwice) {
           const stubbedResultHandler = result => {
             result.action = 'write';
@@ -185,7 +185,7 @@ describe('Conflicter', () => {
       const testAdapter = new TestAdapter({action: 'diff'});
       const conflicter = new Conflicter(testAdapter);
       const _prompt = testAdapter.prompt.bind(testAdapter);
-      const promptStub = sinon.stub(testAdapter, 'prompt', (prompts, resultHandler) => {
+      const promptStub = sinon.stub(testAdapter, 'prompt').callsFake((prompts, resultHandler) => {
         if (promptStub.calledTwice) {
           const stubbedResultHandler = result => {
             result.action = 'write';
@@ -211,7 +211,7 @@ describe('Conflicter', () => {
       const testAdapter = new TestAdapter({action: 'diff'});
       const conflicter = new Conflicter(testAdapter);
       const _prompt = testAdapter.prompt.bind(testAdapter);
-      const promptStub = sinon.stub(testAdapter, 'prompt', (prompts, resultHandler) => {
+      const promptStub = sinon.stub(testAdapter, 'prompt').callsFake((prompts, resultHandler) => {
         if (promptStub.calledTwice) {
           const stubbedResultHandler = result => {
             result.action = 'write';
