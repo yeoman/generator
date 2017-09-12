@@ -11,9 +11,10 @@
     "node": ">=4"
   },
   "scripts": {
-    "test": "xo && gulp",
+    "pretest": "xo",
+    "test": "gulp",
     "doc": "jsdoc -c jsdoc.json",
-    "prepublish": "gulp prepublish"
+    "prepublish": "nsp check"
   },
   "files": [
     "lib"
@@ -63,12 +64,12 @@
     "gulp-coveralls": "^0.1.0",
     "gulp-istanbul": "^1.0.0",
     "gulp-mocha": "^3.0.1",
-    "gulp-nsp": "^2.1.0",
     "gulp-plumber": "^1.0.0",
     "inquirer": "^3.0.1",
     "jsdoc": "^3.3.0-beta1",
     "mockery": "^2.0.0",
     "nock": "^9.0.5",
+    "nsp": "^2.8.0",
     "proxyquire": "^1.0.0",
     "sinon": "^2.1.0",
     "tui-jsdoc-template": "^1.0.4",
