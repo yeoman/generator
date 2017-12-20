@@ -179,14 +179,14 @@ describe('PromptSuggestion', () => {
       });
     });
 
-    describe.only('take a checkbox with choices from a function', () => {
+    describe('take a checkbox with choices from a function', () => {
       beforeEach(function () {
         this.store.set('promptValues', {
           respuesta: ['foo']
         });
       });
 
-      it('override default from an array with objects', function () {
+      it('does not override default from an array with objects', function () {
         const question = {
           type: 'checkbox',
           name: 'respuesta',
@@ -205,14 +205,10 @@ describe('PromptSuggestion', () => {
         };
         const result = promptSuggestion.prefillQuestions(this.store, question)[0];
 
-        result.choices.forEach(choice => {
-          assert.equal(choice.checked, false);
-        });
-
-        assert.deepEqual(result.default, ['foo']);
+        assert.deepEqual(result.default, ['bar']);
       });
 
-      it('override default from an array with strings', function () {
+      it('does not override default from an array with strings', function () {
         const question = {
           type: 'checkbox',
           name: 'respuesta',
@@ -221,10 +217,10 @@ describe('PromptSuggestion', () => {
           choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
         };
         const result = promptSuggestion.prefillQuestions(this.store, question)[0];
-        assert.deepEqual(result.default, ['foo']);
+        assert.deepEqual(result.default, ['bar']);
       });
 
-      describe('with multiple defaults', () => {
+      describe('does not override even with multiple defaults', () => {
         beforeEach(function () {
           this.store.set('promptValues', {
             respuesta: ['foo', 'bar']
@@ -250,11 +246,7 @@ describe('PromptSuggestion', () => {
           };
           const result = promptSuggestion.prefillQuestions(this.store, question)[0];
 
-          result.choices.forEach(choice => {
-            assert.equal(choice.checked, false);
-          });
-
-          assert.deepEqual(result.default, ['foo', 'bar']);
+          assert.deepEqual(result.default, ['bar']);
         });
 
         it('from an array with strings', function () {
@@ -266,7 +258,7 @@ describe('PromptSuggestion', () => {
             choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
           };
           const result = promptSuggestion.prefillQuestions(this.store, question)[0];
-          assert.deepEqual(result.default, ['foo', 'bar']);
+          assert.deepEqual(result.default, ['bar']);
         });
       });
     });
