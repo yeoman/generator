@@ -179,6 +179,90 @@ describe('PromptSuggestion', () => {
       });
     });
 
+    describe('take a checkbox with choices from a function', () => {
+      beforeEach(function () {
+        this.store.set('promptValues', {
+          respuesta: ['foo']
+        });
+      });
+
+      it('does not override default from an array with objects', function () {
+        const question = {
+          type: 'checkbox',
+          name: 'respuesta',
+          default: ['bar'],
+          store: true,
+          choices: () => [{
+            value: 'foo',
+            name: 'foo'
+          }, new inquirer.Separator('spacer'), {
+            value: 'bar',
+            name: 'bar'
+          }, {
+            value: 'baz',
+            name: 'baz'
+          }]
+        };
+        const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+
+        assert.deepEqual(result.default, ['bar']);
+      });
+
+      it('does not override default from an array with strings', function () {
+        const question = {
+          type: 'checkbox',
+          name: 'respuesta',
+          default: ['bar'],
+          store: true,
+          choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+        };
+        const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+        assert.deepEqual(result.default, ['bar']);
+      });
+
+      describe('does not override even with multiple defaults', () => {
+        beforeEach(function () {
+          this.store.set('promptValues', {
+            respuesta: ['foo', 'bar']
+          });
+        });
+
+        it('from an array with objects', function () {
+          const question = {
+            type: 'checkbox',
+            name: 'respuesta',
+            default: ['bar'],
+            store: true,
+            choices: () => [{
+              value: 'foo',
+              name: 'foo'
+            }, new inquirer.Separator('spacer'), {
+              value: 'bar',
+              name: 'bar'
+            }, {
+              value: 'baz',
+              name: 'baz'
+            }]
+          };
+          const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+
+          assert.deepEqual(result.default, ['bar']);
+        });
+
+        it('from an array with strings', function () {
+          const question = {
+            type: 'checkbox',
+            name: 'respuesta',
+            default: ['bar'],
+            store: true,
+            choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+          };
+          const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+          assert.deepEqual(result.default, ['bar']);
+        });
+      });
+    });
+
     describe('take a rawlist / expand', () => {
       beforeEach(function () {
         this.store.set('promptValues', {
