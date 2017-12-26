@@ -28,7 +28,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
         
-            <span class="version">v2.0.1</span>
+            <span class="version">v2.0.2</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -165,7 +165,9 @@ promptSuggestion.prefillQuestions = (store, questions) => {
 
     const storedValue = promptValues[question.name];
 
-    if (storedValue === undefined) {
+    if ((storedValue === undefined) || _.isFunction(question.choices)) {
+      // Do not override prompt default when question.choices is a function,
+      // since can't guarantee that the `storedValue` will even be in the returned choices
       return question;
     }
 
