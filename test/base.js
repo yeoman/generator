@@ -179,6 +179,10 @@ describe('Base', () => {
         exec: sinon.spy(),
         exec2: sinon.spy(),
         exec3: sinon.spy(),
+        exec4: {
+          exec41: sinon.spy(),
+          _private: sinon.spy()
+        },
         _private: sinon.spy(),
         prompting: {
           m1: sinon.spy(),
@@ -393,6 +397,20 @@ describe('Base', () => {
     it('ignore underscore prefixed method in a queue hash', function (done) {
       this.testGen.run(() => {
         assert(this.TestGenerator.prototype.prompting._private.notCalled);
+        done();
+      });
+    });
+
+    it('run methods which put into default queue', function (done) {
+      this.testGen.run(() => {
+        assert(this.TestGenerator.prototype.exec4.exec41.calledOnce);
+        done();
+      });
+    });
+
+    it('ignore underscore prefixed methods which put into default queue', function (done) {
+      this.testGen.run(() => {
+        assert(this.TestGenerator.prototype.exec4._private.notCalled);
         done();
       });
     });
