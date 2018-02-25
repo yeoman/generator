@@ -59,7 +59,7 @@ git config user.email $COMMIT_AUTHOR_EMAIL
 # Commit the new of the new version
 git add --all .
 git commit -m "Deploy docs to GitHub Pages ($TRAVIS_TAG)"
-echo -e "Comitted docs to $TARGET_BRANCH\n"
+echo -e "Committed docs to $TARGET_BRANCH\n"
 
 # Now that we're all set up, we can push.
 # Info: Any command that using GH_OAUTH_TOKEN must pipe the output to /dev/null
