@@ -414,7 +414,7 @@ describe('PromptSuggestion', () => {
       assert.equal(this.store.get('promptValues').respuesta, 'baz');
     });
 
-    describe('empty sotre', () => {
+    describe('empty store', () => {
       beforeEach(function () {
         this.store.delete('promptValues');
       });
