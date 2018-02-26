@@ -24,7 +24,7 @@ describe('Conflicter', () => {
   });
 
   describe('#resolve()', () => {
-    it('wihout conflict', function (done) {
+    it('without conflict', function (done) {
       this.conflicter.resolve(done);
     });
 

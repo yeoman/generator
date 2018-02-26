@@ -77,7 +77,7 @@ describe('Storage', () => {
       assert.equal(this.store.get('name'), 'Yeoman!');
     });
 
-    it('set multipe values at once', function () {
+    it('set multiple values at once', function () {
       this.store.set({foo: 'bar', john: 'doe'});
       assert.equal(this.store.get('foo'), 'bar');
       assert.equal(this.store.get('john'), 'doe');
