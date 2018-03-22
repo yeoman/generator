@@ -845,7 +845,7 @@ describe('Base', () => {
       const help = this.dummy.help();
       const expected = [
         'Usage:',
-        'yo dummy [options] [<baz>]',
+        'yo dummy [<baz>] [options]',
         '',
         'A new desc for this generator',
         '',
@@ -876,7 +876,7 @@ describe('Base', () => {
       });
 
       const usage = this.dummy.usage();
-      assert.equal(usage.trim(), 'yo dummy [options] [<baz>]');
+      assert.equal(usage.trim(), 'yo dummy [<baz>] [options]');
     });
 
     it('returns the expected usage output without arguments', function () {
