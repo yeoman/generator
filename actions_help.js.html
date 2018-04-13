@@ -28,7 +28,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
         
-            <span class="version">v2.0.3</span>
+            <span class="version">v2.0.4</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -120,11 +120,11 @@ help.usage = function () {
   let args = '';
 
   if (this._arguments.length > 0) {
-    args = this._arguments.map(formatArg).join(' ');
+    args = this._arguments.map(formatArg).join(' ') + ' ';
   }
 
   name = name.replace(/^yeoman:/, '');
-  let out = `yo ${name} ${options} ${args}`;
+  let out = `yo ${name} ${args}${options}`;
 
   if (this.description) {
     out += '\n\n' + this.description;
