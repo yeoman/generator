@@ -72,6 +72,14 @@ describe('Base (actions/install mixin)', () => {
       });
 
       it('does not spawn anything with skipInstall', function (done) {
+        this.dummy.runInstall('pnpm', ['install']);
+        this.dummy.run(() => {
+          sinon.assert.notCalled(this.spawnCommandStub);
+          done();
+        });
+      });
+
+      it('does not spawn anything with skipInstall', function (done) {
         this.dummy.runInstall('yarn', ['install']);
         this.dummy.run(() => {
           sinon.assert.notCalled(this.spawnCommandStub);
@@ -134,6 +142,34 @@ describe('Base (actions/install mixin)', () => {
 
     it('resolve Promise on success', function () {
       const promise = this.dummy.npmInstall('yo').then(() => {
+        sinon.assert.calledOnce(this.spawnCommandStub);
+      });
+      this.dummy.run();
+      return promise;
+    });
+  });
+
+  describe('#pnpmInstall()', () => {
+    it('spawn an install process once per commands', function (done) {
+      this.dummy.pnpmInstall();
+      this.dummy.pnpmInstall();
+      this.dummy.run(() => {
+        sinon.assert.calledOnce(this.spawnCommandStub);
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'pnpm', ['install'], {});
+        done();
+      });
+    });
+
+    it('run with options', function (done) {
+      this.dummy.pnpmInstall('yo', {save: true});
+      this.dummy.run(() => {
+        sinon.assert.calledWithExactly(this.spawnCommandStub, 'pnpm', ['install', 'yo', '--save'], {});
+        done();
+      });
+    });
+
+    it('resolve Promise on success', function () {
+      const promise = this.dummy.pnpmInstall('yo').then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
       });
       this.dummy.run();
