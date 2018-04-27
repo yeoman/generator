@@ -3,6 +3,7 @@ const yeoman = require('yeoman-environment');
 const sinon = require('sinon');
 const TestAdapter = require('yeoman-test/lib/adapter').TestAdapter;
 const Base = require('..');
+const chalk = require('chalk');
 
 const asyncStub = {
   on(key, cb) {
@@ -83,6 +84,14 @@ describe('Base (actions/install mixin)', () => {
         const promise = this.dummy.runInstall('npm', ['install']);
         this.dummy.run();
         return promise;
+      });
+
+      it('logs the skipped install command', function (done) {
+        this.dummy.runInstall('npm', ['some-package'], {save: true});
+        this.dummy.run(() => {
+          sinon.assert.calledWith(this.dummy.log.invoke, this.dummy.log.prototype.constructor, this.dummy, ['Skipping install command: ' + chalk.yellow('npm install some-package --save --cache-min 86400')]);
+          done();
+        });
       });
     });
   });
