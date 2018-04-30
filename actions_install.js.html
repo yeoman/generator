@@ -28,7 +28,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
         
-            <span class="version">v2.0.4</span>
+            <span class="version">v2.0.5</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -96,6 +96,7 @@ install.runInstall = function (installer, paths, options, spawnOptions) {
 
     // Return early if we're skipping installation
     if (this.options.skipInstall) {
+      this.log('Skipping install command: ' + chalk.yellow(installer + ' ' + args.join(' ')));
       return resolve();
     }
 
@@ -103,9 +104,10 @@ install.runInstall = function (installer, paths, options, spawnOptions) {
       this.emit(`${installer}Install`, paths);
       this.spawnCommand(installer, args, spawnOptions)
         .on('error', err => {
-          console.log(chalk.red('Could not finish installation. \n') +
+          this.log(chalk.red('Could not finish installation. \n') +
             'Please install ' + installer + ' with ' +
-            chalk.yellow('npm install -g ' + installer) + ' and try again.'
+            chalk.yellow('npm install -g ' + installer) + ' and try again. \n' +
+            'If ' + installer + ' is already installed, try running the following command manually: ' + chalk.yellow(installer + ' ' + args.join(' '))
           );
           reject(err);
           done();
