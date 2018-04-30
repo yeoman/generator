@@ -14,7 +14,7 @@
     "pretest": "xo",
     "test": "nyc mocha",
     "doc": "jsdoc -c jsdoc.json",
-    "prepublish": "nsp check",
+    "prepublishOnly": "nsp check",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "files": [
