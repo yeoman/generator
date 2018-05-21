@@ -9,6 +9,8 @@ const FileEditor = require('mem-fs-editor');
 const Storage = require('../lib/util/storage');
 const promptSuggestion = require('../lib/util/prompt-suggestion');
 
+/* eslint max-nested-callbacks: ["warn", 6] */
+
 describe('PromptSuggestion', () => {
   beforeEach(function () {
     this.memFs = env.createEnv().sharedFs;
