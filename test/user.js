@@ -10,9 +10,13 @@ const shell = require('shelljs');
 const sinon = require('sinon');
 const Base = require('..');
 
+/* eslint max-nested-callbacks: ["warn", 5] */
+
 const tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 
-describe('Base#user', () => {
+describe('Base#user', function () {
+  this.timeout(5000);
+
   beforeEach(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
