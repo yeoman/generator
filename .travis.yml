@@ -19,3 +19,6 @@ env:
     - DEPLOY_ON_NODE_VERSION: 6
     - secure: >-
         Hv7gACQoYGtesz1NTJYRHjGCimEJEjj4bQP2iTpDUUbfAiYe/4QPemoyDEFjRxbu5m2uoYwMk0AQrW7DnQhNAhl7u24jYnRgQyd/2GOx3xZgjwnao27gsrTHss4IyXEaS2h3kRuIVSD+xibz/lwZm+erHOQ9VOwvCQkOKnILXW8=
+cache:
+  directories:
+    - node_modules
