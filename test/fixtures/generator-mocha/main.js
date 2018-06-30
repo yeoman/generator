@@ -22,9 +22,10 @@ module.exports = function(args, options) {
 util.inherits(module.exports, Base);
 
 module.exports.name = 'You can name your generator';
-module.exports.description = 'Ana add a custom description by adding a `description` property to your function.';
+module.exports.description =
+  'Ana add a custom description by adding a `description` property to your function.';
 module.exports.usage = 'Usage can be used to customize the help output';
 
-// namespace is resolved depending on the location of this generator,
+// Namespace is resolved depending on the location of this generator,
 // unless you specifically define it.
 module.exports.namespace = 'mocha:generator';

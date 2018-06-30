@@ -6,7 +6,7 @@ const Base = require('..');
 
 describe('Generators module', () => {
   describe('Base', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.env = Environment.createEnv();
       this.generator = new Base({
         env: this.env,
@@ -14,7 +14,7 @@ describe('Generators module', () => {
       });
     });
 
-    it('is an EventEmitter', function (done) {
+    it('is an EventEmitter', function(done) {
       assert.ok(this.generator instanceof EventEmitter);
       assert.strictEqual(typeof this.generator.on, 'function');
       assert.strictEqual(typeof this.generator.emit, 'function');
