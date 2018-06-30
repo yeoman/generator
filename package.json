@@ -8,13 +8,12 @@
   "author": "Yeoman",
   "main": "lib",
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "scripts": {
     "pretest": "xo",
     "test": "nyc mocha",
     "doc": "jsdoc -c jsdoc.json",
-    "prepublishOnly": "nsp check",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "files": [
@@ -67,7 +66,6 @@
     "mocha": "^5.1.1",
     "mockery": "^2.1.0",
     "nock": "^9.1.6",
-    "nsp": "^3.2.1",
     "nyc": "^11.4.1",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0",
