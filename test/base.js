@@ -201,8 +201,8 @@ describe('Base', () => {
       this.resolveSpy = sinon.spy(this.testGen.conflicter, 'resolve');
     });
 
-    it('run all methods in the given generator', function(done) {
-      this.testGen.run(done);
+    it('run all methods in the given generator', function() {
+      return this.testGen.run();
     });
 
     it('turn on _running flag', function() {
@@ -210,32 +210,29 @@ describe('Base', () => {
       assert.ok(this.testGen._running);
     });
 
-    it('run prototype methods (not instances one)', function(done) {
+    it('run prototype methods (not instances one)', function() {
       this.testGen.exec = sinon.spy();
-      this.testGen.run(() => {
+      return this.testGen.run().then(() => {
         assert.ok(this.execSpy.calledOnce);
         assert.equal(this.testGen.exec.callCount, 0);
-        done();
       });
     });
 
-    it("don't try running prototype attributes", function(done) {
+    it("don't try running prototype attributes", function() {
       this.TestGenerator.prototype.prop = 'something';
-      this.testGen.run(done);
+      return this.testGen.run();
     });
 
-    it('pass instance .args property to the called methods', function(done) {
+    it('pass instance .args property to the called methods', function() {
       this.testGen.args = ['2', 'args'];
-      this.testGen.run(() => {
+      return this.testGen.run().then(() => {
         assert(this.execSpy.withArgs('2', 'args').calledOnce);
-        done();
       });
     });
 
-    it('resolve conflicts after it ran', function(done) {
-      this.testGen.run(() => {
+    it('resolve conflicts after it ran', function() {
+      return this.testGen.run().then(() => {
         assert.equal(this.resolveSpy.callCount, 1);
-        done();
       });
     });
 
@@ -267,7 +264,7 @@ describe('Base', () => {
       this.testGen.run();
     });
 
-    it('stop queue processing once an error is thrown', function(done) {
+    it('stop queue processing once an error is thrown', function() {
       const error = new Error();
       const spy = sinon.spy();
 
@@ -277,13 +274,12 @@ describe('Base', () => {
       this.TestGenerator.prototype.afterError = spy;
 
       this.testGen.on('error', sinon.spy());
-      this.testGen.run(err => {
+      return this.testGen.run().catch(err => {
         assert.equal(err, error);
-        done();
       });
     });
 
-    it('handle function returning promises as asynchronous', function(done) {
+    it('handle function returning promises as asynchronous', function() {
       const spy1 = sinon.spy();
       const spy2 = sinon.spy();
 
@@ -300,9 +296,8 @@ describe('Base', () => {
         spy2();
       };
 
-      this.testGen.run(() => {
+      return this.testGen.run().then(() => {
         spy1.calledBefore(spy2);
-        done();
       });
     });
 
@@ -352,10 +347,12 @@ describe('Base', () => {
         env: this.env
       });
 
-      assert.throws(gen.run.bind(gen));
+      return gen.run().catch(err => {
+        assert(err.toString().includes('This Generator is empty'));
+      });
     });
 
-    it('will run non-enumerable methods', function(done) {
+    it('will run non-enumerable methods', function() {
       class Generator extends Base {}
 
       Object.defineProperty(Generator.prototype, 'nonenumerable', {
@@ -370,55 +367,49 @@ describe('Base', () => {
         env: this.env
       });
 
-      gen.run(() => {
+      return gen.run().then(() => {
         assert(gen.nonenumerable.called);
-        done();
       });
     });
 
-    it('ignore underscore prefixed method', function(done) {
-      this.testGen.run(() => {
+    it('ignore underscore prefixed method', function() {
+      return this.testGen.run().then(() => {
         assert(this.TestGenerator.prototype._private.notCalled);
-        done();
       });
     });
 
-    it('run methods in a queue hash', function(done) {
-      this.testGen.run(() => {
+    it('run methods in a queue hash', function() {
+      return this.testGen.run().then(() => {
         assert(this.TestGenerator.prototype.prompting.m1.calledOnce);
         assert(this.TestGenerator.prototype.prompting.m2.calledOnce);
-        done();
       });
     });
 
-    it('ignore underscore prefixed method in a queue hash', function(done) {
-      this.testGen.run(() => {
+    it('ignore underscore prefixed method in a queue hash', function() {
+      return this.testGen.run().then(() => {
         assert(this.TestGenerator.prototype.prompting._private.notCalled);
-        done();
       });
     });
 
-    it('run named queued methods in order', function(done) {
+    it('run named queued methods in order', function() {
       const initSpy = this.TestGenerator.prototype.initializing;
       const promptSpy = this.TestGenerator.prototype.prompting.m1;
 
-      this.testGen.run(() => {
+      return this.testGen.run().then(() => {
         assert(initSpy.calledBefore(promptSpy));
-        done();
       });
     });
 
-    it('run queued methods in order even if not in order in prototype', function(done) {
+    it('run queued methods in order even if not in order in prototype', function() {
       const initSpy = this.TestGenerator.prototype.initializing;
       const execSpy = this.TestGenerator.prototype.exec;
 
-      this.testGen.run(() => {
+      return this.testGen.run().then(() => {
         assert(initSpy.calledBefore(execSpy));
-        done();
       });
     });
 
-    it('commit mem-fs to disk', function(done) {
+    it('commit mem-fs to disk', function() {
       let filepath;
 
       this.TestGenerator.prototype.writing = function() {
@@ -428,13 +419,12 @@ describe('Base', () => {
         );
       };
 
-      this.testGen.run(() => {
+      return this.testGen.run().then(() => {
         assert(fs.existsSync(filepath));
-        done();
       });
     });
 
-    it('allow skipping file writes to disk', function(done) {
+    it('allow skipping file writes to disk', function() {
       const action = { action: 'skip' };
       const filepath = path.join(__dirname, '/fixtures/conflict.js');
       assert(fs.existsSync(filepath));
@@ -450,13 +440,12 @@ describe('Base', () => {
         env
       });
 
-      testGen.run(() => {
+      return testGen.run().then(() => {
         assert.equal(fs.readFileSync(filepath, 'utf8'), 'var a = 1;' + LF);
-        done();
       });
     });
 
-    it('does not prompt again for skipped files', function(done) {
+    it('does not prompt again for skipped files', function() {
       const action = { action: 'skip' };
       const filepath = path.join(__dirname, '/fixtures/conflict.js');
       const filepath2 = path.join(__dirname, '/fixtures/file-conflict.txt');
@@ -482,14 +471,13 @@ describe('Base', () => {
         env
       });
 
-      testGen.run(() => {
+      return testGen.run().then(() => {
         sinon.assert.calledTwice(Conflicter.prototype.checkForCollision);
         Conflicter.prototype.checkForCollision.restore();
-        done();
       });
     });
 
-    it('does not pass config file to conflicter', function(done) {
+    it('does not pass config file to conflicter', function() {
       this.TestGenerator.prototype.writing = function() {
         fs.writeFileSync(this.destinationPath('.yo-rc.json'), '{"foo": 3}');
         fs.writeFileSync(path.join(os.homedir(), '.yo-rc-global.json'), '{"foo": 3}');
@@ -497,17 +485,16 @@ describe('Base', () => {
         this._globalConfig.set('bar', 1);
       };
 
-      this.testGen.run(done);
+      return this.testGen.run();
     });
 
-    it('allows file writes in any priorities', function(done) {
+    it('allows file writes in any priorities', function() {
       this.TestGenerator.prototype.end = function() {
         this.fs.write(this.destinationPath('foo.txt'), 'test');
       };
 
-      this.testGen.run(() => {
+      return this.testGen.run().then(() => {
         assert(fs.existsSync(this.testGen.destinationPath('foo.txt')));
-        done();
       });
     });
   });
@@ -753,7 +740,7 @@ describe('Base', () => {
       // I use a setTimeout here just to make sure composeWith() doesn't start the
       // generator before the base one is ran.
       setTimeout(() => {
-        this.dummy.run(() => {
+        this.dummy.run().then(() => {
           sinon.assert.callOrder(runSpy, this.spy);
           assert.equal(this.spy.thisValues[0].options.skipInstall, true);
           assert.equal(this.spy.thisValues[0].options['skip-install'], true);
@@ -763,26 +750,24 @@ describe('Base', () => {
       }, 100);
     });
 
-    it('run the composed generator even if main generator is already running.', function(done) {
+    it('run the composed generator even if main generator is already running.', function() {
       this.Dummy.prototype.writing = function() {
         this.composeWith('composed:gen');
       };
 
-      this.dummy.run(() => {
+      return this.dummy.run().then(() => {
         assert(this.spy.called);
-        done();
       });
     });
 
-    it('pass options and arguments to the composed generators', function(done) {
+    it('pass options and arguments to the composed generators', function() {
       this.dummy.composeWith('composed:gen', {
         foo: 'bar',
         'skip-install': true
       });
 
-      this.dummy.run(() => {
+      return this.dummy.run().then(() => {
         assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
-        done();
       });
     });
 
@@ -795,32 +780,29 @@ describe('Base', () => {
         mockery.registerMock(this.stubPath, this.LocalDummy);
       });
 
-      it('runs the composed generator', function(done) {
+      it('runs the composed generator', function() {
         this.dummy.composeWith(this.stubPath, {});
-        this.dummy.run(() => {
+        return this.dummy.run().then(() => {
           assert(this.LocalDummy.prototype.exec.called);
-          done();
         });
       });
 
-      it('pass options and arguments to the composed generators', function(done) {
+      it('pass options and arguments to the composed generators', function() {
         this.dummy.composeWith(this.stubPath, { foo: 'bar', 'skip-install': true });
 
-        this.dummy.run(() => {
+        return this.dummy.run().then(() => {
           assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
-          done();
         });
       });
 
-      it('sets correct metadata on the Generator constructor', function(done) {
+      it('sets correct metadata on the Generator constructor', function() {
         this.dummy.composeWith(this.stubPath, {});
-        this.dummy.run(() => {
+        return this.dummy.run().then(() => {
           assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
           assert.equal(
             this.spy.firstCall.thisValue.options.resolved,
             require.resolve(this.stubPath)
           );
-          done();
         });
       });
     });
@@ -953,7 +935,7 @@ describe('Base', () => {
       rimraf(this.filepath, done);
     });
 
-    it('add the transform stream to the commit stream', function(done) {
+    it('add the transform stream to the commit stream', function() {
       const self = this;
       this.TestGenerator.prototype.writing = function() {
         this.fs.write(self.filepath, 'not correct');
@@ -971,13 +953,12 @@ describe('Base', () => {
         );
       };
 
-      this.testGen.run(() => {
+      return this.testGen.run().then(() => {
         assert.equal(fs.readFileSync(this.filepath, 'utf8'), 'ab');
-        done();
       });
     });
 
-    it('add multiple transform streams to the commit stream', function(done) {
+    it('add multiple transform streams to the commit stream', function() {
       const self = this;
       this.TestGenerator.prototype.writing = function() {
         this.fs.write(self.filepath, 'not correct');
@@ -994,9 +975,8 @@ describe('Base', () => {
         ]);
       };
 
-      this.testGen.run(() => {
+      return this.testGen.run().then(() => {
         assert.equal(fs.readFileSync(this.filepath, 'utf8'), 'ab');
-        done();
       });
     });
   });
