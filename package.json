@@ -1,12 +1,11 @@
 {
   "name": "yeoman-generator",
   "version": "2.0.5",
-  "description": "Rails-inspired generator system that provides scaffolding for your apps",
+  "description":
+    "Rails-inspired generator system that provides scaffolding for your apps",
   "homepage": "http://yeoman.io",
   "author": "Yeoman",
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "main": "lib",
   "keywords": [
     "development",
@@ -34,7 +33,6 @@
     "mocha": "^5.1.1",
     "mockery": "^2.1.0",
     "nock": "^9.1.6",
-    "nsp": "^3.2.1",
     "nyc": "^12.0.2",
     "prettier": "^1.7.0",
     "proxyquire": "^2.0.1",
@@ -53,7 +51,6 @@
     "test": "nyc mocha",
     "doc": "jsdoc -c jsdoc.json",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "prepublish": "nsp check",
     "precommit": "lint-staged"
   },
   "dependencies": {
@@ -61,21 +58,21 @@
     "chalk": "^2.3.0",
     "cli-table": "^0.3.1",
     "cross-spawn": "^6.0.5",
-    "dargs": "^5.1.0",
+    "dargs": "^6.0.0",
     "dateformat": "^3.0.3",
     "debug": "^3.1.0",
     "detect-conflict": "^1.0.0",
     "error": "^7.0.2",
-    "find-up": "^2.1.0",
+    "find-up": "^3.0.0",
     "github-username": "^4.0.0",
     "istextorbinary": "^2.2.1",
     "lodash": "^4.17.10",
     "make-dir": "^1.1.0",
-    "mem-fs-editor": "^4.0.0",
+    "mem-fs-editor": "^5.0.0",
     "minimist": "^1.2.0",
-    "pretty-bytes": "^4.0.2",
+    "pretty-bytes": "^5.1.0",
     "read-chunk": "^2.1.0",
-    "read-pkg-up": "^3.0.0",
+    "read-pkg-up": "^4.0.0",
     "rimraf": "^2.6.2",
     "run-async": "^2.0.0",
     "shelljs": "^0.8.0",
@@ -84,20 +81,11 @@
     "yeoman-environment": "^2.0.5"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.json": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.js": ["eslint --fix", "git add"],
+    "*.json": ["prettier --write", "git add"]
   },
   "eslintConfig": {
-    "extends": [
-      "xo",
-      "prettier"
-    ],
+    "extends": ["xo", "prettier"],
     "env": {
       "mocha": true,
       "node": true
@@ -111,8 +99,6 @@
         }
       ]
     },
-    "plugins": [
-      "prettier"
-    ]
+    "plugins": ["prettier"]
   }
 }
