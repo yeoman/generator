@@ -1,11 +1,12 @@
 {
   "name": "yeoman-generator",
-  "version": "2.0.5",
-  "description":
-    "Rails-inspired generator system that provides scaffolding for your apps",
+  "version": "3.0.0",
+  "description": "Rails-inspired generator system that provides scaffolding for your apps",
   "homepage": "http://yeoman.io",
   "author": "Yeoman",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "main": "lib",
   "keywords": [
     "development",
@@ -81,11 +82,20 @@
     "yeoman-environment": "^2.0.5"
   },
   "lint-staged": {
-    "*.js": ["eslint --fix", "git add"],
-    "*.json": ["prettier --write", "git add"]
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "eslintConfig": {
-    "extends": ["xo", "prettier"],
+    "extends": [
+      "xo",
+      "prettier"
+    ],
     "env": {
       "mocha": true,
       "node": true
@@ -99,6 +109,8 @@
         }
       ]
     },
-    "plugins": ["prettier"]
+    "plugins": [
+      "prettier"
+    ]
   }
 }
