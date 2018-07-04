@@ -1,7 +1,6 @@
 'use strict';
 const fs = require('fs');
 const os = require('os');
-const LF = require('os').EOL;
 const path = require('path');
 const _ = require('lodash');
 const sinon = require('sinon');
@@ -441,7 +440,7 @@ describe('Base', () => {
       });
 
       return testGen.run().then(() => {
-        assert.equal(fs.readFileSync(filepath, 'utf8'), 'var a = 1;' + LF);
+        assert.equal(fs.readFileSync(filepath, 'utf8'), 'var a = 1;\n');
       });
     });
 
