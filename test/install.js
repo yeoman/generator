@@ -1,6 +1,7 @@
 'use strict';
 const yeoman = require('yeoman-environment');
 const sinon = require('sinon');
+const assert = require('yeoman-assert');
 const { TestAdapter } = require('yeoman-test/lib/adapter');
 const Base = require('..');
 const chalk = require('chalk');
@@ -55,6 +56,142 @@ describe('Base (actions/install mixin)', () => {
           spawnEnv
         );
         done();
+      });
+    });
+
+    describe('without --force-install', () => {
+      beforeEach(() => {
+        this.dummy = this.env.create('dummy', {
+          options: {
+            forceInstall: false
+          }
+        });
+        this.spawnCommandStub = sinon.stub(this.dummy, 'spawnCommand');
+      });
+
+      it('should not fail on bad exit code without forceInstall', done => {
+        const asyncStub = {
+          on(key, cb) {
+            if (key === 'exit') {
+              cb(1);
+            }
+            return asyncStub;
+          }
+        };
+        this.spawnCommandStub.returns(asyncStub);
+        this.dummy.scheduleInstallTask('npm', ['install']);
+        this.dummy.run(error => {
+          sinon.assert.calledOnce(this.spawnCommandStub);
+          assert(!error);
+          done();
+        });
+      });
+
+      it('should not fail on exit signal without forceInstall', done => {
+        const asyncStub = {
+          on(key, cb) {
+            if (key === 'exit') {
+              cb(undefined, 'SIGKILL');
+            }
+            return asyncStub;
+          }
+        };
+        this.spawnCommandStub.returns(asyncStub);
+        this.dummy.scheduleInstallTask('npm', ['install']);
+        this.dummy.run(error => {
+          sinon.assert.calledOnce(this.spawnCommandStub);
+          assert(!error);
+          done();
+        });
+      });
+
+      it('should not fail on error without forceInstall', done => {
+        const asyncStub = {
+          on(key, cb) {
+            if (key === 'error') {
+              cb(new Error('Process not found'));
+            }
+            return asyncStub;
+          }
+        };
+        this.spawnCommandStub.returns(asyncStub);
+        this.dummy.scheduleInstallTask('npm', ['install']);
+        this.dummy.run(error => {
+          sinon.assert.calledOnce(this.spawnCommandStub);
+          assert(!error);
+          done();
+        });
+      });
+    });
+
+    describe('with --force-install', () => {
+      beforeEach(() => {
+        this.dummy = this.env.create('dummy', {
+          options: {
+            forceInstall: true
+          }
+        });
+        this.spawnCommandStub = sinon.stub(this.dummy, 'spawnCommand');
+      });
+
+      it('fails on bad exit code with forceInstall', done => {
+        const asyncStub = {
+          on(key, cb) {
+            if (key === 'exit') {
+              cb(1);
+            }
+            return asyncStub;
+          }
+        };
+        this.spawnCommandStub.returns(asyncStub);
+        this.dummy.scheduleInstallTask('npm', ['install']);
+        this.dummy.on('error', error => {
+          sinon.assert.calledOnce(this.spawnCommandStub);
+          assert(error instanceof Error);
+          assert.equal(error.message, 'Installation of npm failed with code 1');
+          done();
+        });
+        this.dummy.run();
+      });
+
+      it('fails on exit signal with forceInstall', done => {
+        const asyncStub = {
+          on(key, cb) {
+            if (key === 'exit') {
+              cb(undefined, 'SIGKILL');
+            }
+            return asyncStub;
+          }
+        };
+        this.spawnCommandStub.returns(asyncStub);
+        this.dummy.scheduleInstallTask('npm', ['install']);
+        this.dummy.on('error', error => {
+          sinon.assert.calledOnce(this.spawnCommandStub);
+          assert(error instanceof Error);
+          assert.equal(error.message, 'Installation of npm failed with code SIGKILL');
+          done();
+        });
+        this.dummy.run();
+      });
+
+      it('fails on error with forceInstall', done => {
+        const asyncStub = {
+          on(key, cb) {
+            if (key === 'error') {
+              cb(new Error('Process not found'));
+            }
+            return asyncStub;
+          }
+        };
+        this.spawnCommandStub.returns(asyncStub);
+        this.dummy.scheduleInstallTask('npm', ['install']);
+        this.dummy.on('error', error => {
+          sinon.assert.calledOnce(this.spawnCommandStub);
+          assert(error instanceof Error);
+          assert.equal(error.message, 'Process not found');
+          done();
+        });
+        this.dummy.run();
       });
     });
 

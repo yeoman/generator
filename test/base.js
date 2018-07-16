@@ -835,6 +835,7 @@ describe('Base', () => {
         "-h, --help # Print the generator's options and usage",
         '--skip-cache # Do not remember prompt answers Default: false',
         '--skip-install # Do not automatically install dependencies Default: false',
+        '--force-install # Fail on install dependencies error Default: false',
         '--ooOoo # Description for ooOoo',
         '',
         'Arguments:',
