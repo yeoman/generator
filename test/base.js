@@ -723,9 +723,9 @@ describe('Base', () => {
         resolved: 'unknown',
         namespace: 'dummy',
         env: this.env,
-        skipInstall: true,
-        forceInstall: true,
-        skipCache: true
+        'skip-install': true,
+        'force-install': true,
+        'skip=cache': true
       });
 
       this.spy = sinon.spy();
