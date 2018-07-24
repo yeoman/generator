@@ -28,7 +28,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
         
-            <span class="version">v3.0.0</span>
+            <span class="version">v3.1.0</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -103,7 +103,7 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
     done => {
       this.emit(`${installer}Install`, paths);
       this.spawnCommand(installer, args, spawnOptions)
-        .on('error', () => {
+        .on('error', error => {
           this.log(
             chalk.red('Could not finish installation. \n') +
               'Please install ' +
@@ -116,10 +116,19 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
               ' is already installed, try running the following command manually: ' +
               chalk.yellow(installer + ' ' + args.join(' '))
           );
+          if (this.options.forceInstall) {
+            this.emit('error', error);
+          }
           done();
         })
-        .on('exit', () => {
+        .on('exit', (code, signal) => {
           this.emit(`${installer}Install:end`, paths);
+          if ((code || signal) &amp;&amp; this.options.forceInstall) {
+            this.emit(
+              'error',
+              new Error(`Installation of ${installer} failed with code ${code || signal}`)
+            );
+          }
           done();
         });
     },
