@@ -723,7 +723,9 @@ describe('Base', () => {
         resolved: 'unknown',
         namespace: 'dummy',
         env: this.env,
-        skipInstall: true
+        skipInstall: true,
+        forceInstall: true,
+        skipCache: true
       });
 
       this.spy = sinon.spy();
@@ -743,6 +745,10 @@ describe('Base', () => {
           sinon.assert.callOrder(runSpy, this.spy);
           assert.equal(this.spy.thisValues[0].options.skipInstall, true);
           assert.equal(this.spy.thisValues[0].options['skip-install'], true);
+          assert.equal(this.spy.thisValues[0].options.forceInstall, true);
+          assert.equal(this.spy.thisValues[0].options['force-install'], true);
+          assert.equal(this.spy.thisValues[0].options.skipCache, true);
+          assert.equal(this.spy.thisValues[0].options['skip-cache'], true);
           assert(this.spy.calledAfter(runSpy));
           done();
         });
@@ -835,6 +841,7 @@ describe('Base', () => {
         "-h, --help # Print the generator's options and usage",
         '--skip-cache # Do not remember prompt answers Default: false',
         '--skip-install # Do not automatically install dependencies Default: false',
+        '--force-install # Fail on install dependencies error Default: false',
         '--ooOoo # Description for ooOoo',
         '',
         'Arguments:',
