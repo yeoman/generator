@@ -725,7 +725,7 @@ describe('Base', () => {
         env: this.env,
         'skip-install': true,
         'force-install': true,
-        'skip=cache': true
+        'skip-cache': true
       });
 
       this.spy = sinon.spy();
