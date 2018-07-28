@@ -28,7 +28,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
         
-            <span class="version">v3.1.0</span>
+            <span class="version">v3.1.1</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -91,7 +91,7 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
   }
 
   // Return early if we're skipping installation
-  if (this.options.skipInstall) {
+  if (this.options.skipInstall || this.options['skip-install']) {
     this.log(
       'Skipping install command: ' + chalk.yellow(installer + ' ' + args.join(' '))
     );
@@ -116,14 +116,17 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
               ' is already installed, try running the following command manually: ' +
               chalk.yellow(installer + ' ' + args.join(' '))
           );
-          if (this.options.forceInstall) {
+          if (this.options.forceInstall || this.options['force-install']) {
             this.emit('error', error);
           }
           done();
         })
         .on('exit', (code, signal) => {
           this.emit(`${installer}Install:end`, paths);
-          if ((code || signal) &amp;&amp; this.options.forceInstall) {
+          if (
+            (code || signal) &amp;&amp;
+            (this.options.forceInstall || this.options['force-install'])
+          ) {
             this.emit(
               'error',
               new Error(`Installation of ${installer} failed with code ${code || signal}`)
