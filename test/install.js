@@ -61,11 +61,7 @@ describe('Base (actions/install mixin)', () => {
 
     describe('without --force-install', () => {
       beforeEach(() => {
-        this.dummy = this.env.create('dummy', {
-          options: {
-            forceInstall: false
-          }
-        });
+        this.dummy = this.env.create('dummy', {});
         this.spawnCommandStub = sinon.stub(this.dummy, 'spawnCommand');
       });
 
@@ -127,9 +123,7 @@ describe('Base (actions/install mixin)', () => {
     describe('with --force-install', () => {
       beforeEach(() => {
         this.dummy = this.env.create('dummy', {
-          options: {
-            forceInstall: true
-          }
+          args: ['--force-install']
         });
         this.spawnCommandStub = sinon.stub(this.dummy, 'spawnCommand');
       });
@@ -198,9 +192,7 @@ describe('Base (actions/install mixin)', () => {
     describe('with --skip-install', () => {
       beforeEach(() => {
         this.dummy = this.env.create('dummy', {
-          options: {
-            skipInstall: true
-          }
+          args: ['--skip-install']
         });
       });
 
