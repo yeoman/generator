@@ -773,6 +773,30 @@ describe('Base', () => {
       });
     });
 
+    describe('object as first argument', () => {
+      it('fails for missing Generator property', function() {
+        const gen = this.dummy;
+        assert.throws(
+          () =>
+            gen.composeWith({
+              path: 'foo-path'
+            }),
+          error => error.message.indexOf('Missing Generator property') >= 0
+        );
+      });
+
+      it('fails for missing path property', function() {
+        const gen = this.dummy;
+        assert.throws(
+          () =>
+            gen.composeWith({
+              Generator: this.GenCompose
+            }),
+          error => error.message.indexOf('path property is not a string') >= 0
+        );
+      });
+    });
+
     it('run the composed generator even if main generator is already running.', function() {
       this.Dummy.prototype.writing = function() {
         this.composeWith('composed:gen');
