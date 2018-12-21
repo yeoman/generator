@@ -736,6 +736,7 @@ describe('Base', () => {
 
     it('runs the composed generators', function(done) {
       this.dummy.composeWith('composed:gen');
+
       const runSpy = sinon.spy(this.dummy, 'run');
 
       // I use a setTimeout here just to make sure composeWith() doesn't start the
@@ -753,6 +754,23 @@ describe('Base', () => {
           done();
         });
       }, 100);
+    });
+
+    it('runs the composed Generator class in the passed path', function() {
+      this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
+
+      this.dummy.composeWith({
+        Generator: this.GenCompose,
+        path: this.stubPath
+      });
+
+      return this.dummy.run().then(() => {
+        assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
+        assert.equal(
+          this.spy.firstCall.thisValue.options.resolved,
+          require.resolve(this.stubPath)
+        );
+      });
     });
 
     it('run the composed generator even if main generator is already running.', function() {
