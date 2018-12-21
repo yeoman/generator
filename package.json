@@ -48,7 +48,7 @@
     "node": ">=6"
   },
   "scripts": {
-    "pretest": "eslint . --fix",
+    "pretest": "eslint .",
     "test": "nyc mocha",
     "doc": "jsdoc -c jsdoc.json",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
