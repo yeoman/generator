@@ -26,7 +26,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
         
-            <span class="version">v3.1.1</span>
+            <span class="version">v3.2.0</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -1010,12 +1010,12 @@ while options are all kept in a hash (<code>this.options</code>).</p>
     
         <h4 class="name" id="composeWith">
             
-                <span class="type-signature"></span>composeWith<span class="signature">(namespace, options, settings<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {this}</span>
+                <span class="type-signature"></span>composeWith<span class="signature">(generator, options)</span><span class="type-signature"> &rarr; {this}</span>
                 
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line510">line 510</a></code>
+                <code><a href="index.js.html#line512">line 512</a></code>
             </div>
             
         </h4>
@@ -1051,8 +1051,6 @@ while options are all kept in a hash (<code>this.options</code>).</p>
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -1065,31 +1063,26 @@ while options are all kept in a hash (<code>this.options</code>).</p>
 
         <tr>
             
-                <td class="name"><code>namespace</code></td>
+                <td class="name"><code>generator</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">String</span>
+|
+
+<span class="param-type">Object</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"><p>The generator namespace to compose with</p></td>
+            <td class="description last"><p>The path to the generator module or an object (see examples)</p></td>
         </tr>
 
     
@@ -1109,158 +1102,10 @@ while options are all kept in a hash (<code>this.options</code>).</p>
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
             <td class="description last"><p>The options passed to the Generator</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>settings</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Settings hash on the composition relation</p>
-                <h6>Properties</h6>
-                
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>local</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Path to a locally stored generator</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>link</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    "weak"
-                
-                </td>
-            
-
-            <td class="description last"><p>If &quot;strong&quot;, the composition will occured
-                                         even when the composition is initialized by
-                                         the end user</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
         </tr>
 
     
@@ -1293,6 +1138,8 @@ while options are all kept in a hash (<code>this.options</code>).</p>
 
 
 
+
+- <p>This generator</p>
 
 
 
@@ -1348,6 +1195,10 @@ while options are all kept in a hash (<code>this.options</code>).</p>
         <p class="code-caption">Using a direct dependency generator</p>
     
     <pre class="prettyprint"><code>this.composeWith(require.resolve('generator-bootstrap/app/main.js'), { sass: true });</code></pre>
+
+        <p class="code-caption">Passing a Generator class</p>
+    
+    <pre class="prettyprint"><code>this.composeWith({ Generator: MyGenerator, path: '../generator-bootstrap/app/main.js' }, { sass: true });</code></pre>
 
     
 
@@ -1512,7 +1363,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line653">line 653</a></code>
+                <code><a href="index.js.html#line691">line 691</a></code>
             </div>
             
         </h4>
@@ -1684,7 +1535,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line601">line 601</a></code>
+                <code><a href="index.js.html#line639">line 639</a></code>
             </div>
             
         </h4>
@@ -1846,7 +1697,7 @@ This path is used to find storage, when using a file system helper method (like
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line671">line 671</a></code>
+                <code><a href="index.js.html#line709">line 709</a></code>
             </div>
             
         </h4>
@@ -3201,7 +3052,7 @@ parsed by nopt as a <code>this.options</code> hash object.</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line694">line 694</a></code>
+                <code><a href="index.js.html#line732">line 732</a></code>
             </div>
             
         </h4>
@@ -3364,7 +3215,7 @@ or a single one.</p></td>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line559">line 559</a></code>
+                <code><a href="index.js.html#line597">line 597</a></code>
             </div>
             
         </h4>
@@ -3474,7 +3325,7 @@ or a single one.</p></td>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line568">line 568</a></code>
+                <code><a href="index.js.html#line606">line 606</a></code>
             </div>
             
         </h4>
@@ -4024,7 +3875,7 @@ run loop.</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line625">line 625</a></code>
+                <code><a href="index.js.html#line663">line 663</a></code>
             </div>
             
         </h4>
@@ -4669,7 +4520,7 @@ This path is used by multiples file system methods like (<code>this.read</code> 
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line638">line 638</a></code>
+                <code><a href="index.js.html#line676">line 676</a></code>
             </div>
             
         </h4>
