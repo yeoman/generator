@@ -736,6 +736,7 @@ describe('Base', () => {
 
     it('runs the composed generators', function(done) {
       this.dummy.composeWith('composed:gen');
+
       const runSpy = sinon.spy(this.dummy, 'run');
 
       // I use a setTimeout here just to make sure composeWith() doesn't start the
@@ -753,6 +754,47 @@ describe('Base', () => {
           done();
         });
       }, 100);
+    });
+
+    it('runs the composed Generator class in the passed path', function() {
+      this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
+
+      this.dummy.composeWith({
+        Generator: this.GenCompose,
+        path: this.stubPath
+      });
+
+      return this.dummy.run().then(() => {
+        assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
+        assert.equal(
+          this.spy.firstCall.thisValue.options.resolved,
+          require.resolve(this.stubPath)
+        );
+      });
+    });
+
+    describe('object as first argument', () => {
+      it('fails for missing Generator property', function() {
+        const gen = this.dummy;
+        assert.throws(
+          () =>
+            gen.composeWith({
+              path: 'foo-path'
+            }),
+          error => error.message.indexOf('Missing Generator property') >= 0
+        );
+      });
+
+      it('fails for missing path property', function() {
+        const gen = this.dummy;
+        assert.throws(
+          () =>
+            gen.composeWith({
+              Generator: this.GenCompose
+            }),
+          error => error.message.indexOf('path property is not a string') >= 0
+        );
+      });
     });
 
     it('run the composed generator even if main generator is already running.', function() {
