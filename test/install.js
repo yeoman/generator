@@ -52,7 +52,7 @@ describe('Base (actions/install mixin)', () => {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'nestedScript',
-          ['install', 'path1', 'path2', '--save'],
+          ['install', 'path1', 'path2'],
           spawnEnv
         );
         done();
@@ -221,7 +221,7 @@ describe('Base (actions/install mixin)', () => {
             this.dummy,
             [
               'Skipping install command: ' +
-                chalk.yellow('npm install some-package --save --cache-min 86400')
+                chalk.yellow('npm install some-package --cache-min 86400')
             ]
           );
           done();
@@ -278,7 +278,7 @@ describe('Base (actions/install mixin)', () => {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'npm',
-          ['install', 'yo', '--save', '--cache-min', 86400],
+          ['install', 'yo', '--cache-min', 86400],
           {}
         );
         done();
