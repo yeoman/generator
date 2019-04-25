@@ -286,6 +286,36 @@ describe('Base (actions/install mixin)', () => {
     });
   });
 
+  describe('#pnpmInstall()', () => {
+    it('spawn an install process once per commands', done => {
+      this.dummy.pnpmInstall();
+      this.dummy.pnpmInstall();
+      this.dummy.run(() => {
+        sinon.assert.calledOnce(this.spawnCommandStub);
+        sinon.assert.calledWithExactly(
+          this.spawnCommandStub,
+          'pnpm',
+          ['install', '--prefer-offline'],
+          {}
+        );
+        done();
+      });
+    });
+
+    it('run with options', done => {
+      this.dummy.pnpmInstall('yo', { save: true });
+      this.dummy.run(() => {
+        sinon.assert.calledWithExactly(
+          this.spawnCommandStub,
+          'pnpm',
+          ['install', 'yo', '--save', '--prefer-offline'],
+          {}
+        );
+        done();
+      });
+    });
+  });
+
   describe('#yarnInstall()', () => {
     it('spawn an install process once per commands', done => {
       this.dummy.yarnInstall();
