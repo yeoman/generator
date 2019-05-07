@@ -284,6 +284,15 @@ describe('Base (actions/install mixin)', () => {
         done();
       });
     });
+
+    it('spawn separate install processes if spawnOptions differs', done => {
+      this.dummy.npmInstall(null, null, { cwd: 'path1' });
+      this.dummy.npmInstall(null, null, { cwd: 'path2' });
+      this.dummy.run(() => {
+        sinon.assert.calledTwice(this.spawnCommandStub);
+        done();
+      });
+    });
   });
 
   describe('#yarnInstall()', () => {
@@ -307,6 +316,15 @@ describe('Base (actions/install mixin)', () => {
           ['add', 'yo', '--dev'],
           {}
         );
+        done();
+      });
+    });
+
+    it('spawn separate install processes if spawnOptions differs', done => {
+      this.dummy.yarnInstall(null, null, { cwd: 'path1' });
+      this.dummy.yarnInstall(null, null, { cwd: 'path2' });
+      this.dummy.run(() => {
+        sinon.assert.calledTwice(this.spawnCommandStub);
         done();
       });
     });
