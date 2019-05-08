@@ -64,7 +64,7 @@
     "detect-conflict": "^1.0.0",
     "error": "^7.0.2",
     "find-up": "^3.0.0",
-    "github-username": "^5.0.0",
+    "github-username": "^3.0.0",
     "istextorbinary": "^2.2.1",
     "lodash": "^4.17.11",
     "make-dir": "^3.0.0",
