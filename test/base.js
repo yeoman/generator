@@ -270,6 +270,7 @@ describe('Base', () => {
       this.TestGenerator.prototype.throwing = () => {
         throw error;
       };
+
       this.TestGenerator.prototype.afterError = spy;
 
       this.testGen.on('error', sinon.spy());
@@ -666,6 +667,7 @@ describe('Base', () => {
       const addWrongOp = () => {
         generator.option('no-op');
       };
+
       assert.throws(addWrongOp, /this\.option\('op', \{type: Boolean\}\)/);
     });
   });

@@ -160,6 +160,7 @@ describe('Conflicter', () => {
 
             return _prompt(prompts, stubbedResultHandler);
           }
+
           return _prompt(prompts, resultHandler);
         });
 
@@ -194,6 +195,7 @@ describe('Conflicter', () => {
 
             return _prompt(prompts, stubbedResultHandler);
           }
+
           return _prompt(prompts, resultHandler);
         });
 
@@ -228,6 +230,7 @@ describe('Conflicter', () => {
 
             return _prompt(prompts, stubbedResultHandler);
           }
+
           return _prompt(prompts, resultHandler);
         });
 
@@ -262,6 +265,7 @@ describe('Conflicter', () => {
 
             return _prompt(prompts, stubbedResultHandler);
           }
+
           return _prompt(prompts, resultHandler);
         });
 

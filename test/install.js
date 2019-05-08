@@ -71,6 +71,7 @@ describe('Base (actions/install mixin)', () => {
             if (key === 'exit') {
               cb(1);
             }
+
             return asyncStub;
           }
         };
@@ -89,6 +90,7 @@ describe('Base (actions/install mixin)', () => {
             if (key === 'exit') {
               cb(undefined, 'SIGKILL');
             }
+
             return asyncStub;
           }
         };
@@ -107,6 +109,7 @@ describe('Base (actions/install mixin)', () => {
             if (key === 'error') {
               cb(new Error('Process not found'));
             }
+
             return asyncStub;
           }
         };
@@ -134,6 +137,7 @@ describe('Base (actions/install mixin)', () => {
             if (key === 'exit') {
               cb(1);
             }
+
             return asyncStub;
           }
         };
@@ -154,6 +158,7 @@ describe('Base (actions/install mixin)', () => {
             if (key === 'exit') {
               cb(undefined, 'SIGKILL');
             }
+
             return asyncStub;
           }
         };
@@ -174,6 +179,7 @@ describe('Base (actions/install mixin)', () => {
             if (key === 'error') {
               cb(new Error('Process not found'));
             }
+
             return asyncStub;
           }
         };
