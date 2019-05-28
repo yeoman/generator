@@ -341,7 +341,7 @@ describe('Base', () => {
     });
 
     it('throws if no method is available', function() {
-      const gen = new class extends Base {}([], {
+      const gen = new (class extends Base {})([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
         env: this.env
