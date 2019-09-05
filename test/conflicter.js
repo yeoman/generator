@@ -114,6 +114,15 @@ describe('Conflicter', () => {
       });
     });
 
+    it('abort on first conflict', function(done) {
+      this.conflicter.bail = true;
+      assert.throws(
+        this.conflicter.collision.bind(this.conflicter, this.conflictingFile),
+        /^ConflicterConflictError: Process aborted by conflict$/
+      );
+      done();
+    });
+
     it('does not give a conflict on same binary files', function(done) {
       this.conflicter.collision(
         {
