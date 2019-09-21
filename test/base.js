@@ -1174,4 +1174,53 @@ describe('Base', () => {
       assert.equal(this.dummy.rootGeneratorVersion(), '1.0.0');
     });
   });
+
+  describe('#queueMethod()', () => {
+    beforeEach(function() {
+      this.Generator = class extends Base {
+        constructor(args, opts) {
+          super(args, opts);
+
+          this.queueMethod(function() {
+            this.queue = this.options.testQueue;
+          }, 'testQueue');
+        }
+
+        exec() {}
+      };
+    });
+
+    it('queued method is executed', function(done) {
+      const gen = new this.Generator({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env: this.env,
+        testQueue: 'This value'
+      });
+
+      gen.run().then(() => {
+        assert.equal(gen.queue, 'This value');
+        done();
+      });
+    });
+
+    it('queued method is executed by derived generator', function(done) {
+      const Derived = class extends this.Generator {
+        // At least a method is required otherwise will fail. Is this a problem?
+        exec() {}
+      };
+
+      const derivedGen = new Derived({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env: this.env,
+        testQueue: 'That value'
+      });
+
+      derivedGen.run().then(() => {
+        assert.equal(derivedGen.queue, 'That value');
+        done();
+      });
+    });
+  });
 });
