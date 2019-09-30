@@ -153,6 +153,9 @@ describe('Storage', () => {
         this.store2.set('bar', 'foo');
         this.store.set('foo', 'bar');
 
+        assert.equal(this.store2.get('foo'), 'bar');
+        assert.equal(this.store.get('bar'), 'foo');
+
         const json = this.fs.readJSON(this.storePath);
         assert.equal(json.test.foo, 'bar');
         assert.equal(json.test.bar, 'foo');
