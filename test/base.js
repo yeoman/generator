@@ -1206,8 +1206,21 @@ describe('Base', () => {
 
     it('queued method is executed by derived generator', function(done) {
       const Derived = class extends this.Generator {
+        constructor(args, opts) {
+          super(args, opts);
+
+          this.prop = 'a';
+        }
+
         // At least a method is required otherwise will fail. Is this a problem?
-        exec() {}
+        exec() {
+          assert.equal(this.prop, 'a');
+        }
+
+        get initializing() {
+          assert.equal(this.prop, 'a');
+          return {};
+        }
       };
 
       const derivedGen = new Derived({
