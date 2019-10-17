@@ -1236,4 +1236,129 @@ describe('Base', () => {
       });
     });
   });
+
+  describe('Inheriting priorities', () => {
+    beforeEach(function() {
+      this.First = class First extends Base {
+        constructor(args, opts) {
+          super(args, { inheritPriorities: true, ...opts });
+          opts = opts || { inheritPriorities: true };
+
+          if (opts.inheritPriorities) {
+            this.inheritPriorities(First.prototype);
+          }
+        }
+
+        get initializing() {
+          return {
+            setValue() {
+              assert.ok(false);
+            }
+          };
+        }
+
+        prompting() {
+          assert.ok(false);
+        }
+
+        configuring() {
+          this.firstFunction = this.options.testQueue;
+        }
+      };
+
+      this.Parent = class Parent extends this.First {
+        constructor(args, opts) {
+          super(args, { inheritPriorities: true, ...opts });
+          opts = opts || { inheritPriorities: true };
+
+          if (opts.inheritPriorities) {
+            this.inheritPriorities(Parent.prototype);
+          }
+        }
+
+        get initializing() {
+          return {
+            setValue() {
+              this.parentGetter = this.options.testQueue;
+            }
+          };
+        }
+
+        prompting() {
+          this.parentFunction = this.options.testQueue;
+        }
+      };
+    });
+
+    it('ignoring priorities on a parent generator', function(done) {
+      const Derived = class extends this.Parent {
+        constructor(args, opts) {
+          super(args, { ...opts, inheritPriorities: false });
+        }
+
+        exec() {}
+      };
+
+      const derivedGen = new Derived({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env: this.env,
+        testQueue: 'That value'
+      });
+
+      derivedGen.run().then(() => {
+        assert.equal(derivedGen.parentGetter, undefined);
+        assert.equal(derivedGen.parentFunction, undefined);
+        assert.equal(derivedGen.firstFunction, undefined);
+        done();
+      });
+    });
+
+    it('overriding inherited priorities', function(done) {
+      const self = this;
+      const Derived = class extends this.Parent {
+        constructor(args, opts) {
+          super(args, { inheritPriorities: true, ...opts });
+
+          this.inheritPriorities(self.Parent.prototype, true);
+        }
+      };
+
+      const derivedGen = new Derived({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env: this.env,
+        testQueue: 'That value'
+      });
+
+      derivedGen.run().then(() => {
+        assert.equal(derivedGen.parentGetter, 'That value');
+        assert.equal(derivedGen.parentFunction, 'That value');
+        assert.equal(derivedGen.firstFunction, undefined);
+        done();
+      });
+    });
+
+    it('inherited priorities', function(done) {
+      const Derived = class Derived extends this.Parent {
+        constructor(args, opts) {
+          super(args, { inheritPriorities: true, ...opts });
+        }
+      };
+
+      const derivedGen = new Derived({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env: this.env,
+        testQueue: 'That value'
+      });
+
+      derivedGen.run().then(() => {
+        assert.equal(derivedGen.parentGetter, 'That value');
+        assert.equal(derivedGen.parentFunction, 'That value');
+        assert.equal(derivedGen.firstFunction, 'That value');
+        done();
+      });
+    });
+  });
 });
