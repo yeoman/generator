@@ -115,9 +115,9 @@ describe('Conflicter', () => {
     });
 
     it('abort on first conflict', function(done) {
-      this.conflicter.bail = true;
+      const conflicter = new Conflicter(new TestAdapter(), false, true);
       assert.throws(
-        this.conflicter.collision.bind(this.conflicter, this.conflictingFile),
+        conflicter.collision.bind(conflicter, this.conflictingFile),
         /^ConflicterConflictError: Process aborted by conflict$/
       );
       done();
