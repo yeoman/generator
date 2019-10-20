@@ -123,6 +123,24 @@ describe('Conflicter', () => {
       done();
     });
 
+    it('abort on first conflict with whitespace changes', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        bail: true
+      });
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+                 content
+      `
+        },
+        status => {
+          assert.equal(status, 'skip');
+          done();
+        }
+      );
+    });
+
     it('does not give a conflict with ignoreWhitespace', function(done) {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         ignoreWhitespace: true
@@ -137,6 +155,26 @@ describe('Conflicter', () => {
         },
         status => {
           assert.equal(status, 'identical');
+          done();
+        }
+      );
+    });
+
+    it('skip rewrite with ignoreWhitespace and skipRegenerate', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        ignoreWhitespace: true,
+        skipRegenerate: true
+      });
+
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+           content
+`
+        },
+        status => {
+          assert.equal(status, 'skip');
           done();
         }
       );
