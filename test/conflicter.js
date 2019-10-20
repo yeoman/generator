@@ -123,6 +123,42 @@ describe('Conflicter', () => {
       done();
     });
 
+    it('does not give a conflict with ignoreWhitespace', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        ignoreWhitespace: true
+      });
+
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+           content
+`
+        },
+        status => {
+          assert.equal(status, 'identical');
+          done();
+        }
+      );
+    });
+
+    it('does give a conflict without ignoreWhitespace', function(done) {
+      const conflicter = new Conflicter(new TestAdapter({ action: 'skip' }));
+
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+           content
+`
+        },
+        status => {
+          assert.equal(status, 'skip');
+          done();
+        }
+      );
+    });
+
     it('does not give a conflict on same binary files', function(done) {
       this.conflicter.collision(
         {
