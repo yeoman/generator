@@ -141,6 +141,20 @@ describe('Conflicter', () => {
       );
     });
 
+    it('abort on create new file', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        bail: true
+      });
+      assert.throws(
+        conflicter.collision.bind(conflicter, {
+          path: 'file-who-does-not-exist2.js',
+          contents: ''
+        }),
+        /^ConflicterConflictError: Process aborted by conflict$/
+      );
+      done();
+    });
+
     it('does not give a conflict with ignoreWhitespace', function(done) {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         ignoreWhitespace: true
