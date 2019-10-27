@@ -115,12 +115,100 @@ describe('Conflicter', () => {
     });
 
     it('abort on first conflict', function(done) {
-      this.conflicter.bail = true;
+      const conflicter = new Conflicter(new TestAdapter(), false, true);
       assert.throws(
-        this.conflicter.collision.bind(this.conflicter, this.conflictingFile),
+        conflicter.collision.bind(conflicter, this.conflictingFile),
         /^ConflicterConflictError: Process aborted by conflict$/
       );
       done();
+    });
+
+    it('abort on first conflict with whitespace changes', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        bail: true
+      });
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+                 content
+      `
+        },
+        status => {
+          assert.equal(status, 'skip');
+          done();
+        }
+      );
+    });
+
+    it('abort on create new file', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        bail: true
+      });
+      assert.throws(
+        conflicter.collision.bind(conflicter, {
+          path: 'file-who-does-not-exist2.js',
+          contents: ''
+        }),
+        /^ConflicterConflictError: Process aborted by conflict$/
+      );
+      done();
+    });
+
+    it('does not give a conflict with ignoreWhitespace', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        ignoreWhitespace: true
+      });
+
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+           content
+`
+        },
+        status => {
+          assert.equal(status, 'identical');
+          done();
+        }
+      );
+    });
+
+    it('skip rewrite with ignoreWhitespace and skipRegenerate', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        ignoreWhitespace: true,
+        skipRegenerate: true
+      });
+
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+           content
+`
+        },
+        status => {
+          assert.equal(status, 'skip');
+          done();
+        }
+      );
+    });
+
+    it('does give a conflict without ignoreWhitespace', function(done) {
+      const conflicter = new Conflicter(new TestAdapter({ action: 'skip' }));
+
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+           content
+`
+        },
+        status => {
+          assert.equal(status, 'skip');
+          done();
+        }
+      );
     });
 
     it('does not give a conflict on same binary files', function(done) {
