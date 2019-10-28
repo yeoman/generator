@@ -1181,9 +1181,14 @@ describe('Base', () => {
         constructor(args, opts) {
           super(args, opts);
 
-          this.queueMethod(function() {
-            this.queue = this.options.testQueue;
-          }, 'testQueue');
+          this.queueMethod(
+            {
+              testQueue: function() {
+                this.queue = this.options.testQueue;
+              }
+            },
+            () => {}
+          );
         }
 
         exec() {}
