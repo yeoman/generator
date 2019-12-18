@@ -29,6 +29,9 @@ describe('Storage', () => {
   });
 
   afterEach(function() {
+    const json = this.fs.read(this.storePath);
+    assert.ok(json.endsWith('\n'));
+    assert.ok(!json.endsWith('\n\n'));
     rm(this.storePath);
     process.chdir(this.beforeDir);
   });
