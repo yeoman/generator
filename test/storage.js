@@ -29,14 +29,23 @@ describe('Storage', () => {
   });
 
   afterEach(function() {
+    const json = this.fs.read(this.storePath);
+    assert.ok(json.endsWith('\n'));
+    assert.ok(!json.endsWith('\n\n'));
     rm(this.storePath);
     process.chdir(this.beforeDir);
   });
 
   describe('.constructor()', () => {
-    it('require a name parameter', () => {
+    it('require a parameter', () => {
       assert.throws(() => {
         new Storage(); // eslint-disable-line no-new
+      });
+    });
+
+    it('require at least 2 parameter', () => {
+      assert.throws(() => {
+        new Storage({}); // eslint-disable-line no-new
       });
     });
 
@@ -47,6 +56,12 @@ describe('Storage', () => {
         path.join(__dirname, './fixtures/config.json')
       );
       assert.equal(store.get('testFramework'), 'mocha');
+      assert.ok(store.existed);
+    });
+
+    it('take a fs and path parameter without name', function() {
+      const store = new Storage(this.fs, path.join(__dirname, './fixtures/config.json'));
+      assert.equal(store.get('test').testFramework, 'mocha');
       assert.ok(store.existed);
     });
   });
@@ -233,5 +248,11 @@ describe('Storage', () => {
         });
       });
     });
+  });
+
+  it('stores sharing the same store file with and without namespace', function() {
+    const store = new Storage(this.fs, this.storePath);
+    store.set('test', { bar: 'foo' });
+    assert.equal(this.store.get('bar'), 'foo');
   });
 });
