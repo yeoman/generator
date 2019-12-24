@@ -155,6 +155,75 @@ describe('Conflicter', () => {
       done();
     });
 
+    it('skip file changes with dryRun', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        dryRun: true
+      });
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+                 content
+      `
+        },
+        status => {
+          assert.equal(status, 'skip');
+          done();
+        }
+      );
+    });
+
+    it('skip new file with dryRun', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        dryRun: true
+      });
+      conflicter.collision(
+        {
+          path: 'file-who-does-not-exist2.js',
+          contents: ''
+        },
+        status => {
+          assert.equal(status, 'skip');
+          done();
+        }
+      );
+    });
+
+    it('skip deleted file with dryRun', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        dryRun: true
+      });
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/foo.js'),
+          contents: null
+        },
+        status => {
+          assert.equal(status, 'skip');
+          done();
+        }
+      );
+    });
+
+    it('skip whitespace changes with dryRun', function(done) {
+      const conflicter = new Conflicter(new TestAdapter(), false, {
+        dryRun: true,
+        ignoreWhitespace: true
+      });
+      conflicter.collision(
+        {
+          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          contents: `initial
+                 content
+      `
+        },
+        status => {
+          assert.equal(status, 'skip');
+          done();
+        }
+      );
+    });
+
     it('does not give a conflict with ignoreWhitespace', function(done) {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         ignoreWhitespace: true
