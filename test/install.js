@@ -28,6 +28,9 @@ describe('Base (actions/install mixin)', () => {
     // Keep track of all commands executed by spawnCommand.
     this.spawnCommandStub = sinon.stub(this.dummy, 'spawnCommand');
     this.spawnCommandStub.returns(asyncStub);
+
+    // Keep track of all commands executed by spawnCommand.
+    this.spawnCommandStubSync = sinon.stub(this.dummy, 'spawnCommandSync');
   });
 
   describe('#scheduleInstallTask()', () => {
@@ -299,6 +302,46 @@ describe('Base (actions/install mixin)', () => {
         done();
       });
     });
+
+    it('run sync with 1 arg', () => {
+      this.dummy.npmInstall(true);
+      sinon.assert.calledWithExactly(
+        this.spawnCommandStubSync,
+        'npm',
+        ['install', '--cache-min', 86400],
+        {}
+      );
+    });
+
+    it('run sync with pkgs arg', () => {
+      this.dummy.npmInstall(null, true);
+      sinon.assert.calledWithExactly(
+        this.spawnCommandStubSync,
+        'npm',
+        ['install', '--cache-min', 86400],
+        {}
+      );
+    });
+
+    it('run sync with pkgs and options args', () => {
+      this.dummy.npmInstall(null, null, true);
+      sinon.assert.calledWithExactly(
+        this.spawnCommandStubSync,
+        'npm',
+        ['install', '--cache-min', 86400],
+        {}
+      );
+    });
+
+    it('run sync with pkgs, options and spawnOptions args', () => {
+      this.dummy.npmInstall(null, null, null, true);
+      sinon.assert.calledWithExactly(
+        this.spawnCommandStubSync,
+        'npm',
+        ['install', '--cache-min', 86400],
+        {}
+      );
+    });
   });
 
   describe('#yarnInstall()', () => {
@@ -350,6 +393,45 @@ describe('Base (actions/install mixin)', () => {
         );
         done();
       });
+    });
+
+    it('sync spawn npm and bower', () => {
+      this.dummy.installDependencies({ sync: true });
+      sinon.assert.calledTwice(this.spawnCommandStubSync);
+      sinon.assert.calledWithExactly(this.spawnCommandStubSync, 'bower', ['install'], {});
+      sinon.assert.calledWithExactly(
+        this.spawnCommandStubSync,
+        'npm',
+        ['install', '--cache-min', 86400],
+        {}
+      );
+    });
+
+    it('spawn npm and bower at generator constructor', () => {
+      let spawnCommandStubSync;
+      const Dummy2 = class extends Base {
+        constructor(args, options) {
+          super(args, options);
+
+          // Keep track of all commands executed by spawnCommand.
+          spawnCommandStubSync = sinon.stub(this, 'spawnCommandSync');
+
+          this.installDependencies({ sync: true });
+        }
+
+        exec() {}
+      };
+      this.env.registerStub(Dummy2, 'dummy2');
+      this.env.create('dummy2');
+
+      sinon.assert.calledTwice(spawnCommandStubSync);
+      sinon.assert.calledWithExactly(spawnCommandStubSync, 'bower', ['install'], {});
+      sinon.assert.calledWithExactly(
+        spawnCommandStubSync,
+        'npm',
+        ['install', '--cache-min', 86400],
+        {}
+      );
     });
 
     it('spawn yarn', done => {
