@@ -1241,4 +1241,161 @@ describe('Base', () => {
       });
     });
   });
+
+  describe('Custom queues', () => {
+    beforeEach(function() {
+      this.TestGenerator = class extends Base {
+        constructor(args, options) {
+          super(args, {
+            ...options,
+            customQueues: [
+              {
+                name: 'prePrompting1',
+                before: 'prompting'
+              },
+              {
+                name: 'preConfiguring1',
+                before: 'preConfiguring2'
+              },
+              {
+                name: 'preConfiguring2',
+                before: 'configuring'
+              },
+              {
+                name: 'afterEnd'
+              }
+            ]
+          });
+        }
+      };
+    });
+
+    it('run custom queues in correct order', function() {
+      const prePrompting1 = sinon.spy();
+      const preConfiguring1 = sinon.spy();
+      const preConfiguring2 = sinon.spy();
+      const afterEnd = sinon.spy();
+
+      const initializing = sinon.spy();
+      const prompting = sinon.spy();
+      const configuring = sinon.spy();
+      const end = sinon.spy();
+
+      _.extend(this.TestGenerator.prototype, {
+        prePrompting1,
+        preConfiguring1,
+        preConfiguring2,
+        afterEnd,
+        initializing,
+        prompting,
+        configuring,
+        end,
+        assert: function() {
+          assert.deepStrictEqual(this._queues, {
+            initializing: 'initializing',
+            prePrompting1: 'dummy#prePrompting1',
+            prompting: 'prompting',
+            preConfiguring1: 'dummy#preConfiguring1',
+            preConfiguring2: 'dummy#preConfiguring2',
+            configuring: 'configuring',
+            default: 'default',
+            writing: 'writing',
+            conflicts: 'conflicts',
+            install: 'install',
+            end: 'end',
+            afterEnd: 'dummy#afterEnd'
+          });
+          assert.deepStrictEqual(this.env.runLoop.queueNames, [
+            'initializing',
+            'dummy#prePrompting1',
+            'prompting',
+            'dummy#preConfiguring1',
+            'dummy#preConfiguring2',
+            'configuring',
+            'default',
+            'writing',
+            'conflicts',
+            'install',
+            'end',
+            'dummy#afterEnd'
+          ]);
+        }
+      });
+
+      this.testGen = new this.TestGenerator([], {
+        resolved: 'generator-ember/all/index.js',
+        namespace: 'dummy',
+        env: this.env,
+        'skip-install': true
+      });
+
+      return this.testGen.run().then(() => {
+        initializing.calledBefore(prePrompting1);
+        prePrompting1.calledBefore(prompting);
+        prompting.calledBefore(preConfiguring1);
+        preConfiguring1.calledBefore(preConfiguring2);
+        preConfiguring2.calledBefore(configuring);
+        configuring.calledBefore(end);
+        end.calledBefore(afterEnd);
+      });
+    });
+  });
+
+  describe('Custom queues errors', () => {
+    it('error is thrown with conflicting custom queue', function() {
+      const TestGenerator = class extends Base {
+        constructor(args, options) {
+          super(args, {
+            ...options,
+            customQueues: [
+              {
+                name: 'initializing',
+                before: 'prompting'
+              }
+            ]
+          });
+        }
+      };
+
+      assert.throws(
+        () =>
+          new TestGenerator([], {
+            resolved: 'generator-ember/all/index.js',
+            namespace: 'dummy',
+            env: this.env,
+            'skip-install': true
+          })
+      );
+    });
+
+    it('error is thrown with duplicate custom queue', function() {
+      const TestGenerator = class extends Base {
+        constructor(args, options) {
+          super(args, {
+            ...options,
+            customQueues: [
+              {
+                name: 'beforePrompting',
+                before: 'prompting'
+              },
+              {
+                name: 'beforePrompting',
+                before: 'prompting'
+              }
+            ]
+          });
+        }
+      };
+
+      assert.throws(
+        () =>
+          new TestGenerator([], {
+            resolved: 'generator-ember/all/index.js',
+            namespace: 'dummy',
+            env: this.env,
+            'skip-install': true
+          })
+      );
+    });
+  });
 });
