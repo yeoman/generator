@@ -1250,6 +1250,12 @@ describe('Base', () => {
             ...options,
             customPriorities: [
               {
+                // Change priority prompting to be queue before writing for this generator.
+                // If we change defaults priorities in the future, the order of custom priorities will keep the same.
+                name: 'prompting',
+                before: 'writing'
+              },
+              {
                 name: 'prePrompting1',
                 before: 'prompting'
               },
@@ -1293,12 +1299,12 @@ describe('Base', () => {
         assert: function() {
           assert.deepStrictEqual(this._queues, {
             initializing: 'initializing',
-            prePrompting1: 'dummy#prePrompting1',
-            prompting: 'prompting',
             preConfiguring1: 'dummy#preConfiguring1',
             preConfiguring2: 'dummy#preConfiguring2',
             configuring: 'configuring',
             default: 'default',
+            prePrompting1: 'dummy#prePrompting1',
+            prompting: 'dummy#prompting',
             writing: 'writing',
             conflicts: 'conflicts',
             install: 'install',
@@ -1307,12 +1313,13 @@ describe('Base', () => {
           });
           assert.deepStrictEqual(this.env.runLoop.queueNames, [
             'initializing',
-            'dummy#prePrompting1',
             'prompting',
             'dummy#preConfiguring1',
             'dummy#preConfiguring2',
             'configuring',
             'default',
+            'dummy#prePrompting1',
+            'dummy#prompting',
             'writing',
             'conflicts',
             'install',
@@ -1331,43 +1338,17 @@ describe('Base', () => {
 
       return this.testGen.run().then(() => {
         initializing.calledBefore(prePrompting1);
-        prePrompting1.calledBefore(prompting);
-        prompting.calledBefore(preConfiguring1);
-        preConfiguring1.calledBefore(preConfiguring2);
+        preConfiguring1.calledBefore(initializing);
         preConfiguring2.calledBefore(configuring);
-        configuring.calledBefore(end);
+        configuring.calledBefore(prePrompting1);
+        prePrompting1.calledBefore(prompting);
+        prompting.calledBefore(end);
         end.calledBefore(afterEnd);
       });
     });
   });
 
   describe('Custom priorities errors', () => {
-    it('error is thrown with conflicting custom queue', function() {
-      const TestGenerator = class extends Base {
-        constructor(args, options) {
-          super(args, {
-            ...options,
-            customPriorities: [
-              {
-                name: 'initializing',
-                before: 'prompting'
-              }
-            ]
-          });
-        }
-      };
-
-      assert.throws(
-        () =>
-          new TestGenerator([], {
-            resolved: 'generator-ember/all/index.js',
-            namespace: 'dummy',
-            env: this.env,
-            'skip-install': true
-          })
-      );
-    });
-
     it('error is thrown with duplicate custom queue', function() {
       const TestGenerator = class extends Base {
         constructor(args, options) {
