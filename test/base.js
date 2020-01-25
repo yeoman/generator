@@ -1242,13 +1242,13 @@ describe('Base', () => {
     });
   });
 
-  describe('Custom queues', () => {
+  describe('Custom priorities', () => {
     beforeEach(function() {
       this.TestGenerator = class extends Base {
         constructor(args, options) {
           super(args, {
             ...options,
-            customQueues: [
+            customPriorities: [
               {
                 name: 'prePrompting1',
                 before: 'prompting'
@@ -1270,7 +1270,7 @@ describe('Base', () => {
       };
     });
 
-    it('run custom queues in correct order', function() {
+    it('run custom priorities in correct order', function() {
       const prePrompting1 = sinon.spy();
       const preConfiguring1 = sinon.spy();
       const preConfiguring2 = sinon.spy();
@@ -1341,13 +1341,13 @@ describe('Base', () => {
     });
   });
 
-  describe('Custom queues errors', () => {
+  describe('Custom priorities errors', () => {
     it('error is thrown with conflicting custom queue', function() {
       const TestGenerator = class extends Base {
         constructor(args, options) {
           super(args, {
             ...options,
-            customQueues: [
+            customPriorities: [
               {
                 name: 'initializing',
                 before: 'prompting'
@@ -1373,7 +1373,7 @@ describe('Base', () => {
         constructor(args, options) {
           super(args, {
             ...options,
-            customQueues: [
+            customPriorities: [
               {
                 name: 'beforePrompting',
                 before: 'prompting'
