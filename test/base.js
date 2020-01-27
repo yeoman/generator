@@ -1241,4 +1241,142 @@ describe('Base', () => {
       });
     });
   });
+
+  describe('Custom priorities', () => {
+    beforeEach(function() {
+      this.TestGenerator = class extends Base {
+        constructor(args, options) {
+          super(args, {
+            ...options,
+            customPriorities: [
+              {
+                // Change priority prompting to be queue before writing for this generator.
+                // If we change defaults priorities in the future, the order of custom priorities will keep the same.
+                name: 'prompting',
+                before: 'writing'
+              },
+              {
+                name: 'prePrompting1',
+                before: 'prompting'
+              },
+              {
+                name: 'preConfiguring1',
+                before: 'preConfiguring2'
+              },
+              {
+                name: 'preConfiguring2',
+                before: 'configuring'
+              },
+              {
+                name: 'afterEnd'
+              }
+            ]
+          });
+        }
+      };
+    });
+
+    it('run custom priorities in correct order', function() {
+      const prePrompting1 = sinon.spy();
+      const preConfiguring1 = sinon.spy();
+      const preConfiguring2 = sinon.spy();
+      const afterEnd = sinon.spy();
+
+      const initializing = sinon.spy();
+      const prompting = sinon.spy();
+      const configuring = sinon.spy();
+      const end = sinon.spy();
+
+      _.extend(this.TestGenerator.prototype, {
+        prePrompting1,
+        preConfiguring1,
+        preConfiguring2,
+        afterEnd,
+        initializing,
+        prompting,
+        configuring,
+        end,
+        assert: function() {
+          assert.deepStrictEqual(this._queues, {
+            initializing: 'initializing',
+            preConfiguring1: 'dummy#preConfiguring1',
+            preConfiguring2: 'dummy#preConfiguring2',
+            configuring: 'configuring',
+            default: 'default',
+            prePrompting1: 'dummy#prePrompting1',
+            prompting: 'dummy#prompting',
+            writing: 'writing',
+            conflicts: 'conflicts',
+            install: 'install',
+            end: 'end',
+            afterEnd: 'dummy#afterEnd'
+          });
+          assert.deepStrictEqual(this.env.runLoop.queueNames, [
+            'initializing',
+            'prompting',
+            'dummy#preConfiguring1',
+            'dummy#preConfiguring2',
+            'configuring',
+            'default',
+            'dummy#prePrompting1',
+            'dummy#prompting',
+            'writing',
+            'conflicts',
+            'install',
+            'end',
+            'dummy#afterEnd'
+          ]);
+        }
+      });
+
+      this.testGen = new this.TestGenerator([], {
+        resolved: 'generator-ember/all/index.js',
+        namespace: 'dummy',
+        env: this.env,
+        'skip-install': true
+      });
+
+      return this.testGen.run().then(() => {
+        initializing.calledBefore(prePrompting1);
+        preConfiguring1.calledBefore(initializing);
+        preConfiguring2.calledBefore(configuring);
+        configuring.calledBefore(prePrompting1);
+        prePrompting1.calledBefore(prompting);
+        prompting.calledBefore(end);
+        end.calledBefore(afterEnd);
+      });
+    });
+  });
+
+  describe('Custom priorities errors', () => {
+    it('error is thrown with duplicate custom queue', function() {
+      const TestGenerator = class extends Base {
+        constructor(args, options) {
+          super(args, {
+            ...options,
+            customPriorities: [
+              {
+                name: 'beforePrompting',
+                before: 'prompting'
+              },
+              {
+                name: 'beforePrompting',
+                before: 'prompting'
+              }
+            ]
+          });
+        }
+      };
+
+      assert.throws(
+        () =>
+          new TestGenerator([], {
+            resolved: 'generator-ember/all/index.js',
+            namespace: 'dummy',
+            env: this.env,
+            'skip-install': true
+          })
+      );
+    });
+  });
 });
