@@ -28,16 +28,6 @@ describe('Multiples generators', () => {
     this.Dummy = class extends Base {};
     this.spyExec = sinon.spy();
     this.Dummy.prototype.exec = this.spyExec;
-
-    this.dummy = new this.Dummy(['bar', 'baz', 'bom'], {
-      foo: false,
-      something: 'else',
-      // Mandatory options, created by the `env#create()` helper
-      resolved: resolveddir,
-      namespace: 'dummy',
-      env: this.env,
-      'skip-install': true
-    });
   });
 
   describe('#composeWith() with multiples generators', () => {

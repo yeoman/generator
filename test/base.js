@@ -1276,26 +1276,8 @@ describe('Base', () => {
       };
     });
 
-    it('run custom priorities in correct order', function() {
-      const prePrompting1 = sinon.spy();
-      const preConfiguring1 = sinon.spy();
-      const preConfiguring2 = sinon.spy();
-      const afterEnd = sinon.spy();
-
-      const initializing = sinon.spy();
-      const prompting = sinon.spy();
-      const configuring = sinon.spy();
-      const end = sinon.spy();
-
+    it('generates correct _queues and runLoop queueNames', function() {
       _.extend(this.TestGenerator.prototype, {
-        prePrompting1,
-        preConfiguring1,
-        preConfiguring2,
-        afterEnd,
-        initializing,
-        prompting,
-        configuring,
-        end,
         assert: function() {
           assert.deepStrictEqual(this._queues, {
             initializing: 'initializing',
@@ -1336,14 +1318,46 @@ describe('Base', () => {
         'skip-install': true
       });
 
+      return this.testGen.run();
+    });
+
+    it('run custom priorities in correct order', function() {
+      const prePrompting1 = sinon.spy();
+      const preConfiguring1 = sinon.spy();
+      const preConfiguring2 = sinon.spy();
+      const afterEnd = sinon.spy();
+
+      const initializing = sinon.spy();
+      const prompting = sinon.spy();
+      const configuring = sinon.spy();
+      const end = sinon.spy();
+
+      _.extend(this.TestGenerator.prototype, {
+        prePrompting1,
+        preConfiguring1,
+        preConfiguring2,
+        afterEnd,
+        initializing,
+        prompting,
+        configuring,
+        end
+      });
+
+      this.testGen = new this.TestGenerator([], {
+        resolved: 'generator-ember/all/index.js',
+        namespace: 'dummy',
+        env: this.env,
+        'skip-install': true
+      });
+
       return this.testGen.run().then(() => {
-        initializing.calledBefore(prePrompting1);
-        preConfiguring1.calledBefore(initializing);
-        preConfiguring2.calledBefore(configuring);
-        configuring.calledBefore(prePrompting1);
-        prePrompting1.calledBefore(prompting);
-        prompting.calledBefore(end);
-        end.calledBefore(afterEnd);
+        assert(initializing.calledBefore(preConfiguring1));
+        assert(preConfiguring1.calledBefore(preConfiguring2));
+        assert(preConfiguring2.calledBefore(configuring));
+        assert(configuring.calledBefore(prePrompting1));
+        assert(prePrompting1.calledBefore(prompting));
+        assert(prompting.calledBefore(end));
+        assert(end.calledBefore(afterEnd));
       });
     });
   });
