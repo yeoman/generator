@@ -736,6 +736,10 @@ describe('Base', () => {
       this.env.registerStub(this.GenCompose, 'composed:gen');
     });
 
+    it('returns the composed generator when pass true', function() {
+      assert(this.dummy.composeWith('composed:gen', true) instanceof this.GenCompose);
+    });
+
     it('runs the composed generators', function(done) {
       this.dummy.composeWith('composed:gen');
 
