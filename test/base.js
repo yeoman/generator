@@ -1244,6 +1244,97 @@ describe('Base', () => {
         done();
       });
     });
+
+    it('queued method with function, methodName and reject', function() {
+      const env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+      const gen = new this.Generator({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env,
+        testQueue: 'This value'
+      });
+
+      sinon.spy(env.runLoop, 'add');
+      const noop = () => {};
+      gen.queueMethod(noop, 'configuring', noop);
+
+      assert(env.runLoop.add.calledOnce);
+      assert.equal('default', env.runLoop.add.getCall(0).args[0]);
+    });
+
+    it('queued method with object, queueName and reject', function() {
+      const env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+      const gen = new this.Generator({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env,
+        testQueue: 'This value'
+      });
+
+      sinon.spy(env.runLoop, 'add');
+      const noop = () => {};
+      const queueName = 'configuring';
+      const tasks = {
+        foo() {}
+      };
+      gen.queueMethod(tasks, queueName, noop);
+
+      assert(env.runLoop.add.calledOnce);
+      assert.equal(queueName, env.runLoop.add.getCall(0).args[0]);
+    });
+  });
+
+  describe('#queueTask()', () => {
+    beforeEach(function() {
+      this.Generator = class extends Base {
+        constructor(args, opts) {
+          super(args, opts);
+
+          this.queueMethod(
+            {
+              testQueue: function() {
+                this.queue = this.options.testQueue;
+              }
+            },
+            () => {}
+          );
+        }
+
+        exec() {}
+      };
+    });
+
+    it('queued method with function and options', function() {
+      const env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+      const gen = new this.Generator({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env,
+        testQueue: 'This value'
+      });
+
+      sinon.spy(env.runLoop, 'add');
+      const method = () => {};
+      const taskName = 'foo';
+      const queueName = 'configuring';
+      gen.queueTask({
+        method,
+        queueName,
+        taskName,
+        once: true,
+        run: false
+      });
+
+      assert(env.runLoop.add.calledOnce);
+      assert.equal(queueName, env.runLoop.add.getCall(0).args[0]);
+      assert.deepStrictEqual(
+        {
+          once: taskName,
+          run: false
+        },
+        env.runLoop.add.getCall(0).args[2]
+      );
+    });
   });
 
   describe('Custom priorities', () => {
@@ -1253,6 +1344,7 @@ describe('Base', () => {
           super(args, {
             ...options,
             customPriorities: [
+              ...(options.customPriorities || []),
               {
                 // Change priority prompting to be queue before writing for this generator.
                 // If we change defaults priorities in the future, the order of custom priorities will keep the same.
@@ -1265,14 +1357,16 @@ describe('Base', () => {
               },
               {
                 name: 'preConfiguring1',
-                before: 'preConfiguring2'
+                before: 'preConfiguring2',
+                queueName: 'common#preConfiguring1',
+                once: true
               },
               {
-                name: 'preConfiguring2',
+                priorityName: 'preConfiguring2',
                 before: 'configuring'
               },
               {
-                name: 'afterEnd'
+                priorityName: 'afterEnd'
               }
             ]
           });
@@ -1284,23 +1378,40 @@ describe('Base', () => {
       _.extend(this.TestGenerator.prototype, {
         assert: function() {
           assert.deepStrictEqual(this._queues, {
-            initializing: 'initializing',
-            preConfiguring1: 'dummy#preConfiguring1',
-            preConfiguring2: 'dummy#preConfiguring2',
-            configuring: 'configuring',
-            default: 'default',
-            prePrompting1: 'dummy#prePrompting1',
-            prompting: 'dummy#prompting',
-            writing: 'writing',
-            conflicts: 'conflicts',
-            install: 'install',
-            end: 'end',
-            afterEnd: 'dummy#afterEnd'
+            initializing: { priorityName: 'initializing', queueName: 'initializing' },
+            preConfiguring1: {
+              priorityName: 'preConfiguring1',
+              queueName: 'common#preConfiguring1',
+              before: 'preConfiguring2',
+              once: true
+            },
+            preConfiguring2: {
+              priorityName: 'preConfiguring2',
+              queueName: 'dummy#preConfiguring2',
+              before: 'configuring'
+            },
+            configuring: { priorityName: 'configuring', queueName: 'configuring' },
+            default: { priorityName: 'default', queueName: 'default' },
+            prePrompting1: {
+              priorityName: 'prePrompting1',
+              queueName: 'dummy#prePrompting1',
+              before: 'prompting'
+            },
+            prompting: {
+              priorityName: 'prompting',
+              queueName: 'dummy#prompting',
+              before: 'writing'
+            },
+            writing: { priorityName: 'writing', queueName: 'writing' },
+            conflicts: { priorityName: 'conflicts', queueName: 'conflicts' },
+            install: { priorityName: 'install', queueName: 'install' },
+            end: { priorityName: 'end', queueName: 'end' },
+            afterEnd: { priorityName: 'afterEnd', queueName: 'dummy#afterEnd' }
           });
           assert.deepStrictEqual(this.env.runLoop.queueNames, [
             'initializing',
             'prompting',
-            'dummy#preConfiguring1',
+            'common#preConfiguring1',
             'dummy#preConfiguring2',
             'configuring',
             'default',
@@ -1362,6 +1473,48 @@ describe('Base', () => {
         assert(prePrompting1.calledBefore(prompting));
         assert(prompting.calledBefore(end));
         assert(end.calledBefore(afterEnd));
+      });
+    });
+
+    it('correctly run custom priority with once option', function() {
+      const commonPreConfiguring = sinon.spy();
+      const customPreConfiguring1 = sinon.spy();
+      const customPreConfiguring2 = sinon.spy();
+
+      _.extend(this.TestGenerator.prototype, {
+        get preConfiguring1() {
+          return { commonPreConfiguring };
+        }
+      });
+
+      this.TestGenerator2 = class extends this.TestGenerator {
+        get preConfiguring1() {
+          return { ...super.preConfiguring1, customPreConfiguring1 };
+        }
+      };
+
+      this.TestGenerator3 = class extends this.TestGenerator {
+        get preConfiguring1() {
+          return { ...super.preConfiguring1, customPreConfiguring2 };
+        }
+      };
+
+      this.testGen = new this.TestGenerator2([], {
+        resolved: 'unknown',
+        namespace: 'dummy',
+        env: this.env,
+        'skip-install': true
+      });
+
+      this.testGen.composeWith({
+        Generator: this.TestGenerator3,
+        path: 'unknown'
+      });
+
+      return this.testGen.run().then(() => {
+        sinon.assert.calledOnce(commonPreConfiguring);
+        sinon.assert.calledOnce(customPreConfiguring1);
+        sinon.assert.calledOnce(customPreConfiguring2);
       });
     });
   });
