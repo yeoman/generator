@@ -45,7 +45,7 @@
   "license": "BSD-2-Clause",
   "repository": "yeoman/generator",
   "engines": {
-    "node": ">=6"
+    "node": ">=10"
   },
   "scripts": {
     "pretest": "eslint .",
