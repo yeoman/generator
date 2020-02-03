@@ -1,7 +1,7 @@
 name: Update generator api
 on:
   schedule:
-    - cron:  '*/5 * * * *'
+    - cron:  '0 0 * * 0'
 jobs:
   createPullRequest:
     runs-on: ubuntu-latest
