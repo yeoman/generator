@@ -1623,6 +1623,127 @@ describe('Base', () => {
     });
   });
 
+  describe('#runComposedMethod', () => {
+    it('correctly run runComposedMethod', function() {
+      const commonConfiguring = sinon.spy();
+      const configuring = sinon.spy();
+
+      const TestGenerator = class extends Base {
+        constructor(args, opts) {
+          super(args, {
+            ...opts,
+            customPriorities: [{ name: 'commonConfiguring', once: true }]
+          });
+        }
+      };
+      _.extend(TestGenerator.prototype, {
+        commonConfiguring: commonConfiguring,
+
+        get composed() {
+          return {
+            commonConfiguring: {
+              method: this.commonConfiguring,
+              priorityName: 'commonConfiguring'
+            }
+          };
+        },
+
+        _composed(options) {
+          return [
+            {
+              method: this.commonConfiguring,
+              taskName: 'commonConfiguring',
+              priorityName: 'commonConfiguring'
+            },
+            {
+              method: this.commonConfiguring,
+              taskName: 'commonConfiguring',
+              priorityName: 'commonConfiguring'
+            },
+            {
+              method: function() {
+                configuring(options.callNumber);
+              },
+              taskName: 'configuring'
+            }
+          ];
+        }
+      });
+
+      const testGen = new TestGenerator([], {
+        resolved: 'unknown',
+        namespace: 'dummy',
+        env: this.env,
+        'skip-install': true
+      });
+
+      testGen.runComposedMethod('_composed', { callNumber: 1 });
+      testGen.runComposedMethod('_composed', { callNumber: 2 });
+
+      return testGen.run().then(() => {
+        sinon.assert.calledOnce(commonConfiguring);
+        sinon.assert.calledTwice(configuring);
+        assert.equal(1, configuring.getCall(0).args[0]);
+        assert.equal(2, configuring.getCall(1).args[0]);
+      });
+    });
+
+    it("throws if the method doesn't exists", function() {
+      assert.throws(() => this.dummy.runComposedMethod('dontExists'), /not found/);
+    });
+
+    describe('throws on errors', function() {
+      before(function() {
+        const TestGenerator = class extends Base {};
+        TestGenerator.prototype.notAFunction = {};
+        TestGenerator.prototype.returnUndefined = () => {};
+        TestGenerator.prototype.invalidComposedMethod = () => {
+          return {};
+        };
+
+        TestGenerator.prototype.invalidPriority = () => {
+          return { method: () => {}, priorityName: 'dontExists' };
+        };
+
+        this.gen = new TestGenerator([], {
+          resolved: 'unknown',
+          namespace: 'dummy',
+          env: this.env,
+          'skip-install': true
+        });
+      });
+
+      it('throws if not a function', function() {
+        assert.throws(
+          () => this.gen.runComposedMethod('notAFunction'),
+          /not a composed method/
+        );
+      });
+
+      it('throws if passed an invalid priority', function() {
+        assert.throws(
+          () => this.gen.runComposedMethod('invalidPriority'),
+          /Priority (.*) is not defined/
+        );
+      });
+
+      /* Ait('throws if the function returns not an object', function() {
+       *  assert.throws(
+       *    () => this.gen.runComposedMethod('returnUndefined'),
+       *    /not a composed method/
+       *  );
+       * });
+       */
+
+      it('throws if the function returns a invalid task', function() {
+        assert.throws(
+          () => this.gen.runComposedMethod('invalidComposedMethod'),
+          /Invalid task at composed method/
+        );
+      });
+    });
+  });
+
   describe('Custom priorities errors', () => {
     it('error is thrown with duplicate custom queue', function() {
       const TestGenerator = class extends Base {
