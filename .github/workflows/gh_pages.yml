@@ -17,8 +17,10 @@ jobs:
           path: out
       - name: Update jsdoc
         run: |
-          jsdoc source/lib/*.js
-          cd out
+          cd source
+          npm ci
+          jsdoc -c jsdoc.json -d ../out
+          cd ../out
           git add .
           git config --local user.email "mshima@users.noreply.github.com"
           git config --local user.name "Marcelo Shima"
