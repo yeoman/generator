@@ -1,7 +1,7 @@
-name: Update generator api
+name: Update api docs
 on:
   schedule:
-    - cron:  '0 0 * * 0'
+    - cron:  '0 0 * * *'
 jobs:
   createPullRequest:
     runs-on: ubuntu-latest
@@ -24,20 +24,20 @@ jobs:
           git add .
           git config --local user.email "mshima@users.noreply.github.com"
           git config --local user.name "Marcelo Shima"
-          git commit -a -m "Update generator api"
+          git commit -a -m "Update api docs" || true
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Update generator api
+          commit-message: Update api docs
           committer: Marcelo Shima <mshima@users.noreply.github.com>
           author: Marcelo Shima <mshima@users.noreply.github.com>
-          title: 'Update generator api'
+          title: 'Update api docs'
           body: |
-            Update generator api with last master version
+            Update api docs with master version
           labels: automated pr
-          branch: api-generator
+          branch: gh-pages-master
           path: out
       - name: Check outputs
         run: |

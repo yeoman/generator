@@ -11,14 +11,15 @@
   },
   "templates": {
     "logo": {
-        "url": "https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png",
-        "width": "127px",
-        "height": "14px"
+      "url": "https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png",
+      "width": "127px",
+      "height": "14px"
     },
     "name": "Generator",
-    "footerText": "BSD license Copyright (c) Google"
+    "footerText": "BSD license Copyright (c) Google",
+    "default": {
+      "includeDate": false
+    }
   },
-  "plugins": [
-    "plugins/markdown"
-  ]
+  "plugins": ["plugins/markdown"]
 }
