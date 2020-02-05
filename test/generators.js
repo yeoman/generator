@@ -51,4 +51,28 @@ describe('Generators module', () => {
       this.generator._globalConfig.path
     );
   });
+
+  describe('#createStorage', function() {
+    before(function() {
+      this.generator = new Base({
+        env: this.env,
+        resolved: 'test',
+        localConfigOnly: true
+      });
+    });
+
+    it('with path and name', function() {
+      const global = path.join(this.env.cwd, '.yo-rc-global.json');
+      const customStorage = this.generator.createStorage(global, '*');
+      assert.equal(global, customStorage.path);
+      assert.equal('*', customStorage.name);
+    });
+
+    it('with path', function() {
+      const global = path.join(this.env.cwd, '.yo-rc-global.json');
+      const customStorage = this.generator.createStorage(global);
+      assert.equal(global, customStorage.path);
+      assert.equal(undefined, customStorage.name);
+    });
+  });
 });
