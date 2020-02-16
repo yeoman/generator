@@ -209,20 +209,24 @@ class Generator extends EventEmitter {
     // Determine the app root
     this.contextRoot = this.env.cwd;
 
-    let rootPath = findUp.sync('.yo-rc.json', {
-      cwd: this.env.cwd
-    });
-    rootPath = rootPath ? path.dirname(rootPath) : this.env.cwd;
+    if (this.options.localConfigOnly) {
+      debug('Using local configurations only');
+    } else {
+      let rootPath = findUp.sync('.yo-rc.json', {
+        cwd: this.env.cwd
+      });
+      rootPath = rootPath ? path.dirname(rootPath) : this.env.cwd;
 
-    if (rootPath !== this.env.cwd) {
-      this.log(
-        [
-          '',
-          'Just found a `.yo-rc.json` in a parent directory.',
-          'Setting the project root at: ' + rootPath
-        ].join('\n')
-      );
-      this.destinationRoot(rootPath);
+      if (rootPath !== this.env.cwd) {
+        this.log(
+          [
+            '',
+            'Just found a `.yo-rc.json` in a parent directory.',
+            'Setting the project root at: ' + rootPath
+          ].join('\n')
+        );
+        this.destinationRoot(rootPath);
+      }
     }
 
     this.appname = this.determineAppname();
@@ -707,8 +711,9 @@ class Generator extends EventEmitter {
   /**
    * Compose this generator with another one.
    * @param  {String|Object|Array} generator  The path to the generator module or an object (see examples)
-   * @param  {Object} options    The options passed to the Generator
-   * @return {this}    This generator
+   * @param  {Object}  [options]   The options passed to the Generator
+   * @param  {boolean} [returnNewGenerator] Returns the created generator instead of returning this.
+   * @return {this|Object}    This generator or the composed generator when returnNewGenerator=true
    *
    * @example &lt;caption>Using a peerDependency generator&lt;/caption>
    * this.composeWith('bootstrap', { sass: true });
@@ -719,7 +724,11 @@ class Generator extends EventEmitter {
    * @example &lt;caption>Passing a Generator class&lt;/caption>
    * this.composeWith({ Generator: MyGenerator, path: '../generator-bootstrap/app/main.js' }, { sass: true });
    */
-  composeWith(generator, options) {
+  composeWith(generator, options, returnNewGenerator = false) {
+    if (typeof options === 'boolean') {
+      returnNewGenerator = options;
+    }
+
     let instantiatedGenerator;
 
     if (Array.isArray(generator)) {
@@ -813,6 +822,10 @@ class Generator extends EventEmitter {
       this._composedWith.push(instantiatedGenerator);
     }
 
+    if (returnNewGenerator) {
+      return instantiatedGenerator;
+    }
+
     return this;
   }
 
@@ -851,7 +864,11 @@ class Generator extends EventEmitter {
    * @private
    */
   _getGlobalStorage() {
-    const storePath = path.join(os.homedir(), '.yo-rc-global.json');
+    // When localConfigOnly === true simulate a globalConfig at local dir
+    const globalStorageDir = this.options.localConfigOnly
+      ? this.destinationRoot()
+      : os.homedir();
+    const storePath = path.join(globalStorageDir, '.yo-rc-global.json');
     const storeName = `${this.rootGeneratorName()}:${this.rootGeneratorVersion()}`;
     return new Storage(storeName, this.fs, storePath);
   }

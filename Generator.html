@@ -494,7 +494,7 @@ module.exports = class extends Generator {
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line377">line 377</a></code>
+                <code><a href="index.js.html#line381">line 381</a></code>
             </div>
             
         </h4>
@@ -1358,12 +1358,12 @@ while options are all kept in a hash (<code>this.options</code>).</p>
     
         <h4 class="name" id="composeWith">
             
-                <span class="type-signature"></span>composeWith<span class="signature">(generator, options)</span><span class="type-signature"> &rarr; {this}</span>
+                <span class="type-signature"></span>composeWith<span class="signature">(generator, options<span class="signature-attributes">opt</span>, returnNewGenerator<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {this|Object}</span>
                 
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line672">line 672</a></code>
+                <code><a href="index.js.html#line677">line 677</a></code>
             </div>
             
         </h4>
@@ -1399,7 +1399,11 @@ while options are all kept in a hash (<code>this.options</code>).</p>
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1430,7 +1434,19 @@ while options are all kept in a hash (<code>this.options</code>).</p>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>The path to the generator module or an object (see examples)</p></td>
@@ -1453,10 +1469,63 @@ while options are all kept in a hash (<code>this.options</code>).</p>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>The options passed to the Generator</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>returnNewGenerator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>Returns the created generator instead of returning this.</p></td>
         </tr>
 
     
@@ -1485,12 +1554,15 @@ while options are all kept in a hash (<code>this.options</code>).</p>
 
 
 <span class="param-type">this</span>
+|
+
+<span class="param-type">Object</span>
 
 
 
 
 
-- <p>This generator</p>
+- <p>This generator or the composed generator when returnNewGenerator=true</p>
 
 
 
@@ -1567,7 +1639,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line270">line 270</a></code>
+                <code><a href="index.js.html#line274">line 274</a></code>
             </div>
             
         </h4>
@@ -2012,7 +2084,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line868">line 868</a></code>
+                <code><a href="index.js.html#line885">line 885</a></code>
             </div>
             
         </h4>
@@ -2184,7 +2256,7 @@ while options are all kept in a hash (<code>this.options</code>).</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line816">line 816</a></code>
+                <code><a href="index.js.html#line833">line 833</a></code>
             </div>
             
         </h4>
@@ -2346,7 +2418,7 @@ This path is used to find storage, when using a file system helper method (like
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line886">line 886</a></code>
+                <code><a href="index.js.html#line903">line 903</a></code>
             </div>
             
         </h4>
@@ -4365,7 +4437,7 @@ message to let the user know.</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line314">line 314</a></code>
+                <code><a href="index.js.html#line318">line 318</a></code>
             </div>
             
         </h4>
@@ -4773,7 +4845,7 @@ parsed by nopt as a <code>this.options</code> hash object.</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line284">line 284</a></code>
+                <code><a href="index.js.html#line288">line 288</a></code>
             </div>
             
         </h4>
@@ -4934,7 +5006,7 @@ user's answers as defaults.</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line508">line 508</a></code>
+                <code><a href="index.js.html#line512">line 512</a></code>
             </div>
             
         </h4>
@@ -5185,7 +5257,7 @@ user's answers as defaults.</p>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line909">line 909</a></code>
+                <code><a href="index.js.html#line926">line 926</a></code>
             </div>
             
         </h4>
@@ -5348,7 +5420,7 @@ or a single one.</p></td>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line773">line 773</a></code>
+                <code><a href="index.js.html#line786">line 786</a></code>
             </div>
             
         </h4>
@@ -5458,7 +5530,7 @@ or a single one.</p></td>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line782">line 782</a></code>
+                <code><a href="index.js.html#line795">line 795</a></code>
             </div>
             
         </h4>
@@ -5568,7 +5640,7 @@ or a single one.</p></td>
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line580">line 580</a></code>
+                <code><a href="index.js.html#line584">line 584</a></code>
             </div>
             
         </h4>
@@ -6270,7 +6342,7 @@ https://nodejs.org/api/child_process.html#child_process_child_process_spawn_comm
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line840">line 840</a></code>
+                <code><a href="index.js.html#line857">line 857</a></code>
             </div>
             
         </h4>
@@ -7399,7 +7471,7 @@ This path is used by multiples file system methods like (<code>this.read</code> 
             
             <div class="container-source members">
                 <code><a href="index.js.html">index.js</a></code>,
-                <code><a href="index.js.html#line853">line 853</a></code>
+                <code><a href="index.js.html#line870">line 870</a></code>
             </div>
             
         </h4>
