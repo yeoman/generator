@@ -7,6 +7,8 @@ const os = require('os');
 
 const Base = require('..');
 
+const NAMESPACE = 'somenamespace';
+
 describe('Generators module', () => {
   beforeEach(function() {
     this.env = Environment.createEnv();
@@ -14,8 +16,11 @@ describe('Generators module', () => {
 
   describe('Base', () => {
     beforeEach(function() {
-      this.generator = new Base({
+      const Generator = class extends Base {};
+      Generator.prototype.exec = function() {};
+      this.generator = new Generator({
         env: this.env,
+        namespace: NAMESPACE,
         resolved: 'test'
       });
     });
@@ -26,6 +31,15 @@ describe('Generators module', () => {
       assert.strictEqual(typeof this.generator.emit, 'function');
       this.generator.on('yay-o-man', done);
       this.generator.emit('yay-o-man');
+    });
+
+    it('emits done event', function(done) {
+      this.env.on(`done$${NAMESPACE}#exec`, (id, generator) => {
+        assert(generator === this.generator);
+        assert(`done$${NAMESPACE}#exec`.includes(id));
+        done();
+      });
+      this.generator.run();
     });
   });
 
