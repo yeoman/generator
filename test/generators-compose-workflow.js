@@ -374,4 +374,59 @@ describe('Multiples generators', () => {
       }, 100);
     });
   });
+
+  it('#composeWith() inside contructor', function(done) {
+    const Generator = class extends Base {
+      constructor(args, opts) {
+        super(args, opts);
+        this.composeWith('composed:gen2');
+      }
+    };
+    const writingSpy1 = sinon.spy();
+    Generator.prototype.writing = {
+      compose1: function() {
+        writingSpy1();
+      }
+    };
+
+    const Generator2 = class extends Base {
+      constructor(args, opts) {
+        super(args, opts);
+        this.composeWith('composed:gen3');
+      }
+    };
+    const writingSpy2 = sinon.spy();
+    Generator2.prototype.writing = {
+      compose2: function() {
+        writingSpy2();
+      }
+    };
+
+    const Generator3 = class extends Base {};
+    const writingSpy3 = sinon.spy();
+    Generator3.prototype.writing = {
+      compose3: function() {
+        writingSpy3();
+      }
+    };
+
+    this.env.registerStub(Generator, 'composed:gen');
+    this.env.registerStub(Generator2, 'composed:gen2');
+    this.env.registerStub(Generator3, 'composed:gen3');
+
+    const dummy = new Generator([], {
+      resolved: 'unknown',
+      namespace: 'dummy',
+      env: this.env,
+      'skip-install': true,
+      'force-install': true,
+      'skip-cache': true
+    });
+
+    dummy.run().then(() => {
+      assert(writingSpy2.calledAfter(writingSpy1));
+      assert(writingSpy3.calledAfter(writingSpy2));
+      done();
+    });
+  });
 });
