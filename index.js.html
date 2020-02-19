@@ -318,23 +318,20 @@ const methodIsValid = function(name) {
 
 /**
  * Task options.
- * @typedef {Object} TaskOptions
- * @extends QueueOptions
+ * @typedef {QueueOptions} TaskOptions
  * @property {Function} [reject] - Reject callback.
  */
 
 /**
  * Priority object.
- * @typedef {Object} Priority
- * @extends QueueOptions
+ * @typedef {QueueOptions} Priority
  * @property {string} priorityName - Name of the priority.
  * @property {string} [before] - The queue which this priority should be added before.
  */
 
 /**
  * Complete Task object.
- * @typedef {Object} Task
- * @extends TaskOptions
+ * @typedef {TaskOptions} Task
  * @property {Function} method - Function to be queued.
  * @property {string} taskName - Name of the task.
  */
@@ -866,8 +863,8 @@ class Generator extends EventEmitter {
   /**
    * Schedule methods on a run queue.
    *
-   * @param {Object}          taskGroup: Name of the method (task) to be scheduled or taskOptions.
-   * @param {TaskOptions} [taskOptions]: Name of the method (task) to be scheduled or taskOptions.
+   * @param {Object}          taskGroup: Object containing tasks.
+   * @param {TaskOptions} [taskOptions]: options.
    */
   queueTaskGroup(taskGroup, taskOptions) {
     const self = this;
