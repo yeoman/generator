@@ -115,10 +115,6 @@
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
-                <li><a href="Generator.html#queueTask">queueTask</a></li>
-                <li>
-                  <a href="Generator.html#queueTaskGroup">queueTaskGroup</a>
-                </li>
                 <li>
                   <a href="Generator.html#registerTransformStream"
                     >registerTransformStream</a
@@ -269,9 +265,6 @@
           </li>
         </ul>
       </div>
-      <div class="lnb-api hidden">
-        <h3><a href="global.html">Global</a></h3>
-      </div>
     </nav>
     <div id="resizer"></div>
 
@@ -308,34 +301,6 @@ const methodIsValid = function(name) {
   return name.charAt(0) !== '_' &amp;&amp; name !== 'constructor';
 };
 
-/**
- * Queue options.
- * @typedef {Object} QueueOptions
- * @property {string} [queueName] - Name of the queue.
- * @property {boolean} [once] - Execute only once by namespace and taskName.
- * @property {boolean} [run] - Run the queue if not running yet.
- */
-
-/**
- * Task options.
- * @typedef {QueueOptions} TaskOptions
- * @property {Function} [reject] - Reject callback.
- */
-
-/**
- * Priority object.
- * @typedef {QueueOptions} Priority
- * @property {string} priorityName - Name of the priority.
- * @property {string} [before] - The queue which this priority should be added before.
- */
-
-/**
- * Complete Task object.
- * @typedef {TaskOptions} Task
- * @property {Function} method - Function to be queued.
- * @property {string} taskName - Name of the task.
- */
-
 class Generator extends EventEmitter {
   // If for some reason environment adds more queues, we should use or own for stability.
   static get queues() {
@@ -368,7 +333,6 @@ class Generator extends EventEmitter {
    *
    * @param {string[]} args           - Provide arguments at initialization
    * @param {Object} options          - Provide options at initialization
-   * @param {Priority[]} [options.customPriorities] - Custom priorities
    *
    * @property {Object}   env         - the current Environment being run
    * @property {String}   resolved    - the path to the current generator
@@ -498,29 +462,24 @@ class Generator extends EventEmitter {
 
     // Add original queues.
     Generator.queues.forEach(queue => {
-      this._queues[queue] = { priorityName: queue, queueName: queue };
+      this._queues[queue] = queue;
     });
 
     // Add custom queues
     if (Array.isArray(this.options.customPriorities)) {
-      const customPriorities = this.options.customPriorities.map(customPriority => {
-        // Keep backward compatibility with name
-        const newPriority = { priorityName: customPriority.name, ...customPriority };
-        delete newPriority.name;
-        return newPriority;
-      });
+      const customPriorities = this.options.customPriorities;
 
       // Sort customPriorities, a referenced custom queue must be added before the one that reference it.
       customPriorities.sort((a, b) => {
-        if (a.priorityName === b.priorityName) {
+        if (a.name === b.name) {
           throw new Error(`Duplicate custom queue ${a.name}`);
         }
 
-        if (a.priorityName === b.before) {
+        if (a.name === b.before) {
           return -1;
         }
 
-        if (b.priorityName === a.before) {
+        if (b.name === a.before) {
           return 1;
         }
 
@@ -529,13 +488,11 @@ class Generator extends EventEmitter {
 
       // Add queue to runLoop
       customPriorities.forEach(customQueue => {
-        customQueue.queueName =
-          customQueue.queueName ||
-          `${this.options.namespace}#${customQueue.priorityName}`;
-        debug(`Registering custom queue ${customQueue.queueName}`);
-        this._queues[customQueue.priorityName] = customQueue;
+        const queueName = `${this.options.namespace}#${customQueue.name}`;
+        debug(`Registering custom queue ${queueName}`);
+        this._queues[customQueue.name] = queueName;
 
-        if (this.env.runLoop.queueNames.includes(customQueue.queueName)) {
+        if (this.env.runLoop.queueNames.includes(queueName)) {
           return;
         }
 
@@ -584,10 +541,7 @@ class Generator extends EventEmitter {
           };
         }
 
-        let beforeQueue = customQueue.before
-          ? this._queues[customQueue.before].queueName
-          : undefined;
-        this.env.runLoop.addSubQueue(customQueue.queueName, beforeQueue);
+        this.env.runLoop.addSubQueue(queueName, this._queues[customQueue.before]);
       });
     }
   }
@@ -828,9 +782,9 @@ class Generator extends EventEmitter {
    * Schedule methods on a run queue.
    *
    * @param {Function|Object} method: Method to be scheduled or object with function properties.
-   * @param {String} [methodName]: Name of the method (task) to be scheduled.
+   * @param {String} [methodName]: Name of the method to be scheduled.
    * @param {String} [queueName]: Name of the queue to be scheduled on.
-   * @param {Function} [reject]: Reject callback.
+   * @param {String} [reject]: Reject callback.
    */
   queueMethod(method, methodName, queueName, reject = () => {}) {
     if (typeof queueName === 'function') {
@@ -840,95 +794,54 @@ class Generator extends EventEmitter {
       queueName = queueName || 'default';
     }
 
+    const self = this;
     if (!_.isFunction(method)) {
       if (typeof methodName === 'function') {
         reject = methodName;
         methodName = undefined;
       }
 
-      this.queueTaskGroup(method, {
-        queueName: methodName,
-        reject
+      queueName = methodName || queueName;
+      // Run each queue items
+      _.each(method, (newMethod, newMethodName) => {
+        if (!_.isFunction(newMethod) || !methodIsValid(newMethodName)) return;
+
+        self.queueMethod(newMethod, newMethodName, queueName, reject);
       });
       return;
     }
 
-    this.queueTask({
-      method,
-      taskName: methodName,
-      queueName,
-      reject
-    });
-  }
-
-  /**
-   * Schedule methods on a run queue.
-   *
-   * @param {Object}          taskGroup: Object containing tasks.
-   * @param {TaskOptions} [taskOptions]: options.
-   */
-  queueTaskGroup(taskGroup, taskOptions) {
-    const self = this;
-    // Run each queue items
-    _.each(taskGroup, (newMethod, newMethodName) => {
-      if (!_.isFunction(newMethod) || !methodIsValid(newMethodName)) return;
-
-      self.queueTask({
-        ...taskOptions,
-        method: newMethod,
-        taskName: newMethodName
-      });
-    });
-  }
-
-  /**
-   * Schedule tasks on a run queue.
-   *
-   * @param {Task} task: Task to be queued.
-   */
-  queueTask(task) {
-    const reject = task.reject || (() => {});
-    const queueName = task.queueName || 'default';
-    const methodName = task.taskName;
-    const method = task.method;
-    const once = task.once ? methodName : undefined;
-
-    const self = this;
     let namespace = '';
     if (self.options &amp;&amp; self.options.namespace) {
       namespace = self.options.namespace;
     }
 
-    debug(`Queueing ${namespace}#${methodName} with options %o`, task);
-    self.env.runLoop.add(
-      queueName,
-      completed => {
-        debug(`Running ${namespace}#${methodName}`);
-        self.emit(`method:${methodName}`);
+    debug(`Queueing ${namespace}#${methodName} in ${queueName}`);
+    self.env.runLoop.add(queueName, completed => {
+      debug(`Running ${namespace}#${methodName}`);
+      self.emit(`method:${methodName}`);
 
-        runAsync(function() {
-          self.async = () => this.async();
-          self.runningState = { namespace, queueName, methodName };
-          return method.apply(self, self.args);
-        })()
-          .then(function() {
-            delete self.runningState;
-            completed();
-          })
-          .catch(err => {
-            debug(`An error occured while running ${namespace}#${methodName}`, err);
-            delete self.runningState;
+      runAsync(function() {
+        self.async = () => this.async();
+        self.runningState = { namespace, queueName, methodName };
+        return method.apply(self, self.args);
+      })()
+        .then(function() {
+          delete self.runningState;
+          completed();
+        })
+        .catch(err => {
+          debug(`An error occured while running ${namespace}#${methodName}`, err);
+          delete self.runningState;
 
-            // Ensure we emit the error event outside the promise context so it won't be
-            // swallowed when there's no listeners.
-            setImmediate(() => {
-              self.emit('error', err);
-              reject(err);
-            });
+          // Ensure we emit the error event outside the promise context so it won't be
+          // swallowed when there's no listeners.
+          setImmediate(() => {
+            self.emit('error', err);
+            reject(err);
           });
-      },
-      { once, run: task.run }
-    );
+        });
+    });
   }
 
   /**
@@ -974,22 +887,19 @@ class Generator extends EventEmitter {
         );
         const item = property.value ? property.value : property.get.call(self);
 
-        const priority = self._queues[name];
-        let taskOptions = { ...priority, reject };
+        const queueName = self._queues[name];
 
         // Name points to a function; run it!
         if (typeof item === 'function') {
-          taskOptions.taskName = name;
-          taskOptions.method = item;
-          return self.queueTask(taskOptions);
+          return self.queueMethod(item, name, queueName, reject);
         }
 
         // Not a queue hash; stop
-        if (!priority) {
+        if (!queueName) {
           return;
         }
 
-        self.queueTaskGroup(item, taskOptions);
+        self.queueMethod(item, queueName, reject);
       }
 
       validMethods.forEach(addInQueue);
@@ -1057,12 +967,7 @@ class Generator extends EventEmitter {
     }
 
     const instantiate = (Generator, path) => {
-      if (path === 'unknown') {
-        Generator.resolved = path;
-      } else {
-        Generator.resolved = require.resolve(path);
-      }
-
+      Generator.resolved = require.resolve(path);
       Generator.namespace = this.env.namespace(path);
 
       return this.env.instantiate(Generator, {
