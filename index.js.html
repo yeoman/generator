@@ -332,19 +332,18 @@ const methodIsValid = function(name) {
 /**
  * Complete Task object.
  * @typedef {TaskOptions} Task
- * @property {WrappedFunction} method - Function to be queued.
+ * @property {WrappedMethod} method - Function to be queued.
  * @property {string} taskName - Name of the task.
  */
 
 /**
- * WrappedFunction context is provided by runAsync. It contains only async().
- * Set generator's async with the one provided by runAsync.
+ * RunAsync creates a promise and executes wrappedMethod inside the promise.
+ * It replaces async property of the wrappedMethod's context with one RunAsync provides.
  * async() simulates an async function by creating a callback.
  *
- * RunAsync creates a promise and executes wrappedFunction.
  * It supports promises/async and sync functions.
  * - Promises/async: forward resolve/reject from the runAsync promise to the
- *   promise returned by the wrappedFunction.
+ *   promise returned by the wrappedMethod.
  * - Sync functions: resolves with the returned value.
  *   Can be a promise for chaining
  * - Sync functions with callback (done = this.async()) calls:
@@ -352,7 +351,7 @@ const methodIsValid = function(name) {
  *   Resolve with done(undefined, resolveValue) second argument
  * - Callback must called when 'async()' was called inside a sync function.
  * - Callback can be ignored when 'async()' was called inside a async function.
- * @typedef {Function} WrappedFunction
+ * @typedef {Function} WrappedMethod
  */
 
 class Generator extends EventEmitter {
@@ -926,13 +925,13 @@ class Generator extends EventEmitter {
         self.emit(`method:${methodName}`);
 
         /**
-         * @param {WrappedFunction} wrappedFunction: Function to be wrapped.
+         * @param {WrappedMethod} wrappedMethod: Function to be wrapped.
          * @returns {any}
          */
-        function createFunctionWrapper(wrappedFunction) {
+        function createFunctionWrapper(wrappedMethod) {
           self.async = () => this.async();
           self.runningState = { namespace, queueName, methodName };
-          return wrappedFunction.apply(self, self.args);
+          return wrappedMethod.apply(self, self.args);
         }
 
         runAsync(createFunctionWrapper(method))()

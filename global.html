@@ -484,8 +484,8 @@
 
                     <td class="type">
                       <span class="param-type"
-                        ><a href="global.html#WrappedFunction"
-                          >WrappedFunction</a
+                        ><a href="global.html#WrappedMethod"
+                          >WrappedMethod</a
                         ></span
                       >
                     </td>
@@ -569,8 +569,8 @@
             </dd>
 
             <dt>
-              <h4 class="name" id="WrappedFunction">
-                <span class="type-signature"></span>WrappedFunction<span
+              <h4 class="name" id="WrappedMethod">
+                <span class="type-signature"></span>WrappedMethod<span
                   class="signature"
                   >()</span
                 ><span class="type-signature"></span>
@@ -585,19 +585,16 @@
             <dd>
               <div class="description">
                 <p>
-                  WrappedFunction context is provided by runAsync. It contains
-                  only async(). Set generator's async with the one provided by
-                  runAsync. async() simulates an async function by creating a
-                  callback.
+                  RunAsync creates a promise and executes wrappedMethod inside
+                  the promise. It replaces async property of the wrappedMethod's
+                  context with one RunAsync provides. async() simulates an async
+                  function by creating a callback.
                 </p>
-                <p>
-                  RunAsync creates a promise and executes wrappedFunction. It
-                  supports promises/async and sync functions.
-                </p>
+                <p>It supports promises/async and sync functions.</p>
                 <ul>
                   <li>
                     Promises/async: forward resolve/reject from the runAsync
-                    promise to the promise returned by the wrappedFunction.
+                    promise to the promise returned by the wrappedMethod.
                   </li>
                   <li>
                     Sync functions: resolves with the returned value. Can be a
