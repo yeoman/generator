@@ -34,9 +34,12 @@ describe('Generators module', () => {
     });
 
     it('emits done event', function(done) {
-      this.env.on(`done$${NAMESPACE}#exec`, (id, generator) => {
-        assert(generator === this.generator);
-        assert(`done$${NAMESPACE}#exec`.includes(id));
+      this.env.on(`done$${NAMESPACE}#exec`, data => {
+        assert(data.generator === this.generator);
+        assert(`done$${NAMESPACE}#exec`.includes(data.namespace));
+        assert(data.namespace === NAMESPACE);
+        assert(data.priorityName === 'default');
+        assert(data.queueName === 'default');
         done();
       });
       this.generator.run();
