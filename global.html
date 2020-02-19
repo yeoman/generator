@@ -483,7 +483,11 @@
                     <td class="name"><code>method</code></td>
 
                     <td class="type">
-                      <span class="param-type">function</span>
+                      <span class="param-type"
+                        ><a href="global.html#WrappedFunction"
+                          >WrappedFunction</a
+                        ></span
+                      >
                     </td>
 
                     <td class="description last">
@@ -560,6 +564,60 @@
                   </tr>
                 </tbody>
               </table>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="WrappedFunction">
+                <span class="type-signature"></span>WrappedFunction<span
+                  class="signature"
+                  >()</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="index.js.html">index.js</a></code
+                  >,
+                  <code><a href="index.js.html#line59">line 59</a></code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>
+                  WrappedFunction context is provided by runAsync. It contains
+                  only async(). Set generator's async with the one provided by
+                  runAsync. async() simulates an async function by creating a
+                  callback.
+                </p>
+                <p>
+                  RunAsync creates a promise and executes wrappedFunction. It
+                  supports promises/async and sync functions.
+                </p>
+                <ul>
+                  <li>
+                    Promises/async: forward resolve/reject from the runAsync
+                    promise to the promise returned by the wrappedFunction.
+                  </li>
+                  <li>
+                    Sync functions: resolves with the returned value. Can be a
+                    promise for chaining
+                  </li>
+                  <li>
+                    Sync functions with callback (done = this.async()) calls:
+                    Reject with done(rejectValue) first argument Resolve with
+                    done(undefined, resolveValue) second argument
+                  </li>
+                  <li>
+                    Callback must called when 'async()' was called inside a sync
+                    function.
+                  </li>
+                  <li>
+                    Callback can be ignored when 'async()' was called inside a
+                    async function.
+                  </li>
+                </ul>
+              </div>
 
               <dl class="details"></dl>
             </dd>

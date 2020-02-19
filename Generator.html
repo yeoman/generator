@@ -115,6 +115,10 @@
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
+                <li><a href="Generator.html#queueTask">queueTask</a></li>
+                <li>
+                  <a href="Generator.html#queueTaskGroup">queueTaskGroup</a>
+                </li>
                 <li>
                   <a href="Generator.html#registerTransformStream"
                     >registerTransformStream</a
@@ -265,6 +269,9 @@
           </li>
         </ul>
       </div>
+      <div class="lnb-api hidden">
+        <h3><a href="global.html">Global</a></h3>
+      </div>
     </nav>
     <div id="resizer"></div>
 
@@ -303,7 +310,7 @@
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line80">line 80</a></code>
+                  <code><a href="index.js.html#line128">line 128</a></code>
                 </div>
               </h4>
             </dt>
@@ -344,6 +351,43 @@
 
                       <td class="description last">
                         <p>Provide options at initialization</p>
+                        <h6>Properties</h6>
+
+                        <table class="params">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+
+                              <th>Type</th>
+
+                              <th>Attributes</th>
+
+                              <th class="last">Description</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <tr>
+                              <td class="name">
+                                <code>customPriorities</code>
+                              </td>
+
+                              <td class="type">
+                                <span class="param-type"
+                                  >Array.&lt;<a href="global.html#Priority"
+                                    >Priority</a
+                                  >></span
+                                >
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="description last">
+                                <p>Custom priorities</p>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </td>
                     </tr>
                   </tbody>
@@ -505,7 +549,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line377">line 377</a></code>
+                  <code><a href="index.js.html#line435">line 435</a></code>
                 </div>
               </h4>
             </dt>
@@ -841,7 +885,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line673">line 673</a></code>
+                  <code><a href="index.js.html#line781">line 781</a></code>
                 </div>
               </h4>
             </dt>
@@ -958,7 +1002,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line273">line 273</a></code>
+                  <code><a href="index.js.html#line331">line 331</a></code>
                 </div>
               </h4>
             </dt>
@@ -1076,7 +1120,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line887">line 887</a></code>
+                  <code><a href="index.js.html#line1000">line 1000</a></code>
                 </div>
               </h4>
             </dt>
@@ -1139,7 +1183,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line835">line 835</a></code>
+                  <code><a href="index.js.html#line948">line 948</a></code>
                 </div>
               </h4>
             </dt>
@@ -1204,7 +1248,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line905">line 905</a></code>
+                  <code><a href="index.js.html#line1018">line 1018</a></code>
                 </div>
               </h4>
             </dt>
@@ -1697,7 +1741,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line315">line 315</a></code>
+                  <code><a href="index.js.html#line373">line 373</a></code>
                 </div>
               </h4>
             </dt>
@@ -1911,7 +1955,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line287">line 287</a></code>
+                  <code><a href="index.js.html#line345">line 345</a></code>
                 </div>
               </h4>
             </dt>
@@ -1993,7 +2037,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line508">line 508</a></code>
+                  <code><a href="index.js.html#line566">line 566</a></code>
                 </div>
               </h4>
             </dt>
@@ -2049,7 +2093,7 @@ module.exports = class extends Generator {
                       <td class="attributes">&lt;optional><br /></td>
 
                       <td class="description last">
-                        <p>Name of the method to be scheduled.</p>
+                        <p>Name of the method (task) to be scheduled.</p>
                       </td>
                     </tr>
 
@@ -2071,12 +2115,140 @@ module.exports = class extends Generator {
                       <td class="name"><code>reject</code></td>
 
                       <td class="type">
-                        <span class="param-type">String</span>
+                        <span class="param-type">function</span>
                       </td>
 
                       <td class="attributes">&lt;optional><br /></td>
 
                       <td class="description last"><p>Reject callback.</p></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="queueTask">
+                <span class="type-signature"></span>queueTask<span
+                  class="signature"
+                  >(task:)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="index.js.html">index.js</a></code
+                  >,
+                  <code><a href="index.js.html#line620">line 620</a></code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Schedule tasks on a run queue.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>task:</code></td>
+
+                      <td class="type">
+                        <span class="param-type"
+                          ><a href="global.html#Task">Task</a></span
+                        >
+                      </td>
+
+                      <td class="description last">
+                        <p>Task to be queued.</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="queueTaskGroup">
+                <span class="type-signature"></span>queueTaskGroup<span
+                  class="signature"
+                  >(taskGroup:, taskOptions<span class="signature-attributes"
+                    >opt</span
+                  >)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="index.js.html">index.js</a></code
+                  >,
+                  <code><a href="index.js.html#line601">line 601</a></code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Schedule methods on a run queue.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>taskGroup:</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last">
+                        <p>Object containing tasks.</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>taskOptions</code></td>
+
+                      <td class="type">
+                        <span class="param-type"
+                          ><a href="global.html#TaskOptions"
+                            >TaskOptions</a
+                          ></span
+                        >
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="description last"><p>options.</p></td>
                     </tr>
                   </tbody>
                 </table>
@@ -2095,7 +2267,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line928">line 928</a></code>
+                  <code><a href="index.js.html#line1041">line 1041</a></code>
                 </div>
               </h4>
             </dt>
@@ -2164,7 +2336,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line777">line 777</a></code>
+                  <code><a href="index.js.html#line890">line 890</a></code>
                 </div>
               </h4>
             </dt>
@@ -2198,7 +2370,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line786">line 786</a></code>
+                  <code><a href="index.js.html#line899">line 899</a></code>
                 </div>
               </h4>
             </dt>
@@ -2231,7 +2403,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line580">line 580</a></code>
+                  <code><a href="index.js.html#line685">line 685</a></code>
                 </div>
               </h4>
             </dt>
@@ -2446,7 +2618,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line859">line 859</a></code>
+                  <code><a href="index.js.html#line972">line 972</a></code>
                 </div>
               </h4>
             </dt>
@@ -2743,7 +2915,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line872">line 872</a></code>
+                  <code><a href="index.js.html#line985">line 985</a></code>
                 </div>
               </h4>
             </dt>
