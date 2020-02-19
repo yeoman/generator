@@ -1,14 +1,18 @@
 name: Update api docs
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - docs
+  release:
+    types: [published]
+
 jobs:
-  createPullRequest:
+  build:
+    name: Update api docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v1
-      - run: npm install -g jsdoc
+      - run: npm install -g jsdoc prettier
       - uses: actions/checkout@v2
         with:
           path: source
@@ -22,21 +26,22 @@ jobs:
           npm ci
           jsdoc -c jsdoc.json -d ../out
           cd ../out
+          prettier * --write
           git add .
-          git config --local user.email "mshima@users.noreply.github.com"
-          git config --local user.name "Marcelo Shima"
-          git commit -a -m "Update api docs" || true
+          git config --local user.email ""
+          git config --local user.name "Github Actions"
+          git commit -a -m "Update api for ${{github.event.release.name}}" || true
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Update api docs
-          committer: Marcelo Shima <mshima@users.noreply.github.com>
-          author: Marcelo Shima <mshima@users.noreply.github.com>
-          title: 'Update api docs'
+          commit-message: 'Update api for ${{github.event.release.name}}'
+          committer: ""
+          author: Github Actions <mshima@users.noreply.github.com>
+          title: 'Update api for ${{github.event.release.name}}'
           body: |
-            Update api docs with master version
+            Update api docs
           labels: automated pr
           branch: gh-pages-master
           path: out
