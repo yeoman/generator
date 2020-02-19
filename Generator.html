@@ -86,14 +86,9 @@
                 <li>
                   <a href="Generator.html#argumentsHelp">argumentsHelp</a>
                 </li>
-                <li>
-                  <a href="Generator.html#argumentsHelp">argumentsHelp</a>
-                </li>
-                <li><a href="Generator.html#bowerInstall">bowerInstall</a></li>
                 <li><a href="Generator.html#bowerInstall">bowerInstall</a></li>
                 <li><a href="Generator.html#composeWith">composeWith</a></li>
                 <li><a href="Generator.html#debug">debug</a></li>
-                <li><a href="Generator.html#desc">desc</a></li>
                 <li><a href="Generator.html#desc">desc</a></li>
                 <li>
                   <a href="Generator.html#destinationPath">destinationPath</a>
@@ -105,25 +100,15 @@
                   <a href="Generator.html#determineAppname">determineAppname</a>
                 </li>
                 <li><a href="Generator.html#git.email">git.email</a></li>
-                <li><a href="Generator.html#git.email">git.email</a></li>
-                <li><a href="Generator.html#help">help</a></li>
                 <li><a href="Generator.html#help">help</a></li>
                 <li>
                   <a href="Generator.html#installDependencies"
                     >installDependencies</a
                   >
                 </li>
-                <li>
-                  <a href="Generator.html#installDependencies"
-                    >installDependencies</a
-                  >
-                </li>
                 <li><a href="Generator.html#git.name">git.name</a></li>
-                <li><a href="Generator.html#git.name">git.name</a></li>
-                <li><a href="Generator.html#npmInstall">npmInstall</a></li>
                 <li><a href="Generator.html#npmInstall">npmInstall</a></li>
                 <li><a href="Generator.html#option">option</a></li>
-                <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
@@ -148,30 +133,16 @@
                     >scheduleInstallTask</a
                   >
                 </li>
-                <li>
-                  <a href="Generator.html#scheduleInstallTask"
-                    >scheduleInstallTask</a
-                  >
-                </li>
                 <li><a href="Generator.html#sourceRoot">sourceRoot</a></li>
                 <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
-                <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
-                <li>
-                  <a href="Generator.html#spawnCommandSync">spawnCommandSync</a>
-                </li>
                 <li>
                   <a href="Generator.html#spawnCommandSync">spawnCommandSync</a>
                 </li>
                 <li><a href="Generator.html#templatePath">templatePath</a></li>
                 <li><a href="Generator.html#usage">usage</a></li>
-                <li><a href="Generator.html#usage">usage</a></li>
                 <li>
                   <a href="Generator.html#github.username">github.username</a>
                 </li>
-                <li>
-                  <a href="Generator.html#github.username">github.username</a>
-                </li>
-                <li><a href="Generator.html#yarnInstall">yarnInstall</a></li>
                 <li><a href="Generator.html#yarnInstall">yarnInstall</a></li>
               </ul>
             </div>
@@ -327,7 +298,7 @@
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line81">line 81</a></code>
+                  <code><a href="index.js.html#line80">line 80</a></code>
                 </div>
               </h4>
             </dt>
@@ -351,13 +322,12 @@
                       <td class="name"><code>args</code></td>
 
                       <td class="type">
-                        <span class="param-type">String</span>
-                        |
-
-                        <span class="param-type">Array</span>
+                        <span class="param-type">Array.&lt;string></span>
                       </td>
 
-                      <td class="description last"></td>
+                      <td class="description last">
+                        <p>Provide arguments at initialization</p>
+                      </td>
                     </tr>
 
                     <tr>
@@ -367,7 +337,9 @@
                         <span class="param-type">Object</span>
                       </td>
 
-                      <td class="description last"></td>
+                      <td class="description last">
+                        <p>Provide options at initialization</p>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -396,18 +368,6 @@
 
                     <td class="description last">
                       <p>the current Environment being run</p>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td class="name"><code>args</code></td>
-
-                    <td class="type">
-                      <span class="param-type">Object</span>
-                    </td>
-
-                    <td class="description last">
-                      <p>Provide arguments at initialization</p>
                     </td>
                   </tr>
 
@@ -535,12 +495,12 @@ module.exports = class extends Generator {
                 <span class="type-signature"></span>argument<span
                   class="signature"
                   >(name, config)</span
-                ><span class="type-signature"></span>
+                ><span class="type-signature"> &rarr; {this}</span>
 
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line381">line 381</a></code>
+                  <code><a href="index.js.html#line377">line 377</a></code>
                 </div>
               </h4>
             </dt>
@@ -560,14 +520,6 @@ module.exports = class extends Generator {
                   (<code>this.argument</code>), while options are all kept in a
                   hash (<code>this.options</code>).
                 </p>
-                <h3>Options:</h3>
-                <ul>
-                  <li><code>description</code> Description for the argument</li>
-                  <li><code>required</code> Boolean whether it is required</li>
-                  <li><code>optional</code> Boolean whether it is optional</li>
-                  <li><code>type</code> String, Number, Array, or Object</li>
-                  <li><code>default</code> Default value for this argument</li>
-                </ul>
               </div>
 
               <div class="container-params">
@@ -592,7 +544,7 @@ module.exports = class extends Generator {
                         <span class="param-type">String</span>
                       </td>
 
-                      <td class="description last"></td>
+                      <td class="description last"><p>Argument name</p></td>
                     </tr>
 
                     <tr>
@@ -602,10 +554,108 @@ module.exports = class extends Generator {
                         <span class="param-type">Object</span>
                       </td>
 
-                      <td class="description last"></td>
+                      <td class="description last">
+                        <p>Argument options</p>
+                        <h6>Properties</h6>
+
+                        <table class="params">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+
+                              <th>Type</th>
+
+                              <th>Attributes</th>
+
+                              <th class="last">Description</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <tr>
+                              <td class="name"><code>type</code></td>
+
+                              <td class="type">
+                                <span class="param-type">any</span>
+                              </td>
+
+                              <td class="attributes"></td>
+
+                              <td class="description last">
+                                <p>String, Number, Array, or Object</p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>description</code></td>
+
+                              <td class="type">
+                                <span class="param-type">string</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="description last">
+                                <p>Description for the argument</p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>required</code></td>
+
+                              <td class="type">
+                                <span class="param-type">boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="description last">
+                                <p>required` Boolean whether it is required</p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>optional</code></td>
+
+                              <td class="type">
+                                <span class="param-type">boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="description last">
+                                <p>Boolean whether it is optional</p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>default</code></td>
+
+                              <td class="type">
+                                <span class="param-type">any</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="description last">
+                                <p>Default value for this argument</p>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">this</span>
+
+                -
+                <p>This generator</p>
               </div>
 
               <dl class="details"></dl>
@@ -647,167 +697,6 @@ module.exports = class extends Generator {
                     <li>
                       <a href="actions_help.html#.argumentsHelp"
                         >actions/help.argumentsHelp</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="argumentsHelp">
-                <span class="type-signature"></span>argumentsHelp<span
-                  class="signature"
-                  >()</span
-                ><span class="type-signature"> &rarr; {String}</span>
-
-                <div class="container-source members">
-                  <code><a href="actions_help.js.html">actions/help.js</a></code
-                  >,
-                  <code><a href="actions_help.js.html#line93">line 93</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Get help text for arguments</p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">String</span>
-
-                -
-                <p>Text of options in formatted table</p>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_help.html#.argumentsHelp"
-                        >actions/help.argumentsHelp</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="bowerInstall">
-                <span class="type-signature"></span>bowerInstall<span
-                  class="signature"
-                  >(cmpnt<span class="signature-attributes">opt</span>,
-                  options<span class="signature-attributes">opt</span>,
-                  spawnOptions<span class="signature-attributes">opt</span
-                  >)</span
-                ><span class="type-signature"></span>
-
-                <div class="container-source members">
-                  <code
-                    ><a href="actions_install.js.html"
-                      >actions/install.js</a
-                    ></code
-                  >,
-                  <code
-                    ><a href="actions_install.js.html#line178"
-                      >line 178</a
-                    ></code
-                  >
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Receives a list of <code>components</code> and an
-                  <code>options</code> object to install through bower.
-                </p>
-                <p>
-                  The installation will automatically run during the run loop
-                  <code>install</code> phase.
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th>Attributes</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>cmpnt</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                        |
-
-                        <span class="param-type">Array</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>Components to install</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>options</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>
-                          Options to pass to <code>dargs</code> as arguments
-                        </p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>spawnOptions</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>Options to pass <code>child_process.spawn</code>.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_install.html#.bowerInstall"
-                        >actions/install.bowerInstall</a
                       >
                     </li>
                   </ul>
@@ -947,7 +836,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line677">line 677</a></code>
+                  <code><a href="index.js.html#line673">line 673</a></code>
                 </div>
               </h4>
             </dt>
@@ -1087,7 +976,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line274">line 274</a></code>
+                  <code><a href="index.js.html#line273">line 273</a></code>
                 </div>
               </h4>
             </dt>
@@ -1196,78 +1085,16 @@ module.exports = class extends Generator {
             </dd>
 
             <dt>
-              <h4 class="name" id="desc">
-                <span class="type-signature"></span>desc<span class="signature"
-                  >(description)</span
-                ><span class="type-signature"></span>
-
-                <div class="container-source members">
-                  <code><a href="actions_help.js.html">actions/help.js</a></code
-                  >,
-                  <code><a href="actions_help.js.html#line84">line 84</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Simple setter for custom <code>description</code> to append on
-                  help output.
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>description</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                      </td>
-
-                      <td class="description last"></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_help.html#.desc">actions/help.desc</a>
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
               <h4 class="name" id="destinationPath">
                 <span class="type-signature"></span>destinationPath<span
                   class="signature"
-                  >(&hellip;path)</span
+                  >(&hellip;dest)</span
                 ><span class="type-signature"> &rarr; {String}</span>
 
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line891">line 891</a></code>
+                  <code><a href="index.js.html#line887">line 887</a></code>
                 </div>
               </h4>
             </dt>
@@ -1294,7 +1121,7 @@ module.exports = class extends Generator {
 
                   <tbody>
                     <tr>
-                      <td class="name"><code>path</code></td>
+                      <td class="name"><code>dest</code></td>
 
                       <td class="type">
                         <span class="param-type">String</span>
@@ -1302,7 +1129,7 @@ module.exports = class extends Generator {
 
                       <td class="attributes">&lt;repeatable><br /></td>
 
-                      <td class="description last"></td>
+                      <td class="description last"><p>path parts</p></td>
                     </tr>
                   </tbody>
                 </table>
@@ -1330,7 +1157,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line839">line 839</a></code>
+                  <code><a href="index.js.html#line835">line 835</a></code>
                 </div>
               </h4>
             </dt>
@@ -1395,7 +1222,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line909">line 909</a></code>
+                  <code><a href="index.js.html#line905">line 905</a></code>
                 </div>
               </h4>
             </dt>
@@ -1469,96 +1296,6 @@ module.exports = class extends Generator {
             </dd>
 
             <dt>
-              <h4 class="name" id="git.email">
-                <span class="type-signature"></span>git.email<span
-                  class="signature"
-                  >()</span
-                ><span class="type-signature"> &rarr; {String}</span>
-
-                <div class="container-source members">
-                  <code><a href="actions_user.js.html">actions/user.js</a></code
-                  >,
-                  <code><a href="actions_user.js.html#line42">line 42</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Retrieves user's email from Git in the global scope or the
-                  project scope (it'll take what Git will use in the current
-                  context)
-                </p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">String</span>
-
-                -
-                <p>configured git email or undefined</p>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_user.html#.git.email"
-                        >actions/user.git.email</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="help">
-                <span class="type-signature"></span>help<span class="signature"
-                  >()</span
-                ><span class="type-signature"> &rarr; {String}</span>
-
-                <div class="container-source members">
-                  <code><a href="actions_help.js.html">actions/help.js</a></code
-                  >,
-                  <code><a href="actions_help.js.html#line19">line 19</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Tries to get the description from a USAGE file one folder
-                  above the source root otherwise uses a default description
-                </p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">String</span>
-
-                -
-                <p>Help message of the generator</p>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_help.html#.help">actions/help.help</a>
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
               <h4 class="name" id="help">
                 <span class="type-signature"></span>help<span class="signature"
                   >()</span
@@ -1804,208 +1541,6 @@ module.exports = class extends Generator {
             </dd>
 
             <dt>
-              <h4 class="name" id="installDependencies">
-                <span class="type-signature"></span>installDependencies<span
-                  class="signature"
-                  >(options<span class="signature-attributes">opt</span>)</span
-                ><span class="type-signature"></span>
-
-                <div class="container-source members">
-                  <code
-                    ><a href="actions_install.js.html"
-                      >actions/install.js</a
-                    ></code
-                  >,
-                  <code
-                    ><a href="actions_install.js.html#line119"
-                      >line 119</a
-                    ></code
-                  >
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Runs <code>npm</code> and <code>bower</code>, in sequence, in
-                  the generated directory and prints a message to let the user
-                  know.
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th>Attributes</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>options</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <h6>Properties</h6>
-
-                        <table class="params">
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-
-                              <th>Type</th>
-
-                              <th>Attributes</th>
-
-                              <th>Default</th>
-
-                              <th class="last">Description</th>
-                            </tr>
-                          </thead>
-
-                          <tbody>
-                            <tr>
-                              <td class="name"><code>npm</code></td>
-
-                              <td class="type">
-                                <span class="param-type">Boolean</span>
-                                |
-
-                                <span class="param-type">Object</span>
-                              </td>
-
-                              <td class="attributes">&lt;optional><br /></td>
-
-                              <td class="default">
-                                true
-                              </td>
-
-                              <td class="description last">
-                                <p>
-                                  whether to run <code>npm install</code> or can
-                                  be options to pass to <code>dargs</code> as
-                                  arguments
-                                </p>
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td class="name"><code>bower</code></td>
-
-                              <td class="type">
-                                <span class="param-type">Boolean</span>
-                                |
-
-                                <span class="param-type">Object</span>
-                              </td>
-
-                              <td class="attributes">&lt;optional><br /></td>
-
-                              <td class="default">
-                                true
-                              </td>
-
-                              <td class="description last">
-                                <p>
-                                  whether to run <code>bower install</code> or
-                                  can be options to pass to
-                                  <code>dargs</code> as arguments
-                                </p>
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td class="name"><code>yarn</code></td>
-
-                              <td class="type">
-                                <span class="param-type">Boolean</span>
-                                |
-
-                                <span class="param-type">Object</span>
-                              </td>
-
-                              <td class="attributes">&lt;optional><br /></td>
-
-                              <td class="default">
-                                false
-                              </td>
-
-                              <td class="description last">
-                                <p>
-                                  whether to run <code>yarn install</code> or
-                                  can be options to pass to
-                                  <code>dargs</code> as arguments
-                                </p>
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td class="name"><code>skipMessage</code></td>
-
-                              <td class="type">
-                                <span class="param-type">Boolean</span>
-                              </td>
-
-                              <td class="attributes">&lt;optional><br /></td>
-
-                              <td class="default">
-                                false
-                              </td>
-
-                              <td class="description last">
-                                <p>whether to log the used commands</p>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_install.html#.installDependencies"
-                        >actions/install.installDependencies</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-
-              <h5>Examples</h5>
-
-              <pre class="prettyprint"><code>this.installDependencies({
-  bower: true,
-  npm: true
-});</code></pre>
-
-              <pre class="prettyprint"><code>this.installDependencies({
-  yarn: {force: true},
-  npm: false
-});</code></pre>
-            </dd>
-
-            <dt>
               <h4 class="name" id="git.name">
                 <span class="type-signature"></span>git.name<span
                   class="signature"
@@ -2045,171 +1580,6 @@ module.exports = class extends Generator {
                     <li>
                       <a href="actions_user.html#.git.name"
                         >actions/user.git.name</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="git.name">
-                <span class="type-signature"></span>git.name<span
-                  class="signature"
-                  >()</span
-                ><span class="type-signature"> &rarr; {String}</span>
-
-                <div class="container-source members">
-                  <code><a href="actions_user.js.html">actions/user.js</a></code
-                  >,
-                  <code><a href="actions_user.js.html#line22">line 22</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Retrieves user's name from Git in the global scope or the
-                  project scope (it'll take what Git will use in the current
-                  context)
-                </p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">String</span>
-
-                -
-                <p>configured git name or undefined</p>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_user.html#.git.name"
-                        >actions/user.git.name</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="npmInstall">
-                <span class="type-signature"></span>npmInstall<span
-                  class="signature"
-                  >(pkgs<span class="signature-attributes">opt</span>,
-                  options<span class="signature-attributes">opt</span>,
-                  spawnOptions<span class="signature-attributes">opt</span
-                  >)</span
-                ><span class="type-signature"></span>
-
-                <div class="container-source members">
-                  <code
-                    ><a href="actions_install.js.html"
-                      >actions/install.js</a
-                    ></code
-                  >,
-                  <code
-                    ><a href="actions_install.js.html#line191"
-                      >line 191</a
-                    ></code
-                  >
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Receives a list of <code>packages</code> and an
-                  <code>options</code> object to install through npm.
-                </p>
-                <p>
-                  The installation will automatically run during the run loop
-                  <code>install</code> phase.
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th>Attributes</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>pkgs</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                        |
-
-                        <span class="param-type">Array</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>Packages to install</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>options</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>
-                          Options to pass to <code>dargs</code> as arguments
-                        </p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>spawnOptions</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>Options to pass <code>child_process.spawn</code>.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_install.html#.npmInstall"
-                        >actions/install.npmInstall</a
                       >
                     </li>
                   </ul>
@@ -2340,12 +1710,12 @@ module.exports = class extends Generator {
                 <span class="type-signature"></span>option<span
                   class="signature"
                   >(name, config)</span
-                ><span class="type-signature"></span>
+                ><span class="type-signature"> &rarr; {this}</span>
 
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line318">line 318</a></code>
+                  <code><a href="index.js.html#line315">line 315</a></code>
                 </div>
               </h4>
             </dt>
@@ -2357,17 +1727,6 @@ module.exports = class extends Generator {
                   all the cli options parsed by nopt as a
                   <code>this.options</code> hash object.
                 </p>
-                <h3>Options:</h3>
-                <ul>
-                  <li><code>description</code> Description for the option</li>
-                  <li><code>type</code> Either Boolean, String or Number</li>
-                  <li>
-                    <code>alias</code> Option name alias (example
-                    <code>-h</code> and --help`)
-                  </li>
-                  <li><code>default</code> Default value</li>
-                  <li><code>hide</code> Boolean whether to hide from help</li>
-                </ul>
               </div>
 
               <div class="container-params">
@@ -2392,7 +1751,7 @@ module.exports = class extends Generator {
                         <span class="param-type">String</span>
                       </td>
 
-                      <td class="description last"></td>
+                      <td class="description last"><p>Option name</p></td>
                     </tr>
 
                     <tr>
@@ -2402,58 +1761,114 @@ module.exports = class extends Generator {
                         <span class="param-type">Object</span>
                       </td>
 
-                      <td class="description last"></td>
+                      <td class="description last">
+                        <p>Option options</p>
+                        <h6>Properties</h6>
+
+                        <table class="params">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+
+                              <th>Type</th>
+
+                              <th>Attributes</th>
+
+                              <th class="last">Description</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <tr>
+                              <td class="name"><code>type</code></td>
+
+                              <td class="type">
+                                <span class="param-type">any</span>
+                              </td>
+
+                              <td class="attributes"></td>
+
+                              <td class="description last">
+                                <p>Either Boolean, String or Number</p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>description</code></td>
+
+                              <td class="type">
+                                <span class="param-type">string</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="description last">
+                                <p>Description for the option</p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>default</code></td>
+
+                              <td class="type">
+                                <span class="param-type">any</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="description last">
+                                <p>Default value</p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>alias</code></td>
+
+                              <td class="type">
+                                <span class="param-type">any</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="description last">
+                                <p>
+                                  Option name alias (example <code>-h</code> and
+                                  --help`)
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>hide</code></td>
+
+                              <td class="type">
+                                <span class="param-type">any</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="description last">
+                                <p>Boolean whether to hide from help</p>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="optionsHelp">
-                <span class="type-signature"></span>optionsHelp<span
-                  class="signature"
-                  >()</span
-                ><span class="type-signature"> &rarr; {String}</span>
-
-                <div class="container-source members">
-                  <code><a href="actions_help.js.html">actions/help.js</a></code
-                  >,
-                  <code
-                    ><a href="actions_help.js.html#line111">line 111</a></code
-                  >
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Get help text for options</p>
-              </div>
-
               <div class="container-returns">
                 <h5>Returns:</h5>
 
-                <span class="param-type">String</span>
+                <span class="param-type">this</span>
 
                 -
-                <p>Text of options in formatted table</p>
+                <p>This generator</p>
               </div>
 
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_help.html#.optionsHelp"
-                        >actions/help.optionsHelp</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
+              <dl class="details"></dl>
             </dd>
 
             <dt>
@@ -2511,7 +1926,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line288">line 288</a></code>
+                  <code><a href="index.js.html#line287">line 287</a></code>
                 </div>
               </h4>
             </dt>
@@ -2572,6 +1987,9 @@ module.exports = class extends Generator {
                 <h5>Returns:</h5>
 
                 <span class="param-type">Promise</span>
+
+                -
+                <p>prompt promise</p>
               </div>
 
               <dl class="details"></dl>
@@ -2590,7 +2008,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line512">line 512</a></code>
+                  <code><a href="index.js.html#line508">line 508</a></code>
                 </div>
               </h4>
             </dt>
@@ -2686,13 +2104,13 @@ module.exports = class extends Generator {
               <h4 class="name" id="registerTransformStream">
                 <span class="type-signature"></span>registerTransformStream<span
                   class="signature"
-                  >(stream)</span
+                  >(streams)</span
                 ><span class="type-signature"> &rarr; {this}</span>
 
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line932">line 932</a></code>
+                  <code><a href="index.js.html#line928">line 928</a></code>
                 </div>
               </h4>
             </dt>
@@ -2720,7 +2138,7 @@ module.exports = class extends Generator {
 
                   <tbody>
                     <tr>
-                      <td class="name"><code>stream</code></td>
+                      <td class="name"><code>streams</code></td>
 
                       <td class="type">
                         <span class="param-type">stream.Transform</span>
@@ -2743,6 +2161,9 @@ module.exports = class extends Generator {
                 <h5>Returns:</h5>
 
                 <span class="param-type">this</span>
+
+                -
+                <p>This generator</p>
               </div>
 
               <dl class="details"></dl>
@@ -2758,7 +2179,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line781">line 781</a></code>
+                  <code><a href="index.js.html#line777">line 777</a></code>
                 </div>
               </h4>
             </dt>
@@ -2792,7 +2213,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line790">line 790</a></code>
+                  <code><a href="index.js.html#line786">line 786</a></code>
                 </div>
               </h4>
             </dt>
@@ -2825,7 +2246,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line584">line 584</a></code>
+                  <code><a href="index.js.html#line580">line 580</a></code>
                 </div>
               </h4>
             </dt>
@@ -3031,142 +2452,6 @@ module.exports = class extends Generator {
             </dd>
 
             <dt>
-              <h4 class="name" id="scheduleInstallTask">
-                <span class="type-signature"></span>scheduleInstallTask<span
-                  class="signature"
-                  >(installer, paths<span class="signature-attributes">opt</span
-                  >, options<span class="signature-attributes">opt</span>,
-                  spawnOptions<span class="signature-attributes">opt</span
-                  >)</span
-                ><span class="type-signature"></span>
-
-                <div class="container-source members">
-                  <code
-                    ><a href="actions_install.js.html"
-                      >actions/install.js</a
-                    ></code
-                  >,
-                  <code
-                    ><a href="actions_install.js.html#line26">line 26</a></code
-                  >
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Combine package manager cmd line arguments and run the
-                  <code>install</code> command.
-                </p>
-                <p>
-                  During the <code>install</code> step, every command will be
-                  scheduled to run once, on the run loop.
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th>Attributes</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>installer</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>Which package manager to use</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>paths</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                        |
-
-                        <span class="param-type">Array</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>
-                          Packages to install. Use an empty string for
-                          <code>npm install</code>
-                        </p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>options</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>
-                          Options to pass to <code>dargs</code> as arguments
-                        </p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>spawnOptions</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>
-                          Options to pass <code>child_process.spawn</code>. ref
-                          https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
-                        </p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_install.html#.scheduleInstallTask"
-                        >actions/install.scheduleInstallTask</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
               <h4 class="name" id="sourceRoot">
                 <span class="type-signature"></span>sourceRoot<span
                   class="signature"
@@ -3176,7 +2461,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line863">line 863</a></code>
+                  <code><a href="index.js.html#line859">line 859</a></code>
                 </div>
               </h4>
             </dt>
@@ -3348,238 +2633,6 @@ module.exports = class extends Generator {
             </dd>
 
             <dt>
-              <h4 class="name" id="spawnCommand">
-                <span class="type-signature"></span>spawnCommand<span
-                  class="signature"
-                  >(command, args, opt<span class="signature-attributes"
-                    >opt</span
-                  >)</span
-                ><span class="type-signature"> &rarr; {String}</span>
-
-                <div class="container-source members">
-                  <code
-                    ><a href="actions_spawn-command.js.html"
-                      >actions/spawn-command.js</a
-                    ></code
-                  >,
-                  <code
-                    ><a href="actions_spawn-command.js.html#line19"
-                      >line 19</a
-                    ></code
-                  >
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Normalize a command across OS and spawn it (asynchronously).
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th>Attributes</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>command</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>program to execute</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>args</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Array</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>list of arguments to pass to the program</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>opt</code></td>
-
-                      <td class="type">
-                        <span class="param-type">object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>any cross-spawn options</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">String</span>
-
-                -
-                <p>spawned process reference</p>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_spawn-command.html#.spawnCommand"
-                        >actions/spawn-command.spawnCommand</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="spawnCommandSync">
-                <span class="type-signature"></span>spawnCommandSync<span
-                  class="signature"
-                  >(command, args, opt<span class="signature-attributes"
-                    >opt</span
-                  >)</span
-                ><span class="type-signature"> &rarr; {String}</span>
-
-                <div class="container-source members">
-                  <code
-                    ><a href="actions_spawn-command.js.html"
-                      >actions/spawn-command.js</a
-                    ></code
-                  >,
-                  <code
-                    ><a href="actions_spawn-command.js.html#line32"
-                      >line 32</a
-                    ></code
-                  >
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Normalize a command across OS and spawn it (synchronously).
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th>Attributes</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>command</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>program to execute</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>args</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Array</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>list of arguments to pass to the program</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>opt</code></td>
-
-                      <td class="type">
-                        <span class="param-type">object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>any cross-spawn options</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">String</span>
-
-                -
-                <p>spawn.sync result</p>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_spawn-command.html#.spawnCommandSync"
-                        >actions/spawn-command.spawnCommandSync</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
               <h4 class="name" id="spawnCommandSync">
                 <span class="type-signature"></span>spawnCommandSync<span
                   class="signature"
@@ -3699,13 +2752,13 @@ module.exports = class extends Generator {
               <h4 class="name" id="templatePath">
                 <span class="type-signature"></span>templatePath<span
                   class="signature"
-                  >(&hellip;path)</span
+                  >(&hellip;dest)</span
                 ><span class="type-signature"> &rarr; {String}</span>
 
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line876">line 876</a></code>
+                  <code><a href="index.js.html#line872">line 872</a></code>
                 </div>
               </h4>
             </dt>
@@ -3732,7 +2785,7 @@ module.exports = class extends Generator {
 
                   <tbody>
                     <tr>
-                      <td class="name"><code>path</code></td>
+                      <td class="name"><code>dest</code></td>
 
                       <td class="type">
                         <span class="param-type">String</span>
@@ -3740,7 +2793,7 @@ module.exports = class extends Generator {
 
                       <td class="attributes">&lt;repeatable><br /></td>
 
-                      <td class="description last"></td>
+                      <td class="description last"><p>path parts</p></td>
                     </tr>
                   </tbody>
                 </table>
@@ -3802,49 +2855,6 @@ module.exports = class extends Generator {
             </dd>
 
             <dt>
-              <h4 class="name" id="usage">
-                <span class="type-signature"></span>usage<span class="signature"
-                  >()</span
-                ><span class="type-signature"> &rarr; {String}</span>
-
-                <div class="container-source members">
-                  <code><a href="actions_help.js.html">actions/help.js</a></code
-                  >,
-                  <code><a href="actions_help.js.html#line59">line 59</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Output usage information for this given generator, depending
-                  on its arguments or options
-                </p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">String</span>
-
-                -
-                <p>Usage information of the generator</p>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_help.html#.usage">actions/help.usage</a>
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
               <h4 class="name" id="github.username">
                 <span class="type-signature"></span>github.username<span
                   class="signature"
@@ -3883,170 +2893,6 @@ module.exports = class extends Generator {
                     <li>
                       <a href="actions_user.html#.github.username"
                         >actions/user.github.username</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="github.username">
-                <span class="type-signature"></span>github.username<span
-                  class="signature"
-                  >()</span
-                ><span class="type-signature"> &rarr; {Promise}</span>
-
-                <div class="container-source members">
-                  <code><a href="actions_user.js.html">actions/user.js</a></code
-                  >,
-                  <code><a href="actions_user.js.html#line62">line 62</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Retrieves GitHub's username from the GitHub API</p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">Promise</span>
-
-                -
-                <p>
-                  Resolved with the GitHub username or rejected if unable to get
-                  the information
-                </p>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_user.html#.github.username"
-                        >actions/user.github.username</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-              </dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="yarnInstall">
-                <span class="type-signature"></span>yarnInstall<span
-                  class="signature"
-                  >(pkgs<span class="signature-attributes">opt</span>,
-                  options<span class="signature-attributes">opt</span>,
-                  spawnOptions<span class="signature-attributes">opt</span
-                  >)</span
-                ><span class="type-signature"></span>
-
-                <div class="container-source members">
-                  <code
-                    ><a href="actions_install.js.html"
-                      >actions/install.js</a
-                    ></code
-                  >,
-                  <code
-                    ><a href="actions_install.js.html#line204"
-                      >line 204</a
-                    ></code
-                  >
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Receives a list of <code>packages</code> and an
-                  <code>options</code> object to install through yarn.
-                </p>
-                <p>
-                  The installation will automatically run during the run loop
-                  <code>install</code> phase.
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th>Attributes</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>pkgs</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                        |
-
-                        <span class="param-type">Array</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>Packages to install</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>options</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>
-                          Options to pass to <code>dargs</code> as arguments
-                        </p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>spawnOptions</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>Options to pass <code>child_process.spawn</code>.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="actions_install.html#.yarnInstall"
-                        >actions/install.yarnInstall</a
                       >
                     </li>
                   </ul>

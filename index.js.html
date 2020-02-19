@@ -86,14 +86,9 @@
                 <li>
                   <a href="Generator.html#argumentsHelp">argumentsHelp</a>
                 </li>
-                <li>
-                  <a href="Generator.html#argumentsHelp">argumentsHelp</a>
-                </li>
-                <li><a href="Generator.html#bowerInstall">bowerInstall</a></li>
                 <li><a href="Generator.html#bowerInstall">bowerInstall</a></li>
                 <li><a href="Generator.html#composeWith">composeWith</a></li>
                 <li><a href="Generator.html#debug">debug</a></li>
-                <li><a href="Generator.html#desc">desc</a></li>
                 <li><a href="Generator.html#desc">desc</a></li>
                 <li>
                   <a href="Generator.html#destinationPath">destinationPath</a>
@@ -105,25 +100,15 @@
                   <a href="Generator.html#determineAppname">determineAppname</a>
                 </li>
                 <li><a href="Generator.html#git.email">git.email</a></li>
-                <li><a href="Generator.html#git.email">git.email</a></li>
-                <li><a href="Generator.html#help">help</a></li>
                 <li><a href="Generator.html#help">help</a></li>
                 <li>
                   <a href="Generator.html#installDependencies"
                     >installDependencies</a
                   >
                 </li>
-                <li>
-                  <a href="Generator.html#installDependencies"
-                    >installDependencies</a
-                  >
-                </li>
                 <li><a href="Generator.html#git.name">git.name</a></li>
-                <li><a href="Generator.html#git.name">git.name</a></li>
-                <li><a href="Generator.html#npmInstall">npmInstall</a></li>
                 <li><a href="Generator.html#npmInstall">npmInstall</a></li>
                 <li><a href="Generator.html#option">option</a></li>
-                <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
@@ -148,30 +133,16 @@
                     >scheduleInstallTask</a
                   >
                 </li>
-                <li>
-                  <a href="Generator.html#scheduleInstallTask"
-                    >scheduleInstallTask</a
-                  >
-                </li>
                 <li><a href="Generator.html#sourceRoot">sourceRoot</a></li>
                 <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
-                <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
-                <li>
-                  <a href="Generator.html#spawnCommandSync">spawnCommandSync</a>
-                </li>
                 <li>
                   <a href="Generator.html#spawnCommandSync">spawnCommandSync</a>
                 </li>
                 <li><a href="Generator.html#templatePath">templatePath</a></li>
                 <li><a href="Generator.html#usage">usage</a></li>
-                <li><a href="Generator.html#usage">usage</a></li>
                 <li>
                   <a href="Generator.html#github.username">github.username</a>
                 </li>
-                <li>
-                  <a href="Generator.html#github.username">github.username</a>
-                </li>
-                <li><a href="Generator.html#yarnInstall">yarnInstall</a></li>
                 <li><a href="Generator.html#yarnInstall">yarnInstall</a></li>
               </ul>
             </div>
@@ -325,41 +296,6 @@ const methodIsValid = function(name) {
   return name.charAt(0) !== '_' &amp;&amp; name !== 'constructor';
 };
 
-/**
- * The `Generator` class provides the common API shared by all generators.
- * It define options, arguments, file, prompt, log, API, etc.
- *
- * It mixes into its prototype all the methods found in the `actions/` mixins.
- *
- * Every generator should extend this base class.
- *
- * @constructor
- * @mixes actions/help
- * @mixes actions/install
- * @mixes actions/spawn-command
- * @mixes actions/user
- * @mixes nodejs/EventEmitter
- *
- * @param {String|Array} args
- * @param {Object} options
- *
- * @property {Object}   env         - the current Environment being run
- * @property {Object}   args        - Provide arguments at initialization
- * @property {String}   resolved    - the path to the current generator
- * @property {String}   description - Used in `--help` output
- * @property {String}   appname     - The application name
- * @property {Storage}  config      - `.yo-rc` config file manager
- * @property {Object}   fs          - An instance of {@link https://github.com/SBoudrias/mem-fs-editor Mem-fs-editor}
- * @property {Function} log         - Output content through Interface Adapter
- *
- * @example
- * const Generator = require('yeoman-generator');
- * module.exports = class extends Generator {
- *   writing() {
- *     this.fs.write(this.destinationPath('index.js'), 'const foo = 1;');
- *   }
- * };
- */
 class Generator extends EventEmitter {
   // If for some reason environment adds more queues, we should use or own for stability.
   static get queues() {
@@ -375,6 +311,40 @@ class Generator extends EventEmitter {
     ];
   }
 
+  /**
+   * @classdesc The `Generator` class provides the common API shared by all generators.
+   * It define options, arguments, file, prompt, log, API, etc.
+   *
+   * It mixes into its prototype all the methods found in the `actions/` mixins.
+   *
+   * Every generator should extend this base class.
+   *
+   * @constructor
+   * @mixes actions/help
+   * @mixes actions/install
+   * @mixes actions/spawn-command
+   * @mixes actions/user
+   * @mixes nodejs/EventEmitter
+   *
+   * @param {string[]} args           - Provide arguments at initialization
+   * @param {Object} options          - Provide options at initialization
+   *
+   * @property {Object}   env         - the current Environment being run
+   * @property {String}   resolved    - the path to the current generator
+   * @property {String}   description - Used in `--help` output
+   * @property {String}   appname     - The application name
+   * @property {Storage}  config      - `.yo-rc` config file manager
+   * @property {Object}   fs          - An instance of {@link https://github.com/SBoudrias/mem-fs-editor Mem-fs-editor}
+   * @property {Function} log         - Output content through Interface Adapter
+   *
+   * @example
+   * const Generator = require('yeoman-generator');
+   * module.exports = class extends Generator {
+   *   writing() {
+   *     this.fs.write(this.destinationPath('index.js'), 'const foo = 1;');
+   *   }
+   * };
+   */
   constructor(args, options) {
     super();
 
@@ -580,7 +550,7 @@ class Generator extends EventEmitter {
    * user's answers as defaults.
    *
    * @param  {array} questions  Array of question descriptor objects. See {@link https://github.com/SBoudrias/Inquirer.js/blob/master/README.md Documentation}
-   * @return {Promise}
+   * @return {Promise} prompt promise
    */
   prompt(questions) {
     questions = promptSuggestion.prefillQuestions(this._globalConfig, questions);
@@ -601,16 +571,14 @@ class Generator extends EventEmitter {
    * generate generator usage. By default, generators get all the cli options
    * parsed by nopt as a `this.options` hash object.
    *
-   * ### Options:
-   *
-   *   - `description` Description for the option
-   *   - `type` Either Boolean, String or Number
-   *   - `alias` Option name alias (example `-h` and --help`)
-   *   - `default` Default value
-   *   - `hide` Boolean whether to hide from help
-   *
-   * @param {String} name
-   * @param {Object} config
+   * @param {String} name - Option name
+   * @param {Object} config - Option options
+   * @param {any} config.type - Either Boolean, String or Number
+   * @param {string} [config.description] - Description for the option
+   * @param {any} [config.default] - Default value
+   * @param {any} [config.alias] - Option name alias (example `-h` and --help`)
+   * @param {any} [config.hide] - Boolean whether to hide from help
+   * @return {this} This generator
    */
   option(name, config) {
     config = config || {};
@@ -664,16 +632,15 @@ class Generator extends EventEmitter {
    * Besides, arguments are used inside your code as a property (`this.argument`),
    * while options are all kept in a hash (`this.options`).
    *
-   * ### Options:
    *
-   *   - `description` Description for the argument
-   *   - `required` Boolean whether it is required
-   *   - `optional` Boolean whether it is optional
-   *   - `type` String, Number, Array, or Object
-   *   - `default` Default value for this argument
-   *
-   * @param {String} name
-   * @param {Object} config
+   * @param {String} name - Argument name
+   * @param {Object} config - Argument options
+   * @param {any} config.type - String, Number, Array, or Object
+   * @param {string} [config.description] - Description for the argument
+   * @param {boolean} [config.required] - required` Boolean whether it is required
+   * @param {boolean} [config.optional] - Boolean whether it is optional
+   * @param {any} [config.default] - Default value for this argument
+   * @return {this} This generator
    */
   argument(name, config) {
     config = config || {};
@@ -1167,11 +1134,11 @@ class Generator extends EventEmitter {
 
   /**
    * Join a path to the source root.
-   * @param  {...String} path
+   * @param  {...String} dest - path parts
    * @return {String}    joined path
    */
-  templatePath() {
-    let filepath = path.join.apply(path, arguments);
+  templatePath(...dest) {
+    let filepath = path.join.apply(path, dest);
 
     if (!path.isAbsolute(filepath)) {
       filepath = path.join(this.sourceRoot(), filepath);
@@ -1182,11 +1149,11 @@ class Generator extends EventEmitter {
 
   /**
    * Join a path to the destination root.
-   * @param  {...String} path
+   * @param  {...String} dest - path parts
    * @return {String}    joined path
    */
-  destinationPath() {
-    let filepath = path.join.apply(path, arguments);
+  destinationPath(...dest) {
+    let filepath = path.join.apply(path, dest);
 
     if (!path.isAbsolute(filepath)) {
       filepath = path.join(this.destinationRoot(), filepath);
@@ -1222,9 +1189,9 @@ class Generator extends EventEmitter {
    *
    * Most usually, these transform stream will be Gulp plugins.
    *
-   * @param  {stream.Transform|stream.Transform[]} stream An array of Transform stream
+   * @param  {stream.Transform|stream.Transform[]} streams An array of Transform stream
    * or a single one.
-   * @return {this}
+   * @return {this} This generator
    */
   registerTransformStream(streams) {
     assert(streams, 'expected to receive a transform stream as parameter');
