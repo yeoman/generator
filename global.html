@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.7.2</span>
+        <span class="version">v4.5.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -88,9 +88,6 @@
                 </li>
                 <li><a href="Generator.html#bowerInstall">bowerInstall</a></li>
                 <li><a href="Generator.html#composeWith">composeWith</a></li>
-                <li>
-                  <a href="Generator.html#createStorage">createStorage</a>
-                </li>
                 <li><a href="Generator.html#debug">debug</a></li>
                 <li><a href="Generator.html#desc">desc</a></li>
                 <li>
@@ -166,10 +163,8 @@
                 <li><a href="Storage.html#delete">delete</a></li>
                 <li><a href="Storage.html#get">get</a></li>
                 <li><a href="Storage.html#getAll">getAll</a></li>
-                <li><a href="Storage.html#getPath">getPath</a></li>
                 <li><a href="Storage.html#save">save</a></li>
                 <li><a href="Storage.html#set">set</a></li>
-                <li><a href="Storage.html#setPath">setPath</a></li>
               </ul>
             </div>
           </li>
@@ -292,7 +287,7 @@
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line45">line 45</a></code>
+                  <code><a href="index.js.html#line46">line 46</a></code>
                 </div>
               </h4>
             </dt>
@@ -301,14 +296,19 @@
                 <p>Priority object.</p>
               </div>
 
-              <h5>Type:</h5>
-              <ul>
-                <li>
-                  <span class="param-type"
-                    ><a href="global.html#QueueOptions">QueueOptions</a></span
-                  >
-                </li>
-              </ul>
+              <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+            </li>
+        </ul>
+    
+    -->
 
               <h5 class="subsection-title">Properties:</h5>
 
@@ -377,12 +377,19 @@
                 <p>Queue options.</p>
               </div>
 
-              <h5>Type:</h5>
-              <ul>
-                <li>
-                  <span class="param-type">Object</span>
-                </li>
-              </ul>
+              <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+            </li>
+        </ul>
+    
+    -->
 
               <h5 class="subsection-title">Properties:</h5>
 
@@ -452,7 +459,7 @@
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code
                   >,
-                  <code><a href="index.js.html#line52">line 52</a></code>
+                  <code><a href="index.js.html#line54">line 54</a></code>
                 </div>
               </h4>
             </dt>
@@ -461,14 +468,19 @@
                 <p>Complete Task object.</p>
               </div>
 
-              <h5>Type:</h5>
-              <ul>
-                <li>
-                  <span class="param-type"
-                    ><a href="global.html#TaskOptions">TaskOptions</a></span
-                  >
-                </li>
-              </ul>
+              <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+            </li>
+        </ul>
+    
+    -->
 
               <h5 class="subsection-title">Properties:</h5>
 
@@ -488,11 +500,7 @@
                     <td class="name"><code>method</code></td>
 
                     <td class="type">
-                      <span class="param-type"
-                        ><a href="global.html#WrappedMethod"
-                          >WrappedMethod</a
-                        ></span
-                      >
+                      <span class="param-type">function</span>
                     </td>
 
                     <td class="description last">
@@ -531,14 +539,19 @@
                 <p>Task options.</p>
               </div>
 
-              <h5>Type:</h5>
-              <ul>
-                <li>
-                  <span class="param-type"
-                    ><a href="global.html#QueueOptions">QueueOptions</a></span
-                  >
-                </li>
-              </ul>
+              <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+            </li>
+        </ul>
+    
+    -->
 
               <h5 class="subsection-title">Properties:</h5>
 
@@ -569,57 +582,6 @@
                   </tr>
                 </tbody>
               </table>
-
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="WrappedMethod">
-                <span class="type-signature"></span>WrappedMethod<span
-                  class="signature"
-                  >()</span
-                ><span class="type-signature"></span>
-
-                <div class="container-source members">
-                  <code><a href="index.js.html">index.js</a></code
-                  >,
-                  <code><a href="index.js.html#line59">line 59</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  RunAsync creates a promise and executes wrappedMethod inside
-                  the promise. It replaces async property of the wrappedMethod's
-                  context with one RunAsync provides. async() simulates an async
-                  function by creating a callback.
-                </p>
-                <p>It supports promises/async and sync functions.</p>
-                <ul>
-                  <li>
-                    Promises/async: forward resolve/reject from the runAsync
-                    promise to the promise returned by the wrappedMethod.
-                  </li>
-                  <li>
-                    Sync functions: resolves with the returned value. Can be a
-                    promise for chaining
-                  </li>
-                  <li>
-                    Sync functions with callback (done = this.async()) calls:
-                    Reject with done(rejectValue) first argument Resolve with
-                    done(undefined, resolveValue) second argument
-                  </li>
-                  <li>
-                    Callback must called when 'async()' was called inside a sync
-                    function.
-                  </li>
-                  <li>
-                    Callback can be ignored when 'async()' was called inside a
-                    async function.
-                  </li>
-                </ul>
-              </div>
 
               <dl class="details"></dl>
             </dd>
