@@ -1,0 +1,39 @@
+name: Release Published
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Create Node.js Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Generate package
+        id: generate_package
+        run: echo ::set-output name=FILE::$(npm pack)
+
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{github.event.release.upload_url}}
+          asset_path: ./${{ steps.generate_package.outputs.FILE }}
+          asset_name: ${{ steps.generate_package.outputs.FILE }}
+          asset_content_type: application/gzip
+
+      - name: Try to publish to npmjs
+        run: |
+          if [ "$NODE_AUTH_TOKEN" != "" ]; then
+            npm publish ${{ steps.generate_package.outputs.FILE }}
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
