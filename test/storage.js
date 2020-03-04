@@ -255,4 +255,28 @@ describe('Storage', () => {
     store.set('test', { bar: 'foo' });
     assert.equal(this.store.get('bar'), 'foo');
   });
+
+  it('#getPath() & #setPath()', function() {
+    this.store.set('name', { name: 'test' });
+    assert.ok(this.store.getPath('name'));
+    assert.equal(this.store.getPath('name.name'), 'test');
+    assert.equal(this.store.setPath('name.name', 'changed'), 'changed');
+    assert.equal(this.store.getPath('name.name'), 'changed');
+    assert.equal(this.store.get('name').name, 'changed');
+  });
+
+  describe('.constructor() with lodashPath', () => {
+    beforeEach(function() {
+      this.pathStore = new Storage('test.path', this.fs, this.storePath, true);
+    });
+
+    it('get and set value', function() {
+      assert.equal(this.pathStore.setPath('name', 'initial'), 'initial');
+      assert.equal(this.store.get('path').name, 'initial');
+      this.store.set('path', { name: 'test' });
+      assert.equal(this.pathStore.get('name'), 'test');
+      this.pathStore.set('name', 'changed');
+      assert.equal(this.store.get('path').name, 'changed');
+    });
+  });
 });
