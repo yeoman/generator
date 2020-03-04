@@ -265,13 +265,9 @@ describe('Storage', () => {
     assert.equal(this.store.get('name').name, 'changed');
   });
 
-  describe('.constructor() with asPath', () => {
+  describe('.constructor() with lodashPath', () => {
     beforeEach(function() {
-      this.pathStore = new Storage(
-        { name: 'test.path', asPath: true },
-        this.fs,
-        this.storePath
-      );
+      this.pathStore = new Storage('test.path', this.fs, this.storePath, true);
     });
 
     it('get and set value', function() {
