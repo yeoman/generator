@@ -92,4 +92,18 @@ describe('Generators module', () => {
       assert.equal(undefined, customStorage.name);
     });
   });
+
+  it('runing standalone', function(done) {
+    const Generator = class extends Base {};
+    let value = 1;
+    Generator.prototype.exec = function() {
+      value = 2;
+    };
+
+    const generator = new Generator();
+    generator.run().then(() => {
+      assert.equal(2, value);
+      done();
+    });
+  });
 });
