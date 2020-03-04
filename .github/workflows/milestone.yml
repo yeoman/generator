@@ -1,0 +1,38 @@
+name: Milestone Reached
+
+on:
+  milestone:
+    types: [closed]
+
+jobs:
+  build:
+    name: Release Milestone
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.milestone.title, 'v') && startsWith(github.event.milestone.description, 'Do release')
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - name: Verify version
+        run: |
+          npm install -g semver
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          semver -r =${{github.event.milestone.title}} $(semver -i minor $CURRENT_VERSION) $(semver -i patch $CURRENT_VERSION) $(semver -i major $CURRENT_VERSION)
+      - name: Create tag
+        run: |
+          git config --global user.email ""
+          git config --global user.name "GitHub Actions"
+          npm version ${{github.event.milestone.title}}
+          git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+          git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY" ${{github.event.milestone.title}}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{github.event.milestone.title}}
+          release_name: Release ${{github.event.milestone.title}}
+          body: ${{github.event.milestone.description}}
+          draft: true
+          prerelease: false
