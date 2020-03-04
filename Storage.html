@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.6.0</span>
+        <span class="version">v4.7.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -163,8 +163,10 @@
                 <li><a href="Storage.html#delete">delete</a></li>
                 <li><a href="Storage.html#get">get</a></li>
                 <li><a href="Storage.html#getAll">getAll</a></li>
+                <li><a href="Storage.html#getPath">getPath</a></li>
                 <li><a href="Storage.html#save">save</a></li>
                 <li><a href="Storage.html#set">set</a></li>
+                <li><a href="Storage.html#setPath">setPath</a></li>
               </ul>
             </div>
           </li>
@@ -277,7 +279,7 @@
             <span class="attribs"><span class="type-signature"></span></span
             >Storage<span class="signature"
               >(name<span class="signature-attributes">opt</span>, fs,
-              configPath)</span
+              configPath, lodashPath)</span
             ><span class="type-signature"></span>
           </h2>
 
@@ -300,13 +302,13 @@
                 new <span class="type-signature"></span>Storage<span
                   class="signature"
                   >(name<span class="signature-attributes">opt</span>, fs,
-                  configPath)</span
+                  configPath, lodashPath)</span
                 ><span class="type-signature"></span>
 
                 <div class="container-source members">
                   <code><a href="util_storage.js.html">util/storage.js</a></code
                   >,
-                  <code><a href="util_storage.js.html#line23">line 23</a></code>
+                  <code><a href="util_storage.js.html#line24">line 24</a></code>
                 </div>
               </h4>
             </dt>
@@ -369,6 +371,20 @@
                         <p>The filepath used as a storage.</p>
                       </td>
                     </tr>
+
+                    <tr>
+                      <td class="name"><code>lodashPath</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Boolean</span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last">
+                        <p>Set true to treat name as a lodash path.</p>
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -399,7 +415,7 @@
                   <code><a href="util_storage.js.html">util/storage.js</a></code
                   >,
                   <code
-                    ><a href="util_storage.js.html#line127">line 127</a></code
+                    ><a href="util_storage.js.html#line161">line 161</a></code
                   >
                 </div>
               </h4>
@@ -465,7 +481,7 @@
                   <code><a href="util_storage.js.html">util/storage.js</a></code
                   >,
                   <code
-                    ><a href="util_storage.js.html#line115">line 115</a></code
+                    ><a href="util_storage.js.html#line149">line 149</a></code
                   >
                 </div>
               </h4>
@@ -517,7 +533,7 @@
                 <div class="container-source members">
                   <code><a href="util_storage.js.html">util/storage.js</a></code
                   >,
-                  <code><a href="util_storage.js.html#line78">line 78</a></code>
+                  <code><a href="util_storage.js.html#line88">line 88</a></code>
                 </div>
               </h4>
             </dt>
@@ -578,7 +594,9 @@
                 <div class="container-source members">
                   <code><a href="util_storage.js.html">util/storage.js</a></code
                   >,
-                  <code><a href="util_storage.js.html#line86">line 86</a></code>
+                  <code
+                    ><a href="util_storage.js.html#line105">line 105</a></code
+                  >
                 </div>
               </h4>
             </dt>
@@ -600,6 +618,67 @@
             </dd>
 
             <dt>
+              <h4 class="name" id="getPath">
+                <span class="type-signature"></span>getPath<span
+                  class="signature"
+                  >(path)</span
+                ><span class="type-signature"> &rarr; {*}</span>
+
+                <div class="container-source members">
+                  <code><a href="util_storage.js.html">util/storage.js</a></code
+                  >,
+                  <code><a href="util_storage.js.html#line97">line 97</a></code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Get a stored value from a lodash path</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>path</code></td>
+
+                      <td class="type">
+                        <span class="param-type">String</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>The path under which the value is stored.</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">*</span>
+
+                -
+                <p>The stored value. Any JSON valid type could be returned</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
               <h4 class="name" id="save">
                 <span class="type-signature"></span>save<span class="signature"
                   >()</span
@@ -608,7 +687,7 @@
                 <div class="container-source members">
                   <code><a href="util_storage.js.html">util/storage.js</a></code
                   >,
-                  <code><a href="util_storage.js.html#line69">line 69</a></code>
+                  <code><a href="util_storage.js.html#line79">line 79</a></code>
                 </div>
               </h4>
             </dt>
@@ -629,7 +708,9 @@
                 <div class="container-source members">
                   <code><a href="util_storage.js.html">util/storage.js</a></code
                   >,
-                  <code><a href="util_storage.js.html#line96">line 96</a></code>
+                  <code
+                    ><a href="util_storage.js.html#line115">line 115</a></code
+                  >
                 </div>
               </h4>
             </dt>
@@ -655,6 +736,84 @@
                   <tbody>
                     <tr>
                       <td class="name"><code>key</code></td>
+
+                      <td class="type">
+                        <span class="param-type">String</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>The key under which the value is stored</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>val</code></td>
+
+                      <td class="type">
+                        <span class="param-type">*</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>
+                          Any valid JSON type value (String, Number, Array,
+                          Object).
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">*</span>
+
+                -
+                <p>val Whatever was passed in as val.</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="setPath">
+                <span class="type-signature"></span>setPath<span
+                  class="signature"
+                  >(path, val)</span
+                ><span class="type-signature"> &rarr; {*}</span>
+
+                <div class="container-source members">
+                  <code><a href="util_storage.js.html">util/storage.js</a></code
+                  >,
+                  <code
+                    ><a href="util_storage.js.html#line136">line 136</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Assign a lodash path to a value and schedule a save.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>path</code></td>
 
                       <td class="type">
                         <span class="param-type">String</span>
