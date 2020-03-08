@@ -143,6 +143,24 @@ describe('Generator with environment version', () => {
         });
       });
     });
+
+    describe('#prompt with storage', function() {
+      it('with incompatible inquirer', function() {
+        this.getVersionStub.withArgs().returns('3.0.0');
+        this.getVersionStub.withArgs('inquirer').returns('7.0.0');
+        assert.throws(
+          () => this.dummy.prompt([], this.dummy.config),
+          /requires inquirer at least 7.1.0, current version is 7.0.0$/
+        );
+      });
+
+      it('with compatible environment', function() {
+        const self = this;
+        this.getVersionStub.withArgs().returns('3.0.0');
+        this.getVersionStub.withArgs('inquirer').returns('7.1.0');
+        return self.dummy.prompt([], self.dummy.config);
+      });
+    });
   });
 
   describe('mocked 2.8.1', () => {
@@ -171,7 +189,7 @@ describe('Generator with environment version', () => {
         it('throws exception', function() {
           assert.throws(
             () => this.dummy.checkEnvironmentVersion(),
-            /requires yeoman-environment at least 3.0.0, current version is less than 3.0.0$/
+            /requires yeoman-environment at least 2.9.0, current version is less than 2.9.0$/
           );
         });
       });
