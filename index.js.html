@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.6.0</span>
+        <span class="version">v4.7.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -163,8 +163,10 @@
                 <li><a href="Storage.html#delete">delete</a></li>
                 <li><a href="Storage.html#get">get</a></li>
                 <li><a href="Storage.html#getAll">getAll</a></li>
+                <li><a href="Storage.html#getPath">getPath</a></li>
                 <li><a href="Storage.html#save">save</a></li>
                 <li><a href="Storage.html#set">set</a></li>
+                <li><a href="Storage.html#setPath">setPath</a></li>
               </ul>
             </div>
           </li>
@@ -290,6 +292,7 @@ const through = require('through2');
 const FileEditor = require('mem-fs-editor');
 const createDebug = require('debug');
 const SubQueue = require('grouped-queue/lib/subqueue');
+const Environment = require('yeoman-environment');
 
 const Conflicter = require('./util/conflicter');
 const Storage = require('./util/storage');
@@ -407,7 +410,8 @@ class Generator extends EventEmitter {
       args = [];
     }
 
-    this.options = options || {};
+    options = options || {};
+    this.options = options;
     this._initOptions = _.clone(options);
     this._args = args || [];
     this._options = {};
@@ -439,20 +443,18 @@ class Generator extends EventEmitter {
       default: false
     });
 
-    // Checks required parameters
-    assert(
-      this.options.env,
-      'You must provide the environment object. Use env#create() to create a new generator.'
-    );
-    assert(
-      this.options.resolved,
-      'You must provide the resolved path value. Use env#create() to create a new generator.'
-    );
-    this.env = this.options.env;
-    this.resolved = this.options.resolved;
+    this.resolved = this.options.resolved || __dirname;
+    // Make sure we have a full featured environment.
+    this.env = this.options.env || Environment.createEnv();
+    if (Object.getPrototypeOf(this.env) === Object.prototype) {
+      debug('Converting env from a simple object to an Environment');
+      const env = Environment.createEnv();
+      Object.assign(env, this.env);
+      this.env = env;
+    }
 
     // Ensure the environment support features this yeoman-generator version require.
-    require('yeoman-environment').enforceUpdate(this.env);
+    Environment.enforceUpdate(this.env);
 
     this.description = this.description || '';
 
@@ -1187,12 +1189,13 @@ class Generator extends EventEmitter {
   /**
    * Return a storage instance.
    * @param  {String} storePath  The path of the json file
-   * @param  {String} [rootName] The rootName in which is stored inside the json
+   * @param  {String} [path] The name in which is stored inside the json
+   * @param  {String} [lodashPath] Treat path as an lodash path
    * @return {Storage} json storage
    * @private
    */
-  createStorage(storePath, rootName) {
-    return new Storage(rootName, this.fs, storePath);
+  createStorage(storePath, path, lodashPath = false) {
+    return new Storage(path, this.fs, storePath, lodashPath);
   }
 
   /**
