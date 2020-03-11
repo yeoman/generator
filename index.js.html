@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.7.0</span>
+        <span class="version">v4.7.1</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -88,6 +88,9 @@
                 </li>
                 <li><a href="Generator.html#bowerInstall">bowerInstall</a></li>
                 <li><a href="Generator.html#composeWith">composeWith</a></li>
+                <li>
+                  <a href="Generator.html#createStorage">createStorage</a>
+                </li>
                 <li><a href="Generator.html#debug">debug</a></li>
                 <li><a href="Generator.html#desc">desc</a></li>
                 <li>
@@ -291,7 +294,6 @@ const runAsync = require('run-async');
 const through = require('through2');
 const FileEditor = require('mem-fs-editor');
 const createDebug = require('debug');
-const SubQueue = require('grouped-queue/lib/subqueue');
 const Environment = require('yeoman-environment');
 
 const Conflicter = require('./util/conflicter');
@@ -557,6 +559,15 @@ class Generator extends EventEmitter {
 
         // Backwards compatibilitiy with grouped-queue &lt; 1.0.0
         if (!this.env.runLoop.addSubQueue) {
+          let SubQueue;
+          try {
+            SubQueue = require('grouped-queue/lib/subqueue');
+          } catch {
+            throw new Error(
+              "The running environment doesn't have the necessary features to run this generator. Update it and run again."
+            );
+          }
+
           this.env.runLoop.addSubQueue = function(name, before) {
             if (this.__queues__[name]) {
               // Sub-queue already exists
@@ -1192,9 +1203,9 @@ class Generator extends EventEmitter {
    * @param  {String} [path] The name in which is stored inside the json
    * @param  {String} [lodashPath] Treat path as an lodash path
    * @return {Storage} json storage
-   * @private
    */
   createStorage(storePath, path, lodashPath = false) {
+    storePath = this.destinationPath(storePath);
     return new Storage(path, this.fs, storePath, lodashPath);
   }
 
