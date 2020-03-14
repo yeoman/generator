@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.7.1</span>
+        <span class="version">v4.7.2</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -562,7 +562,7 @@ class Generator extends EventEmitter {
           let SubQueue;
           try {
             SubQueue = require('grouped-queue/lib/subqueue');
-          } catch {
+          } catch (error) {
             throw new Error(
               "The running environment doesn't have the necessary features to run this generator. Update it and run again."
             );
