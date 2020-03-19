@@ -69,7 +69,7 @@
     "lodash": "^4.17.11",
     "make-dir": "^3.0.0",
     "mem-fs-editor": "^6.0.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.5",
     "pretty-bytes": "^5.2.0",
     "read-chunk": "^3.2.0",
     "read-pkg-up": "^5.0.0",
