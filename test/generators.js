@@ -69,8 +69,38 @@ describe('Generators module', () => {
     );
   });
 
+  describe('#runWithOptions', function() {
+    beforeEach(function() {
+      const Generator = class extends Base {};
+      Generator.prototype.throwing = () => {
+        throw new Error('not thrown');
+      };
+
+      this.generator = new Generator({
+        env: this.env,
+        resolved: 'test'
+      });
+    });
+
+    it('forwards error to environment with forwardErrorToEnvironment', function(done) {
+      this.env.on('error', () => {
+        done();
+      });
+      this.generator.runWithOptions({ forwardErrorToEnvironment: true });
+    });
+
+    it('forwards error to environment with environment with newErrorHandler option', function(done) {
+      this.env.options.newErrorHandler = true;
+
+      this.env.on('error', () => {
+        done();
+      });
+      this.generator.runWithOptions();
+    });
+  });
+
   describe('#createStorage', function() {
-    before(function() {
+    beforeEach(function() {
       this.generator = new Base({
         env: this.env,
         resolved: 'test',
