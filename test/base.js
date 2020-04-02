@@ -29,6 +29,9 @@ describe('Base', () => {
 
   beforeEach(function() {
     this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+    // Ignore error forwarded to environment
+    this.env.on('error', _ => {});
+
     makeDir.sync(resolveddir);
     this.Dummy = class extends Base {};
     this.Dummy.prototype.exec = sinon.spy();
@@ -293,6 +296,29 @@ describe('Base', () => {
       this.testGen.on('error', sinon.spy());
       return this.testGen.run().catch(err => {
         assert.equal(err, error);
+      });
+    });
+
+    it('pause queue once an error is thrown', function(done) {
+      const error = new Error();
+      let thrown = false;
+      let catched = false;
+
+      this.TestGenerator.prototype.throwing = () => {
+        thrown = true;
+        throw error;
+      };
+
+      this.TestGenerator.prototype.done = () => {
+        if (thrown && catched) {
+          done();
+        }
+      };
+
+      this.testGen.run().catch(() => {
+        catched = true;
+        assert.equal(this.env.runLoop.running, false);
+        this.env.runLoop.run();
       });
     });
 
