@@ -450,7 +450,7 @@ describe('Base', () => {
       const filepath = path.join(__dirname, '/fixtures/conflict.js');
       const filepath2 = path.join(__dirname, '/fixtures/file-conflict.txt');
 
-      sinon.spy(Conflicter.prototype, 'checkForCollision');
+      sinon.spy(Conflicter.prototype, 'collision');
       const env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter(action));
       env.registerStub(this.Dummy, 'dummy:app');
 
@@ -472,12 +472,14 @@ describe('Base', () => {
       });
 
       return testGen.run().then(() => {
-        sinon.assert.calledTwice(Conflicter.prototype.checkForCollision);
-        Conflicter.prototype.checkForCollision.restore();
+        sinon.assert.calledTwice(Conflicter.prototype.collision);
+        Conflicter.prototype.collision.restore();
       });
     });
 
     it('does not pass config file to conflicter', function() {
+      sinon.spy(Conflicter.prototype, 'collision');
+
       this.TestGenerator.prototype.writing = function() {
         fs.writeFileSync(this.destinationPath('.yo-rc.json'), '{"foo": 3}');
         fs.writeFileSync(path.join(os.homedir(), '.yo-rc-global.json'), '{"foo": 3}');
@@ -485,7 +487,25 @@ describe('Base', () => {
         this._globalConfig.set('bar', 1);
       };
 
-      return this.testGen.run();
+      return this.testGen.run().then(() => {
+        sinon.assert.notCalled(Conflicter.prototype.collision);
+        Conflicter.prototype.collision.restore();
+      });
+    });
+
+    it('does not pass file with pre-defined status to conflicter', function() {
+      sinon.spy(Conflicter.prototype, 'collision');
+
+      this.TestGenerator.prototype.writing = function() {
+        this.fs.write('test.json', '{"foo": 3}');
+        const file = this.env.sharedFs.get('test.json');
+        file.conflicter = 'skip';
+      };
+
+      return this.testGen.run().then(() => {
+        sinon.assert.notCalled(Conflicter.prototype.collision);
+        Conflicter.prototype.collision.restore();
+      });
     });
 
     it('allows file writes in any priorities', function() {
