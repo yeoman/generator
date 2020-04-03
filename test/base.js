@@ -497,6 +497,18 @@ describe('Base', () => {
         assert(fs.existsSync(this.testGen.destinationPath('foo.txt')));
       });
     });
+
+    it('can cancel cancellable tasks', function(done) {
+      this.TestGenerator.prototype.cancel = function() {
+        this.cancelCancellableTasks();
+      };
+
+      this.TestGenerator.prototype.throwing = () => {
+        throw new Error('not thrown');
+      };
+
+      this.testGen.run().then(done);
+    });
   });
 
   describe('#argument()', () => {
