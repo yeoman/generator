@@ -245,7 +245,7 @@ describe('Base', () => {
         done();
       });
 
-      this.testGen.run();
+      this.testGen.run().catch(() => {});
     });
 
     it('can emit error from sync methods', function(done) {
@@ -260,7 +260,7 @@ describe('Base', () => {
         done();
       });
 
-      this.testGen.run();
+      this.testGen.run().catch(() => {});
     });
 
     it('stop queue processing once an error is thrown', function() {
@@ -313,7 +313,7 @@ describe('Base', () => {
         done();
       });
 
-      this.testGen.run();
+      this.testGen.run().catch(() => {});
     });
 
     it('run methods in series', function(done) {
