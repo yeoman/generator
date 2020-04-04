@@ -7,6 +7,15 @@ const sinon = require('sinon');
 const { TestAdapter } = require('yeoman-test/lib/adapter');
 const Conflicter = require('../lib/util/conflicter');
 
+const createActions = actions => {
+  return {
+    _action: actions,
+    get action() {
+      return this._action.shift();
+    }
+  };
+};
+
 describe('Conflicter', () => {
   beforeEach(function() {
     this.conflicter = new Conflicter(new TestAdapter());
@@ -312,23 +321,8 @@ describe('Conflicter', () => {
     });
 
     it('displays default diff for text files', done => {
-      const testAdapter = new TestAdapter({ action: 'diff' });
+      const testAdapter = new TestAdapter(createActions(['diff', 'write']));
       const conflicter = new Conflicter(testAdapter);
-      const _prompt = testAdapter.prompt.bind(testAdapter);
-      const promptStub = sinon
-        .stub(testAdapter, 'prompt')
-        .callsFake((prompts, resultHandler) => {
-          if (promptStub.calledTwice) {
-            const stubbedResultHandler = result => {
-              result.action = 'write';
-              return resultHandler(result);
-            };
-
-            return _prompt(prompts, stubbedResultHandler);
-          }
-
-          return _prompt(prompts, resultHandler);
-        });
 
       conflicter.collision(
         {
@@ -347,23 +341,8 @@ describe('Conflicter', () => {
     });
 
     it('shows old content for deleted text files', done => {
-      const testAdapter = new TestAdapter({ action: 'diff' });
+      const testAdapter = new TestAdapter(createActions(['diff', 'write']));
       const conflicter = new Conflicter(testAdapter);
-      const _prompt = testAdapter.prompt.bind(testAdapter);
-      const promptStub = sinon
-        .stub(testAdapter, 'prompt')
-        .callsFake((prompts, resultHandler) => {
-          if (promptStub.calledTwice) {
-            const stubbedResultHandler = result => {
-              result.action = 'write';
-              return resultHandler(result);
-            };
-
-            return _prompt(prompts, stubbedResultHandler);
-          }
-
-          return _prompt(prompts, resultHandler);
-        });
 
       conflicter.collision(
         {
@@ -382,23 +361,8 @@ describe('Conflicter', () => {
     });
 
     it('displays custom diff for binary files', done => {
-      const testAdapter = new TestAdapter({ action: 'diff' });
+      const testAdapter = new TestAdapter(createActions(['diff', 'write']));
       const conflicter = new Conflicter(testAdapter);
-      const _prompt = testAdapter.prompt.bind(testAdapter);
-      const promptStub = sinon
-        .stub(testAdapter, 'prompt')
-        .callsFake((prompts, resultHandler) => {
-          if (promptStub.calledTwice) {
-            const stubbedResultHandler = result => {
-              result.action = 'write';
-              return resultHandler(result);
-            };
-
-            return _prompt(prompts, stubbedResultHandler);
-          }
-
-          return _prompt(prompts, resultHandler);
-        });
 
       conflicter.collision(
         {
@@ -417,23 +381,8 @@ describe('Conflicter', () => {
     });
 
     it('displays custom diff for deleted binary files', done => {
-      const testAdapter = new TestAdapter({ action: 'diff' });
+      const testAdapter = new TestAdapter(createActions(['diff', 'write']));
       const conflicter = new Conflicter(testAdapter);
-      const _prompt = testAdapter.prompt.bind(testAdapter);
-      const promptStub = sinon
-        .stub(testAdapter, 'prompt')
-        .callsFake((prompts, resultHandler) => {
-          if (promptStub.calledTwice) {
-            const stubbedResultHandler = result => {
-              result.action = 'write';
-              return resultHandler(result);
-            };
-
-            return _prompt(prompts, stubbedResultHandler);
-          }
-
-          return _prompt(prompts, resultHandler);
-        });
 
       conflicter.collision(
         {
