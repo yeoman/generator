@@ -19,6 +19,11 @@ jobs:
         repository: yeoman/yeoman-test
         path: yeoman-test
 
+    - name: Checkout yeoman-generator
+      uses: actions/checkout@v2
+      with:
+        path: yeoman-generator
+
     - name: Checkout yeoman-environment
       uses: actions/checkout@v2
       with:
@@ -34,6 +39,14 @@ jobs:
         cd $GITHUB_WORKSPACE/yeoman-test
         npm ci
         npm install ${{ github.repository }}#$GITHUB_SHA
+        npm install yeoman/environment#master
+        npm test
+
+    - name: Run yeoman-generator test
+      run: |
+        cd $GITHUB_WORKSPACE/yeoman-generator
+        npm ci
+        npm install yeoman/yeoman-test#master
         npm install yeoman/environment#master
         npm test
 
