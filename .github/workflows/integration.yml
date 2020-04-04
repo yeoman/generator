@@ -13,27 +13,21 @@ jobs:
         node-version: [12.x]
 
     steps:
-    - name: Checkout yeoman-environment
-      uses: actions/checkout@v2
-      with:
-        repository: yeoman/environment
-        path: yeoman-environment
     - name: Checkout yeoman-test
       uses: actions/checkout@v2
       with:
         repository: yeoman/yeoman-test
         path: yeoman-test
+
+    - name: Checkout yeoman-environment
+      uses: actions/checkout@v2
+      with:
+        repository: yeoman/environment
+        path: yeoman-environment
+
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-
-    - name: Run yeoman-environment test
-      run: |
-        cd $GITHUB_WORKSPACE/yeoman-environment
-        npm ci
-        npm install ${{ github.repository }}#$GITHUB_SHA
-        npm install yeoman/yeoman-test#master
-        npm test
 
     - name: Run yeoman-test test
       run: |
@@ -41,4 +35,12 @@ jobs:
         npm ci
         npm install ${{ github.repository }}#$GITHUB_SHA
         npm install yeoman/environment#master
+        npm test
+
+    - name: Run yeoman-environment test
+      run: |
+        cd $GITHUB_WORKSPACE/yeoman-environment
+        npm ci
+        npm install ${{ github.repository }}#$GITHUB_SHA
+        npm install yeoman/yeoman-test#master
         npm test
