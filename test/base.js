@@ -61,6 +61,23 @@ describe('Base', () => {
       assert.equal(dummy.contextRoot, subdir);
     });
 
+    it('uses the destinationRoot passed at options', function() {
+      const projectDir = path.join(__dirname, 'fixtures/dummy-project');
+      const subdir = path.join(projectDir, 'subdir');
+      process.chdir(subdir);
+      this.env.cwd = process.cwd();
+
+      const dummy = new this.Dummy(['foo'], {
+        resolved: 'ember/all',
+        env: this.env,
+        destinationRoot: subdir
+      });
+
+      assert.equal(process.cwd(), subdir);
+      assert.equal(dummy.destinationPath(), subdir);
+      assert.equal(dummy.contextRoot, subdir);
+    });
+
     it('use the environment options', function() {
       this.env.registerStub(class extends Base {}, 'ember:model');
 
