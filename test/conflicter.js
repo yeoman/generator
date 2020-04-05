@@ -136,6 +136,7 @@ describe('Conflicter', () => {
     });
 
     it('abort on first conflict', function(done) {
+      this.timeout(4000);
       const conflicter = new Conflicter(new TestAdapter(), false, true);
       assert.throws(
         conflicter.collision.bind(conflicter, this.conflictingFile),
