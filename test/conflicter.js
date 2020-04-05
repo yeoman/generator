@@ -21,15 +21,27 @@ describe('Conflicter', () => {
     this.conflicter = new Conflicter(new TestAdapter());
   });
 
-  it('#checkForCollision()', function() {
-    const spy = sinon.spy();
-    const contents = fs.readFileSync(__filename, 'utf8');
-    this.conflicter.checkForCollision(__filename, contents, spy);
-    const conflict = this.conflicter.conflicts.pop();
+  describe('#checkForCollision()', () => {
+    it('correctly pushes to conflicts', function() {
+      const spy = sinon.spy();
+      const contents = fs.readFileSync(__filename, 'utf8');
+      this.conflicter.checkForCollision(__filename, contents, spy);
+      const conflict = this.conflicter.conflicts.pop();
 
-    assert.deepEqual(conflict.file.path, __filename);
-    assert.deepEqual(conflict.file.contents, fs.readFileSync(__filename, 'utf8'));
-    assert.deepEqual(conflict.callback, spy);
+      assert.deepEqual(conflict.file.path, __filename);
+      assert.deepEqual(conflict.file.contents, fs.readFileSync(__filename, 'utf8'));
+      assert.deepEqual(conflict.callback, spy);
+    });
+
+    it('handles predefined status', function() {
+      const spy = sinon.spy();
+      const contents = fs.readFileSync(__filename, 'utf8');
+      this.conflicter.checkForCollision(
+        { path: __filename, contents, conflicter: 'someStatus' },
+        spy
+      );
+      spy.calledWith(null, 'someStatus');
+    });
   });
 
   describe('#resolve()', () => {
