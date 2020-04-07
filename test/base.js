@@ -1410,6 +1410,35 @@ describe('Base', () => {
         env.runLoop.add.getCall(0).args[2]
       );
     });
+
+    it('queued method with function and options with reject', function() {
+      const gen = new this.Generator({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env: this.env,
+        testQueue: 'This value'
+      });
+
+      let thrown = false;
+      const method = () => {
+        thrown = true;
+        throw new Error();
+      };
+
+      const taskName = 'foo';
+      const queueName = 'configuring';
+      gen.queueTask({
+        method,
+        queueName,
+        taskName,
+        run: false,
+        reject: () => {}
+      });
+
+      return gen.run().then(() => {
+        assert.equal(thrown, true);
+      });
+    });
   });
 
   describe('Custom priorities', () => {
