@@ -1,1126 +1,544 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>JSDoc: Class: Conflicter</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-</head>
-
-<body>
-
-<div id="main">
-
-    <h1 class="page-title">Class: Conflicter</h1>
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2><span class="attribs"><span class="type-signature"></span></span>Conflicter<span class="signature">(adapter, force, bail)</span><span class="type-signature"></span></h2>
-        
-            <div class="class-description"><p>The Conflicter is a module that can be used to detect conflict between files. Each
-Generator file system helpers pass files through this module to make sure they don't
-break a user file.</p>
-<p>When a potential conflict is detected, we prompt the user and ask them for
-confirmation before proceeding with the actual write.</p></div>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-    <h2>Constructor</h2>
-    
-
-    
-    <h4 class="name" id="Conflicter"><span class="type-signature"></span>new Conflicter<span class="signature">(adapter, force, bail)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>adapter</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">TerminalAdapter</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The generator adapter</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>force</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>When set to true, we won't check for conflict. (the
-conflicter become a passthrough)</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>bail</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>When set to true, we will abort on first conflict. (used for
-testing reproducibility)</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>force</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>same as the constructor argument</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_conflicter.js.html">util/conflicter.js</a>, <a href="util_conflicter.js.html#line38">line 38</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
+
+  <body>
+    <div id="main">
+      <h1 class="page-title">Class: Conflicter</h1>
+
+      <section>
+        <header>
+          <h2>
+            <span class="attribs"><span class="type-signature"></span></span
+            >Conflicter<span class="signature">(adapter, force, bail)</span
+            ><span class="type-signature"></span>
+          </h2>
+
+          <div class="class-description">
+            <p>
+              The Conflicter is a module that can be used to detect conflict
+              between files. Each Generator file system helpers pass files
+              through this module to make sure they don't break a user file.
+            </p>
+            <p>
+              When a potential conflict is detected, we prompt the user and ask
+              them for confirmation before proceeding with the actual write.
+            </p>
+          </div>
+        </header>
+
+        <article>
+          <div class="container-overview">
+            <h2>Constructor</h2>
+
+            <h4 class="name" id="Conflicter">
+              <span class="type-signature"></span>new Conflicter<span
+                class="signature"
+                >(adapter, force, bail)</span
+              ><span class="type-signature"></span>
+            </h4>
+
+            <h5>Parameters:</h5>
+
+            <table class="params">
+              <thead>
+                <tr>
+                  <th>Name</th>
+
+                  <th>Type</th>
+
+                  <th class="last">Description</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td class="name"><code>adapter</code></td>
+
+                  <td class="type">
+                    <span class="param-type">TerminalAdapter</span>
+                  </td>
+
+                  <td class="description last"><p>The generator adapter</p></td>
+                </tr>
+
+                <tr>
+                  <td class="name"><code>force</code></td>
+
+                  <td class="type">
+                    <span class="param-type">Boolean</span>
+                  </td>
+
+                  <td class="description last">
+                    <p>
+                      When set to true, we won't check for conflict. (the
+                      conflicter become a passthrough)
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="name"><code>bail</code></td>
+
+                  <td class="type">
+                    <span class="param-type">Boolean</span>
+                  </td>
+
+                  <td class="description last">
+                    <p>
+                      When set to true, we will abort on first conflict. (used
+                      for testing reproducibility)
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h5 class="subsection-title">Properties:</h5>
+
+            <table class="props">
+              <thead>
+                <tr>
+                  <th>Name</th>
+
+                  <th>Type</th>
+
+                  <th class="last">Description</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td class="name"><code>force</code></td>
+
+                  <td class="type">
+                    <span class="param-type">Boolean</span>
+                  </td>
+
+                  <td class="description last">
+                    <p>same as the constructor argument</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <dl class="details">
+              <dt class="tag-source">Source:</dt>
+              <dd class="tag-source">
+                <ul class="dummy">
+                  <li>
+                    <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                    <a href="util_conflicter.js.html#line38">line 38</a>
+                  </li>
+                </ul>
+              </dd>
+            </dl>
+          </div>
+
+          <h3 class="subsection-title">Methods</h3>
+
+          <h4 class="name" id="_detectConflict">
+            <span class="type-signature"></span>_detectConflict<span
+              class="signature"
+              >(file)</span
+            ><span class="type-signature"> &rarr; {Boolean}</span>
+          </h4>
+
+          <div class="description">
+            <p>
+              Detect conflicts between file contents at
+              <code>filepath</code> with the <code>contents</code> passed to the
+              function
+            </p>
+            <p>
+              If <code>filepath</code> points to a folder, we'll always return
+              true.
+            </p>
+            <p>Based on detect-conflict module</p>
+          </div>
+
+          <h5>Parameters:</h5>
+
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Type</th>
+
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="name"><code>file</code></td>
+
+                <td class="type">
+                  <span class="param-type">Object</span>
+                </td>
+
+                <td class="description last">
+                  <p>
+                    File object respecting this interface: { path, contents }
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html#line156">line 156</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h5>Returns:</h5>
+
+          <div class="param-desc">
+            <p>
+              <code>true</code> if there's a conflict,
+              <code>false</code> otherwise.
+            </p>
+          </div>
+
+          <dl>
+            <dt>
+              Type
+            </dt>
+            <dd>
+              <span class="param-type">Boolean</span>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="_printDiff">
+            <span class="type-signature"></span>_printDiff<span
+              class="signature"
+              >(file)</span
+            ><span class="type-signature"></span>
+          </h4>
+
+          <div class="description">
+            <p>Print the file differences to console</p>
+          </div>
+
+          <h5>Parameters:</h5>
+
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Type</th>
+
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="name"><code>file</code></td>
+
+                <td class="type">
+                  <span class="param-type">Object</span>
+                </td>
+
+                <td class="description last">
+                  <p>
+                    File object respecting this interface: { path, contents }
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html#line128">line 128</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="checkForCollision">
+            <span class="type-signature"></span>checkForCollision<span
+              class="signature"
+              >(filepath, contents, callback)</span
+            ><span class="type-signature"></span>
+          </h4>
+
+          <div class="description">
+            <p>Add a file to conflicter queue</p>
+          </div>
+
+          <h5>Parameters:</h5>
+
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Type</th>
+
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="name"><code>filepath</code></td>
+
+                <td class="type">
+                  <span class="param-type">String</span>
+                </td>
+
+                <td class="description last"><p>File destination path</p></td>
+              </tr>
+
+              <tr>
+                <td class="name"><code>contents</code></td>
+
+                <td class="type">
+                  <span class="param-type">String</span>
+                </td>
+
+                <td class="description last"><p>File new contents</p></td>
+              </tr>
+
+              <tr>
+                <td class="name"><code>callback</code></td>
+
+                <td class="type">
+                  <span class="param-type">function</span>
+                </td>
+
+                <td class="description last">
+                  <p>
+                    callback to be called once we know if the user want to
+                    proceed or not.
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html#line75">line 75</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="collision">
+            <span class="type-signature"></span>collision<span class="signature"
+              >(file, cb)</span
+            ><span class="type-signature"></span>
+          </h4>
+
+          <div class="description">
+            <p>
+              Check if a file conflict with the current version on the user disk
+            </p>
+            <p>A basic check is done to see if the file exists, if it does:</p>
+            <ol>
+              <li>Read its content from <code>fs</code></li>
+              <li>Compare it with the provided content</li>
+              <li>If identical, mark it as is and skip the check</li>
+              <li>If diverged, prepare and show up the file collision menu</li>
+            </ol>
+          </div>
+
+          <h5>Parameters:</h5>
+
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Type</th>
+
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="name"><code>file</code></td>
+
+                <td class="type">
+                  <span class="param-type">Object</span>
+                </td>
+
+                <td class="description last">
+                  <p>
+                    File object respecting this interface: { path, contents }
+                  </p>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="name"><code>cb</code></td>
+
+                <td class="type">
+                  <span class="param-type">function</span>
+                </td>
+
+                <td class="description last">
+                  <p>
+                    Callback receiving a status string ('identical', 'create',
+                    'skip', 'force')
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html#line209">line 209</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="resolve">
+            <span class="type-signature"></span>resolve<span class="signature"
+              >(cb)</span
+            ><span class="type-signature"></span>
+          </h4>
+
+          <div class="description">
+            <p>
+              Process the <em>potential conflict</em> queue and ask the user to
+              resolve conflict when they occur
+            </p>
+            <p>The user is presented with the following options:</p>
+            <ul>
+              <li><code>Y</code> Yes, overwrite</li>
+              <li><code>n</code> No, do not overwrite</li>
+              <li><code>a</code> All, overwrite this and all others</li>
+              <li><code>x</code> Exit, abort</li>
+              <li>
+                <code>d</code> Diff, show the differences between the old and
+                the new
+              </li>
+              <li><code>h</code> Help, show this help</li>
+            </ul>
+          </div>
+
+          <h5>Parameters:</h5>
+
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Type</th>
+
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="name"><code>cb</code></td>
+
+                <td class="type">
+                  <span class="param-type">function</span>
+                </td>
+
+                <td class="description last">
+                  <p>
+                    Callback once every conflict are resolved. (note that each
+                    file can specify it's own callback. See
+                    <code>#checkForCollision()</code>)
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html#line101">line 101</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+        </article>
+      </section>
     </div>
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="_detectConflict"><span class="type-signature"></span>_detectConflict<span class="signature">(file)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Detect conflicts between file contents at <code>filepath</code> with the <code>contents</code> passed to the
-function</p>
-<p>If <code>filepath</code> points to a folder, we'll always return true.</p>
-<p>Based on detect-conflict module</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>file</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>File object respecting this interface: { path, contents }</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_conflicter.js.html">util/conflicter.js</a>, <a href="util_conflicter.js.html#line156">line 156</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p><code>true</code> if there's a conflict, <code>false</code> otherwise.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="_printDiff"><span class="type-signature"></span>_printDiff<span class="signature">(file)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Print the file differences to console</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>file</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>File object respecting this interface: { path, contents }</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_conflicter.js.html">util/conflicter.js</a>, <a href="util_conflicter.js.html#line128">line 128</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="checkForCollision"><span class="type-signature"></span>checkForCollision<span class="signature">(filepath, contents, callback)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Add a file to conflicter queue</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>filepath</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>File destination path</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>contents</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>File new contents</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>callback to be called once we know if the user want to
-proceed or not.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_conflicter.js.html">util/conflicter.js</a>, <a href="util_conflicter.js.html#line75">line 75</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="collision"><span class="type-signature"></span>collision<span class="signature">(file, cb)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Check if a file conflict with the current version on the user disk</p>
-<p>A basic check is done to see if the file exists, if it does:</p>
-<ol>
-<li>Read its content from  <code>fs</code></li>
-<li>Compare it with the provided content</li>
-<li>If identical, mark it as is and skip the check</li>
-<li>If diverged, prepare and show up the file collision menu</li>
-</ol>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>file</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>File object respecting this interface: { path, contents }</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Callback receiving a status string ('identical', 'create',
-'skip', 'force')</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_conflicter.js.html">util/conflicter.js</a>, <a href="util_conflicter.js.html#line209">line 209</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="resolve"><span class="type-signature"></span>resolve<span class="signature">(cb)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Process the <em>potential conflict</em> queue and ask the user to resolve conflict when they
-occur</p>
-<p>The user is presented with the following options:</p>
-<ul>
-<li><code>Y</code> Yes, overwrite</li>
-<li><code>n</code> No, do not overwrite</li>
-<li><code>a</code> All, overwrite this and all others</li>
-<li><code>x</code> Exit, abort</li>
-<li><code>d</code> Diff, show the differences between the old and the new</li>
-<li><code>h</code> Help, show this help</li>
-</ul>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Callback once every conflict are resolved. (note that each
-file can specify it's own callback. See <code>#checkForCollision()</code>)</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_conflicter.js.html">util/conflicter.js</a>, <a href="util_conflicter.js.html#line101">line 101</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
-
-
-
-
-</div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-promptSuggestion.html">promptSuggestion</a></li></ul><h3>Classes</h3><ul><li><a href="Conflicter.html">Conflicter</a></li><li><a href="Generator.html">Generator</a></li><li><a href="Storage.html">Storage</a></li></ul><h3>Mixins</h3><ul><li><a href="actions_help.html">actions/help</a></li><li><a href="actions_install.html">actions/install</a></li><li><a href="actions_spawn-command.html">actions/spawn-command</a></li><li><a href="actions_user.html">actions/user</a></li></ul><h3><a href="global.html">Global</a></h3>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a>
-</footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
-</body>
+    <nav>
+      <h2><a href="index.html">Home</a></h2>
+      <h3>Modules</h3>
+      <ul>
+        <li><a href="module-promptSuggestion.html">promptSuggestion</a></li>
+      </ul>
+      <h3>Classes</h3>
+      <ul>
+        <li><a href="Conflicter.html">Conflicter</a></li>
+        <li><a href="Generator.html">Generator</a></li>
+        <li><a href="Storage.html">Storage</a></li>
+      </ul>
+      <h3>Mixins</h3>
+      <ul>
+        <li><a href="actions_help.html">actions/help</a></li>
+        <li><a href="actions_install.html">actions/install</a></li>
+        <li><a href="actions_spawn-command.html">actions/spawn-command</a></li>
+        <li><a href="actions_user.html">actions/user</a></li>
+      </ul>
+      <h3><a href="global.html">Global</a></h3>
+    </nav>
+
+    <br class="clear" />
+
+    <footer>
+      Documentation generated by
+      <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a>
+    </footer>
+
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
 </html>

@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px">
+      <div class="logo" style="width: 127px; height: 14px;">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.7.2</span>
+        <span class="version">v4.8.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -87,6 +87,11 @@
                   <a href="Generator.html#argumentsHelp">argumentsHelp</a>
                 </li>
                 <li><a href="Generator.html#bowerInstall">bowerInstall</a></li>
+                <li>
+                  <a href="Generator.html#cancelCancellableTasks"
+                    >cancelCancellableTasks</a
+                  >
+                </li>
                 <li><a href="Generator.html#composeWith">composeWith</a></li>
                 <li>
                   <a href="Generator.html#createStorage">createStorage</a>
@@ -286,15 +291,14 @@ const EventEmitter = require('events');
 const assert = require('assert');
 const _ = require('lodash');
 const findUp = require('find-up');
+const semver = require('semver');
 const readPkgUp = require('read-pkg-up');
 const chalk = require('chalk');
 const makeDir = require('make-dir');
 const minimist = require('minimist');
 const runAsync = require('run-async');
 const through = require('through2');
-const FileEditor = require('mem-fs-editor');
 const createDebug = require('debug');
-const Environment = require('yeoman-environment');
 
 const Conflicter = require('./util/conflicter');
 const Storage = require('./util/storage');
@@ -302,10 +306,20 @@ const promptSuggestion = require('./util/prompt-suggestion');
 
 const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
 const debug = createDebug('yeoman:generator');
+const ENV_VER_WITH_VER_API = '3.0.0';
 
 // Ensure a prototype method is a candidate run by default
 const methodIsValid = function(name) {
   return name.charAt(0) !== '_' &amp;&amp; name !== 'constructor';
+};
+
+// New runWithOptions should take precedence if exists.
+const runGenerator = generator => {
+  if (generator.runWithOptions) {
+    generator.runWithOptions();
+  } else {
+    generator.run();
+  }
 };
 
 /**
@@ -446,23 +460,53 @@ class Generator extends EventEmitter {
     });
 
     this.resolved = this.options.resolved || __dirname;
+    this.env = this.options.env;
+
     // Make sure we have a full featured environment.
-    this.env = this.options.env || Environment.createEnv();
-    if (Object.getPrototypeOf(this.env) === Object.prototype) {
-      debug('Converting env from a simple object to an Environment');
-      const env = Environment.createEnv();
-      Object.assign(env, this.env);
-      this.env = env;
+    try {
+      const Environment = require('yeoman-environment');
+      if (!this.env) {
+        this.env = Environment.createEnv();
+      } else if (Object.getPrototypeOf(this.env) === Object.prototype) {
+        debug('Converting env from a simple object to an Environment');
+        const env = Environment.createEnv();
+        Object.assign(env, this.env);
+        this.env = env;
+      } else {
+        Environment.enforceUpdate(this.env);
+      }
+    } catch (error) {
+      const env = this.env;
+      if (!env) {
+        throw new Error('This generator requires an environment.');
+      }
+
+      if (Object.getPrototypeOf(this.env) === Object.prototype) {
+        console.log(
+          'Current Environment is a plain object, some features can be missing'
+        );
+      }
+
+      // Ensure the environment support features this yeoman-generator version require.
+      if (!env.adapter || !env.runLoop || !env.sharedFs) {
+        throw new Error(
+          "Current environment doesn't provides some necessary feature this generator needs"
+        );
+      }
     }
 
-    // Ensure the environment support features this yeoman-generator version require.
-    Environment.enforceUpdate(this.env);
+    try {
+      this.fs = this.env.fs || require('mem-fs-editor').create(this.env.sharedFs);
+    } catch (_) {
+      throw new Error(
+        "Current environment don't provides some necessary feature this generator needs"
+      );
+    }
 
     this.description = this.description || '';
 
+    // Place holder for run-async callback.
     this.async = () => () => {};
-
-    this.fs = FileEditor.create(this.env.sharedFs);
 
     this.conflicter = new Conflicter(this.env.adapter, this.options.force, {
       bail: this.options.bail,
@@ -483,10 +527,11 @@ class Generator extends EventEmitter {
 
     // Determine the app root
     this.contextRoot = this.env.cwd;
+    this._destinationRoot = this.options.destinationRoot;
 
     if (this.options.localConfigOnly) {
       debug('Using local configurations only');
-    } else {
+    } else if (!this._destinationRoot) {
       let rootPath = findUp.sync('.yo-rc.json', {
         cwd: this.env.cwd
       });
@@ -608,6 +653,50 @@ class Generator extends EventEmitter {
         this.env.runLoop.addSubQueue(customQueue.queueName, beforeQueue);
       });
     }
+  }
+
+  checkEnvironmentVersion(packageDependency, version) {
+    if (version === undefined) {
+      version = packageDependency;
+      packageDependency = 'yeoman-environment';
+    }
+
+    version = version || ENV_VER_WITH_VER_API;
+    const returnError = currentVersion => {
+      return new Error(
+        `This generator (${this.options.namespace}) requires ${packageDependency} at least ${version}, current version is ${currentVersion}`
+      );
+    };
+
+    if (!this.env.getVersion) {
+      if (!this.options.ignoreVersionCheck) {
+        throw returnError(`less than ${ENV_VER_WITH_VER_API}`);
+      }
+
+      console.warn(
+        `It's not possible to check version with running Environment less than ${ENV_VER_WITH_VER_API}`
+      );
+      console.warn('Some features may be missing');
+      if (semver.lte(version, '2.8.1')) {
+        return undefined;
+      }
+
+      return false;
+    }
+
+    let runningVersion = this.env.getVersion(packageDependency);
+    if (runningVersion !== undefined &amp;&amp; semver.lte(version, runningVersion)) {
+      return true;
+    }
+
+    if (this.options.ignoreVersionCheck) {
+      console.warn(
+        `Current ${packageDependency} is not compatible with current generator, min required: ${version} current version: ${runningVersion}. Some features may be missing.`
+      );
+      return false;
+    }
+
+    throw returnError(runningVersion);
   }
 
   /**
@@ -850,7 +939,7 @@ class Generator extends EventEmitter {
    * @param {String} [queueName]: Name of the queue to be scheduled on.
    * @param {Function} [reject]: Reject callback.
    */
-  queueMethod(method, methodName, queueName, reject = () => {}) {
+  queueMethod(method, methodName, queueName, reject) {
     if (typeof queueName === 'function') {
       reject = queueName;
       queueName = 'default';
@@ -905,54 +994,91 @@ class Generator extends EventEmitter {
    * @param {Task} task: Task to be queued.
    */
   queueTask(task) {
-    const reject = task.reject || (() => {});
+    const reject = task.reject;
     const queueName = task.queueName || 'default';
     const methodName = task.taskName;
     const method = task.method;
     const once = task.once ? methodName : undefined;
 
+    const priority = Object.entries(this._queues).find(
+      ([_, opts]) => opts.queueName === queueName
+    );
+    const priorityName = priority ? priority[0] : undefined;
+
     const self = this;
+    const runLoop = this.env.runLoop;
     let namespace = '';
     if (self.options &amp;&amp; self.options.namespace) {
       namespace = self.options.namespace;
     }
 
-    debug(`Queueing ${namespace}#${methodName} with options %o`, task);
-    self.env.runLoop.add(
+    debug(
+      `Queueing ${namespace}#${methodName} with options %o`,
+      _.omit(task, ['method'])
+    );
+    runLoop.add(
       queueName,
-      completed => {
+      taskCompleted => {
         debug(`Running ${namespace}#${methodName}`);
         self.emit(`method:${methodName}`);
+        const taskCancelled = task.cancellable &amp;&amp; !self._running;
 
-        /**
-         * @param {WrappedMethod} wrappedMethod: Function to be wrapped.
-         * @returns {any}
-         */
-        function createFunctionWrapper(wrappedMethod) {
+        runAsync(function() {
+          if (taskCancelled) {
+            return Promise.resolve();
+          }
+
           self.async = () => this.async();
           self.runningState = { namespace, queueName, methodName };
-          return wrappedMethod.apply(self, self.args);
-        }
-
-        runAsync(createFunctionWrapper(method))()
+          return method.apply(self, self.args);
+        })()
           .then(function() {
+            if (taskCancelled) {
+              taskCompleted();
+              return;
+            }
+
             delete self.runningState;
-            completed();
+            const eventName = `done$${namespace || 'unknownnamespace'}#${methodName}`;
+            debug(`Emiting event ${eventName}`);
+            self.env.emit(eventName, {
+              namespace,
+              generator: self,
+              queueName,
+              priorityName
+            });
+            taskCompleted();
           })
           .catch(err => {
             debug(`An error occured while running ${namespace}#${methodName}`, err);
+            if (reject) {
+              debug('Rejecting task promise, queue will continue normally');
+              reject(err);
+              taskCompleted();
+              return;
+            }
+
             delete self.runningState;
+            if (runLoop.pause) {
+              runLoop.pause();
+            }
 
             // Ensure we emit the error event outside the promise context so it won't be
             // swallowed when there's no listeners.
             setImmediate(() => {
               self.emit('error', err);
-              reject(err);
             });
           });
       },
       { once, run: task.run }
     );
+  }
+
+  /**
+   * Ignore cancellable tasks.
+   */
+  cancelCancellableTasks() {
+    this._running = false;
   }
 
   /**
@@ -962,19 +1088,50 @@ class Generator extends EventEmitter {
    *
    * Any method named `constructor` and any methods prefixed by a `_` won't be scheduled.
    *
-   * You can also supply the arguments for the method to be invoked. If none are
-   * provided, the same values used to initialize the invoker are used to
-   * initialize the invoked.
-   *
    * @param {Function} [cb] Deprecated: prefer to use the promise interface
    * @return {Promise} Resolved once the process finish
    */
   run(cb) {
+    const options = { forwardErrorToEnvironment: false };
+    const promise = this.runWithOptions(options);
+
+    // Maintain backward compatibility with the callback function
+    if (_.isFunction(cb)) {
+      return promise.then(cb, cb);
+    }
+
+    return promise;
+  }
+
+  /**
+   * Alternative implementation of run() with a different api.
+   * Api for run is stable for old generators.
+   *
+   * Runs the generator, scheduling prototype methods on a run queue. Method names
+   * will determine the order each method is run. Methods without special names
+   * will run in the default queue.
+   *
+   * Any method named `constructor` and any methods prefixed by a `_` won't be scheduled.
+   *
+   * @private
+   * @param {Object} [options] Options.
+   * @param {Boolean} [options.forwardErrorToEnvironment=true] Handle errors and forward the error on environment.
+   * @return {Promise} Resolved once the queue is cleared.
+   */
+  runWithOptions(options = {}) {
+    const forwardErrorToEnvironment =
+      options.forwardErrorToEnvironment === undefined
+        ? this.env.options &amp;&amp; this.env.options.newErrorHandler
+        : options.forwardErrorToEnvironment;
+
     const promise = new Promise((resolve, reject) => {
       const self = this;
       this._running = true;
       this.debug('Generator is starting');
       this.emit('run');
+
+      // Add an error listener to reject the promise
+      this.on('error', reject);
 
       const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
       const validMethods = methods.filter(methodIsValid);
@@ -999,7 +1156,7 @@ class Generator extends EventEmitter {
         const item = property.value ? property.value : property.get.call(self);
 
         const priority = self._queues[name];
-        let taskOptions = { ...priority, reject };
+        let taskOptions = { ...priority, cancellable: true, run: false };
 
         // Name points to a function; run it!
         if (typeof item === 'function') {
@@ -1038,12 +1195,13 @@ class Generator extends EventEmitter {
         });
       });
 
-      _.invokeMap(this._composedWith, 'run');
+      this._composedWith.forEach(runGenerator);
     });
 
-    // Maintain backward compatibility with the callback function
-    if (_.isFunction(cb)) {
-      promise.then(cb, cb);
+    if (forwardErrorToEnvironment) {
+      return promise.catch(err => {
+        this.env.emit('error', err);
+      });
     }
 
     return promise;
@@ -1105,7 +1263,8 @@ class Generator extends EventEmitter {
         skipCache: this.options.skipCache || this.options['skip-cache'],
         'skip-cache': this.options.skipCache || this.options['skip-cache'],
         forceInstall: this.options.forceInstall || this.options['force-install'],
-        'force-install': this.options.forceInstall || this.options['force-install']
+        'force-install': this.options.forceInstall || this.options['force-install'],
+        destinationRoot: this._destinationRoot
       },
       options
     );
@@ -1164,7 +1323,7 @@ class Generator extends EventEmitter {
     }
 
     if (this._running) {
-      instantiatedGenerator.run();
+      runGenerator(instantiatedGenerator);
     } else {
       this._composedWith.push(instantiatedGenerator);
     }
@@ -1233,18 +1392,21 @@ class Generator extends EventEmitter {
    * This path is used to find storage, when using a file system helper method (like
    * `this.write` and `this.copy`)
    * @param  {String} rootPath new destination root path
+   * @param  {Boolean} skipEnvironment - don't update the environment cwd/chdir.
    * @return {String}          destination root path
    */
-  destinationRoot(rootPath) {
+  destinationRoot(rootPath, skipEnvironment = false) {
     if (typeof rootPath === 'string') {
       this._destinationRoot = path.resolve(rootPath);
 
-      if (!fs.existsSync(rootPath)) {
-        makeDir.sync(rootPath);
+      if (!fs.existsSync(this._destinationRoot)) {
+        makeDir.sync(this._destinationRoot);
       }
 
-      process.chdir(rootPath);
-      this.env.cwd = rootPath;
+      if (!skipEnvironment) {
+        process.chdir(this._destinationRoot);
+        this.env.cwd = this._destinationRoot;
+      }
 
       // Reset the storage
       this.config = this._getStorage();
@@ -1358,11 +1520,10 @@ class Generator extends EventEmitter {
       const filename = path.basename(file.path);
 
       if (filename === '.yo-rc.json' || filename === '.yo-rc-global.json') {
-        this.push(file);
-        return cb();
+        file.conflicter = 'force';
       }
 
-      self.conflicter.checkForCollision(file.path, file.contents, (err, status) => {
+      self.conflicter.checkForCollision(file, (err, status) => {
         if (err) {
           cb(err);
           return;
@@ -1402,7 +1563,7 @@ module.exports = Generator;
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px"
+        style="width: 127px; height: 14px;"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>
