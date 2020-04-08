@@ -27,7 +27,7 @@ jobs:
           jsdoc -c jsdoc.json -d ../out
           cd ../out
           sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' global.html
-          prettier * --write
+          prettier . --write
           git add .
           git config --local user.email ""
           git config --local user.name "Github Actions"
