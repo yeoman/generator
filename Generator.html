@@ -1014,10 +1014,33 @@ module.exports = class extends Generator {
                 <span class="param-type">Object</span>
 
                 -
-                <p>json storage</p>
+                <p>
+                  This generator or the composed generator when
+                  returnNewGenerator=true
+                </p>
               </div>
 
               <dl class="details"></dl>
+
+              <h5>Examples</h5>
+
+              <p class="code-caption">Using a peerDependency generator</p>
+
+              <pre
+                class="prettyprint"
+              ><code>this.composeWith('bootstrap', { sass: true });</code></pre>
+
+              <p class="code-caption">Using a direct dependency generator</p>
+
+              <pre
+                class="prettyprint"
+              ><code>this.composeWith(require.resolve('generator-bootstrap/app/main.js'), { sass: true });</code></pre>
+
+              <p class="code-caption">Passing a Generator class</p>
+
+              <pre
+                class="prettyprint"
+              ><code>this.composeWith({ Generator: MyGenerator, path: '../generator-bootstrap/app/main.js' }, { sass: true });</code></pre>
             </dd>
 
             <dt>
@@ -1967,11 +1990,8 @@ module.exports = class extends Generator {
                               <td class="type">
                                 <span class="param-type">any</span>
                               </td>
-                            </tr>
 
                               <td class="attributes"></td>
-
-                              <td class="attributes">&lt;optional><br /></td>
 
                               <td class="description last">
                                 <p>Either Boolean, String or Number</p>
