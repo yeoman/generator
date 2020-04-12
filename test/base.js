@@ -315,7 +315,7 @@ describe('Base', () => {
         }
       };
 
-      this.testGen.run().catch(() => {
+      this.testGen.runWithOptions().catch(() => {
         catched = true;
         assert.equal(this.env.runLoop.running, false);
         this.env.runLoop.run();

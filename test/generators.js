@@ -89,8 +89,8 @@ describe('Generators module', () => {
       this.generator.runWithOptions({ forwardErrorToEnvironment: true });
     });
 
-    it('forwards error to environment with environment with newErrorHandler option', function(done) {
-      this.env.options.newErrorHandler = true;
+    it('forwards error to environment with forwardErrorToEnvironment option', function(done) {
+      this.generator.options.forwardErrorToEnvironment = true;
 
       this.env.on('error', () => {
         done();
