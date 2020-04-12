@@ -131,7 +131,7 @@ describe('Base (actions/install mixin)', () => {
         this.spawnCommandStub = sinon.stub(this.dummy, 'spawnCommand');
       });
 
-      it('rejects and emit error on bad exit code with forceInstall', () => {
+      it('fails on bad exit code with forceInstall', done => {
         const asyncStub = {
           on(key, cb) {
             if (key === 'exit') {
@@ -143,24 +143,13 @@ describe('Base (actions/install mixin)', () => {
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
-        const assertError = (error, resolve) => {
+        this.dummy.on('error', error => {
           sinon.assert.calledOnce(this.spawnCommandStub);
           assert(error instanceof Error);
           assert.equal(error.message, 'Installation of npm failed with code 1');
-          resolve();
-        };
-
-        const promiseOn = new Promise(resolve => {
-          this.dummy.on('error', error => {
-            assertError(error, resolve);
-          });
+          done();
         });
-        const promiseCatch = new Promise(resolve => {
-          this.dummy.run().catch(error => {
-            assertError(error, resolve);
-          });
-        });
-        return Promise.all([promiseOn, promiseCatch]);
+        this.dummy.run();
       });
 
       it('fails on exit signal with forceInstall', done => {
@@ -181,10 +170,10 @@ describe('Base (actions/install mixin)', () => {
           assert.equal(error.message, 'Installation of npm failed with code SIGKILL');
           done();
         });
-        this.dummy.run().catch(() => {});
+        this.dummy.run();
       });
 
-      it('fails on error with forceInstall', () => {
+      it('fails on error with forceInstall', done => {
         const asyncStub = {
           on(key, cb) {
             if (key === 'error') {
@@ -196,24 +185,13 @@ describe('Base (actions/install mixin)', () => {
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
-        const assertError = (error, resolve) => {
+        this.dummy.on('error', error => {
           sinon.assert.calledOnce(this.spawnCommandStub);
           assert(error instanceof Error);
           assert.equal(error.message, 'Process not found');
-          resolve();
-        };
-
-        const promiseOn = new Promise(resolve => {
-          this.dummy.on('error', error => {
-            assertError(error, resolve);
-          });
+          done();
         });
-        const promiseCatch = new Promise(resolve => {
-          this.dummy.run().catch(error => {
-            assertError(error, resolve);
-          });
-        });
-        return Promise.all([promiseOn, promiseCatch]);
+        this.dummy.run();
       });
     });
 
