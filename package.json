@@ -80,6 +80,7 @@
     "through2": "^3.0.1"
   },
   "optionalDependencies": {
+    "grouped-queue": "^1.1.0",
     "mem-fs-editor": "^6.0.0",
     "yeoman-environment": "^2.3.4"
   },
