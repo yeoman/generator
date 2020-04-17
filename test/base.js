@@ -299,29 +299,6 @@ describe('Base', () => {
       });
     });
 
-    it('pause queue once an error is thrown', function(done) {
-      const error = new Error();
-      let thrown = false;
-      let catched = false;
-
-      this.TestGenerator.prototype.throwing = () => {
-        thrown = true;
-        throw error;
-      };
-
-      this.TestGenerator.prototype.done = () => {
-        if (thrown && catched) {
-          done();
-        }
-      };
-
-      this.testGen.runWithOptions().catch(() => {
-        catched = true;
-        assert.equal(this.env.runLoop.running, false);
-        this.env.runLoop.run();
-      });
-    });
-
     it('handle function returning promises as asynchronous', function() {
       const spy1 = sinon.spy();
       const spy2 = sinon.spy();
