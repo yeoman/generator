@@ -11,6 +11,7 @@ const Base = require('..');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-generator-environment');
 
+/* eslint-disable max-nested-callbacks */
 describe('Generator with environment version', () => {
   before(helpers.setUpTestDirectory(tmpdir));
   describe('mocked 3.0.0', () => {
