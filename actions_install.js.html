@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.8.0</span>
+        <span class="version">v4.8.2</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -352,7 +352,7 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
               chalk.yellow(installer + ' ' + args.join(' '))
           );
           if (this.options.forceInstall || this.options['force-install']) {
-            this.emit('error', error);
+            return this.emit('error', error);
           }
 
           done();
@@ -363,7 +363,7 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
             (code || signal) &amp;&amp;
             (this.options.forceInstall || this.options['force-install'])
           ) {
-            this.emit(
+            return this.emit(
               'error',
               new Error(`Installation of ${installer} failed with code ${code || signal}`)
             );
