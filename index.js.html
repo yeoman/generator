@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.8.2</span>
+        <span class="version">v4.8.3</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -1021,7 +1021,8 @@ class Generator extends EventEmitter {
     );
     runLoop.add(
       queueName,
-      taskCompleted => {
+      // Run-queue's done(continue), pause
+      continueQueue => {
         debug(`Running ${namespace}#${methodName}`);
         self.emit(`method:${methodName}`);
         const taskCancelled = task.cancellable &amp;&amp; !self._running;
@@ -1037,7 +1038,7 @@ class Generator extends EventEmitter {
         })()
           .then(function() {
             if (taskCancelled) {
-              taskCompleted();
+              continueQueue();
               return;
             }
 
@@ -1050,22 +1051,18 @@ class Generator extends EventEmitter {
               queueName,
               priorityName
             });
-            taskCompleted();
+            continueQueue();
           })
           .catch(err => {
             debug(`An error occured while running ${namespace}#${methodName}`, err);
             if (reject) {
               debug('Rejecting task promise, queue will continue normally');
               reject(err);
-              taskCompleted();
+              continueQueue();
               return;
             }
 
             delete self.runningState;
-            if (runLoop.pause) {
-              runLoop.pause();
-            }
-
             // Ensure we emit the error event outside the promise context so it won't be
             // swallowed when there's no listeners.
             setImmediate(() => {
@@ -1226,6 +1223,7 @@ class Generator extends EventEmitter {
       this._composedWith.forEach(runGenerator);
     });
 
+    // For composed generators, otherwise error will not be catched.
     if (forwardErrorToEnvironment) {
       return promise.catch(err => {
         this.env.emit('error', err);
