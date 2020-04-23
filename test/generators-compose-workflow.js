@@ -19,6 +19,7 @@ const Base = require('..');
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 
+/* eslint-disable max-nested-callbacks */
 describe('Multiples generators', () => {
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
