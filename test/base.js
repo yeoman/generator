@@ -1631,4 +1631,57 @@ describe('Base', () => {
       );
     });
   });
+
+  describe('#prompt', () => {
+    let promptSpy;
+    const input1Prompt = { type: 'input', name: 'prompt1' };
+    const input2Prompt = { type: 'input', name: 'prompt2' };
+    beforeEach(function() {
+      this.dummy.env.adapter = new TestAdapter({
+        prompt1: 'prompt1NewValue',
+        prompt2: 'prompt2NewValue'
+      });
+      promptSpy = sinon.spy(this.dummy.env.adapter, 'prompt');
+      this.dummy.options.askAnswered = true;
+      this.dummy.config.set('prompt1', 'prompt1Value');
+      this.dummy.config.set('prompt2', 'prompt2Value');
+      this.dummy.config.set('notUsed', 'notUsedValue');
+    });
+    afterEach(function() {
+      promptSpy.restore();
+    });
+
+    it('passes correct answer to adapter', function() {
+      const expectedAnswers = { prompt1: 'prompt1Value' };
+      return this.dummy.prompt(input1Prompt, this.dummy.config).then(_ => {
+        assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
+      });
+    });
+
+    it('passes correct answers to adapter', function() {
+      const expectedAnswers = { prompt1: 'prompt1Value', prompt2: 'prompt2Value' };
+      return this.dummy
+        .prompt([input1Prompt, input2Prompt], this.dummy.config)
+        .then(_ => {
+          assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
+        });
+    });
+
+    it('saves answers to config', function() {
+      return this.dummy
+        .prompt([input1Prompt, input2Prompt], this.dummy.config)
+        .then(answers => {
+          assert.equal(answers.prompt1, 'prompt1NewValue');
+          assert.equal(answers.prompt2, 'prompt2NewValue');
+          assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
+          assert.equal(this.dummy.config.get('prompt2'), 'prompt2NewValue');
+        });
+    });
+
+    it('passes correct askAnswered option to adapter', function() {
+      return this.dummy.prompt([input1Prompt], this.dummy.config).then(_ => {
+        assert.deepEqual(promptSpy.getCall(0).args[0][0].askAnswered, true);
+      });
+    });
+  });
 });
