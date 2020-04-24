@@ -33,7 +33,8 @@
               <dd class="tag-source">
                 <ul class="dummy">
                   <li>
-                    <a href="actions_install.js.html">actions/install.js</a>,
+                    <a href="actions_install.js.html">actions/install.js</a>
+                    ,
                     <a href="actions_install.js.html#line11">line 11</a>
                   </li>
                 </ul>
@@ -44,24 +45,32 @@
           <h3 class="subsection-title">Methods</h3>
 
           <h4 class="name" id=".bowerInstall">
-            <span class="type-signature">(static) </span>bowerInstall<span
-              class="signature"
-              >(cmpnt<span class="signature-attributes">opt</span>, options<span
-                class="signature-attributes"
-                >opt</span
-              >, spawnOptions<span class="signature-attributes">opt</span
-              >)</span
-            ><span class="type-signature"></span>
+            <span class="type-signature">(static)</span>
+            bowerInstall
+            <span class="signature">
+              (cmpnt
+              <span class="signature-attributes">opt</span>
+              , options
+              <span class="signature-attributes">opt</span>
+              , spawnOptions
+              <span class="signature-attributes">opt</span>
+              )
+            </span>
+            <span class="type-signature"></span>
           </h4>
 
           <div class="description">
             <p>
-              Receives a list of <code>components</code> and an
-              <code>options</code> object to install through bower.
+              Receives a list of
+              <code>components</code>
+              and an
+              <code>options</code>
+              object to install through bower.
             </p>
             <p>
               The installation will automatically run during the run loop
-              <code>install</code> phase.
+              <code>install</code>
+              phase.
             </p>
           </div>
 
@@ -91,7 +100,10 @@
                   <span class="param-type">Array</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last"><p>Components to install</p></td>
               </tr>
@@ -103,10 +115,17 @@
                   <span class="param-type">Object</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
-                  <p>Options to pass to <code>dargs</code> as arguments</p>
+                  <p>
+                    Options to pass to
+                    <code>dargs</code>
+                    as arguments
+                  </p>
                 </td>
               </tr>
 
@@ -117,10 +136,17 @@
                   <span class="param-type">Object</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
-                  <p>Options to pass <code>child_process.spawn</code>.</p>
+                  <p>
+                    Options to pass
+                    <code>child_process.spawn</code>
+                    .
+                  </p>
                 </td>
               </tr>
             </tbody>
@@ -131,7 +157,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="actions_install.js.html">actions/install.js</a>,
+                  <a href="actions_install.js.html">actions/install.js</a>
+                  ,
                   <a href="actions_install.js.html#line178">line 178</a>
                 </li>
               </ul>
@@ -139,16 +166,24 @@
           </dl>
 
           <h4 class="name" id=".installDependencies">
-            <span class="type-signature">(static) </span
-            >installDependencies<span class="signature"
-              >(options<span class="signature-attributes">opt</span>)</span
-            ><span class="type-signature"></span>
+            <span class="type-signature">(static)</span>
+            installDependencies
+            <span class="signature">
+              (options
+              <span class="signature-attributes">opt</span>
+              )
+            </span>
+            <span class="type-signature"></span>
           </h4>
 
           <div class="description">
             <p>
-              Runs <code>npm</code> and <code>bower</code>, in sequence, in the
-              generated directory and prints a message to let the user know.
+              Runs
+              <code>npm</code>
+              and
+              <code>bower</code>
+              , in sequence, in the generated directory and prints a message to
+              let the user know.
             </p>
           </div>
 
@@ -175,7 +210,10 @@
                   <span class="param-type">Object</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
                   <h6>Properties</h6>
@@ -206,7 +244,10 @@
                           <span class="param-type">Object</span>
                         </td>
 
-                        <td class="attributes">&lt;optional><br /></td>
+                        <td class="attributes">
+                          &lt;optional>
+                          <br />
+                        </td>
 
                         <td class="default">
                           true
@@ -214,8 +255,11 @@
 
                         <td class="description last">
                           <p>
-                            whether to run <code>npm install</code> or can be
-                            options to pass to <code>dargs</code> as arguments
+                            whether to run
+                            <code>npm install</code>
+                            or can be options to pass to
+                            <code>dargs</code>
+                            as arguments
                           </p>
                         </td>
                       </tr>
@@ -230,7 +274,10 @@
                           <span class="param-type">Object</span>
                         </td>
 
-                        <td class="attributes">&lt;optional><br /></td>
+                        <td class="attributes">
+                          &lt;optional>
+                          <br />
+                        </td>
 
                         <td class="default">
                           true
@@ -238,8 +285,11 @@
 
                         <td class="description last">
                           <p>
-                            whether to run <code>bower install</code> or can be
-                            options to pass to <code>dargs</code> as arguments
+                            whether to run
+                            <code>bower install</code>
+                            or can be options to pass to
+                            <code>dargs</code>
+                            as arguments
                           </p>
                         </td>
                       </tr>
@@ -254,7 +304,10 @@
                           <span class="param-type">Object</span>
                         </td>
 
-                        <td class="attributes">&lt;optional><br /></td>
+                        <td class="attributes">
+                          &lt;optional>
+                          <br />
+                        </td>
 
                         <td class="default">
                           false
@@ -262,8 +315,11 @@
 
                         <td class="description last">
                           <p>
-                            whether to run <code>yarn install</code> or can be
-                            options to pass to <code>dargs</code> as arguments
+                            whether to run
+                            <code>yarn install</code>
+                            or can be options to pass to
+                            <code>dargs</code>
+                            as arguments
                           </p>
                         </td>
                       </tr>
@@ -275,7 +331,10 @@
                           <span class="param-type">Boolean</span>
                         </td>
 
-                        <td class="attributes">&lt;optional><br /></td>
+                        <td class="attributes">
+                          &lt;optional>
+                          <br />
+                        </td>
 
                         <td class="default">
                           false
@@ -297,7 +356,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="actions_install.js.html">actions/install.js</a>,
+                  <a href="actions_install.js.html">actions/install.js</a>
+                  ,
                   <a href="actions_install.js.html#line119">line 119</a>
                 </li>
               </ul>
@@ -317,24 +377,32 @@
 });</code></pre>
 
           <h4 class="name" id=".npmInstall">
-            <span class="type-signature">(static) </span>npmInstall<span
-              class="signature"
-              >(pkgs<span class="signature-attributes">opt</span>, options<span
-                class="signature-attributes"
-                >opt</span
-              >, spawnOptions<span class="signature-attributes">opt</span
-              >)</span
-            ><span class="type-signature"></span>
+            <span class="type-signature">(static)</span>
+            npmInstall
+            <span class="signature">
+              (pkgs
+              <span class="signature-attributes">opt</span>
+              , options
+              <span class="signature-attributes">opt</span>
+              , spawnOptions
+              <span class="signature-attributes">opt</span>
+              )
+            </span>
+            <span class="type-signature"></span>
           </h4>
 
           <div class="description">
             <p>
-              Receives a list of <code>packages</code> and an
-              <code>options</code> object to install through npm.
+              Receives a list of
+              <code>packages</code>
+              and an
+              <code>options</code>
+              object to install through npm.
             </p>
             <p>
               The installation will automatically run during the run loop
-              <code>install</code> phase.
+              <code>install</code>
+              phase.
             </p>
           </div>
 
@@ -364,7 +432,10 @@
                   <span class="param-type">Array</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last"><p>Packages to install</p></td>
               </tr>
@@ -376,10 +447,17 @@
                   <span class="param-type">Object</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
-                  <p>Options to pass to <code>dargs</code> as arguments</p>
+                  <p>
+                    Options to pass to
+                    <code>dargs</code>
+                    as arguments
+                  </p>
                 </td>
               </tr>
 
@@ -390,10 +468,17 @@
                   <span class="param-type">Object</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
-                  <p>Options to pass <code>child_process.spawn</code>.</p>
+                  <p>
+                    Options to pass
+                    <code>child_process.spawn</code>
+                    .
+                  </p>
                 </td>
               </tr>
             </tbody>
@@ -404,7 +489,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="actions_install.js.html">actions/install.js</a>,
+                  <a href="actions_install.js.html">actions/install.js</a>
+                  ,
                   <a href="actions_install.js.html#line191">line 191</a>
                 </li>
               </ul>
@@ -412,22 +498,31 @@
           </dl>
 
           <h4 class="name" id=".scheduleInstallTask">
-            <span class="type-signature">(static) </span
-            >scheduleInstallTask<span class="signature"
-              >(installer, paths<span class="signature-attributes">opt</span>,
-              options<span class="signature-attributes">opt</span>,
-              spawnOptions<span class="signature-attributes">opt</span>)</span
-            ><span class="type-signature"></span>
+            <span class="type-signature">(static)</span>
+            scheduleInstallTask
+            <span class="signature">
+              (installer, paths
+              <span class="signature-attributes">opt</span>
+              , options
+              <span class="signature-attributes">opt</span>
+              , spawnOptions
+              <span class="signature-attributes">opt</span>
+              )
+            </span>
+            <span class="type-signature"></span>
           </h4>
 
           <div class="description">
             <p>
               Combine package manager cmd line arguments and run the
-              <code>install</code> command.
+              <code>install</code>
+              command.
             </p>
             <p>
-              During the <code>install</code> step, every command will be
-              scheduled to run once, on the run loop.
+              During the
+              <code>install</code>
+              step, every command will be scheduled to run once, on the run
+              loop.
             </p>
           </div>
 
@@ -471,7 +566,10 @@
                   <span class="param-type">Array</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
                   <p>
@@ -488,10 +586,17 @@
                   <span class="param-type">Object</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
-                  <p>Options to pass to <code>dargs</code> as arguments</p>
+                  <p>
+                    Options to pass to
+                    <code>dargs</code>
+                    as arguments
+                  </p>
                 </td>
               </tr>
 
@@ -502,11 +607,16 @@
                   <span class="param-type">Object</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
                   <p>
-                    Options to pass <code>child_process.spawn</code>. ref
+                    Options to pass
+                    <code>child_process.spawn</code>
+                    . ref
                     https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
                   </p>
                 </td>
@@ -519,7 +629,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="actions_install.js.html">actions/install.js</a>,
+                  <a href="actions_install.js.html">actions/install.js</a>
+                  ,
                   <a href="actions_install.js.html#line26">line 26</a>
                 </li>
               </ul>
@@ -527,24 +638,32 @@
           </dl>
 
           <h4 class="name" id=".yarnInstall">
-            <span class="type-signature">(static) </span>yarnInstall<span
-              class="signature"
-              >(pkgs<span class="signature-attributes">opt</span>, options<span
-                class="signature-attributes"
-                >opt</span
-              >, spawnOptions<span class="signature-attributes">opt</span
-              >)</span
-            ><span class="type-signature"></span>
+            <span class="type-signature">(static)</span>
+            yarnInstall
+            <span class="signature">
+              (pkgs
+              <span class="signature-attributes">opt</span>
+              , options
+              <span class="signature-attributes">opt</span>
+              , spawnOptions
+              <span class="signature-attributes">opt</span>
+              )
+            </span>
+            <span class="type-signature"></span>
           </h4>
 
           <div class="description">
             <p>
-              Receives a list of <code>packages</code> and an
-              <code>options</code> object to install through yarn.
+              Receives a list of
+              <code>packages</code>
+              and an
+              <code>options</code>
+              object to install through yarn.
             </p>
             <p>
               The installation will automatically run during the run loop
-              <code>install</code> phase.
+              <code>install</code>
+              phase.
             </p>
           </div>
 
@@ -574,7 +693,10 @@
                   <span class="param-type">Array</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last"><p>Packages to install</p></td>
               </tr>
@@ -586,10 +708,17 @@
                   <span class="param-type">Object</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
-                  <p>Options to pass to <code>dargs</code> as arguments</p>
+                  <p>
+                    Options to pass to
+                    <code>dargs</code>
+                    as arguments
+                  </p>
                 </td>
               </tr>
 
@@ -600,10 +729,17 @@
                   <span class="param-type">Object</span>
                 </td>
 
-                <td class="attributes">&lt;optional><br /></td>
+                <td class="attributes">
+                  &lt;optional>
+                  <br />
+                </td>
 
                 <td class="description last">
-                  <p>Options to pass <code>child_process.spawn</code>.</p>
+                  <p>
+                    Options to pass
+                    <code>child_process.spawn</code>
+                    .
+                  </p>
                 </td>
               </tr>
             </tbody>
@@ -614,7 +750,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="actions_install.js.html">actions/install.js</a>,
+                  <a href="actions_install.js.html">actions/install.js</a>
+                  ,
                   <a href="actions_install.js.html#line204">line 204</a>
                 </li>
               </ul>
