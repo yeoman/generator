@@ -942,6 +942,7 @@ describe('Base', () => {
         '--skip-cache # Do not remember prompt answers Default: false',
         '--skip-install # Do not automatically install dependencies Default: false',
         '--force-install # Fail on install dependencies error Default: false',
+        '--ask-answered # Show prompts for already configured options Default: false',
         '--ooOoo # Description for ooOoo',
         '',
         'Arguments:',
@@ -1651,19 +1652,28 @@ describe('Base', () => {
       promptSpy.restore();
     });
 
-    it('passes correct answer to adapter', function() {
+    it('passes config value as answer to adapter', function() {
       const expectedAnswers = { prompt1: 'prompt1Value' };
       return this.dummy.prompt(input1Prompt, this.dummy.config).then(_ => {
         assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
       });
     });
 
-    it('passes correct answers to adapter', function() {
+    it('passes config values as answers to adapter', function() {
       const expectedAnswers = { prompt1: 'prompt1Value', prompt2: 'prompt2Value' };
       return this.dummy
         .prompt([input1Prompt, input2Prompt], this.dummy.config)
         .then(_ => {
           assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
+        });
+    });
+
+    it('passes config values as the question default', function() {
+      return this.dummy
+        .prompt([input1Prompt, input2Prompt], this.dummy.config)
+        .then(_ => {
+          assert.deepEqual(promptSpy.getCall(0).args[0][0].default, 'prompt1Value');
+          assert.deepEqual(promptSpy.getCall(0).args[0][1].default, 'prompt2Value');
         });
     });
 
