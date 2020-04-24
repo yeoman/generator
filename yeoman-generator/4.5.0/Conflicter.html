@@ -24,9 +24,10 @@
       <section>
         <header>
           <h2>
-            <span class="attribs"><span class="type-signature"></span></span
-            >Conflicter<span class="signature">(adapter, force, bail)</span
-            ><span class="type-signature"></span>
+            <span class="attribs"><span class="type-signature"></span></span>
+            Conflicter
+            <span class="signature">(adapter, force, bail)</span>
+            <span class="type-signature"></span>
           </h2>
 
           <div class="class-description">
@@ -47,10 +48,10 @@
             <h2>Constructor</h2>
 
             <h4 class="name" id="Conflicter">
-              <span class="type-signature"></span>new Conflicter<span
-                class="signature"
-                >(adapter, force, bail)</span
-              ><span class="type-signature"></span>
+              <span class="type-signature"></span>
+              new Conflicter
+              <span class="signature">(adapter, force, bail)</span>
+              <span class="type-signature"></span>
             </h4>
 
             <h5>Parameters:</h5>
@@ -142,7 +143,8 @@
               <dd class="tag-source">
                 <ul class="dummy">
                   <li>
-                    <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                    <a href="util_conflicter.js.html">util/conflicter.js</a>
+                    ,
                     <a href="util_conflicter.js.html#line38">line 38</a>
                   </li>
                 </ul>
@@ -153,21 +155,24 @@
           <h3 class="subsection-title">Methods</h3>
 
           <h4 class="name" id="_detectConflict">
-            <span class="type-signature"></span>_detectConflict<span
-              class="signature"
-              >(file)</span
-            ><span class="type-signature"> &rarr; {Boolean}</span>
+            <span class="type-signature"></span>
+            _detectConflict
+            <span class="signature">(file)</span>
+            <span class="type-signature">&rarr; {Boolean}</span>
           </h4>
 
           <div class="description">
             <p>
               Detect conflicts between file contents at
-              <code>filepath</code> with the <code>contents</code> passed to the
-              function
+              <code>filepath</code>
+              with the
+              <code>contents</code>
+              passed to the function
             </p>
             <p>
-              If <code>filepath</code> points to a folder, we'll always return
-              true.
+              If
+              <code>filepath</code>
+              points to a folder, we'll always return true.
             </p>
             <p>Based on detect-conflict module</p>
           </div>
@@ -207,7 +212,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>
+                  ,
                   <a href="util_conflicter.js.html#line156">line 156</a>
                 </li>
               </ul>
@@ -218,8 +224,10 @@
 
           <div class="param-desc">
             <p>
-              <code>true</code> if there's a conflict,
-              <code>false</code> otherwise.
+              <code>true</code>
+              if there's a conflict,
+              <code>false</code>
+              otherwise.
             </p>
           </div>
 
@@ -233,10 +241,10 @@
           </dl>
 
           <h4 class="name" id="_printDiff">
-            <span class="type-signature"></span>_printDiff<span
-              class="signature"
-              >(file)</span
-            ><span class="type-signature"></span>
+            <span class="type-signature"></span>
+            _printDiff
+            <span class="signature">(file)</span>
+            <span class="type-signature"></span>
           </h4>
 
           <div class="description">
@@ -278,7 +286,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>
+                  ,
                   <a href="util_conflicter.js.html#line128">line 128</a>
                 </li>
               </ul>
@@ -286,10 +295,10 @@
           </dl>
 
           <h4 class="name" id="checkForCollision">
-            <span class="type-signature"></span>checkForCollision<span
-              class="signature"
-              >(filepath, contents, callback)</span
-            ><span class="type-signature"></span>
+            <span class="type-signature"></span>
+            checkForCollision
+            <span class="signature">(filepath, contents, callback)</span>
+            <span class="type-signature"></span>
           </h4>
 
           <div class="description">
@@ -352,7 +361,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>
+                  ,
                   <a href="util_conflicter.js.html#line75">line 75</a>
                 </li>
               </ul>
@@ -360,9 +370,10 @@
           </dl>
 
           <h4 class="name" id="collision">
-            <span class="type-signature"></span>collision<span class="signature"
-              >(file, cb)</span
-            ><span class="type-signature"></span>
+            <span class="type-signature"></span>
+            collision
+            <span class="signature">(file, cb)</span>
+            <span class="type-signature"></span>
           </h4>
 
           <div class="description">
@@ -371,7 +382,10 @@
             </p>
             <p>A basic check is done to see if the file exists, if it does:</p>
             <ol>
-              <li>Read its content from <code>fs</code></li>
+              <li>
+                Read its content from
+                <code>fs</code>
+              </li>
               <li>Compare it with the provided content</li>
               <li>If identical, mark it as is and skip the check</li>
               <li>If diverged, prepare and show up the file collision menu</li>
@@ -428,7 +442,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>
+                  ,
                   <a href="util_conflicter.js.html#line209">line 209</a>
                 </li>
               </ul>
@@ -436,27 +451,44 @@
           </dl>
 
           <h4 class="name" id="resolve">
-            <span class="type-signature"></span>resolve<span class="signature"
-              >(cb)</span
-            ><span class="type-signature"></span>
+            <span class="type-signature"></span>
+            resolve
+            <span class="signature">(cb)</span>
+            <span class="type-signature"></span>
           </h4>
 
           <div class="description">
             <p>
-              Process the <em>potential conflict</em> queue and ask the user to
-              resolve conflict when they occur
+              Process the
+              <em>potential conflict</em>
+              queue and ask the user to resolve conflict when they occur
             </p>
             <p>The user is presented with the following options:</p>
             <ul>
-              <li><code>Y</code> Yes, overwrite</li>
-              <li><code>n</code> No, do not overwrite</li>
-              <li><code>a</code> All, overwrite this and all others</li>
-              <li><code>x</code> Exit, abort</li>
               <li>
-                <code>d</code> Diff, show the differences between the old and
-                the new
+                <code>Y</code>
+                Yes, overwrite
               </li>
-              <li><code>h</code> Help, show this help</li>
+              <li>
+                <code>n</code>
+                No, do not overwrite
+              </li>
+              <li>
+                <code>a</code>
+                All, overwrite this and all others
+              </li>
+              <li>
+                <code>x</code>
+                Exit, abort
+              </li>
+              <li>
+                <code>d</code>
+                Diff, show the differences between the old and the new
+              </li>
+              <li>
+                <code>h</code>
+                Help, show this help
+              </li>
             </ul>
           </div>
 
@@ -485,7 +517,8 @@
                   <p>
                     Callback once every conflict are resolved. (note that each
                     file can specify it's own callback. See
-                    <code>#checkForCollision()</code>)
+                    <code>#checkForCollision()</code>
+                    )
                   </p>
                 </td>
               </tr>
@@ -497,7 +530,8 @@
             <dd class="tag-source">
               <ul class="dummy">
                 <li>
-                  <a href="util_conflicter.js.html">util/conflicter.js</a>,
+                  <a href="util_conflicter.js.html">util/conflicter.js</a>
+                  ,
                   <a href="util_conflicter.js.html#line101">line 101</a>
                 </li>
               </ul>
