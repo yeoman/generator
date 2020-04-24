@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.8.3</span>
+        <span class="version">v4.9.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -71,91 +71,6 @@
                 </li>
                 <li><a href="Conflicter.html#collision">collision</a></li>
                 <li><a href="Conflicter.html#resolve">resolve</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
-            <a href="Generator.html">Generator</a
-            ><button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="Generator_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
-                <li><a href="Generator.html#argument">argument</a></li>
-                <li>
-                  <a href="Generator.html#argumentsHelp">argumentsHelp</a>
-                </li>
-                <li><a href="Generator.html#bowerInstall">bowerInstall</a></li>
-                <li>
-                  <a href="Generator.html#cancelCancellableTasks"
-                    >cancelCancellableTasks</a
-                  >
-                </li>
-                <li><a href="Generator.html#composeWith">composeWith</a></li>
-                <li>
-                  <a href="Generator.html#createStorage">createStorage</a>
-                </li>
-                <li><a href="Generator.html#debug">debug</a></li>
-                <li><a href="Generator.html#desc">desc</a></li>
-                <li>
-                  <a href="Generator.html#destinationPath">destinationPath</a>
-                </li>
-                <li>
-                  <a href="Generator.html#destinationRoot">destinationRoot</a>
-                </li>
-                <li>
-                  <a href="Generator.html#determineAppname">determineAppname</a>
-                </li>
-                <li><a href="Generator.html#git.email">git.email</a></li>
-                <li><a href="Generator.html#help">help</a></li>
-                <li>
-                  <a href="Generator.html#installDependencies"
-                    >installDependencies</a
-                  >
-                </li>
-                <li><a href="Generator.html#git.name">git.name</a></li>
-                <li><a href="Generator.html#npmInstall">npmInstall</a></li>
-                <li><a href="Generator.html#option">option</a></li>
-                <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
-                <li><a href="Generator.html#prompt">prompt</a></li>
-                <li><a href="Generator.html#queueMethod">queueMethod</a></li>
-                <li><a href="Generator.html#queueTask">queueTask</a></li>
-                <li>
-                  <a href="Generator.html#queueTaskGroup">queueTaskGroup</a>
-                </li>
-                <li>
-                  <a href="Generator.html#registerTransformStream"
-                    >registerTransformStream</a
-                  >
-                </li>
-                <li>
-                  <a href="Generator.html#rootGeneratorName"
-                    >rootGeneratorName</a
-                  >
-                </li>
-                <li>
-                  <a href="Generator.html#rootGeneratorVersion"
-                    >rootGeneratorVersion</a
-                  >
-                </li>
-                <li><a href="Generator.html#run">run</a></li>
-                <li>
-                  <a href="Generator.html#scheduleInstallTask"
-                    >scheduleInstallTask</a
-                  >
-                </li>
-                <li><a href="Generator.html#sourceRoot">sourceRoot</a></li>
-                <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
-                <li>
-                  <a href="Generator.html#spawnCommandSync">spawnCommandSync</a>
-                </li>
-                <li><a href="Generator.html#templatePath">templatePath</a></li>
-                <li><a href="Generator.html#usage">usage</a></li>
-                <li>
-                  <a href="Generator.html#github.username">github.username</a>
-                </li>
-                <li><a href="Generator.html#yarnInstall">yarnInstall</a></li>
               </ul>
             </div>
           </li>
@@ -306,7 +221,7 @@ const promptSuggestion = require('./util/prompt-suggestion');
 
 const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
 const debug = createDebug('yeoman:generator');
-const ENV_VER_WITH_VER_API = '3.0.0';
+const ENV_VER_WITH_VER_API = '2.9.0';
 
 // Ensure a prototype method is a candidate run by default
 const methodIsValid = function(name) {
@@ -418,6 +333,7 @@ class Generator extends EventEmitter {
    *   }
    * };
    */
+  /* eslint-disable complexity */
   constructor(args, options) {
     super();
 
@@ -456,6 +372,12 @@ class Generator extends EventEmitter {
     this.option('force-install', {
       type: Boolean,
       description: 'Fail on install dependencies error',
+      default: false
+    });
+
+    this.option('ask-answered', {
+      type: Boolean,
+      description: 'Show prompts for already configured options',
       default: false
     });
 
@@ -715,14 +637,71 @@ class Generator extends EventEmitter {
    * every question descriptor. When set to true, Yeoman will store/fetch the
    * user's answers as defaults.
    *
-   * @param  {array} questions  Array of question descriptor objects. See {@link https://github.com/SBoudrias/Inquirer.js/blob/master/README.md Documentation}
+   * @param  {object|object[]} questions  Array of question descriptor objects. See {@link https://github.com/SBoudrias/Inquirer.js/blob/master/README.md Documentation}
+   * @param  {Storage} [questions[].storage] Store/fetch the question on the storage.
+   * @param  {Storage} [storage] Storage object
    * @return {Promise} prompt promise
    */
-  prompt(questions) {
+  prompt(questions, storage) {
+    const checkInquirer = () => {
+      if (this.inquireSupportsPrefilled === undefined) {
+        this.checkEnvironmentVersion();
+        this.inquireSupportsPrefilled = this.checkEnvironmentVersion('inquirer', '7.1.0');
+      }
+    };
+
+    if (storage !== undefined) {
+      checkInquirer();
+    }
+
+    const questionsToStore = [];
+
+    const getAnswerFromStorage = function(question) {
+      const questionStorage = question.storage || storage;
+      if (questionStorage) {
+        checkInquirer();
+
+        const name = question.name;
+        questionsToStore.push(name);
+        const value = questionStorage.get(name);
+        if (value !== undefined) {
+          question.default = value;
+        }
+
+        return [name, value];
+      }
+
+      return undefined;
+    };
+
+    if (!Array.isArray(questions)) {
+      questions = [questions];
+    }
+
+    // Shows the prompt even if the answer already exists.
+    questions.forEach(question => {
+      question.askAnswered = this.options.askAnswered === true;
+    });
+
+    // Pre-fill answers with storage values.
+    const answers = {};
+    questions
+      .map(getAnswerFromStorage)
+      .filter(a => a)
+      .forEach(([key, value]) => {
+        answers[key] = value;
+      });
+
     questions = promptSuggestion.prefillQuestions(this._globalConfig, questions);
     questions = promptSuggestion.prefillQuestions(this.config, questions);
 
-    return this.env.adapter.prompt(questions).then(answers => {
+    return this.env.adapter.prompt(questions, answers).then(answers => {
+      if (storage) {
+        storage.set(answers);
+      } else {
+        questionsToStore.forEach(name => storage.set(name, answers[name]));
+      }
+
       if (!this.options['skip-cache'] &amp;&amp; !this.options.skipCache) {
         promptSuggestion.storeAnswers(this._globalConfig, questions, answers, false);
         promptSuggestion.storeAnswers(this.config, questions, answers, true);
