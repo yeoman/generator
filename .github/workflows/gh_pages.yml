@@ -25,14 +25,21 @@ jobs:
           cd source
           npm ci
           jsdoc -c jsdoc.json -d ../out
-          cd ../out
+      - name: Run prettier
+        run: |
+          cd out
           sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' global.html
           prettier . --write
+      - name: Create commit
+        if: always()
+        run: |
+          cd out
           git add .
           git config --local user.email ""
           git config --local user.name "Github Actions"
           git commit -a -m "Update api for ${{github.event.release.name}}" || true
       - name: Create Pull Request
+        if: always()
         id: cpr
         uses: peter-evans/create-pull-request@v2
         with:
