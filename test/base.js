@@ -942,6 +942,7 @@ describe('Base', () => {
         '--skip-cache # Do not remember prompt answers Default: false',
         '--skip-install # Do not automatically install dependencies Default: false',
         '--force-install # Fail on install dependencies error Default: false',
+        '--ask-answered # Show prompts for already configured options Default: false',
         '--ooOoo # Description for ooOoo',
         '',
         'Arguments:',
