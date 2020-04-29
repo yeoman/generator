@@ -200,6 +200,7 @@ describe('Base', () => {
         exec2: sinon.spy(),
         exec3: sinon.spy(),
         _private: sinon.spy(),
+        '#composed': sinon.spy(),
         prompting: {
           m1: sinon.spy(),
           m2: sinon.spy(),
@@ -395,6 +396,12 @@ describe('Base', () => {
     it('ignore underscore prefixed method', function() {
       return this.testGen.run().then(() => {
         assert(this.TestGenerator.prototype._private.notCalled);
+      });
+    });
+
+    it('ignore hashtag prefixed method', function() {
+      return this.testGen.run().then(() => {
+        assert(this.TestGenerator.prototype['#composed'].notCalled);
       });
     });
 
