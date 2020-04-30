@@ -265,6 +265,21 @@ describe('Storage', () => {
     assert.equal(this.store.get('name').name, 'changed');
   });
 
+  describe('#getStorage()', () => {
+    beforeEach(function() {
+      this.pathStore = this.store.createStorage('path');
+    });
+
+    it('get and set value', function() {
+      assert.equal(this.pathStore.setPath('name', 'initial'), 'initial');
+      assert.equal(this.store.get('path').name, 'initial');
+      this.store.set('path', { name: 'test' });
+      assert.equal(this.pathStore.get('name'), 'test');
+      this.pathStore.set('name', 'changed');
+      assert.equal(this.store.get('path').name, 'changed');
+    });
+  });
+
   describe('.constructor() with lodashPath', () => {
     beforeEach(function() {
       this.pathStore = new Storage('test.path', this.fs, this.storePath, true);
