@@ -1,4 +1,4 @@
-name: Node.js CI
+name: NPM Test
 
 on: [push, pull_request]
 
@@ -14,8 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: OS ${{ matrix.os }} ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+    - uses: actions/setup-node@v1.2.0
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
