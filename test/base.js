@@ -556,6 +556,49 @@ describe('Base', () => {
 
       this.testGen.run().then(done);
     });
+
+    it('can start over the generator', function(done) {
+      const spy1 = sinon.spy();
+      const spy2 = sinon.spy();
+
+      this.TestGenerator.prototype.cancel = function() {
+        spy1();
+        if (!this.startedOver) {
+          this.startOver({ startedOver: true });
+          this.startedOver = true;
+        }
+      };
+
+      this.TestGenerator.prototype.after = function() {
+        assert(this.options.startedOver);
+        assert(this.startedOver);
+        spy2();
+      };
+
+      this.testGen.run().then(() => {
+        assert(spy1.calledTwice);
+        assert(spy2.calledOnce);
+        done();
+      });
+    });
+
+    it('can queue a method again', function(done) {
+      const spy1 = sinon.spy();
+
+      this.TestGenerator.prototype.cancel = function() {
+        spy1();
+        if (!this.startedOver) {
+          this.queueOwnTask('cancel');
+          this.startOver();
+          this.startedOver = true;
+        }
+      };
+
+      this.testGen.run().then(() => {
+        assert(spy1.calledTwice);
+        done();
+      });
+    });
   });
 
   describe('#argument()', () => {
