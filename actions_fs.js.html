@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Source: util/storage.js | Generator</title>
+    <title>Source: actions/fs.js | Generator</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -388,185 +388,236 @@
     <div class="main" id="main">
       <section>
         <article>
-          <pre class="prettyprint source linenums"><code>'use strict';
+          <pre
+            class="prettyprint source linenums"
+          ><code>/* eslint max-params: [1, 5] */
 const assert = require('assert');
-const _ = require('lodash');
 
 /**
- * Storage instances handle a json file where Generator authors can store data.
- *
- * The `Generator` class instantiate the storage named `config` by default.
- *
- * @constructor
- * @param {String} [name]     The name of the new storage (this is a namespace)
- * @param {mem-fs-editor} fs  A mem-fs editor instance
- * @param {String} configPath The filepath used as a storage.
- * @param {Boolean} lodashPath Set true to treat name as a lodash path.
- *
- * @example
- * class extend Generator {
- *   writing: function() {
- *     this.config.set('coffeescript', false);
- *   }
- * }
+ * @mixin
+ * @alias actions/fs
  */
-class Storage {
-  constructor(name, fs, configPath, lodashPath = false) {
-    if (name !== undefined &amp;&amp; typeof name !== 'string') {
-      configPath = fs;
-      fs = name;
-      name = undefined;
+const fs = module.exports;
+
+/**
+ * Read file from templates folder.
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.read(this.templatePath(filepath))
+ *
+ * @param {String} filepath - absolute file path or relative to templates folder.
+ * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.readTemplate = function(filepath, ...args) {
+  return this.fs.read(this.templatePath(filepath), ...args);
+};
+
+/**
+ * Copy file from templates folder to destination folder.
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.copy(this.templatePath(from), this.destinationPath(to))
+ *
+ * @param {String} from - absolute file path or relative to templates folder.
+ * @param {String} to - absolute file path or relative to destination folder.
+ * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.copyTemplate = function(from, to, ...args) {
+  return this.fs.copy(this.templatePath(from), this.destinationPath(to), ...args);
+};
+
+/**
+ * Read file from destination folder
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.read(this.destinationPath(filepath)).
+ *
+ * @param {String} filepath - absolute file path or relative to destination folder.
+ * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.readDestination = function(filepath, ...args) {
+  return this.fs.read(this.destinationPath(filepath), ...args);
+};
+
+/**
+ * Read JSON file from destination folder
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.readJSON(this.destinationPath(filepath)).
+ *
+ * @param {String} filepath - absolute file path or relative to destination folder.
+ * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.readDestinationJSON = function(filepath, ...args) {
+  return this.fs.readJSON(this.destinationPath(filepath), ...args);
+};
+
+/**
+ * Write file to destination folder
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.write(this.destinationPath(filepath)).
+ *
+ * @param {String} filepath - absolute file path or relative to destination folder.
+ * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.writeDestination = function(filepath, ...args) {
+  return this.fs.write(this.destinationPath(filepath), ...args);
+};
+
+/**
+ * Write json file to destination folder
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.writeJSON(this.destinationPath(filepath)).
+ *
+ * @param {String} filepath - absolute file path or relative to destination folder.
+ * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.writeDestinationJSON = function(filepath, ...args) {
+  return this.fs.writeJSON(this.destinationPath(filepath), ...args);
+};
+
+/**
+ * Delete file from destination folder
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.delete(this.destinationPath(filepath)).
+ *
+ * @param {String} filepath - absolute file path or relative to destination folder.
+ * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.deleteDestination = function(filepath, ...args) {
+  return this.fs.delete(this.destinationPath(filepath), ...args);
+};
+
+/**
+ * Copy file from destination folder to another destination folder.
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.copy(this.destinationPath(from), this.destinationPath(to)).
+ *
+ * @param {String} from - absolute file path or relative to destination folder.
+ * @param {String} to - absolute file path or relative to destination folder.
+ * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.copyDestination = function(from, to, ...args) {
+  return this.fs.copy(this.destinationPath(from), this.destinationPath(to), ...args);
+};
+
+/**
+ * Move file from destination folder to another destination folder.
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.move(this.destinationPath(from), this.destinationPath(to)).
+ *
+ * @param {String} from - absolute file path or relative to destination folder.
+ * @param {String} to - absolute file path or relative to destination folder.
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.moveDestination = function(from, to, ...args) {
+  return this.fs.move(this.destinationPath(from), this.destinationPath(to), ...args);
+};
+
+/**
+ * Exists file on destination folder.
+ * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
+ * Shortcut for this.fs.exists(this.destinationPath(filepath)).
+ *
+ * @param {String} filepath - absolute file path or relative to destination folder.
+ * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
+ */
+fs.existsDestination = function(filepath, ...args) {
+  return this.fs.exists(this.destinationPath(filepath), ...args);
+};
+
+/**
+ * Copy a template from templates folder to the destination.
+ *
+ * @param  {String|Array} source - template file, absolute or relative to templatePath().
+ * @param  {String|Array} [destination] - destination, absolute or relative to destinationPath().
+ * @param {Object} [templateData] - ejs data
+ * @param {Object} [templateOptions] - ejs options
+ * @param {Object} [copyOptions] - mem-fs-editor copy options
+ */
+fs.renderTemplate = function(
+  source,
+  destination = source,
+  templateData = this._templateData(),
+  templateOptions,
+  copyOptions
+) {
+  if (typeof templateData === 'string') {
+    templateData = this._templateData(templateData);
+  }
+
+  source = Array.isArray(source) ? source : [source];
+  const templatePath = this.templatePath(...source);
+  destination = Array.isArray(destination) ? destination : [destination];
+  const destinationPath = this.destinationPath(...destination);
+
+  this.fs.copyTpl(
+    templatePath,
+    destinationPath,
+    templateData,
+    templateOptions,
+    copyOptions
+  );
+};
+
+/**
+ * Copy templates from templates folder to the destination.
+ *
+ * @param  {Array} templates - template file, absolute or relative to templatePath().
+ * @param  {function} [templates.when] - conditional if the template should be written.
+ *                                       First argument is the templateData, second is the generator.
+ * @param  {String|Array} templates.source - template file, absolute or relative to templatePath().
+ * @param  {String|Array} [templates.destination] - destination, absolute or relative to destinationPath().
+ * @param {Object} [templates.templateOptions] - ejs options
+ * @param {Object} [templates.copyOptions] - mem-fs-editor copy options
+ * @param {Object} [templateData] - ejs data
+ */
+fs.renderTemplates = function(templates, templateData = this._templateData()) {
+  assert(Array.isArray(templates), 'Templates must an array');
+  if (typeof templateData === 'string') {
+    templateData = this._templateData(templateData);
+  }
+
+  const self = this;
+  const renderEachTemplate = template => {
+    if (template.when &amp;&amp; !template.when(templateData, this)) {
+      return;
     }
 
-    assert(configPath, 'A config filepath is required to create a storage');
+    const { source, destination, templateOptions, copyOptions } = template;
+    self.renderTemplate(source, destination, templateData, templateOptions, copyOptions);
+  };
 
-    this.path = configPath;
-    this.name = name;
-    this.fs = fs;
-    this.existed = Object.keys(this._store).length > 0;
-    this.indent = 2;
-    this.lodashPath = lodashPath;
+  templates.forEach(template => renderEachTemplate(template));
+};
+
+/**
+ * Utility method to get a formatted data for templates.
+ *
+ * @param {String} path - path to the storage key.
+ * @return {Object} data to be passed to the templates.
+ */
+fs._templateData = function(path) {
+  if (path) {
+    return this.config.getPath(path);
   }
 
-  /**
-   * Return the current store as JSON object
-   * @return {Object} the store content
-   * @private
-   */
-  get _store() {
-    const store = this.fs.readJSON(this.path, {});
-    if (!this.name) {
-      return store || {};
-    }
-
-    return (this.lodashPath ? _.get(store, this.name) : store[this.name]) || {};
+  const allConfig = this.config.getAll();
+  if (this.generatorConfig) {
+    Object.assign(allConfig, this.generatorConfig.getAll());
   }
 
-  /**
-   * Persist a configuration to disk
-   * @param {Object} val - current configuration values
-   * @private
-   */
-  _persist(val) {
-    let fullStore;
-    if (this.name) {
-      fullStore = this.fs.readJSON(this.path, {});
-      if (this.lodashPath) {
-        _.set(fullStore, this.name, val);
-      } else {
-        fullStore[this.name] = val;
-      }
-    } else {
-      fullStore = val;
-    }
-
-    this.fs.writeJSON(this.path, fullStore, null, this.indent);
+  if (this.instanceConfig) {
+    Object.assign(allConfig, this.instanceConfig.getAll());
   }
 
-  /**
-   * Save a new object of values
-   */
-  save() {
-    this._persist(this._store);
-  }
-
-  /**
-   * Get a stored value
-   * @param  {String} key  The key under which the value is stored.
-   * @return {*}           The stored value. Any JSON valid type could be returned
-   */
-  get(key) {
-    return this._store[key];
-  }
-
-  /**
-   * Get a stored value from a lodash path
-   * @param  {String} path  The path under which the value is stored.
-   * @return {*}           The stored value. Any JSON valid type could be returned
-   */
-  getPath(path) {
-    return _.get(this._store, path);
-  }
-
-  /**
-   * Get all the stored values
-   * @return {Object}  key-value object
-   */
-  getAll() {
-    return _.cloneDeep(this._store);
-  }
-
-  /**
-   * Assign a key to a value and schedule a save.
-   * @param {String} key  The key under which the value is stored
-   * @param {*} val  Any valid JSON type value (String, Number, Array, Object).
-   * @return {*} val  Whatever was passed in as val.
-   */
-  set(key, val) {
-    assert(!_.isFunction(val), "Storage value can't be a function");
-
-    const store = this._store;
-
-    if (_.isObject(key)) {
-      val = _.assignIn(store, key);
-    } else {
-      store[key] = val;
-    }
-
-    this._persist(store);
-    return val;
-  }
-
-  /**
-   * Assign a lodash path to a value and schedule a save.
-   * @param {String} path  The key under which the value is stored
-   * @param {*} val  Any valid JSON type value (String, Number, Array, Object).
-   * @return {*} val  Whatever was passed in as val.
-   */
-  setPath(path, val) {
-    assert(!_.isFunction(val), "Storage value can't be a function");
-
-    const store = this._store;
-    _.set(store, path, val);
-    this._persist(store);
-    return val;
-  }
-
-  /**
-   * Delete a key from the store and schedule a save.
-   * @param  {String} key  The key under which the value is stored.
-   */
-  delete(key) {
-    const store = this._store;
-    delete store[key];
-    this._persist(store);
-  }
-
-  /**
-   * Setup the store with defaults value and schedule a save.
-   * If keys already exist, the initial value is kept.
-   * @param  {Object} defaults  Key-value object to store.
-   * @return {*} val  Returns the merged options.
-   */
-  defaults(defaults) {
-    assert(_.isObject(defaults), 'Storage `defaults` method only accept objects');
-    const val = _.defaults(this.getAll(), defaults);
-    this.set(val);
-    return val;
-  }
-
-  /**
-   * Create a child storage.
-   * @param  {String} path - relative path of the key to create a new storage.
-   * @return {Storage} Returns a new Storage.
-   */
-  createStorage(path) {
-    const childName = this.name ? `${this.name}.${path}` : path;
-    return new Storage(childName, this.fs, this.path, true);
-  }
-}
-
-module.exports = Storage;
+  return allConfig;
+};
 </code></pre>
         </article>
       </section>
