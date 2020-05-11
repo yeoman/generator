@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.10.0</span>
+        <span class="version">v4.10.1</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -910,7 +910,9 @@ class Generator extends EventEmitter {
 
       if (!this.options['skip-cache'] &amp;&amp; !this.options.skipCache) {
         promptSuggestion.storeAnswers(this._globalConfig, questions, answers, false);
-        promptSuggestion.storeAnswers(this.config, questions, answers, true);
+        if (!this.options.skipLocalCache) {
+          promptSuggestion.storeAnswers(this.config, questions, answers, true);
+        }
       }
 
       return answers;
@@ -1504,6 +1506,7 @@ class Generator extends EventEmitter {
         'skip-cache': this.options.skipCache || this.options['skip-cache'],
         forceInstall: this.options.forceInstall || this.options['force-install'],
         'force-install': this.options.forceInstall || this.options['force-install'],
+        skipLocalCache: this.options.skipLocalCache,
         destinationRoot: this._destinationRoot
       },
       options
