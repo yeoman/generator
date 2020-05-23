@@ -4,9 +4,9 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const FileEditor = require('mem-fs-editor');
-const env = require('yeoman-environment');
 const helpers = require('yeoman-test');
 const Storage = require('../lib/util/storage');
+const memFs = require('mem-fs');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 
@@ -22,7 +22,7 @@ describe('Storage', () => {
   beforeEach(function() {
     this.beforeDir = process.cwd();
     this.storePath = path.join(tmpdir, 'new-config.json');
-    this.memFs = env.createEnv().sharedFs;
+    this.memFs = memFs.create();
     this.fs = FileEditor.create(this.memFs);
     this.store = new Storage('test', this.fs, this.storePath);
     this.store.set('foo', 'bar');
