@@ -294,4 +294,45 @@ describe('Storage', () => {
       assert.equal(this.store.get('path').name, 'changed');
     });
   });
+
+  describe('#createProxy()', () => {
+    let proxy;
+    beforeEach(function() {
+      proxy = this.store.createProxy();
+    });
+
+    it('sets values', function() {
+      proxy.name = 'Yeoman!';
+      assert.equal(this.store.get('name'), 'Yeoman!');
+    });
+
+    it('sets multiple values at once', function() {
+      Object.assign(proxy, { foo: 'bar', john: 'doe' });
+      assert.equal(this.store.get('foo'), 'bar');
+      assert.equal(this.store.get('john'), 'doe');
+    });
+
+    it('gets values', function() {
+      this.store.set('name', 'Yeoman!');
+      assert.equal(proxy.name, 'Yeoman!');
+    });
+
+    it('works with spread operator', function() {
+      this.store.set({ foo: 'bar', john: 'doe' });
+      const store = { ...proxy };
+      assert.equal(store.foo, 'bar');
+      assert.equal(store.john, 'doe');
+    });
+
+    it('works with in operator', function() {
+      this.store.set({ foo: 'bar', john: 'doe' });
+      assert('foo' in proxy);
+      assert(!('foo2' in proxy));
+    });
+
+    it('works with deepEquals', function() {
+      this.store.set({ foo: 'bar', john: 'doe' });
+      assert.deepStrictEqual({ ...proxy }, { foo: 'bar', john: 'doe' });
+    });
+  });
 });
