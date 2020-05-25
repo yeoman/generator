@@ -774,6 +774,54 @@ describe('Base', () => {
     });
   });
 
+  describe('#registerConfigPrompts()', () => {
+    it('adds an prompt with common definitions', function() {
+      this.dummy.registerConfigPrompts({
+        name: 'foo',
+        message: 'bar',
+        type: 'number',
+        prompt: true
+      });
+      assert.equal(this.dummy._prompts[0].name, 'foo');
+      assert.equal(this.dummy._prompts[0].message, 'bar');
+      assert.equal(this.dummy._prompts[0].type, 'number');
+    });
+
+    it('should export option', function() {
+      this.dummy.registerConfigPrompts({
+        name: 'foo',
+        message: 'bar2',
+        type: 'string',
+        exportOption: true
+      });
+      assert.equal(this.dummy._prompts[0].name, 'foo');
+      assert.equal(this.dummy._prompts[0].message, 'bar2');
+      assert.equal(this.dummy._prompts[0].type, 'string');
+      assert.equal(this.dummy._options.foo.name, 'foo');
+      assert.equal(this.dummy._options.foo.description, 'bar2');
+      assert.equal(this.dummy._options.foo.type, String);
+    });
+
+    it('allows to customize option config', function() {
+      this.dummy.registerConfigPrompts({
+        name: 'foo',
+        message: 'bar2',
+        type: 'string',
+        exportOption: {
+          description: 'bar3',
+          name: 'foo2',
+          type: Number
+        }
+      });
+      assert.equal(this.dummy._prompts[0].name, 'foo');
+      assert.equal(this.dummy._prompts[0].message, 'bar2');
+      assert.equal(this.dummy._prompts[0].type, 'string');
+      assert.equal(this.dummy._options.foo2.name, 'foo2');
+      assert.equal(this.dummy._options.foo2.description, 'bar3');
+      assert.equal(this.dummy._options.foo2.type, Number);
+    });
+  });
+
   describe('#parseOptions()', () => {
     beforeEach(function() {
       this.dummy = new this.Dummy(['start', '--foo', 'bar', '-s', 'baz', 'remain'], {
