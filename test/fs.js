@@ -83,7 +83,7 @@ describe('generators.Base (actions/fs)', function() {
     const passedArg1 = randomString();
     const passedArg2 = randomString();
     const passedArg3 = {};
-    const passedArg4 = randomString();
+    const passedArg4 = { foo: 'bar' };
 
     describe(`#${operation.name}`, () => {
       let ret;
@@ -137,7 +137,7 @@ describe('generators.Base (actions/fs)', function() {
         }
 
         assert.equal(call.args[2], passedArg3);
-        assert.equal(call.args[3], passedArg4);
+        assert.equal(call.args[3].foo, passedArg4.foo);
       });
     });
   });
@@ -238,7 +238,7 @@ describe('generators.Base (actions/fs)', function() {
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
       const data = {};
-      const templateOptions = {};
+      const templateOptions = { foo: '123' };
       const copyOptions = {};
 
       this.gen.renderTemplates(
@@ -266,7 +266,7 @@ describe('generators.Base (actions/fs)', function() {
       assert.equal(secondCall.args[0], secondCallArg1);
       assert.equal(secondCall.args[1], secondCallArg2);
       assert.equal(secondCall.args[2], data);
-      assert.equal(secondCall.args[3], templateOptions);
+      assert.equal(secondCall.args[3].foo, templateOptions.foo);
       assert.equal(secondCall.args[4], copyOptions);
     });
 
