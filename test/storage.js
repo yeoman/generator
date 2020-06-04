@@ -335,4 +335,45 @@ describe('Storage', () => {
       assert.deepStrictEqual({ ...proxy }, { foo: 'bar', john: 'doe' });
     });
   });
+
+  describe('caching', () => {
+    beforeEach(function() {
+      // Make sure the cache is loaded.
+      // on instantiation a change event is emitted when the file loads to mem-fs
+      this.store.get('foo');
+    });
+
+    it('loads', function() {
+      assert(this.store._cachedStore);
+    });
+
+    it("doesn't loads when disabled", function() {
+      const store = new Storage('test', this.fs, this.storePath, { disableCache: true });
+      assert(store._cachedStore === undefined);
+      store.get('foo');
+      assert(store._cachedStore === undefined);
+    });
+
+    it('cleanups when the file changes', function() {
+      this.fs.writeJSON(this.store.path, {});
+      assert(this.store._cachedStore === undefined);
+    });
+
+    it("doesn't cleanup when another file changes", function() {
+      this.fs.write('a.txt', 'anything');
+      assert(this.store._cachedStore);
+    });
+
+    it('cleanups when per file cache is disabled and another file changes', function() {
+      this.fs.writeJSON(this.store.path, { disableCacheByFile: true });
+      this.fs.write('a.txt', 'anything');
+      assert(this.store._cachedStore === undefined);
+    });
+
+    // Compatibility for mem-fs <= 1.1.3
+    it('cleanups when change event argument is undefined', function() {
+      this.memFs.emit('change');
+      assert(this.store._cachedStore === undefined);
+    });
+  });
 });
