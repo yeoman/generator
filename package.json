@@ -69,6 +69,7 @@
     "istextorbinary": "^2.5.1",
     "lodash": "^4.17.11",
     "make-dir": "^3.0.0",
+    "mem-fs-editor": "^7.0.0",
     "minimist": "^1.2.5",
     "pretty-bytes": "^5.2.0",
     "read-chunk": "^3.2.0",
@@ -82,7 +83,6 @@
   },
   "optionalDependencies": {
     "grouped-queue": "^1.1.0",
-    "mem-fs-editor": "^6.0.0",
     "yeoman-environment": "^2.9.5"
   },
   "lint-staged": {
