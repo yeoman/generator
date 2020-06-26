@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.10.1</span>
+        <span class="version">v4.11.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -139,6 +139,9 @@
                 <li><a href="Generator.html#option">option</a></li>
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
+                <li>
+                  <a href="Generator.html#queueBasicTasks">queueBasicTasks</a>
+                </li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
                 <li><a href="Generator.html#queueTask">queueTask</a></li>
                 <li>
@@ -153,6 +156,11 @@
                   </a>
                 </li>
                 <li><a href="Generator.html#readTemplate">readTemplate</a></li>
+                <li>
+                  <a href="Generator.html#registerConfigPrompts">
+                    registerConfigPrompts
+                  </a>
+                </li>
                 <li>
                   <a href="Generator.html#registerTransformStream">
                     registerTransformStream
@@ -211,6 +219,7 @@
             <div class="hidden" id="Storage_sub">
               <div class="member-type">Methods</div>
               <ul class="inner">
+                <li><a href="Storage.html#createProxy">createProxy</a></li>
                 <li><a href="Storage.html#createStorage">createStorage</a></li>
                 <li><a href="Storage.html#defaults">defaults</a></li>
                 <li><a href="Storage.html#delete">delete</a></li>
@@ -380,7 +389,21 @@
         </ul>
       </div>
       <div class="lnb-api hidden">
-        <h3><a href="global.html">Global</a></h3>
+        <h3>Global</h3>
+        <ul>
+          <li class="hidden"><a href="global.html#Priority">Priority</a></li>
+          <li><a href="global.html#proxyHandler">proxyHandler</a></li>
+          <li class="hidden">
+            <a href="global.html#QueueOptions">QueueOptions</a>
+          </li>
+          <li class="hidden"><a href="global.html#Task">Task</a></li>
+          <li class="hidden">
+            <a href="global.html#TaskOptions">TaskOptions</a>
+          </li>
+          <li class="hidden">
+            <a href="global.html#WrappedMethod">WrappedMethod</a>
+          </li>
+        </ul>
       </div>
     </nav>
     <div id="resizer"></div>
@@ -393,6 +416,32 @@ const assert = require('assert');
 const _ = require('lodash');
 
 /**
+ * Proxy handler for Storage
+ */
+const proxyHandler = {
+  get(storage, property) {
+    return storage.get(property);
+  },
+  set(storage, property, value) {
+    storage.set(property, value);
+    return true;
+  },
+  ownKeys(storage) {
+    return Reflect.ownKeys(storage._store);
+  },
+  has(target, prop) {
+    return target.get(prop) !== undefined;
+  },
+  getOwnPropertyDescriptor(target, key) {
+    return {
+      get: () => this.get(target, key),
+      enumerable: true,
+      configurable: true
+    };
+  }
+};
+
+/**
  * Storage instances handle a json file where Generator authors can store data.
  *
  * The `Generator` class instantiate the storage named `config` by default.
@@ -401,7 +450,10 @@ const _ = require('lodash');
  * @param {String} [name]     The name of the new storage (this is a namespace)
  * @param {mem-fs-editor} fs  A mem-fs editor instance
  * @param {String} configPath The filepath used as a storage.
- * @param {Boolean} lodashPath Set true to treat name as a lodash path.
+ * @param {Object} [options] Storage options.
+ * @param {Boolean} [options.lodashPath=false] Set true to treat name as a lodash path.
+ * @param {Boolean} [options.disableCache=false] Set true to disable json object cache.
+ * @param {Boolean} [options.disableCacheByFile=false] Set true to cleanup cache for every fs change.
  *
  * @example
  * class extend Generator {
@@ -411,21 +463,43 @@ const _ = require('lodash');
  * }
  */
 class Storage {
-  constructor(name, fs, configPath, lodashPath = false) {
+  constructor(name, fs, configPath, options = {}) {
     if (name !== undefined &amp;&amp; typeof name !== 'string') {
       configPath = fs;
       fs = name;
       name = undefined;
     }
 
+    if (typeof options === 'boolean') {
+      options = { lodashPath: options };
+    }
+
+    _.defaults(options, {
+      lodash: false,
+      disableCache: false,
+      disableCacheByFile: false
+    });
+
     assert(configPath, 'A config filepath is required to create a storage');
 
     this.path = configPath;
     this.name = name;
     this.fs = fs;
-    this.existed = Object.keys(this._store).length > 0;
     this.indent = 2;
-    this.lodashPath = lodashPath;
+    this.lodashPath = options.lodashPath;
+    this.disableCache = options.disableCache;
+    this.disableCacheByFile = options.disableCacheByFile;
+
+    this.existed = Object.keys(this._store).length > 0;
+
+    this.fs.store.on('change', filename => {
+      // At mem-fs 1.1.3 filename is not passed to the event.
+      if (this.disableCacheByFile || (filename &amp;&amp; filename !== this.path)) {
+        return;
+      }
+
+      delete this._cachedStore;
+    });
   }
 
   /**
@@ -434,7 +508,11 @@ class Storage {
    * @private
    */
   get _store() {
-    const store = this.fs.readJSON(this.path, {});
+    const store = this._cachedStore || this.fs.readJSON(this.path, {});
+    if (!this.disableCache) {
+      this._cachedStore = store;
+    }
+
     if (!this.name) {
       return store || {};
     }
@@ -563,6 +641,14 @@ class Storage {
   createStorage(path) {
     const childName = this.name ? `${this.name}.${path}` : path;
     return new Storage(childName, this.fs, this.path, true);
+  }
+
+  /**
+   * Creates a proxy object.
+   * @return {Object} proxy.
+   */
+  createProxy() {
+    return new Proxy(this, proxyHandler);
   }
 }
 
