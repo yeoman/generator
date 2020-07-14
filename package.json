@@ -47,7 +47,7 @@
   "license": "BSD-2-Clause",
   "repository": "yeoman/generator",
   "engines": {
-    "node": ">=10"
+    "node": ">=12.10.0"
   },
   "scripts": {
     "pretest": "eslint .",
@@ -63,7 +63,6 @@
     "find-up": "^3.0.0",
     "github-username": "^3.0.0",
     "lodash": "^4.17.11",
-    "make-dir": "^3.0.0",
     "minimist": "^1.2.5",
     "read-pkg-up": "^5.0.0",
     "rimraf": "^2.6.3",
