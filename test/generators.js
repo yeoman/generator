@@ -125,29 +125,23 @@ describe('Generators module', () => {
 
   it('running standalone', function(done) {
     const Generator = class extends Base {};
-    let value = 1;
-    Generator.prototype.exec = function() {
-      value = 2;
-    };
-
-    const generator = new Generator();
-    generator.run().then(() => {
-      assert.equal(2, value);
+    try {
+      // eslint-disable-next-line no-new
+      new Generator();
+    } catch (error) {
+      assert(error.message, 'This generator requires an environment.');
       done();
-    });
+    }
   });
 
   it('running with an empty env', function(done) {
     const Generator = class extends Base {};
-    let value = 1;
-    Generator.prototype.exec = function() {
-      value = 2;
-    };
-
-    const generator = new Generator({ env: {} });
-    generator.run().then(() => {
-      assert.equal(2, value);
+    try {
+      // eslint-disable-next-line no-new
+      new Generator({ env: {} });
+    } catch (error) {
+      assert(error.message, 'This generator requires an environment.');
       done();
-    });
+    }
   });
 });

@@ -2,6 +2,8 @@
 const assert = require('assert');
 const path = require('path');
 const sinon = require('sinon');
+const Environment = require('yeoman-environment');
+
 const fsAction = require('../lib/actions/fs');
 const Base = require('../lib');
 
@@ -20,7 +22,7 @@ describe('generators.Base (actions/fs)', function() {
 
   before(function() {
     this.timeout(10000);
-    this.gen = new Base();
+    this.gen = new Base({ env: Environment.createEnv() });
   });
 
   beforeEach(function() {

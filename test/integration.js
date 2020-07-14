@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('yeoman-assert');
+const Environment = require('yeoman-environment');
 const helpers = require('yeoman-test');
 
 describe('Integration', () => {
@@ -10,7 +11,11 @@ describe('Integration', () => {
     this.timeout(5000);
     let tmpDir;
     return helpers
-      .create(path.join(__dirname, 'fixtures/generator-defaults/app'))
+      .create(
+        path.join(__dirname, 'fixtures/generator-defaults/app'),
+        {},
+        { createEnv: Environment.createEnv }
+      )
       .inTmpDir(() => {
         tmpDir = process.cwd();
       })

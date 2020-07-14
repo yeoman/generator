@@ -27,7 +27,8 @@ describe('Generator with environment version', () => {
         something: 'else',
         namespace: 'dummy',
         env: this.env,
-        'skip-install': true
+        'skip-install': true,
+        skipCheckEnv: true
       });
     });
 
@@ -176,6 +177,7 @@ describe('Generator with environment version', () => {
         something: 'else',
         namespace: 'dummy',
         env: this.env,
+        skipCheckEnv: true,
         'skip-install': true
       });
     });

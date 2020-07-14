@@ -127,7 +127,11 @@ describe('Base', () => {
 
     it('set options with false values', done => {
       const generator = helpers
-        .run(path.join(__dirname, './fixtures/options-generator'))
+        .run(
+          path.join(__dirname, './fixtures/options-generator'),
+          {},
+          { createEnv: yeoman.createEnv }
+        )
         .withOptions({ testOption: false })
         .on('end', () => {
           assert.equal(generator.options.testOption, false);
