@@ -205,8 +205,6 @@ describe('Base', () => {
         env: this.env,
         'skip-install': true
       });
-
-      this.resolveSpy = sinon.spy(this.testGen.conflicter, 'resolve');
     });
 
     it('run all methods in the given generator', function() {
@@ -239,8 +237,12 @@ describe('Base', () => {
     });
 
     it('resolve conflicts after it ran', function() {
+      let resolveSpy;
+      this.testGen.env.on('run', () => {
+        resolveSpy = sinon.spy(this.testGen.env.conflicter, 'resolve');
+      });
       return this.testGen.run().then(() => {
-        assert.equal(this.resolveSpy.callCount, 1);
+        assert.equal(resolveSpy.callCount, 1);
       });
     });
 
