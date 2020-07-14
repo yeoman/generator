@@ -119,7 +119,7 @@ describe('Base', () => {
         .withOptions({ testOption: false })
         .run()
         .then(runResult => {
-          assert.equal(runResult.generator.options.testOption, false);
+          assert.equal(runResult.env.rootGenerator().options.testOption, false);
         });
     });
 
