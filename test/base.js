@@ -109,17 +109,17 @@ describe('Base', () => {
       assert.equal(generator.options.baz, 'bar');
     });
 
-    it('set options with false values', done => {
-      const generator = helpers
-        .run(
+    it('set options with false values', () => {
+      return helpers
+        .create(
           path.join(__dirname, './fixtures/options-generator'),
           {},
           { createEnv: yeoman.createEnv }
         )
         .withOptions({ testOption: false })
-        .on('end', () => {
-          assert.equal(generator.options.testOption, false);
-          done();
+        .run()
+        .then(runResult => {
+          assert.equal(runResult.generator.options.testOption, false);
         });
     });
 
@@ -249,7 +249,7 @@ describe('Base', () => {
         this.async()('some error');
       };
 
-      this.testGen.on('error', err => {
+      this.testGen.env.on('error', err => {
         assert.equal(err, 'some error');
         done();
       });
@@ -264,7 +264,7 @@ describe('Base', () => {
         throw error;
       };
 
-      this.testGen.on('error', err => {
+      this.testGen.env.on('error', err => {
         assert.equal(err, error);
         done();
       });
@@ -317,7 +317,7 @@ describe('Base', () => {
         });
       };
 
-      this.testGen.on('error', err => {
+      this.testGen.env.on('error', err => {
         assert.equal(err.message, 'some error');
         done();
       });
@@ -662,11 +662,14 @@ describe('Base', () => {
       const dummy = new Base([], {
         env: this.env,
         resolved: 'dummy/all'
-      }).on('error', () => {
-        done();
       });
 
-      dummy.argument('foo', { required: true });
+      try {
+        dummy.argument('foo', { required: true });
+      } catch (error) {
+        assert(error.message.startsWith('Did not provide required argument '));
+        done();
+      }
     });
 
     it("doesn't raise an error if required arguments are not provided, but the help option has been specified", function() {

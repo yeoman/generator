@@ -48,7 +48,7 @@ describe('Base (actions/install mixin)', () => {
         options,
         spawnEnv
       );
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'nestedScript',
@@ -77,9 +77,8 @@ describe('Base (actions/install mixin)', () => {
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
-        this.dummy.run(error => {
+        this.dummy.run().then(() => {
           sinon.assert.calledOnce(this.spawnCommandStub);
-          assert(!error);
           done();
         });
       });
@@ -96,9 +95,8 @@ describe('Base (actions/install mixin)', () => {
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
-        this.dummy.run(error => {
+        this.dummy.run().then(() => {
           sinon.assert.calledOnce(this.spawnCommandStub);
-          assert(!error);
           done();
         });
       });
@@ -115,9 +113,8 @@ describe('Base (actions/install mixin)', () => {
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
-        this.dummy.run(error => {
+        this.dummy.run().then(() => {
           sinon.assert.calledOnce(this.spawnCommandStub);
-          assert(!error);
           done();
         });
       });
@@ -204,7 +201,7 @@ describe('Base (actions/install mixin)', () => {
 
       it('does not spawn anything with skipInstall', done => {
         this.dummy.scheduleInstallTask('npm', ['install']);
-        this.dummy.run(() => {
+        this.dummy.run().then(() => {
           sinon.assert.notCalled(this.spawnCommandStub);
           done();
         });
@@ -212,7 +209,7 @@ describe('Base (actions/install mixin)', () => {
 
       it('does not spawn anything with skipInstall', done => {
         this.dummy.scheduleInstallTask('yarn', ['install']);
-        this.dummy.run(() => {
+        this.dummy.run().then(() => {
           sinon.assert.notCalled(this.spawnCommandStub);
           done();
         });
@@ -220,7 +217,7 @@ describe('Base (actions/install mixin)', () => {
 
       it('logs the skipped install command', done => {
         this.dummy.scheduleInstallTask('npm', ['some-package'], { save: true });
-        this.dummy.run(() => {
+        this.dummy.run().then(() => {
           sinon.assert.calledWith(
             this.dummy.log.invoke,
             this.dummy.log.prototype.constructor,
@@ -240,7 +237,7 @@ describe('Base (actions/install mixin)', () => {
     it('spawn a bower process once per commands', done => {
       this.dummy.bowerInstall();
       this.dummy.bowerInstall();
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
         done();
@@ -249,7 +246,7 @@ describe('Base (actions/install mixin)', () => {
 
     it('spawn a bower process with formatted options', done => {
       this.dummy.bowerInstall('jquery', { saveDev: true });
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
@@ -266,7 +263,7 @@ describe('Base (actions/install mixin)', () => {
     it('spawn an install process once per commands', done => {
       this.dummy.npmInstall();
       this.dummy.npmInstall();
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
@@ -280,7 +277,7 @@ describe('Base (actions/install mixin)', () => {
 
     it('run with options', done => {
       this.dummy.npmInstall('yo', { save: true });
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'npm',
@@ -294,7 +291,7 @@ describe('Base (actions/install mixin)', () => {
     it('spawn separate install processes if spawnOptions differs', done => {
       this.dummy.npmInstall(null, null, { cwd: 'path1' });
       this.dummy.npmInstall(null, null, { cwd: 'path2' });
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         done();
       });
@@ -305,7 +302,7 @@ describe('Base (actions/install mixin)', () => {
     it('spawn an install process once per commands', done => {
       this.dummy.yarnInstall();
       this.dummy.yarnInstall();
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['install'], {});
         done();
@@ -314,7 +311,7 @@ describe('Base (actions/install mixin)', () => {
 
     it('run with options', done => {
       this.dummy.yarnInstall('yo', { dev: true });
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
@@ -329,7 +326,7 @@ describe('Base (actions/install mixin)', () => {
     it('spawn separate install processes if spawnOptions differs', done => {
       this.dummy.yarnInstall(null, null, { cwd: 'path1' });
       this.dummy.yarnInstall(null, null, { cwd: 'path2' });
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         done();
       });
@@ -339,7 +336,7 @@ describe('Base (actions/install mixin)', () => {
   describe('#installDependencies()', () => {
     it('spawn npm and bower', done => {
       this.dummy.installDependencies();
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
         sinon.assert.calledWithExactly(
@@ -354,7 +351,7 @@ describe('Base (actions/install mixin)', () => {
 
     it('spawn yarn', done => {
       this.dummy.installDependencies({ yarn: true, npm: false });
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'bower', ['install'], {});
         sinon.assert.calledWithExactly(this.spawnCommandStub, 'yarn', ['install'], {});
@@ -368,7 +365,7 @@ describe('Base (actions/install mixin)', () => {
         bower: { depth: 0 },
         npm: false
       });
-      this.dummy.run(() => {
+      this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,

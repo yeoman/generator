@@ -69,7 +69,7 @@ describe('Generators module', () => {
     );
   });
 
-  describe('#runWithOptions', function() {
+  describe('#run', function() {
     beforeEach(function() {
       const Generator = class extends Base {};
       Generator.prototype.throwing = () => {
@@ -82,20 +82,11 @@ describe('Generators module', () => {
       });
     });
 
-    it('forwards error to environment with forwardErrorToEnvironment', function(done) {
+    it('forwards error to environment', function(done) {
       this.env.on('error', () => {
         done();
       });
-      this.generator.runWithOptions({ forwardErrorToEnvironment: true });
-    });
-
-    it('forwards error to environment with forwardErrorToEnvironment option', function(done) {
-      this.generator.options.forwardErrorToEnvironment = true;
-
-      this.env.on('error', () => {
-        done();
-      });
-      this.generator.runWithOptions();
+      this.generator.run();
     });
   });
 
