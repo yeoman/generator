@@ -41,6 +41,7 @@
     "sinon": "^7.3.2",
     "tui-jsdoc-template": "^1.2.2",
     "yeoman-assert": "^3.1.1",
+    "yeoman-environment": "github:yeoman/environment#v3",
     "yeoman-test": "^2.6.0"
   },
   "license": "BSD-2-Clause",
@@ -82,8 +83,7 @@
     "through2": "^3.0.1"
   },
   "optionalDependencies": {
-    "grouped-queue": "^1.1.0",
-    "yeoman-environment": "^2.9.5"
+    "grouped-queue": "^1.1.0"
   },
   "lint-staged": {
     "*.js": [
