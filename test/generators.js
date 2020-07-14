@@ -129,7 +129,7 @@ describe('Generators module', () => {
       // eslint-disable-next-line no-new
       new Generator();
     } catch (error) {
-      assert(error.message, 'This generator requires an environment.');
+      assert.equal(error.message, 'This generator requires an environment.');
       done();
     }
   });
@@ -140,7 +140,10 @@ describe('Generators module', () => {
       // eslint-disable-next-line no-new
       new Generator({ env: {} });
     } catch (error) {
-      assert(error.message, 'This generator requires an environment.');
+      assert.equal(
+        error.message,
+        "Current environment doesn't provides some necessary feature this generator needs."
+      );
       done();
     }
   });
