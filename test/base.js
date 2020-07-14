@@ -18,8 +18,8 @@ mockery.enable({
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 const { TestAdapter } = require('yeoman-test/lib/adapter');
+const Conflicter = require('yeoman-environment/lib/util/conflicter');
 const Base = require('..');
-const Conflicter = require('../lib/util/conflicter');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
