@@ -40,6 +40,7 @@
     "proxyquire": "^2.1.0",
     "rimraf": "^3.0.2",
     "sinon": "^7.3.2",
+    "through2": "^4.0.2",
     "tui-jsdoc-template": "^1.2.2",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "github:mshima/environment#v3",
@@ -68,8 +69,7 @@
     "run-async": "^2.0.0",
     "semver": "^7.2.1",
     "shelljs": "^0.8.3",
-    "text-table": "^0.2.0",
-    "through2": "^3.0.1"
+    "text-table": "^0.2.0"
   },
   "lint-staged": {
     "*.js": [
