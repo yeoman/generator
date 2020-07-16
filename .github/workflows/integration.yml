@@ -35,7 +35,6 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: mshima/environment
-        ref: v3
         path: yeoman-environment
 
     - uses: actions/setup-node@v2.1.0
@@ -47,7 +46,7 @@ jobs:
         cd $GITHUB_WORKSPACE/yeoman-test
         npm ci
         npm install ${{ github.repository }}#$GITHUB_SHA
-        npm install mshima/environment#v3
+        npm install mshima/environment
         npm test
 
     - name: Run yeoman-generator test
@@ -56,7 +55,7 @@ jobs:
         cd $GITHUB_WORKSPACE/yeoman-generator
         npm ci
         npm install yeoman/yeoman-test#v3
-        npm install mshima/environment#v3
+        npm install mshima/environment
         npm test
 
     - name: Run yeoman-environment test
