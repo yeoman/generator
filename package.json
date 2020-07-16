@@ -44,7 +44,7 @@
     "tui-jsdoc-template": "^1.2.2",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "github:mshima/environment#v3",
-    "yeoman-test": "github:yeoman/yeoman-test"
+    "yeoman-test": "github:yeoman/yeoman-test#v3"
   },
   "license": "BSD-2-Clause",
   "repository": "yeoman/generator",
