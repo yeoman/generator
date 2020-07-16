@@ -55,7 +55,7 @@
     "cross-spawn": "^7.0.3",
     "dargs": "^6.1.0",
     "debug": "^4.1.1",
-    "github-username": "^3.0.0",
+    "github-username": "^5.0.1",
     "lodash": "^4.17.11",
     "minimist": "^1.2.5",
     "read-pkg-up": "^5.0.0",
