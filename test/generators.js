@@ -10,14 +10,14 @@ const Base = require('..');
 const NAMESPACE = 'somenamespace';
 
 describe('Generators module', () => {
-  beforeEach(function() {
+  beforeEach(function () {
     this.env = Environment.createEnv();
   });
 
   describe('Base', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       const Generator = class extends Base {};
-      Generator.prototype.exec = function() {};
+      Generator.prototype.exec = function () {};
       this.generator = new Generator({
         env: this.env,
         namespace: NAMESPACE,
@@ -25,7 +25,7 @@ describe('Generators module', () => {
       });
     });
 
-    it('is an EventEmitter', function(done) {
+    it('is an EventEmitter', function (done) {
       assert.ok(this.generator instanceof EventEmitter);
       assert.strictEqual(typeof this.generator.on, 'function');
       assert.strictEqual(typeof this.generator.emit, 'function');
@@ -33,8 +33,8 @@ describe('Generators module', () => {
       this.generator.emit('yay-o-man');
     });
 
-    it('emits done event', function(done) {
-      this.env.on(`done$${NAMESPACE}#exec`, data => {
+    it('emits done event', function (done) {
+      this.env.on(`done$${NAMESPACE}#exec`, (data) => {
         assert(data.generator === this.generator);
         assert(`done$${NAMESPACE}#exec`.includes(data.namespace));
         assert(data.namespace === NAMESPACE);
@@ -46,7 +46,7 @@ describe('Generators module', () => {
     });
   });
 
-  it('without localConfigOnly option', function() {
+  it('without localConfigOnly option', function () {
     this.generator = new Base({
       env: this.env,
       resolved: 'test'
@@ -57,7 +57,7 @@ describe('Generators module', () => {
     );
   });
 
-  it('with localConfigOnly option', function() {
+  it('with localConfigOnly option', function () {
     this.generator = new Base({
       env: this.env,
       resolved: 'test',
@@ -69,8 +69,8 @@ describe('Generators module', () => {
     );
   });
 
-  describe('#run', function() {
-    beforeEach(function() {
+  describe('#run', function () {
+    beforeEach(function () {
       const Generator = class extends Base {};
       Generator.prototype.throwing = () => {
         throw new Error('not thrown');
@@ -82,7 +82,7 @@ describe('Generators module', () => {
       });
     });
 
-    it('forwards error to environment', function(done) {
+    it('forwards error to environment', function (done) {
       this.env.on('error', () => {
         done();
       });
@@ -90,8 +90,8 @@ describe('Generators module', () => {
     });
   });
 
-  describe('#createStorage', function() {
-    beforeEach(function() {
+  describe('#createStorage', function () {
+    beforeEach(function () {
       this.generator = new Base({
         env: this.env,
         resolved: 'test',
@@ -99,14 +99,14 @@ describe('Generators module', () => {
       });
     });
 
-    it('with path and name', function() {
+    it('with path and name', function () {
       const global = path.join(this.env.cwd, '.yo-rc-global.json');
       const customStorage = this.generator.createStorage(global, '*');
       assert.equal(global, customStorage.path);
       assert.equal('*', customStorage.name);
     });
 
-    it('with path', function() {
+    it('with path', function () {
       const global = path.join(this.env.cwd, '.yo-rc-global.json');
       const customStorage = this.generator.createStorage(global);
       assert.equal(global, customStorage.path);
@@ -114,7 +114,7 @@ describe('Generators module', () => {
     });
   });
 
-  it('running standalone', function(done) {
+  it('running standalone', function (done) {
     const Generator = class extends Base {};
     try {
       // eslint-disable-next-line no-new
@@ -125,11 +125,11 @@ describe('Generators module', () => {
     }
   });
 
-  it('running with an empty env', function(done) {
+  it('running with an empty env', function (done) {
     const Generator = class extends Base {};
     try {
       // eslint-disable-next-line no-new
-      new Generator({ env: {} });
+      new Generator({env: {}});
     } catch (error) {
       assert.equal(
         error.message,

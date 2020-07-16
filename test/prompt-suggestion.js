@@ -12,15 +12,15 @@ const promptSuggestion = require('../lib/util/prompt-suggestion');
 /* eslint max-nested-callbacks: ["warn", 6] */
 
 describe('PromptSuggestion', () => {
-  beforeEach(function() {
+  beforeEach(function () {
     this.memFs = env.createEnv().sharedFs;
     this.fs = FileEditor.create(this.memFs);
     this.storePath = path.join(os.tmpdir(), 'suggestion-config.json');
     this.store = new Storage('suggestion', this.fs, this.storePath);
-    this.store.set('promptValues', { respuesta: 'foo' });
+    this.store.set('promptValues', {respuesta: 'foo'});
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     rimraf(this.storePath, done);
   });
 
@@ -29,15 +29,15 @@ describe('PromptSuggestion', () => {
       assert.throws(promptSuggestion.prefillQuestions.bind(null));
     });
 
-    it('require a questions parameter', function() {
+    it('require a questions parameter', function () {
       assert.throws(promptSuggestion.prefillQuestions.bind(this.store));
     });
 
-    it('take a questions parameter', function() {
+    it('take a questions parameter', function () {
       promptSuggestion.prefillQuestions(this.store, []);
     });
 
-    it('take a question object', function() {
+    it('take a question object', function () {
       const question = {
         name: 'respuesta',
         default: 'bar',
@@ -47,7 +47,7 @@ describe('PromptSuggestion', () => {
       assert.equal(result.default, 'foo');
     });
 
-    it('take a question array', function() {
+    it('take a question array', function () {
       const question = [
         {
           name: 'respuesta',
@@ -59,7 +59,7 @@ describe('PromptSuggestion', () => {
       assert.equal(result.default, 'foo');
     });
 
-    it("don't override default when store is set to false", function() {
+    it("don't override default when store is set to false", function () {
       const question = {
         name: 'respuesta',
         default: 'bar',
@@ -69,7 +69,7 @@ describe('PromptSuggestion', () => {
       assert.equal(result.default, 'bar');
     });
 
-    it('override default when store is set to true', function() {
+    it('override default when store is set to true', function () {
       const question = {
         name: 'respuesta',
         default: 'bar',
@@ -79,7 +79,7 @@ describe('PromptSuggestion', () => {
       assert.equal(result.default, 'foo');
     });
 
-    it('keep inquirer objects', function() {
+    it('keep inquirer objects', function () {
       const question = {
         type: 'checkbox',
         name: 'respuesta',
@@ -92,13 +92,13 @@ describe('PromptSuggestion', () => {
     });
 
     describe('take a checkbox', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.store.set('promptValues', {
           respuesta: ['foo']
         });
       });
 
-      it('override default from an array with objects', function() {
+      it('override default from an array with objects', function () {
         const question = {
           type: 'checkbox',
           name: 'respuesta',
@@ -120,16 +120,19 @@ describe('PromptSuggestion', () => {
             }
           ]
         };
-        const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+        const result = promptSuggestion.prefillQuestions(
+          this.store,
+          question
+        )[0];
 
-        result.choices.forEach(choice => {
+        result.choices.forEach((choice) => {
           assert.equal(choice.checked, false);
         });
 
         assert.deepEqual(result.default, ['foo']);
       });
 
-      it('override default from an array with strings', function() {
+      it('override default from an array with strings', function () {
         const question = {
           type: 'checkbox',
           name: 'respuesta',
@@ -137,18 +140,21 @@ describe('PromptSuggestion', () => {
           store: true,
           choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
         };
-        const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+        const result = promptSuggestion.prefillQuestions(
+          this.store,
+          question
+        )[0];
         assert.deepEqual(result.default, ['foo']);
       });
 
       describe('with multiple defaults', () => {
-        beforeEach(function() {
+        beforeEach(function () {
           this.store.set('promptValues', {
             respuesta: ['foo', 'bar']
           });
         });
 
-        it('from an array with objects', function() {
+        it('from an array with objects', function () {
           const question = {
             type: 'checkbox',
             name: 'respuesta',
@@ -170,16 +176,19 @@ describe('PromptSuggestion', () => {
               }
             ]
           };
-          const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+          const result = promptSuggestion.prefillQuestions(
+            this.store,
+            question
+          )[0];
 
-          result.choices.forEach(choice => {
+          result.choices.forEach((choice) => {
             assert.equal(choice.checked, false);
           });
 
           assert.deepEqual(result.default, ['foo', 'bar']);
         });
 
-        it('from an array with strings', function() {
+        it('from an array with strings', function () {
           const question = {
             type: 'checkbox',
             name: 'respuesta',
@@ -187,20 +196,23 @@ describe('PromptSuggestion', () => {
             store: true,
             choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
           };
-          const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+          const result = promptSuggestion.prefillQuestions(
+            this.store,
+            question
+          )[0];
           assert.deepEqual(result.default, ['foo', 'bar']);
         });
       });
     });
 
     describe('take a checkbox with choices from a function', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.store.set('promptValues', {
           respuesta: ['foo']
         });
       });
 
-      it('does not override default from an array with objects', function() {
+      it('does not override default from an array with objects', function () {
         const question = {
           type: 'checkbox',
           name: 'respuesta',
@@ -222,12 +234,15 @@ describe('PromptSuggestion', () => {
             }
           ]
         };
-        const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+        const result = promptSuggestion.prefillQuestions(
+          this.store,
+          question
+        )[0];
 
         assert.deepEqual(result.default, ['bar']);
       });
 
-      it('does not override default from an array with strings', function() {
+      it('does not override default from an array with strings', function () {
         const question = {
           type: 'checkbox',
           name: 'respuesta',
@@ -235,18 +250,21 @@ describe('PromptSuggestion', () => {
           store: true,
           choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
         };
-        const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+        const result = promptSuggestion.prefillQuestions(
+          this.store,
+          question
+        )[0];
         assert.deepEqual(result.default, ['bar']);
       });
 
       describe('does not override even with multiple defaults', () => {
-        beforeEach(function() {
+        beforeEach(function () {
           this.store.set('promptValues', {
             respuesta: ['foo', 'bar']
           });
         });
 
-        it('from an array with objects', function() {
+        it('from an array with objects', function () {
           const question = {
             type: 'checkbox',
             name: 'respuesta',
@@ -268,33 +286,44 @@ describe('PromptSuggestion', () => {
               }
             ]
           };
-          const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+          const result = promptSuggestion.prefillQuestions(
+            this.store,
+            question
+          )[0];
 
           assert.deepEqual(result.default, ['bar']);
         });
 
-        it('from an array with strings', function() {
+        it('from an array with strings', function () {
           const question = {
             type: 'checkbox',
             name: 'respuesta',
             default: ['bar'],
             store: true,
-            choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+            choices: () => [
+              'foo',
+              new inquirer.Separator('spacer'),
+              'bar',
+              'baz'
+            ]
           };
-          const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+          const result = promptSuggestion.prefillQuestions(
+            this.store,
+            question
+          )[0];
           assert.deepEqual(result.default, ['bar']);
         });
       });
     });
 
     describe('take a rawlist / expand', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.store.set('promptValues', {
           respuesta: 'bar'
         });
       });
 
-      it('override default arrayWithObjects', function() {
+      it('override default arrayWithObjects', function () {
         const question = {
           type: 'rawlist',
           name: 'respuesta',
@@ -316,11 +345,14 @@ describe('PromptSuggestion', () => {
             }
           ]
         };
-        const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+        const result = promptSuggestion.prefillQuestions(
+          this.store,
+          question
+        )[0];
         assert.equal(result.default, 2);
       });
 
-      it('override default arrayWithObjects', function() {
+      it('override default arrayWithObjects', function () {
         const question = {
           type: 'rawlist',
           name: 'respuesta',
@@ -328,38 +360,41 @@ describe('PromptSuggestion', () => {
           store: true,
           choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
         };
-        const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+        const result = promptSuggestion.prefillQuestions(
+          this.store,
+          question
+        )[0];
         assert.equal(result.default, 2);
       });
     });
   });
 
   describe('.storeAnswers()', () => {
-    beforeEach(function() {
-      this.store.set('promptValues', { respuesta: 'foo' });
+    beforeEach(function () {
+      this.store.set('promptValues', {respuesta: 'foo'});
     });
 
     it('require a store parameter', () => {
       assert.throws(promptSuggestion.storeAnswers.bind(null));
     });
 
-    it('require a question parameter', function() {
+    it('require a question parameter', function () {
       assert.throws(promptSuggestion.storeAnswers.bind(this.store));
     });
 
-    it('require a answer parameter', function() {
+    it('require a answer parameter', function () {
       assert.throws(promptSuggestion.storeAnswers.bind(this.store, []));
     });
 
-    it('take a answer parameter', function() {
+    it('take a answer parameter', function () {
       promptSuggestion.storeAnswers(this.store, [], {});
     });
 
-    it('take a storeAll parameter', function() {
+    it('take a storeAll parameter', function () {
       promptSuggestion.storeAnswers(this.store, [], {}, true);
     });
 
-    it('store answer in global store', function() {
+    it('store answer in global store', function () {
       const question = {
         name: 'respuesta',
         default: 'bar',
@@ -375,7 +410,7 @@ describe('PromptSuggestion', () => {
       assert.equal(this.store.get('promptValues').respuesta, 'baz');
     });
 
-    it("don't store default answer in global store", function() {
+    it("don't store default answer in global store", function () {
       const question = {
         name: 'respuesta',
         default: 'bar',
@@ -392,7 +427,7 @@ describe('PromptSuggestion', () => {
       assert.equal(this.store.get('promptValues'), undefined);
     });
 
-    it('force store default answer in global store', function() {
+    it('force store default answer in global store', function () {
       const question = {
         name: 'respuesta',
         default: 'bar',
@@ -409,7 +444,7 @@ describe('PromptSuggestion', () => {
       assert.equal(this.store.get('promptValues').respuesta, 'bar');
     });
 
-    it("don't store answer in global store", function() {
+    it("don't store answer in global store", function () {
       const question = {
         name: 'respuesta',
         default: 'bar',
@@ -425,7 +460,7 @@ describe('PromptSuggestion', () => {
       assert.equal(this.store.get('promptValues').respuesta, 'foo');
     });
 
-    it('store answer from rawlist type', function() {
+    it('store answer from rawlist type', function () {
       const question = {
         type: 'rawlist',
         name: 'respuesta',
@@ -444,10 +479,10 @@ describe('PromptSuggestion', () => {
     });
 
     describe('empty store', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.store.delete('promptValues');
       });
-      it("don't store default answer from rawlist type", function() {
+      it("don't store default answer from rawlist type", function () {
         const question = {
           type: 'rawlist',
           name: 'respuesta',
@@ -465,7 +500,7 @@ describe('PromptSuggestion', () => {
         assert.equal(this.store.get('promptValues'), undefined);
       });
 
-      it('force store default answer from rawlist type', function() {
+      it('force store default answer from rawlist type', function () {
         const question = {
           type: 'rawlist',
           name: 'respuesta',
@@ -484,7 +519,7 @@ describe('PromptSuggestion', () => {
       });
     });
 
-    it('store falsy answer (but not undefined) in global store', function() {
+    it('store falsy answer (but not undefined) in global store', function () {
       const question = {
         name: 'respuesta',
         default: true,

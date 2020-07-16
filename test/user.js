@@ -14,10 +14,10 @@ const Base = require('..');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 
-describe('Base#user', function() {
+describe('Base#user', function () {
   this.timeout(10000);
 
-  beforeEach(function() {
+  beforeEach(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
     makeDir.sync(path.join(tmpdir, 'subdir'));
@@ -27,12 +27,12 @@ describe('Base#user', function() {
     shell.exec('git config --local user.email yo@yeoman.io');
   });
 
-  afterEach(function(done) {
+  afterEach(function (done) {
     process.chdir(this.prevCwd);
     rimraf(tmpdir, done);
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     process.chdir(this.tmp);
     this.shell = shell;
     sinon.spy(this.shell, 'exec');
@@ -42,7 +42,7 @@ describe('Base#user', function() {
     });
   });
 
-  afterEach(function() {
+  afterEach(function () {
     this.shell.exec.restore();
   });
 
@@ -52,17 +52,17 @@ describe('Base#user', function() {
 
   describe('.git', () => {
     describe('.name()', () => {
-      it('is the name used by git', function() {
+      it('is the name used by git', function () {
         assert.equal(this.user.git.name(), 'Yeoman');
       });
 
-      it('cache the value', function() {
+      it('cache the value', function () {
         this.user.git.name();
         this.user.git.name();
         assert.equal(this.shell.exec.callCount, 1);
       });
 
-      it('cache is linked to the CWD', function() {
+      it('cache is linked to the CWD', function () {
         this.user.git.name();
         process.chdir('subdir');
         this.user.git.name();
@@ -71,17 +71,17 @@ describe('Base#user', function() {
     });
 
     describe('.email()', () => {
-      it('is the email used by git', function() {
+      it('is the email used by git', function () {
         assert.equal(this.user.git.email(), 'yo@yeoman.io');
       });
 
-      it('handle cache', function() {
+      it('handle cache', function () {
         this.user.git.email();
         this.user.git.email();
         assert.equal(this.shell.exec.callCount, 1);
       });
 
-      it('cache is linked to the CWD', function() {
+      it('cache is linked to the CWD', function () {
         this.user.git.email();
         process.chdir('subdir');
         this.user.git.email();
@@ -98,7 +98,7 @@ describe('Base#user', function() {
           .get('/search/users?q=XXX')
           .times(1)
           .reply(200, {
-            items: [{ login: 'mockname' }]
+            items: [{login: 'mockname'}]
           });
       });
 
@@ -106,9 +106,9 @@ describe('Base#user', function() {
         nock.restore();
       });
 
-      it('is the username used by GitHub', function() {
-        return this.user.github.username().then(res => {
-          assert.equal(res, 'mockname');
+      it('is the username used by GitHub', function () {
+        return this.user.github.username().then((resolved) => {
+          assert.equal(resolved, 'mockname');
         });
       });
     });

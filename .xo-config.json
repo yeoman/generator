@@ -1,0 +1,17 @@
+{
+  "space": true,
+  "envs": ["es2020", "node", "mocha"],
+  "prettier": true,
+  "rules": {
+    "promise/prefer-await-to-then": "off",
+    "prefer-rest-params": "off",
+    "node/prefer-promises/fs": "off",
+    "eslint-comments/no-unused-disable": "off",
+    "eslint-comments/disable-enable-pair": "off",
+    "unicorn/no-fn-reference-in-iterator": "off",
+    "prefer-spread": "off",
+    "default-param-last": "off",
+    "unicorn/explicit-length-check": "off"
+  }
+}
+

@@ -7,25 +7,22 @@ const Environment = require('yeoman-environment');
 const fsAction = require('../lib/actions/fs');
 const Base = require('../lib');
 
-const randomString = () =>
-  Math.random()
-    .toString(36)
-    .substring(7);
+const randomString = () => Math.random().toString(36).slice(7);
 
-describe('generators.Base (actions/fs)', function() {
+describe('generators.Base (actions/fs)', function () {
   const baseReturns = {
     templatePath: `templatePath${randomString()}`,
     destinationPath: `destinationPath${randomString()}`
   };
-  const configGetAll = { foo: 'bar' };
+  const configGetAll = {foo: 'bar'};
   let returns;
 
-  before(function() {
+  before(function () {
     this.timeout(10000);
-    this.gen = new Base({ env: Environment.createEnv() });
+    this.gen = new Base({env: Environment.createEnv()});
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     returns = {};
     this.base = {
       templatePath: sinon.stub().returns(baseReturns.templatePath),
@@ -39,28 +36,35 @@ describe('generators.Base (actions/fs)', function() {
       },
       fs: {}
     };
-    ['read', 'copy', 'write', 'writeJSON', 'delete', 'move', 'exists', 'copyTpl'].forEach(
-      op => {
-        const returnValue = randomString();
-        this.base.fs[op] = sinon.stub().returns(returnValue);
-        returns[op] = returnValue;
-      }
-    );
+    [
+      'read',
+      'copy',
+      'write',
+      'writeJSON',
+      'delete',
+      'move',
+      'exists',
+      'copyTpl'
+    ].forEach((op) => {
+      const returnValue = randomString();
+      this.base.fs[op] = sinon.stub().returns(returnValue);
+      returns[op] = returnValue;
+    });
     Object.assign(this.base, fsAction);
   });
 
   [
-    { name: 'readTemplate', first: 'templatePath', dest: 'read' },
+    {name: 'readTemplate', first: 'templatePath', dest: 'read'},
     {
       name: 'copyTemplate',
       first: 'templatePath',
       second: 'destinationPath',
       dest: 'copy'
     },
-    { name: 'readDestination', first: 'destinationPath', dest: 'read' },
-    { name: 'writeDestination', first: 'destinationPath', dest: 'write' },
-    { name: 'writeDestinationJSON', first: 'destinationPath', dest: 'writeJSON' },
-    { name: 'deleteDestination', first: 'destinationPath', dest: 'delete' },
+    {name: 'readDestination', first: 'destinationPath', dest: 'read'},
+    {name: 'writeDestination', first: 'destinationPath', dest: 'write'},
+    {name: 'writeDestinationJSON', first: 'destinationPath', dest: 'writeJSON'},
+    {name: 'deleteDestination', first: 'destinationPath', dest: 'delete'},
     {
       name: 'copyDestination',
       first: 'destinationPath',
@@ -73,7 +77,7 @@ describe('generators.Base (actions/fs)', function() {
       second: 'destinationPath',
       dest: 'move'
     },
-    { name: 'existsDestination', first: 'destinationPath', dest: 'exists' },
+    {name: 'existsDestination', first: 'destinationPath', dest: 'exists'},
     {
       name: 'renderTemplate',
       first: 'templatePath',
@@ -81,39 +85,46 @@ describe('generators.Base (actions/fs)', function() {
       dest: 'copyTpl',
       returnsUndefined: true
     }
-  ].forEach(operation => {
+  ].forEach((operation) => {
     const passedArg1 = randomString();
     const passedArg2 = randomString();
     const passedArg3 = {};
-    const passedArg4 = { foo: 'bar' };
+    const passedArg4 = {foo: 'bar'};
 
     describe(`#${operation.name}`, () => {
-      let ret;
+      let returnValue;
       let expectedReturn;
       let firstArgumentHandler;
       let secondArgumentHandler;
 
-      beforeEach(function() {
-        ret = this.base[operation.name](passedArg1, passedArg2, passedArg3, passedArg4);
+      beforeEach(function () {
+        returnValue = this.base[operation.name](
+          passedArg1,
+          passedArg2,
+          passedArg3,
+          passedArg4
+        );
 
-        expectedReturn = operation.returnsUndefined ? undefined : returns[operation.dest];
+        expectedReturn = operation.returnsUndefined
+          ? undefined
+          : returns[operation.dest];
         firstArgumentHandler = this.base[operation.first];
         secondArgumentHandler = this.base[operation.second];
       });
 
-      it('exists on the generator', function() {
+      it('exists on the generator', function () {
         assert(Base.prototype[operation.name]);
       });
 
-      it('returns the correct value', function() {
-        assert.equal(ret, expectedReturn);
+      it('returns the correct value', function () {
+        assert.equal(returnValue, expectedReturn);
       });
 
-      it('handles the first parameter', function() {
+      it('handles the first parameter', function () {
         assert.equal(firstArgumentHandler.getCall(0).args[0], passedArg1);
       });
 
-      it('handles the second parameter', function() {
+      it('handles the second parameter', function () {
         if (operation.second && operation.first === operation.second) {
           assert(secondArgumentHandler.calledTwice);
           assert.equal(secondArgumentHandler.getCall(1).args[0], passedArg2);
@@ -124,7 +135,7 @@ describe('generators.Base (actions/fs)', function() {
         }
       });
 
-      it('calls fs with correct arguments', function() {
+      it('calls fs with correct arguments', function () {
         const destCall = this.base.fs[operation.dest];
         assert(destCall.calledOnce);
         const call = destCall.getCall(0);
@@ -146,54 +157,54 @@ describe('generators.Base (actions/fs)', function() {
 
   describe('#renderTemplate', () => {
     const getAllReturn = {};
-    const getPathReturn = { foo: 'bar' };
+    const getPathReturn = {foo: 'bar'};
 
-    beforeEach(function() {
+    beforeEach(function () {
       sinon.stub(this.gen, 'sourceRoot').returns('');
       sinon.stub(this.gen, 'destinationRoot').returns('');
       sinon.stub(this.gen.config, 'getAll').returns(getAllReturn);
       sinon.stub(this.gen.config, 'getPath').returns(getPathReturn);
 
-      ['copyTpl'].forEach(op => {
+      ['copyTpl'].forEach((op) => {
         const returnValue = randomString();
         sinon.stub(this.gen.fs, op).returns(returnValue);
         returns[op] = returnValue;
       });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       this.gen.sourceRoot.restore();
       this.gen.destinationRoot.restore();
       this.gen.config.getAll.restore();
       this.gen.config.getPath.restore();
-      ['copyTpl'].forEach(op => this.gen.fs[op].restore());
+      ['copyTpl'].forEach((op) => this.gen.fs[op].restore());
     });
 
-    it('gets default data from config', function() {
+    it('gets default data from config', function () {
       this.gen.renderTemplate('a', 'b');
-      const copyTpl = this.gen.fs.copyTpl;
+      const {copyTpl} = this.gen.fs;
 
       assert(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
       assert.equal(firsCall.args[2], getAllReturn);
     });
 
-    it('gets data with path from config', function() {
+    it('gets data with path from config', function () {
       this.gen.renderTemplate('a', 'b', 'test');
-      const copyTpl = this.gen.fs.copyTpl;
+      const {copyTpl} = this.gen.fs;
 
       assert(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
       assert.equal(firsCall.args[2], getPathReturn);
     });
 
-    it('concatenates source and destination', function() {
+    it('concatenates source and destination', function () {
       const source = ['a', 'b'];
       const destination = ['b', 'a'];
       const data = {};
 
       this.gen.renderTemplate(source, destination, data);
-      const copyTpl = this.gen.fs.copyTpl;
+      const {copyTpl} = this.gen.fs;
 
       assert(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
@@ -204,29 +215,29 @@ describe('generators.Base (actions/fs)', function() {
   });
 
   describe('#renderTemplates', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       sinon.stub(this.gen, 'sourceRoot').returns('');
       sinon.stub(this.gen, 'destinationRoot').returns('');
 
-      ['copyTpl'].forEach(op => {
+      ['copyTpl'].forEach((op) => {
         const returnValue = randomString();
         sinon.stub(this.gen.fs, op).returns(returnValue);
         returns[op] = returnValue;
       });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       this.gen.sourceRoot.restore();
       this.gen.destinationRoot.restore();
-      ['copyTpl'].forEach(op => this.gen.fs[op].restore());
+      ['copyTpl'].forEach((op) => this.gen.fs[op].restore());
     });
 
-    it('handles 1 template', function() {
+    it('handles 1 template', function () {
       const passedArg1 = 'foo';
       const data = {};
-      this.gen.renderTemplates([{ source: passedArg1 }], data);
+      this.gen.renderTemplates([{source: passedArg1}], data);
 
-      const copyTpl = this.gen.fs.copyTpl;
+      const {copyTpl} = this.gen.fs;
       assert.equal(copyTpl.callCount, 1);
 
       const firsCall = copyTpl.getCall(0);
@@ -235,17 +246,17 @@ describe('generators.Base (actions/fs)', function() {
       assert.equal(firsCall.args[2], data);
     });
 
-    it('handles more than 1 template', function() {
+    it('handles more than 1 template', function () {
       const passedArg1 = 'foo';
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
       const data = {};
-      const templateOptions = { foo: '123' };
+      const templateOptions = {foo: '123'};
       const copyOptions = {};
 
       this.gen.renderTemplates(
         [
-          { source: passedArg1 },
+          {source: passedArg1},
           {
             source: secondCallArg1,
             destination: secondCallArg2,
@@ -256,7 +267,7 @@ describe('generators.Base (actions/fs)', function() {
         data
       );
 
-      const copyTpl = this.gen.fs.copyTpl;
+      const {copyTpl} = this.gen.fs;
       assert.equal(copyTpl.callCount, 2);
 
       const firsCall = copyTpl.getCall(0);
@@ -272,7 +283,7 @@ describe('generators.Base (actions/fs)', function() {
       assert.equal(secondCall.args[4], copyOptions);
     });
 
-    it('skips templates based on when callback', function() {
+    it('skips templates based on when callback', function () {
       const passedArg1 = 'foo';
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
@@ -282,7 +293,7 @@ describe('generators.Base (actions/fs)', function() {
 
       this.gen.renderTemplates(
         [
-          { source: passedArg1 },
+          {source: passedArg1},
           {
             source: secondCallArg1,
             when: () => false,
@@ -294,7 +305,7 @@ describe('generators.Base (actions/fs)', function() {
         data
       );
 
-      const copyTpl = this.gen.fs.copyTpl;
+      const {copyTpl} = this.gen.fs;
       assert.equal(copyTpl.callCount, 1);
 
       const firsCall = copyTpl.getCall(0);
@@ -303,7 +314,7 @@ describe('generators.Base (actions/fs)', function() {
       assert.equal(firsCall.args[2], data);
     });
 
-    it('passes the data to when callback', function() {
+    it('passes the data to when callback', function () {
       const passedArg1 = 'foo';
       const templateData = {};
       let receivedData;
@@ -312,7 +323,7 @@ describe('generators.Base (actions/fs)', function() {
         [
           {
             source: passedArg1,
-            when: data => {
+            when: (data) => {
               receivedData = data;
             }
           }
@@ -320,7 +331,7 @@ describe('generators.Base (actions/fs)', function() {
         templateData
       );
 
-      const copyTpl = this.gen.fs.copyTpl;
+      const {copyTpl} = this.gen.fs;
       assert.equal(copyTpl.callCount, 0);
 
       assert.equal(receivedData, templateData);

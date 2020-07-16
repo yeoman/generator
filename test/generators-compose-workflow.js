@@ -13,7 +13,7 @@ mockery.enable({
 
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
-const { TestAdapter } = require('yeoman-test/lib/adapter');
+const {TestAdapter} = require('yeoman-test/lib/adapter');
 const Base = require('..');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
@@ -23,8 +23,8 @@ const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 describe('Multiples generators', () => {
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
-  beforeEach(function() {
-    this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+  beforeEach(function () {
+    this.env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter());
     makeDir.sync(resolveddir);
     this.Dummy = class extends Base {};
     this.spyExec = sinon.spy();
@@ -32,7 +32,7 @@ describe('Multiples generators', () => {
   });
 
   describe('#composeWith() with multiples generators', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.dummy = new this.Dummy([], {
         resolved: 'unknown',
         namespace: 'dummy',
@@ -68,7 +68,7 @@ describe('Multiples generators', () => {
       this.env.registerStub(this.GenCompose2, 'composed:gen2');
     });
 
-    it('runs multiple composed generators', function(done) {
+    it('runs multiple composed generators', function (done) {
       this.dummy.composeWith(['composed:gen', 'composed:gen2']);
 
       const runSpy = sinon.spy(this.dummy, 'run');
@@ -90,15 +90,27 @@ describe('Multiples generators', () => {
             this.spyEnd2
           );
           assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
           assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
           assert(this.spyInit1.calledAfter(runSpy));
@@ -110,7 +122,7 @@ describe('Multiples generators', () => {
       }, 100);
     });
 
-    it('runs multiple composed generators (reverse)', function(done) {
+    it('runs multiple composed generators (reverse)', function (done) {
       this.dummy.composeWith(['composed:gen2', 'composed:gen']);
 
       const runSpy = sinon.spy(this.dummy, 'run');
@@ -132,15 +144,27 @@ describe('Multiples generators', () => {
             this.spyEnd1
           );
           assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
           assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
           assert(this.spyInit2.calledAfter(runSpy));
@@ -152,7 +176,7 @@ describe('Multiples generators', () => {
       }, 100);
     });
 
-    it('runs 3 composed generators', function(done) {
+    it('runs 3 composed generators', function (done) {
       this.spyExec3 = sinon.spy();
       this.spyInit3 = sinon.spy();
       const GenCompose3 = class extends Base {};
@@ -161,7 +185,11 @@ describe('Multiples generators', () => {
 
       this.env.registerStub(GenCompose3, 'composed:gen3');
 
-      this.dummy.composeWith(['composed:gen', 'composed:gen2', 'composed:gen3']);
+      this.dummy.composeWith([
+        'composed:gen',
+        'composed:gen2',
+        'composed:gen3'
+      ]);
 
       const runSpy = sinon.spy(this.dummy, 'run');
 
@@ -184,21 +212,39 @@ describe('Multiples generators', () => {
             this.spyEnd2
           );
           assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
           assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
           assert.equal(this.spyExec3.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec3.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec3.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec3.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec3.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec3.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec3.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec3.thisValues[0].options['skip-cache'], true);
           assert(this.spyInit1.calledAfter(runSpy));
@@ -212,7 +258,7 @@ describe('Multiples generators', () => {
       }, 100);
     });
 
-    it('runs multiple composed generators inside a running generator', function(done) {
+    it('runs multiple composed generators inside a running generator', function (done) {
       const Dummy2 = class extends this.Dummy {};
 
       const writingSpy1 = sinon.spy();
@@ -221,13 +267,13 @@ describe('Multiples generators', () => {
       Dummy2.prototype.end = endSpy;
 
       Dummy2.prototype.writing = {
-        compose: function() {
+        compose() {
           // Initializing and default is queue and called next (before writingSpy2)
           // Writing is queue after already queued functions (after writingSpy2)
           this.composeWith(['composed:gen', 'composed:gen2']);
           writingSpy1();
         },
-        writingSpy2: function() {
+        writingSpy2() {
           writingSpy2();
         }
       };
@@ -262,15 +308,27 @@ describe('Multiples generators', () => {
             this.spyEnd2
           );
           assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
           assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
           assert(writingSpy1.calledAfter(runSpy));
@@ -289,7 +347,7 @@ describe('Multiples generators', () => {
       }, 100);
     });
 
-    it('runs multiple composed generators inside a running generator', function(done) {
+    it('runs multiple composed generators inside a running generator', function (done) {
       const Dummy2 = class extends this.Dummy {};
 
       const writingSpy1 = sinon.spy();
@@ -299,19 +357,19 @@ describe('Multiples generators', () => {
 
       Dummy2.prototype.end = endSpy;
       Dummy2.prototype.writing = {
-        compose1: function() {
+        compose1() {
           // Initializing and default is queue and called next (before writingSpy2)
           // Writing is queue after already queued functions (after writingSpy2, compose2, writingSpy3)
           this.composeWith('composed:gen');
           writingSpy1();
         },
-        writingSpy2: function() {
+        writingSpy2() {
           writingSpy2();
         },
-        compose2: function() {
+        compose2() {
           this.composeWith('composed:gen2');
         },
-        writingSpy3: function() {
+        writingSpy3() {
           writingSpy3();
         }
       };
@@ -347,15 +405,27 @@ describe('Multiples generators', () => {
             this.spyEnd2
           );
           assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec1.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec1.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
           assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['skip-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spyExec2.thisValues[0].options['force-install'], true);
+          assert.equal(
+            this.spyExec2.thisValues[0].options['force-install'],
+            true
+          );
           assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
           assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
           assert(writingSpy1.calledAfter(runSpy));
@@ -376,29 +446,29 @@ describe('Multiples generators', () => {
     });
   });
 
-  it('#composeWith() inside contructor', function(done) {
+  it('#composeWith() inside contructor', function (done) {
     const Generator = class extends Base {
-      constructor(args, opts) {
-        super(args, opts);
+      constructor(args, options) {
+        super(args, options);
         this.composeWith('composed:gen2');
       }
     };
     const writingSpy1 = sinon.spy();
     Generator.prototype.writing = {
-      compose1: function() {
+      compose1() {
         writingSpy1();
       }
     };
 
     const Generator2 = class extends Base {
-      constructor(args, opts) {
-        super(args, opts);
+      constructor(args, options) {
+        super(args, options);
         this.composeWith('composed:gen3');
       }
     };
     const writingSpy2 = sinon.spy();
     Generator2.prototype.writing = {
-      compose2: function() {
+      compose2() {
         writingSpy2();
       }
     };
@@ -406,7 +476,7 @@ describe('Multiples generators', () => {
     const Generator3 = class extends Base {};
     const writingSpy3 = sinon.spy();
     Generator3.prototype.writing = {
-      compose3: function() {
+      compose3() {
         writingSpy3();
       }
     };

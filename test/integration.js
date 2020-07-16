@@ -7,24 +7,24 @@ const helpers = require('yeoman-test');
 
 describe('Integration', () => {
   let content;
-  before(function() {
+  before(function () {
     this.timeout(5000);
-    let tmpDir;
+    let temporaryDir;
     return helpers
       .create(
         path.join(__dirname, 'fixtures/generator-defaults/app'),
         {},
-        { createEnv: Environment.createEnv }
+        {createEnv: Environment.createEnv}
       )
       .inTmpDir(() => {
-        tmpDir = process.cwd();
+        temporaryDir = process.cwd();
       })
-      .withPrompts({ foo: 'fooValue' })
-      .withOptions({ extra: 'extraValue' })
+      .withPrompts({foo: 'fooValue'})
+      .withOptions({extra: 'extraValue'})
       .build()
       .run()
       .then(() => {
-        const file = path.join(tmpDir, 'foo-template.js');
+        const file = path.join(temporaryDir, 'foo-template.js');
         content = fs.readFileSync(path.resolve(file)).toString();
       });
   });
