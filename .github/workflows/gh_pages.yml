@@ -11,7 +11,7 @@ jobs:
     name: Update api docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2.1.0
       - run: npm install -g jsdoc prettier
       - uses: actions/checkout@v2
         with:
