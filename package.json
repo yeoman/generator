@@ -51,7 +51,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
-    "chalk": "^2.4.2",
+    "chalk": "^4.1.0",
     "cross-spawn": "^6.0.5",
     "dargs": "^6.1.0",
     "debug": "^4.1.1",
