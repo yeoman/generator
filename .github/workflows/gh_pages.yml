@@ -24,6 +24,7 @@ jobs:
         run: |
           cd source
           npm ci
+          npm install tui-jsdoc-template --no-package-lock
           jsdoc -c jsdoc.json -d ../out
       - name: Run prettier
         run: |
