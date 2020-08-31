@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px;">
+      <div class="logo" style="width: 127px; height: 14px">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.11.0</span>
+        <span class="version">v4.12.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -159,6 +159,11 @@
                 <li>
                   <a href="Generator.html#registerConfigPrompts">
                     registerConfigPrompts
+                  </a>
+                </li>
+                <li>
+                  <a href="Generator.html#registerPriorities">
+                    registerPriorities
                   </a>
                 </li>
                 <li>
@@ -599,6 +604,12 @@ class Generator extends EventEmitter {
     });
 
     this.resolved = this.options.resolved || __dirname;
+    this.description = this.description || '';
+
+    if (this.options.help) {
+      this.options.localConfigOnly = true;
+    }
+
     this.env = this.options.env;
 
     // Make sure we have a full featured environment.
@@ -635,8 +646,6 @@ class Generator extends EventEmitter {
     }
 
     this.fs = require('mem-fs-editor').create(this.env.sharedFs);
-
-    this.description = this.description || '';
 
     // Place holder for run-async callback.
     this.async = () => () => {};
@@ -708,98 +717,109 @@ class Generator extends EventEmitter {
 
     // Add custom queues
     if (Array.isArray(this.options.customPriorities)) {
-      const customPriorities = this.options.customPriorities.map(customPriority => {
-        // Keep backward compatibility with name
-        const newPriority = { priorityName: customPriority.name, ...customPriority };
-        delete newPriority.name;
-        return newPriority;
-      });
-
-      // Sort customPriorities, a referenced custom queue must be added before the one that reference it.
-      customPriorities.sort((a, b) => {
-        if (a.priorityName === b.priorityName) {
-          throw new Error(`Duplicate custom queue ${a.name}`);
-        }
-
-        if (a.priorityName === b.before) {
-          return -1;
-        }
-
-        if (b.priorityName === a.before) {
-          return 1;
-        }
-
-        return 0;
-      });
-
-      // Add queue to runLoop
-      customPriorities.forEach(customQueue => {
-        customQueue.queueName =
-          customQueue.queueName ||
-          `${this.options.namespace}#${customQueue.priorityName}`;
-        debug(`Registering custom queue ${customQueue.queueName}`);
-        this._queues[customQueue.priorityName] = customQueue;
-
-        if (this.env.runLoop.queueNames.includes(customQueue.queueName)) {
-          return;
-        }
-
-        // Backwards compatibilitiy with grouped-queue &lt; 1.0.0
-        if (!this.env.runLoop.addSubQueue) {
-          let SubQueue;
-          try {
-            SubQueue = require('grouped-queue/lib/subqueue');
-          } catch (error) {
-            throw new Error(
-              "The running environment doesn't have the necessary features to run this generator. Update it and run again."
-            );
-          }
-
-          this.env.runLoop.addSubQueue = function(name, before) {
-            if (this.__queues__[name]) {
-              // Sub-queue already exists
-              return;
-            }
-
-            if (!before) {
-              // Add at last place.
-              this.__queues__[name] = new SubQueue();
-              this.queueNames.push(name);
-              return;
-            }
-
-            if (!this.__queues__[before] || _.indexOf(this.queueNames, before) === -1) {
-              throw new Error('sub-queue ' + before + ' not found');
-            }
-
-            const current = this.__queues__;
-            const currentNames = Object.keys(current);
-            // Recreate the queue with new order.
-            this.__queues__ = {};
-            currentNames.forEach(currentName => {
-              if (currentName === before) {
-                this.__queues__[name] = new SubQueue();
-              }
-
-              this.__queues__[currentName] = current[currentName];
-            });
-
-            // Recreate queueNames
-            this.queueNames = Object.keys(this.__queues__);
-          };
-        }
-
-        let beforeQueue = customQueue.before
-          ? this._queues[customQueue.before].queueName
-          : undefined;
-        this.env.runLoop.addSubQueue(customQueue.queueName, beforeQueue);
-      });
+      this.registerPriorities(this.options.customPriorities);
     }
 
     this.compose = this.options.compose;
 
     // Expose utilities for dependency-less generators.
     this._ = _;
+  }
+
+  /**
+   * Register priorities for this generator
+   *
+   * @param  {Object[]} priorities - Priorities
+   * @param  {String} priorities.priorityName - Priority name
+   * @param  {String} priorities.before - The new priority will be queued before the `before` priority.
+   * @param  {String} [priorities.queueName] - Name to be used at grouped-queue
+   */
+  registerPriorities(priorities) {
+    const customPriorities = priorities.map(customPriority => {
+      // Keep backward compatibility with name
+      const newPriority = { priorityName: customPriority.name, ...customPriority };
+      delete newPriority.name;
+      return newPriority;
+    });
+
+    // Sort customPriorities, a referenced custom queue must be added before the one that reference it.
+    customPriorities.sort((a, b) => {
+      if (a.priorityName === b.priorityName) {
+        throw new Error(`Duplicate custom queue ${a.name}`);
+      }
+
+      if (a.priorityName === b.before) {
+        return -1;
+      }
+
+      if (b.priorityName === a.before) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    // Add queue to runLoop
+    customPriorities.forEach(customQueue => {
+      customQueue.queueName =
+        customQueue.queueName || `${this.options.namespace}#${customQueue.priorityName}`;
+      debug(`Registering custom queue ${customQueue.queueName}`);
+      this._queues[customQueue.priorityName] = customQueue;
+
+      if (this.env.runLoop.queueNames.includes(customQueue.queueName)) {
+        return;
+      }
+
+      // Backwards compatibilitiy with grouped-queue &lt; 1.0.0
+      if (!this.env.runLoop.addSubQueue) {
+        let SubQueue;
+        try {
+          SubQueue = require('grouped-queue/lib/subqueue');
+        } catch (error) {
+          throw new Error(
+            "The running environment doesn't have the necessary features to run this generator. Update it and run again."
+          );
+        }
+
+        this.env.runLoop.addSubQueue = function(name, before) {
+          if (this.__queues__[name]) {
+            // Sub-queue already exists
+            return;
+          }
+
+          if (!before) {
+            // Add at last place.
+            this.__queues__[name] = new SubQueue();
+            this.queueNames.push(name);
+            return;
+          }
+
+          if (!this.__queues__[before] || _.indexOf(this.queueNames, before) === -1) {
+            throw new Error('sub-queue ' + before + ' not found');
+          }
+
+          const current = this.__queues__;
+          const currentNames = Object.keys(current);
+          // Recreate the queue with new order.
+          this.__queues__ = {};
+          currentNames.forEach(currentName => {
+            if (currentName === before) {
+              this.__queues__[name] = new SubQueue();
+            }
+
+            this.__queues__[currentName] = current[currentName];
+          });
+
+          // Recreate queueNames
+          this.queueNames = Object.keys(this.__queues__);
+        };
+      }
+
+      let beforeQueue = customQueue.before
+        ? this._queues[customQueue.before].queueName
+        : undefined;
+      this.env.runLoop.addSubQueue(customQueue.queueName, beforeQueue);
+    });
   }
 
   checkEnvironmentVersion(packageDependency, version) {
@@ -1924,7 +1944,7 @@ module.exports = Generator;
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px;"
+        style="width: 127px; height: 14px"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>
