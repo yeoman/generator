@@ -77,7 +77,7 @@
     "rimraf": "^2.6.3",
     "run-async": "^2.0.0",
     "semver": "^7.2.1",
-    "shelljs": "^0.8.3",
+    "shelljs": "^0.8.4",
     "text-table": "^0.2.0",
     "through2": "^3.0.1"
   },
