@@ -39,15 +39,15 @@ jobs:
         cd $GITHUB_WORKSPACE/yeoman-test
         npm ci
         npm install ${{ github.repository }}#$GITHUB_SHA
-        npm install yeoman/environment#master
+        npm install yeoman/environment#main
         npm test
 
     - name: Run yeoman-generator test
       run: |
         cd $GITHUB_WORKSPACE/yeoman-generator
         npm ci
-        npm install yeoman/yeoman-test#master
-        npm install yeoman/environment#master
+        npm install yeoman/yeoman-test#main
+        npm install yeoman/environment#main
         npm test
 
     - name: Run yeoman-environment test
@@ -55,5 +55,5 @@ jobs:
         cd $GITHUB_WORKSPACE/yeoman-environment
         npm ci
         npm install ${{ github.repository }}#$GITHUB_SHA
-        npm install yeoman/yeoman-test#master
+        npm install yeoman/yeoman-test#main
         npm test
