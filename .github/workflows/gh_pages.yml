@@ -13,24 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v2.1.4
-      - run: npm install -g jsdoc prettier
       - uses: actions/checkout@v2
         with:
           path: source
       - uses: actions/checkout@v2
         with:
           ref: gh-pages
-          path: out
+          path: yeoman-generator-doc
       - name: Update jsdoc
         run: |
           cd source
           npm ci
-          jsdoc -c jsdoc.json -d ../out
-      - name: Run prettier
-        run: |
-          cd out
+          npm run doc
           sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' global.html
-          prettier . --write
+          npm install pretter@latest
+          npm run doc:prettier
       - name: Create commit
         if: always()
         run: |
