@@ -51,7 +51,8 @@
   "scripts": {
     "pretest": "eslint .",
     "test": "nyc mocha",
-    "doc": "jsdoc -c jsdoc.json",
+    "doc": "jsdoc -c jsdoc.json -d ../yeoman-generator-doc",
+    "doc:prettier": "prettier ../yeoman-generator-doc --write",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
