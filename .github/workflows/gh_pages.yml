@@ -21,17 +21,17 @@ jobs:
           ref: gh-pages
           path: yeoman-generator-doc
       - name: Update jsdoc
+        working-directory: source
         run: |
-          cd source
           npm ci
           npm run doc
           sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' ../yeoman-generator-doc/global.html
           npm install prettier@latest
           npm run doc:prettier
       - name: Create commit
+        working-directory: yeoman-generator-doc
         if: always()
         run: |
-          cd out
           git add .
           git config --local user.email ""
           git config --local user.name "Github Actions"
@@ -50,7 +50,7 @@ jobs:
             Update api docs
           labels: automated pr
           branch: gh-pages-master
-          path: out
+          path: yeoman-generator-doc
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"
