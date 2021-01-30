@@ -43,8 +43,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Update api for ${{github.event.release.name}}'
-          committer: ""
-          author: Github Actions <mshima@users.noreply.github.com>
           title: 'Update api for ${{github.event.release.name}}'
           body: |
             Update api docs
