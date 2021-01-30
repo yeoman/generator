@@ -25,7 +25,7 @@ jobs:
           cd source
           npm ci
           npm run doc
-          sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' global.html
+          sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' ../yeoman-generator-doc/global.html
           npm install pretter@latest
           npm run doc:prettier
       - name: Create commit
