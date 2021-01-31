@@ -52,7 +52,7 @@
     "pretest": "eslint .",
     "test": "nyc mocha",
     "doc": "jsdoc -c jsdoc.json -d ../yeoman-generator-doc",
-    "doc:prettier": "prettier ../yeoman-generator-doc --write",
+    "doc:prettier": "prettier ../yeoman-generator-doc --write --ignore-path .prettierignore-doc",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
