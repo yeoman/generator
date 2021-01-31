@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.12.0</span>
+        <span class="version">v4.13.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -920,13 +920,13 @@ class Generator extends EventEmitter {
   /**
    * Prompt user to answer questions. The signature of this method is the same as {@link https://github.com/SBoudrias/Inquirer.js Inquirer.js}
    *
-   * On top of the Inquirer.js API, you can provide a `{cache: true}` property for
+   * On top of the Inquirer.js API, you can provide a `{store: true}` property for
    * every question descriptor. When set to true, Yeoman will store/fetch the
    * user's answers as defaults.
    *
    * @param  {object|object[]} questions  Array of question descriptor objects. See {@link https://github.com/SBoudrias/Inquirer.js/blob/master/README.md Documentation}
-   * @param  {Storage} [questions.storage] Store/fetch the question on the storage.
-   * @param  {Storage} [storage] Storage object
+   * @param  {Storage|String} [questions.storage] Storage object or name (generator property) to be used by the question to store/fetch the response.
+   * @param  {Storage|String} [storage] Storage object or name (generator property) to be used by default to store/fetch responses.
    * @return {Promise} prompt promise
    */
   prompt(questions, storage) {
@@ -943,7 +943,7 @@ class Generator extends EventEmitter {
 
     const storageForQuestion = {};
 
-    const getAnswerFromStorage = function(question) {
+    const getAnswerFromStorage = question => {
       let questionStorage = question.storage || storage;
       questionStorage =
         typeof questionStorage === 'string' ? this[questionStorage] : questionStorage;
@@ -1547,6 +1547,10 @@ class Generator extends EventEmitter {
 
       this._composedWith.forEach(runGenerator);
       this._composedWith = [];
+
+      if (typeof this.env.runLoop.start === 'function') {
+        this.env.runLoop.start();
+      }
     });
 
     // For composed generators, otherwise error will not be catched.
