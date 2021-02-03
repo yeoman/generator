@@ -13,7 +13,6 @@ module.exports = class extends Base {
   constructor(args, opts) {
     super(args, opts);
 
-    console.log(require('./options'));
     this.option(require('./options'));
 
     this.registerConfigPrompts(require('./prompts'));
