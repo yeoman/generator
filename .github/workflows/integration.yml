@@ -37,7 +37,7 @@ jobs:
         repository: mshima/environment
         path: yeoman-environment
 
-    - uses: actions/setup-node@v2.1.0
+    - uses: actions/setup-node@v2.1.4
       with:
         node-version: ${{ matrix.node-version }}
 
@@ -46,7 +46,7 @@ jobs:
         cd $GITHUB_WORKSPACE/yeoman-test
         npm ci
         npm install ${{ github.repository }}#$GITHUB_SHA
-        npm install mshima/environment
+        npm install yeoman/environment#main
         npm test
 
     - name: Run yeoman-generator test
@@ -54,8 +54,8 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/yeoman-generator
         npm ci
-        npm install yeoman/yeoman-test#v3
-        npm install mshima/environment
+        npm install yeoman/yeoman-test#main
+        npm install yeoman/environment#main
         npm test
 
     - name: Run yeoman-environment test
@@ -64,5 +64,5 @@ jobs:
         cd $GITHUB_WORKSPACE/yeoman-environment
         npm ci
         npm install ${{ github.repository }}#$GITHUB_SHA
-        npm install yeoman/yeoman-test#v3
+        npm install yeoman/yeoman-test#main
         npm test

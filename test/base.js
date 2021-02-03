@@ -1834,7 +1834,18 @@ describe('Base', () => {
         });
     });
 
-    it('saves answers to specific storage', function () {
+    it('saves answers to config when specified as a property name', function() {
+      return this.dummy
+        .prompt([{ ...input1Prompt, storage: 'config' }, input2Prompt])
+        .then(answers => {
+          assert.equal(answers.prompt1, 'prompt1NewValue');
+          assert.equal(answers.prompt2, 'prompt2NewValue');
+          assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
+          assert.equal(this.dummy.config.get('prompt2'), 'prompt2Value');
+        });
+    });
+
+    it('saves answers to specific storage', function() {
       return this.dummy
         .prompt([{...input1Prompt, storage: this.dummy.config}, input2Prompt])
         .then((answers) => {

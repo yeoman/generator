@@ -5,36 +5,33 @@ on:
       - docs
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   build:
     name: Update api docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v2.1.0
-      - run: npm install -g jsdoc prettier
+      - uses: actions/setup-node@v2.1.4
       - uses: actions/checkout@v2
         with:
           path: source
       - uses: actions/checkout@v2
         with:
           ref: gh-pages
-          path: out
+          path: yeoman-generator-doc
       - name: Update jsdoc
+        working-directory: source
         run: |
-          cd source
           npm ci
-          npm install tui-jsdoc-template --no-package-lock
-          jsdoc -c jsdoc.json -d ../out
-      - name: Run prettier
-        run: |
-          cd out
-          sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' global.html
-          prettier . --write
+          npm run doc
+          sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' ../yeoman-generator-doc/global.html
+          npm install prettier@latest
+          npm run doc:prettier
       - name: Create commit
+        working-directory: yeoman-generator-doc
         if: always()
         run: |
-          cd out
           git add .
           git config --local user.email ""
           git config --local user.name "Github Actions"
@@ -42,18 +39,16 @@ jobs:
       - name: Create Pull Request
         if: always()
         id: cpr
-        uses: peter-evans/create-pull-request@v2
+        uses: peter-evans/create-pull-request@v3.8.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Update api for ${{github.event.release.name}}'
-          committer: ""
-          author: Github Actions <mshima@users.noreply.github.com>
           title: 'Update api for ${{github.event.release.name}}'
           body: |
             Update api docs
           labels: automated pr
           branch: gh-pages-master
-          path: out
+          path: yeoman-generator-doc
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"

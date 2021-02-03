@@ -47,7 +47,8 @@
   "scripts": {
     "pretest": "xo",
     "test": "nyc mocha",
-    "doc": "jsdoc -c jsdoc.json",
+    "doc": "jsdoc -c jsdoc.json -d ../yeoman-generator-doc",
+    "doc:prettier": "prettier ../yeoman-generator-doc --write --ignore-path .prettierignore-doc",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
@@ -61,7 +62,7 @@
     "read-pkg-up": "^5.0.0",
     "run-async": "^2.0.0",
     "semver": "^7.2.1",
-    "shelljs": "^0.8.3",
+    "shelljs": "^0.8.4",
     "text-table": "^0.2.0",
     "xo": "^0.32.1"
   }
