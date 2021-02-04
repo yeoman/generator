@@ -350,7 +350,7 @@ describe('Base (actions/install mixin)', () => {
 
   describe('#installDependencies()', () => {
     it('spawn npm and bower', (done) => {
-      this.dummy.installDependencies();
+      this.dummy.installDependencies({bower: true});
       this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
@@ -370,7 +370,7 @@ describe('Base (actions/install mixin)', () => {
     });
 
     it('spawn yarn', (done) => {
-      this.dummy.installDependencies({yarn: true, npm: false});
+      this.dummy.installDependencies({yarn: true, npm: false, bower: true});
       this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
