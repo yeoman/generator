@@ -7,7 +7,7 @@ describe('generators.Base (actions/spawn-command)', () => {
     this.crossSpawn = sinon.spy();
     this.crossSpawn.sync = sinon.spy();
     this.spawn = proxyquire('../lib/actions/spawn-command', {
-      'cross-spawn': this.crossSpawn
+      execa: this.crossSpawn
     });
   });
 
@@ -35,9 +35,9 @@ describe('generators.Base (actions/spawn-command)', () => {
     });
 
     it('allow overriding default options', function () {
-      this.spawn.spawnCommand('foo', undefined, {stdio: 'wut'});
+      this.spawn.spawnCommand('foo', undefined, {stdio: 'ignore'});
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
-        stdio: 'wut'
+        stdio: 'ignore'
       });
     });
   });
