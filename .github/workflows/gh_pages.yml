@@ -39,7 +39,7 @@ jobs:
       - name: Create Pull Request
         if: always()
         id: cpr
-        uses: peter-evans/create-pull-request@v3.8.0
+        uses: peter-evans/create-pull-request@v3.8.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Update api for ${{github.event.release.name}}'
