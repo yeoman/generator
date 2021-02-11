@@ -1,4 +1,3 @@
-'use strict';
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -27,10 +26,14 @@ const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 describe('Base', () => {
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
-  beforeEach(function() {
-    this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+  beforeEach(function () {
+    this.env = yeoman.createEnv(
+      [],
+      { 'skip-install': true },
+      new TestAdapter()
+    );
     // Ignore error forwarded to environment
-    this.env.on('error', _ => {});
+    this.env.on('error', (_) => {});
 
     makeDir.sync(resolveddir);
     this.Dummy = class extends Base {};
@@ -48,7 +51,7 @@ describe('Base', () => {
   });
 
   describe('constructor', () => {
-    it('set the CWD where `.yo-rc.json` is found', function() {
+    it('set the CWD where `.yo-rc.json` is found', function () {
       const projectDir = path.join(__dirname, 'fixtures/dummy-project');
       const subdir = path.join(projectDir, 'subdir');
       process.chdir(subdir);
@@ -64,7 +67,7 @@ describe('Base', () => {
       assert.equal(dummy.contextRoot, subdir);
     });
 
-    it('uses the destinationRoot passed at options', function() {
+    it('uses the destinationRoot passed at options', function () {
       const projectDir = path.join(__dirname, 'fixtures/dummy-project');
       const subdir = path.join(projectDir, 'subdir');
       process.chdir(subdir);
@@ -81,7 +84,7 @@ describe('Base', () => {
       assert.equal(dummy.contextRoot, subdir);
     });
 
-    it('use the environment options', function() {
+    it('use the environment options', function () {
       this.env.registerStub(class extends Base {}, 'ember:model');
 
       const generator = this.env.create('ember:model', {
@@ -93,7 +96,7 @@ describe('Base', () => {
       assert.equal(generator.options['test-framework'], 'jasmine');
     });
 
-    it('set generator.options from constructor options', function() {
+    it('set generator.options from constructor options', function () {
       const generator = new Base({
         env: this.env,
         resolved: 'test',
@@ -103,7 +106,7 @@ describe('Base', () => {
       assert.equal(generator.options['test-framework'], 'mocha');
     });
 
-    it('set options based on nopt arguments', function() {
+    it('set options based on nopt arguments', function () {
       const generator = new Base(['--foo', 'bar'], {
         env: this.env,
         resolved: 'test'
@@ -114,7 +117,7 @@ describe('Base', () => {
       assert.deepEqual(generator.args, ['bar']);
     });
 
-    it('set arguments based on nopt arguments', function() {
+    it('set arguments based on nopt arguments', function () {
       const generator = new Base(['--foo', 'bar'], {
         env: this.env,
         resolved: 'test'
@@ -125,7 +128,7 @@ describe('Base', () => {
       assert.equal(generator.options.baz, 'bar');
     });
 
-    it('set options with false values', done => {
+    it('set options with false values', (done) => {
       const generator = helpers
         .run(path.join(__dirname, './fixtures/options-generator'))
         .withOptions({ testOption: false })
@@ -135,7 +138,7 @@ describe('Base', () => {
         });
     });
 
-    it('setup fs editor', function() {
+    it('setup fs editor', function () {
       const generator = new Base([], {
         env: this.env,
         resolved: 'test'
@@ -146,13 +149,13 @@ describe('Base', () => {
   });
 
   describe('prototype', () => {
-    it("methods doesn't conflict with Env#runQueue", function() {
+    it("methods doesn't conflict with Env#runQueue", function () {
       assert.notImplement(Base.prototype, this.env.runLoop.queueNames);
     });
   });
 
   describe('#appname', () => {
-    it('is set to the `determineAppname()` return value', function() {
+    it('is set to the `determineAppname()` return value', function () {
       assert.equal(this.dummy.appname, this.dummy.determineAppname());
     });
   });
@@ -169,7 +172,7 @@ describe('Base', () => {
       delete require.cache[path.join(process.cwd(), 'package.json')];
     });
 
-    it('returns appname from bower.json', function() {
+    it('returns appname from bower.json', function () {
       this.dummy.fs.write(
         this.dummy.destinationPath('bower.json'),
         '{ "name": "app-name" }'
@@ -178,7 +181,7 @@ describe('Base', () => {
       assert.equal(this.dummy.determineAppname(), 'app name');
     });
 
-    it('returns appname from package.json', function() {
+    it('returns appname from package.json', function () {
       this.dummy.fs.write(
         this.dummy.destinationPath('package.json'),
         '{ "name": "package_app-name" }'
@@ -187,13 +190,13 @@ describe('Base', () => {
       assert.equal(this.dummy.determineAppname(), 'package_app name');
     });
 
-    it('returns appname from the current directory', function() {
+    it('returns appname from the current directory', function () {
       assert.equal(this.dummy.determineAppname(), 'yeoman base');
     });
   });
 
   describe('#run()', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.TestGenerator = class extends Base {};
       _.extend(this.TestGenerator.prototype, {
         exec: sinon.spy(),
@@ -221,16 +224,16 @@ describe('Base', () => {
       this.resolveSpy = sinon.spy(this.testGen.conflicter, 'resolve');
     });
 
-    it('run all methods in the given generator', function() {
+    it('run all methods in the given generator', function () {
       return this.testGen.run();
     });
 
-    it('turn on _running flag', function() {
+    it('turn on _running flag', function () {
       this.testGen.run();
       assert.ok(this.testGen._running);
     });
 
-    it('run prototype methods (not instances one)', function() {
+    it('run prototype methods (not instances one)', function () {
       this.testGen.exec = sinon.spy();
       return this.testGen.run().then(() => {
         assert.ok(this.execSpy.calledOnce);
@@ -238,30 +241,30 @@ describe('Base', () => {
       });
     });
 
-    it("don't try running prototype attributes", function() {
+    it("don't try running prototype attributes", function () {
       this.TestGenerator.prototype.prop = 'something';
       return this.testGen.run();
     });
 
-    it('pass instance .args property to the called methods', function() {
+    it('pass instance .args property to the called methods', function () {
       this.testGen.args = ['2', 'args'];
       return this.testGen.run().then(() => {
         assert(this.execSpy.withArgs('2', 'args').calledOnce);
       });
     });
 
-    it('resolve conflicts after it ran', function() {
+    it('resolve conflicts after it ran', function () {
       return this.testGen.run().then(() => {
         assert.equal(this.resolveSpy.callCount, 1);
       });
     });
 
-    it('can emit error from async methods', function(done) {
-      this.TestGenerator.prototype.throwing = function() {
+    it('can emit error from async methods', function (done) {
+      this.TestGenerator.prototype.throwing = function () {
         this.async()('some error');
       };
 
-      this.testGen.on('error', err => {
+      this.testGen.on('error', (err) => {
         assert.equal(err, 'some error');
         done();
       });
@@ -269,14 +272,14 @@ describe('Base', () => {
       this.testGen.run().catch(() => {});
     });
 
-    it('can emit error from sync methods', function(done) {
+    it('can emit error from sync methods', function (done) {
       const error = new Error();
 
       this.TestGenerator.prototype.throwing = () => {
         throw error;
       };
 
-      this.testGen.on('error', err => {
+      this.testGen.on('error', (err) => {
         assert.equal(err, error);
         done();
       });
@@ -284,7 +287,7 @@ describe('Base', () => {
       this.testGen.run().catch(() => {});
     });
 
-    it('stop queue processing once an error is thrown', function() {
+    it('stop queue processing once an error is thrown', function () {
       const error = new Error();
       const spy = sinon.spy();
 
@@ -295,17 +298,17 @@ describe('Base', () => {
       this.TestGenerator.prototype.afterError = spy;
 
       this.testGen.on('error', sinon.spy());
-      return this.testGen.run().catch(err => {
+      return this.testGen.run().catch((err) => {
         assert.equal(err, error);
       });
     });
 
-    it('handle function returning promises as asynchronous', function() {
+    it('handle function returning promises as asynchronous', function () {
       const spy1 = sinon.spy();
       const spy2 = sinon.spy();
 
       this.TestGenerator.prototype.first = () => {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           setTimeout(() => {
             spy1();
             resolve();
@@ -322,14 +325,14 @@ describe('Base', () => {
       });
     });
 
-    it('handle failing promises as errors', function(done) {
+    it('handle failing promises as errors', function (done) {
       this.TestGenerator.prototype.failing = () => {
         return new Promise((resolve, reject) => {
           reject(new Error('some error'));
         });
       };
 
-      this.testGen.on('error', err => {
+      this.testGen.on('error', (err) => {
         assert.equal(err.message, 'some error');
         done();
       });
@@ -337,11 +340,11 @@ describe('Base', () => {
       this.testGen.run().catch(() => {});
     });
 
-    it('run methods in series', function(done) {
+    it('run methods in series', function (done) {
       let async1Running = false;
       let async1Ran = false;
 
-      this.TestGenerator.prototype.async1 = function() {
+      this.TestGenerator.prototype.async1 = function () {
         async1Running = true;
         const cb = this.async();
 
@@ -361,19 +364,19 @@ describe('Base', () => {
       this.testGen.run();
     });
 
-    it('throws if no method is available', function() {
+    it('throws if no method is available', function () {
       const gen = new (class extends Base {})([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
         env: this.env
       });
 
-      return gen.run().catch(err => {
+      return gen.run().catch((err) => {
         assert(err.toString().includes('This Generator is empty'));
       });
     });
 
-    it('will run non-enumerable methods', function() {
+    it('will run non-enumerable methods', function () {
       class Generator extends Base {}
 
       Object.defineProperty(Generator.prototype, 'nonenumerable', {
@@ -393,32 +396,32 @@ describe('Base', () => {
       });
     });
 
-    it('ignore underscore prefixed method', function() {
+    it('ignore underscore prefixed method', function () {
       return this.testGen.run().then(() => {
         assert(this.TestGenerator.prototype._private.notCalled);
       });
     });
 
-    it('ignore hashtag prefixed method', function() {
+    it('ignore hashtag prefixed method', function () {
       return this.testGen.run().then(() => {
         assert(this.TestGenerator.prototype['#composed'].notCalled);
       });
     });
 
-    it('run methods in a queue hash', function() {
+    it('run methods in a queue hash', function () {
       return this.testGen.run().then(() => {
         assert(this.TestGenerator.prototype.prompting.m1.calledOnce);
         assert(this.TestGenerator.prototype.prompting.m2.calledOnce);
       });
     });
 
-    it('ignore underscore prefixed method in a queue hash', function() {
+    it('ignore underscore prefixed method in a queue hash', function () {
       return this.testGen.run().then(() => {
         assert(this.TestGenerator.prototype.prompting._private.notCalled);
       });
     });
 
-    it('run named queued methods in order', function() {
+    it('run named queued methods in order', function () {
       const initSpy = this.TestGenerator.prototype.initializing;
       const promptSpy = this.TestGenerator.prototype.prompting.m1;
 
@@ -427,7 +430,7 @@ describe('Base', () => {
       });
     });
 
-    it('run queued methods in order even if not in order in prototype', function() {
+    it('run queued methods in order even if not in order in prototype', function () {
       const initSpy = this.TestGenerator.prototype.initializing;
       const execSpy = this.TestGenerator.prototype.exec;
 
@@ -436,10 +439,10 @@ describe('Base', () => {
       });
     });
 
-    it('commit mem-fs to disk', function() {
+    it('commit mem-fs to disk', function () {
       let filepath;
 
-      this.TestGenerator.prototype.writing = function() {
+      this.TestGenerator.prototype.writing = function () {
         this.fs.write(
           (filepath = path.join(this.destinationRoot(), 'fromfs.txt')),
           'generated'
@@ -451,16 +454,20 @@ describe('Base', () => {
       });
     });
 
-    it('allow skipping file writes to disk', function() {
+    it('allow skipping file writes to disk', function () {
       const action = { action: 'skip' };
       const filepath = path.join(__dirname, '/fixtures/conflict.js');
       assert(fs.existsSync(filepath));
 
-      this.TestGenerator.prototype.writing = function() {
+      this.TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'some new content');
       };
 
-      const env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter(action));
+      const env = yeoman.createEnv(
+        [],
+        { 'skip-install': true },
+        new TestAdapter(action)
+      );
       const testGen = new this.TestGenerator([], {
         resolved: 'generator/app/index.js',
         namespace: 'dummy',
@@ -472,22 +479,26 @@ describe('Base', () => {
       });
     });
 
-    it('does not prompt again for skipped files', function() {
+    it('does not prompt again for skipped files', function () {
       const action = { action: 'skip' };
       const filepath = path.join(__dirname, '/fixtures/conflict.js');
       const filepath2 = path.join(__dirname, '/fixtures/file-conflict.txt');
 
       sinon.spy(Conflicter.prototype, 'collision');
-      const env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter(action));
+      const env = yeoman.createEnv(
+        [],
+        { 'skip-install': true },
+        new TestAdapter(action)
+      );
       env.registerStub(this.Dummy, 'dummy:app');
 
       // The composed generator need to write at least one file for it to go through it's
       // file writing cycle
-      this.Dummy.prototype.writing = function() {
+      this.Dummy.prototype.writing = function () {
         this.fs.write(filepath2, 'foo');
       };
 
-      this.TestGenerator.prototype.writing = function() {
+      this.TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'some new content');
         this.composeWith('dummy:app');
       };
@@ -504,12 +515,15 @@ describe('Base', () => {
       });
     });
 
-    it('does not pass config file to conflicter', function() {
+    it('does not pass config file to conflicter', function () {
       sinon.spy(Conflicter.prototype, 'collision');
 
-      this.TestGenerator.prototype.writing = function() {
+      this.TestGenerator.prototype.writing = function () {
         fs.writeFileSync(this.destinationPath('.yo-rc.json'), '{"foo": 3}');
-        fs.writeFileSync(path.join(os.homedir(), '.yo-rc-global.json'), '{"foo": 3}');
+        fs.writeFileSync(
+          path.join(os.homedir(), '.yo-rc-global.json'),
+          '{"foo": 3}'
+        );
         this.config.set('bar', 1);
         this._globalConfig.set('bar', 1);
       };
@@ -520,10 +534,10 @@ describe('Base', () => {
       });
     });
 
-    it('does not pass file with pre-defined status to conflicter', function() {
+    it('does not pass file with pre-defined status to conflicter', function () {
       sinon.spy(Conflicter.prototype, 'collision');
 
-      this.TestGenerator.prototype.writing = function() {
+      this.TestGenerator.prototype.writing = function () {
         this.fs.write('test.json', '{"foo": 3}');
         const file = this.env.sharedFs.get('test.json');
         file.conflicter = 'skip';
@@ -535,8 +549,8 @@ describe('Base', () => {
       });
     });
 
-    it('allows file writes in any priorities', function() {
-      this.TestGenerator.prototype.end = function() {
+    it('allows file writes in any priorities', function () {
+      this.TestGenerator.prototype.end = function () {
         this.fs.write(this.destinationPath('foo.txt'), 'test');
       };
 
@@ -545,8 +559,8 @@ describe('Base', () => {
       });
     });
 
-    it('can cancel cancellable tasks', function(done) {
-      this.TestGenerator.prototype.cancel = function() {
+    it('can cancel cancellable tasks', function (done) {
+      this.TestGenerator.prototype.cancel = function () {
         this.cancelCancellableTasks();
       };
 
@@ -557,11 +571,11 @@ describe('Base', () => {
       this.testGen.run().then(done);
     });
 
-    it('can start over the generator', function(done) {
+    it('can start over the generator', function (done) {
       const spy1 = sinon.spy();
       const spy2 = sinon.spy();
 
-      this.TestGenerator.prototype.cancel = function() {
+      this.TestGenerator.prototype.cancel = function () {
         spy1();
         if (!this.startedOver) {
           this.startOver({ startedOver: true });
@@ -569,7 +583,7 @@ describe('Base', () => {
         }
       };
 
-      this.TestGenerator.prototype.after = function() {
+      this.TestGenerator.prototype.after = function () {
         assert(this.options.startedOver);
         assert(this.startedOver);
         spy2();
@@ -582,10 +596,10 @@ describe('Base', () => {
       });
     });
 
-    it('can queue a method again', function(done) {
+    it('can queue a method again', function (done) {
       const spy1 = sinon.spy();
 
-      this.TestGenerator.prototype.cancel = function() {
+      this.TestGenerator.prototype.cancel = function () {
         spy1();
         if (!this.startedOver) {
           this.queueOwnTask('cancel');
@@ -602,18 +616,18 @@ describe('Base', () => {
   });
 
   describe('#argument()', () => {
-    it('add a new argument to the generator instance', function() {
+    it('add a new argument to the generator instance', function () {
       assert.equal(this.dummy._arguments.length, 0);
       this.dummy.argument('foo');
       assert.equal(this.dummy._arguments.length, 1);
     });
 
-    it('create the property specified with value from positional args', function() {
+    it('create the property specified with value from positional args', function () {
       this.dummy.argument('foo');
       assert.equal(this.dummy.options.foo, 'bar');
     });
 
-    it('allows specifying default argument values', function() {
+    it('allows specifying default argument values', function () {
       const Generator = class extends Base {
         constructor(args, opts) {
           super(args, opts);
@@ -630,7 +644,7 @@ describe('Base', () => {
       assert.equal(gen.options.bar, 'baz');
     });
 
-    it('allows specifying default argument values', function() {
+    it('allows specifying default argument values', function () {
       const Generator = class extends Base {
         constructor(args, opts) {
           super(args, opts);
@@ -647,7 +661,7 @@ describe('Base', () => {
       assert.equal(gen.options.bar, 'baz');
     });
 
-    it('properly uses arguments values passed from constructor', function() {
+    it('properly uses arguments values passed from constructor', function () {
       const Generator = class extends Base {
         constructor(args, opts) {
           super(args, opts);
@@ -665,12 +679,12 @@ describe('Base', () => {
       assert.equal(gen.options.bar, 'foo');
     });
 
-    it('slice positional arguments when config.type is Array', function() {
+    it('slice positional arguments when config.type is Array', function () {
       this.dummy.argument('bar', { type: Array });
       assert.deepEqual(this.dummy.options.bar, ['bar', 'baz', 'bom']);
     });
 
-    it('raise an error if required arguments are not provided', function(done) {
+    it('raise an error if required arguments are not provided', function (done) {
       const dummy = new Base([], {
         env: this.env,
         resolved: 'dummy/all'
@@ -681,7 +695,7 @@ describe('Base', () => {
       dummy.argument('foo', { required: true });
     });
 
-    it("doesn't raise an error if required arguments are not provided, but the help option has been specified", function() {
+    it("doesn't raise an error if required arguments are not provided, but the help option has been specified", function () {
       const dummy = new Base([], {
         env: this.env,
         resolved: 'dummy:all',
@@ -689,11 +703,13 @@ describe('Base', () => {
       });
 
       assert.equal(dummy._arguments.length, 0);
-      assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', { required: true }));
+      assert.doesNotThrow(
+        dummy.argument.bind(dummy, 'foo', { required: true })
+      );
       assert.equal(dummy._arguments.length, 1);
     });
 
-    it('can be called before #option()', function() {
+    it('can be called before #option()', function () {
       const dummy = new Base(['--foo', 'bar', 'baz'], {
         env: this.env,
         resolved: 'dummy/all'
@@ -707,7 +723,7 @@ describe('Base', () => {
   });
 
   describe('#option()', () => {
-    it('add a new option to the set of generator expected options', function() {
+    it('add a new option to the set of generator expected options', function () {
       // Every generator have the --help options
       const generator = new this.Dummy([], {
         env: this.env,
@@ -723,7 +739,7 @@ describe('Base', () => {
       });
     });
 
-    it('allow aliasing options', function() {
+    it('allow aliasing options', function () {
       const Generator = class extends Base {
         constructor(args, opts) {
           super(args, opts);
@@ -744,7 +760,7 @@ describe('Base', () => {
       assert.equal(gen.options['long-name'], 'that value');
     });
 
-    it('allows Boolean options to be undefined', function() {
+    it('allows Boolean options to be undefined', function () {
       const Generator = class extends Base {
         constructor(args, opts) {
           super(args, opts);
@@ -761,7 +777,7 @@ describe('Base', () => {
       assert.equal(gen.options.undef, undefined);
     });
 
-    it('disallows Boolean options starting with no-', function() {
+    it('disallows Boolean options starting with no-', function () {
       const generator = new this.Dummy([], {
         env: this.env,
         resolved: 'test'
@@ -775,7 +791,7 @@ describe('Base', () => {
   });
 
   describe('#registerConfigPrompts()', () => {
-    it('adds an prompt with common definitions', function() {
+    it('adds an prompt with common definitions', function () {
       this.dummy.registerConfigPrompts({
         name: 'foo',
         message: 'bar',
@@ -787,7 +803,7 @@ describe('Base', () => {
       assert.equal(this.dummy._prompts[0].type, 'number');
     });
 
-    it('should export option', function() {
+    it('should export option', function () {
       this.dummy.registerConfigPrompts({
         name: 'foo',
         message: 'bar2',
@@ -802,7 +818,7 @@ describe('Base', () => {
       assert.equal(this.dummy._options.foo.type, String);
     });
 
-    it('allows to customize option config', function() {
+    it('allows to customize option config', function () {
       this.dummy.registerConfigPrompts({
         name: 'foo',
         message: 'bar2',
@@ -823,11 +839,14 @@ describe('Base', () => {
   });
 
   describe('#parseOptions()', () => {
-    beforeEach(function() {
-      this.dummy = new this.Dummy(['start', '--foo', 'bar', '-s', 'baz', 'remain'], {
-        env: this.env,
-        resolved: 'test'
-      });
+    beforeEach(function () {
+      this.dummy = new this.Dummy(
+        ['start', '--foo', 'bar', '-s', 'baz', 'remain'],
+        {
+          env: this.env,
+          resolved: 'test'
+        }
+      );
 
       this.dummy.option('foo', {
         type: String
@@ -839,22 +858,22 @@ describe('Base', () => {
       });
     });
 
-    it('set generator options', function() {
+    it('set generator options', function () {
       this.dummy.parseOptions();
       assert.equal(this.dummy.options.foo, 'bar');
     });
 
-    it('set generator alias options', function() {
+    it('set generator alias options', function () {
       this.dummy.parseOptions();
       assert.equal(this.dummy.options.shortOpt, 'baz');
     });
 
-    it('set args to what remains', function() {
+    it('set args to what remains', function () {
       this.dummy.parseOptions();
       assert.deepEqual(this.dummy.args, ['start', 'remain']);
     });
 
-    it('gracefully handle no args', function() {
+    it('gracefully handle no args', function () {
       const dummy = new this.Dummy({
         env: this.env,
         resolved: 'test'
@@ -870,7 +889,7 @@ describe('Base', () => {
   });
 
   describe('#composeWith()', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.dummy = new this.Dummy([], {
         resolved: 'unknown',
         namespace: 'dummy',
@@ -886,11 +905,13 @@ describe('Base', () => {
       this.env.registerStub(this.GenCompose, 'composed:gen');
     });
 
-    it('returns the composed generator when pass true', function() {
-      assert(this.dummy.composeWith('composed:gen', true) instanceof this.GenCompose);
+    it('returns the composed generator when pass true', function () {
+      assert(
+        this.dummy.composeWith('composed:gen', true) instanceof this.GenCompose
+      );
     });
 
-    it('runs the composed generators', function(done) {
+    it('runs the composed generators', function (done) {
       this.dummy.composeWith('composed:gen');
 
       const runSpy = sinon.spy(this.dummy, 'run');
@@ -912,7 +933,7 @@ describe('Base', () => {
       }, 100);
     });
 
-    it('runs the composed Generator class in the passed path', function() {
+    it('runs the composed Generator class in the passed path', function () {
       this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
 
       this.dummy.composeWith({
@@ -930,31 +951,31 @@ describe('Base', () => {
     });
 
     describe('object as first argument', () => {
-      it('fails for missing Generator property', function() {
+      it('fails for missing Generator property', function () {
         const gen = this.dummy;
         assert.throws(
           () =>
             gen.composeWith({
               path: 'foo-path'
             }),
-          error => error.message.indexOf('Missing Generator property') >= 0
+          (error) => error.message.indexOf('Missing Generator property') >= 0
         );
       });
 
-      it('fails for missing path property', function() {
+      it('fails for missing path property', function () {
         const gen = this.dummy;
         assert.throws(
           () =>
             gen.composeWith({
               Generator: this.GenCompose
             }),
-          error => error.message.indexOf('path property is not a string') >= 0
+          (error) => error.message.indexOf('path property is not a string') >= 0
         );
       });
     });
 
-    it('run the composed generator even if main generator is already running.', function() {
-      this.Dummy.prototype.writing = function() {
+    it('run the composed generator even if main generator is already running.', function () {
+      this.Dummy.prototype.writing = function () {
         this.composeWith('composed:gen');
       };
 
@@ -963,7 +984,7 @@ describe('Base', () => {
       });
     });
 
-    it('pass options and arguments to the composed generators', function() {
+    it('pass options and arguments to the composed generators', function () {
       this.dummy.composeWith('composed:gen', {
         foo: 'bar',
         'skip-install': true
@@ -975,7 +996,7 @@ describe('Base', () => {
     });
 
     describe('when passing a local path to a generator', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.spy = sinon.spy();
         this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
         this.LocalDummy = class extends Base {};
@@ -983,22 +1004,25 @@ describe('Base', () => {
         mockery.registerMock(this.stubPath, this.LocalDummy);
       });
 
-      it('runs the composed generator', function() {
+      it('runs the composed generator', function () {
         this.dummy.composeWith(this.stubPath, {});
         return this.dummy.run().then(() => {
           assert(this.LocalDummy.prototype.exec.called);
         });
       });
 
-      it('pass options and arguments to the composed generators', function() {
-        this.dummy.composeWith(this.stubPath, { foo: 'bar', 'skip-install': true });
+      it('pass options and arguments to the composed generators', function () {
+        this.dummy.composeWith(this.stubPath, {
+          foo: 'bar',
+          'skip-install': true
+        });
 
         return this.dummy.run().then(() => {
           assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
         });
       });
 
-      it('sets correct metadata on the Generator constructor', function() {
+      it('sets correct metadata on the Generator constructor', function () {
         this.dummy.composeWith(this.stubPath, {});
         return this.dummy.run().then(() => {
           assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
@@ -1012,14 +1036,14 @@ describe('Base', () => {
   });
 
   describe('#desc()', () => {
-    it('update the internal description', function() {
+    it('update the internal description', function () {
       this.dummy.desc('A new desc for this generator');
       assert.equal(this.dummy.description, 'A new desc for this generator');
     });
   });
 
   describe('#help()', () => {
-    it('return the expected help output', function() {
+    it('return the expected help output', function () {
       this.dummy.option('ooOoo');
       this.dummy.argument('baz', {
         type: Number,
@@ -1057,7 +1081,7 @@ describe('Base', () => {
   });
 
   describe('#usage()', () => {
-    it('returns the expected usage output with arguments', function() {
+    it('returns the expected usage output with arguments', function () {
       this.dummy.argument('baz', {
         type: Number,
         required: false
@@ -1067,13 +1091,13 @@ describe('Base', () => {
       assert.equal(usage.trim(), 'yo dummy [<baz>] [options]');
     });
 
-    it('returns the expected usage output without arguments', function() {
+    it('returns the expected usage output without arguments', function () {
       this.dummy._arguments.length = 0;
       const usage = this.dummy.usage();
       assert.equal(usage.trim(), 'yo dummy [options]');
     });
 
-    it('returns the expected usage output without options', function() {
+    it('returns the expected usage output without options', function () {
       this.dummy._arguments.length = 0;
       this.dummy._options = {};
       const usage = this.dummy.usage();
@@ -1082,11 +1106,11 @@ describe('Base', () => {
   });
 
   describe('#config', () => {
-    it('provide a storage instance', function() {
+    it('provide a storage instance', function () {
       assert.ok(this.dummy.config instanceof require('../lib/util/storage'));
     });
 
-    it('is updated when destinationRoot change', function() {
+    it('is updated when destinationRoot change', function () {
       sinon.spy(this.Dummy.prototype, '_getStorage');
       this.dummy.destinationRoot('foo');
       assert.equal(this.Dummy.prototype._getStorage.callCount, 1);
@@ -1099,7 +1123,7 @@ describe('Base', () => {
   });
 
   describe('#templatePath()', () => {
-    it('joins path to the source root', function() {
+    it('joins path to the source root', function () {
       assert.equal(
         this.dummy.templatePath('bar.js'),
         path.join(this.dummy.sourceRoot(), 'bar.js')
@@ -1112,7 +1136,7 @@ describe('Base', () => {
   });
 
   describe('#destinationPath()', () => {
-    it('joins path to the source root', function() {
+    it('joins path to the source root', function () {
       assert.equal(
         this.dummy.destinationPath('bar.js'),
         path.join(this.dummy.destinationRoot(), 'bar.js')
@@ -1125,8 +1149,11 @@ describe('Base', () => {
   });
 
   describe('#registerTransformStream()', () => {
-    beforeEach(function() {
-      this.filepath = path.join(os.tmpdir(), '/yeoman-transform-stream/filea.txt');
+    beforeEach(function () {
+      this.filepath = path.join(
+        os.tmpdir(),
+        '/yeoman-transform-stream/filea.txt'
+      );
       this.TestGenerator = class extends Base {};
       this.TestGenerator.prototype.exec = sinon.spy();
       this.testGen = new this.TestGenerator([], {
@@ -1136,13 +1163,13 @@ describe('Base', () => {
       });
     });
 
-    afterEach(function(done) {
+    afterEach(function (done) {
       rimraf(this.filepath, done);
     });
 
-    it('add the transform stream to the commit stream', function() {
+    it('add the transform stream to the commit stream', function () {
       const self = this;
-      this.TestGenerator.prototype.writing = function() {
+      this.TestGenerator.prototype.writing = function () {
         this.fs.write(self.filepath, 'not correct');
 
         this.registerTransformStream(
@@ -1163,9 +1190,9 @@ describe('Base', () => {
       });
     });
 
-    it('add multiple transform streams to the commit stream', function() {
+    it('add multiple transform streams to the commit stream', function () {
       const self = this;
-      this.TestGenerator.prototype.writing = function() {
+      this.TestGenerator.prototype.writing = function () {
         this.fs.write(self.filepath, 'not correct');
 
         this.registerTransformStream([
@@ -1187,7 +1214,7 @@ describe('Base', () => {
   });
 
   describe('Events', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       class Generator extends Base {}
       this.Generator = Generator;
       Generator.namespace = 'angular:app';
@@ -1195,7 +1222,7 @@ describe('Base', () => {
       Generator.prototype.createSomethingElse = () => {};
     });
 
-    it('emits the series of event on a specific generator', function(done) {
+    it('emits the series of event on a specific generator', function (done) {
       const angular = new this.Generator([], {
         env: yeoman.createEnv([], {}, new TestAdapter()),
         resolved: __filename,
@@ -1210,7 +1237,7 @@ describe('Base', () => {
       ];
 
       function assertEvent(e) {
-        return function() {
+        return function () {
           assert.equal(e, lifecycle.shift());
 
           if (e === 'end') {
@@ -1226,12 +1253,15 @@ describe('Base', () => {
         // methods are executed
         .on('end', assertEvent('end'))
         .on('method:createSomething', assertEvent('method:createSomething'))
-        .on('method:createSomethingElse', assertEvent('method:createSomethingElse'));
+        .on(
+          'method:createSomethingElse',
+          assertEvent('method:createSomethingElse')
+        );
 
       angular.run();
     });
 
-    it('only call the end event once (bug #402)', done => {
+    it('only call the end event once (bug #402)', (done) => {
       class GeneratorOnce extends Base {
         constructor(args, opts) {
           super(args, opts);
@@ -1271,7 +1301,7 @@ describe('Base', () => {
       generatorOnce.run();
     });
 
-    it('triggers end event after all generators methods are ran (#709)', done => {
+    it('triggers end event after all generators methods are ran (#709)', (done) => {
       const endSpy = sinon.spy();
       const GeneratorEnd = class extends Base {
         constructor(args, opts) {
@@ -1302,11 +1332,11 @@ describe('Base', () => {
       rimraf.sync(path.join(resolveddir, 'package.json'));
     });
 
-    it('returns the default name', function() {
+    it('returns the default name', function () {
       assert.equal(this.dummy.rootGeneratorName(), '*');
     });
 
-    it('returns generator name', function() {
+    it('returns generator name', function () {
       fs.writeFileSync(
         path.join(resolveddir, 'package.json'),
         '{ "name": "generator-name" }'
@@ -1320,25 +1350,28 @@ describe('Base', () => {
       rimraf.sync(path.join(resolveddir, 'package.json'));
     });
 
-    it('returns the default version', function() {
+    it('returns the default version', function () {
       assert.equal(this.dummy.rootGeneratorVersion(), '0.0.0');
     });
 
-    it('returns generator version', function() {
-      fs.writeFileSync(path.join(resolveddir, 'package.json'), '{ "version": "1.0.0" }');
+    it('returns generator version', function () {
+      fs.writeFileSync(
+        path.join(resolveddir, 'package.json'),
+        '{ "version": "1.0.0" }'
+      );
       assert.equal(this.dummy.rootGeneratorVersion(), '1.0.0');
     });
   });
 
   describe('#queueMethod()', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.Generator = class extends Base {
         constructor(args, opts) {
           super(args, opts);
 
           this.queueMethod(
             {
-              testQueue: function() {
+              testQueue: function () {
                 this.queue = this.options.testQueue;
               }
             },
@@ -1350,7 +1383,7 @@ describe('Base', () => {
       };
     });
 
-    it('queued method is executed', function(done) {
+    it('queued method is executed', function (done) {
       const gen = new this.Generator({
         resolved: resolveddir,
         namespace: 'dummy',
@@ -1364,7 +1397,7 @@ describe('Base', () => {
       });
     });
 
-    it('queued method is executed by derived generator', function(done) {
+    it('queued method is executed by derived generator', function (done) {
       const Derived = class extends this.Generator {
         constructor(args, opts) {
           super(args, opts);
@@ -1396,8 +1429,12 @@ describe('Base', () => {
       });
     });
 
-    it('queued method with function, methodName and reject', function() {
-      const env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+    it('queued method with function, methodName and reject', function () {
+      const env = yeoman.createEnv(
+        [],
+        { 'skip-install': true },
+        new TestAdapter()
+      );
       const gen = new this.Generator({
         resolved: resolveddir,
         namespace: 'dummy',
@@ -1413,8 +1450,12 @@ describe('Base', () => {
       assert.equal('default', env.runLoop.add.getCall(0).args[0]);
     });
 
-    it('queued method with object, queueName and reject', function() {
-      const env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+    it('queued method with object, queueName and reject', function () {
+      const env = yeoman.createEnv(
+        [],
+        { 'skip-install': true },
+        new TestAdapter()
+      );
       const gen = new this.Generator({
         resolved: resolveddir,
         namespace: 'dummy',
@@ -1436,14 +1477,14 @@ describe('Base', () => {
   });
 
   describe('#queueTask()', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.Generator = class extends Base {
         constructor(args, opts) {
           super(args, opts);
 
           this.queueMethod(
             {
-              testQueue: function() {
+              testQueue: function () {
                 this.queue = this.options.testQueue;
               }
             },
@@ -1455,8 +1496,12 @@ describe('Base', () => {
       };
     });
 
-    it('queued method with function and options', function() {
-      const env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+    it('queued method with function and options', function () {
+      const env = yeoman.createEnv(
+        [],
+        { 'skip-install': true },
+        new TestAdapter()
+      );
       const gen = new this.Generator({
         resolved: resolveddir,
         namespace: 'dummy',
@@ -1487,7 +1532,7 @@ describe('Base', () => {
       );
     });
 
-    it('queued method with function and options with reject', function() {
+    it('queued method with function and options with reject', function () {
       const gen = new this.Generator({
         resolved: resolveddir,
         namespace: 'dummy',
@@ -1518,7 +1563,7 @@ describe('Base', () => {
   });
 
   describe('Custom priorities', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.TestGenerator = class extends Base {
         constructor(args, options) {
           super(args, {
@@ -1554,11 +1599,14 @@ describe('Base', () => {
       };
     });
 
-    it('generates correct _queues and runLoop queueNames', function() {
+    it('generates correct _queues and runLoop queueNames', function () {
       _.extend(this.TestGenerator.prototype, {
-        assert: function() {
+        assert: function () {
           assert.deepStrictEqual(this._queues, {
-            initializing: { priorityName: 'initializing', queueName: 'initializing' },
+            initializing: {
+              priorityName: 'initializing',
+              queueName: 'initializing'
+            },
             preConfiguring1: {
               priorityName: 'preConfiguring1',
               queueName: 'common#preConfiguring1',
@@ -1570,7 +1618,10 @@ describe('Base', () => {
               queueName: 'dummy#preConfiguring2',
               before: 'configuring'
             },
-            configuring: { priorityName: 'configuring', queueName: 'configuring' },
+            configuring: {
+              priorityName: 'configuring',
+              queueName: 'configuring'
+            },
             default: { priorityName: 'default', queueName: 'default' },
             prePrompting1: {
               priorityName: 'prePrompting1',
@@ -1616,7 +1667,7 @@ describe('Base', () => {
       return this.testGen.run();
     });
 
-    it('run custom priorities in correct order', function() {
+    it('run custom priorities in correct order', function () {
       const prePrompting1 = sinon.spy();
       const preConfiguring1 = sinon.spy();
       const preConfiguring2 = sinon.spy();
@@ -1656,7 +1707,7 @@ describe('Base', () => {
       });
     });
 
-    it('correctly run custom priority with once option', function() {
+    it('correctly run custom priority with once option', function () {
       const commonPreConfiguring = sinon.spy();
       const customPreConfiguring1 = sinon.spy();
       const customPreConfiguring2 = sinon.spy();
@@ -1700,7 +1751,7 @@ describe('Base', () => {
   });
 
   describe('Custom priorities errors', () => {
-    it('error is thrown with duplicate custom queue', function() {
+    it('error is thrown with duplicate custom queue', function () {
       const TestGenerator = class extends Base {
         constructor(args, options) {
           super(args, {
@@ -1735,7 +1786,7 @@ describe('Base', () => {
     let promptSpy;
     const input1Prompt = { type: 'input', name: 'prompt1' };
     const input2Prompt = { type: 'input', name: 'prompt2' };
-    beforeEach(function() {
+    beforeEach(function () {
       this.dummy.env.adapter = new TestAdapter({
         prompt1: 'prompt1NewValue',
         prompt2: 'prompt2NewValue'
@@ -1746,39 +1797,48 @@ describe('Base', () => {
       this.dummy.config.set('prompt2', 'prompt2Value');
       this.dummy.config.set('notUsed', 'notUsedValue');
     });
-    afterEach(function() {
+    afterEach(function () {
       promptSpy.restore();
     });
 
-    it('passes config value as answer to adapter', function() {
+    it('passes config value as answer to adapter', function () {
       const expectedAnswers = { prompt1: 'prompt1Value' };
-      return this.dummy.prompt(input1Prompt, this.dummy.config).then(_ => {
+      return this.dummy.prompt(input1Prompt, this.dummy.config).then((_) => {
         assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
       });
     });
 
-    it('passes config values as answers to adapter', function() {
-      const expectedAnswers = { prompt1: 'prompt1Value', prompt2: 'prompt2Value' };
+    it('passes config values as answers to adapter', function () {
+      const expectedAnswers = {
+        prompt1: 'prompt1Value',
+        prompt2: 'prompt2Value'
+      };
       return this.dummy
         .prompt([input1Prompt, input2Prompt], this.dummy.config)
-        .then(_ => {
+        .then((_) => {
           assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
         });
     });
 
-    it('passes config values as the question default', function() {
+    it('passes config values as the question default', function () {
       return this.dummy
         .prompt([input1Prompt, input2Prompt], this.dummy.config)
-        .then(_ => {
-          assert.deepEqual(promptSpy.getCall(0).args[0][0].default, 'prompt1Value');
-          assert.deepEqual(promptSpy.getCall(0).args[0][1].default, 'prompt2Value');
+        .then((_) => {
+          assert.deepEqual(
+            promptSpy.getCall(0).args[0][0].default,
+            'prompt1Value'
+          );
+          assert.deepEqual(
+            promptSpy.getCall(0).args[0][1].default,
+            'prompt2Value'
+          );
         });
     });
 
-    it('saves answers to config', function() {
+    it('saves answers to config', function () {
       return this.dummy
         .prompt([input1Prompt, input2Prompt], this.dummy.config)
-        .then(answers => {
+        .then((answers) => {
           assert.equal(answers.prompt1, 'prompt1NewValue');
           assert.equal(answers.prompt2, 'prompt2NewValue');
           assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
@@ -1786,10 +1846,10 @@ describe('Base', () => {
         });
     });
 
-    it('saves answers to config when specified as a property name', function() {
+    it('saves answers to config when specified as a property name', function () {
       return this.dummy
         .prompt([{ ...input1Prompt, storage: 'config' }, input2Prompt])
-        .then(answers => {
+        .then((answers) => {
           assert.equal(answers.prompt1, 'prompt1NewValue');
           assert.equal(answers.prompt2, 'prompt2NewValue');
           assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
@@ -1797,10 +1857,10 @@ describe('Base', () => {
         });
     });
 
-    it('saves answers to specific storage', function() {
+    it('saves answers to specific storage', function () {
       return this.dummy
         .prompt([{ ...input1Prompt, storage: this.dummy.config }, input2Prompt])
-        .then(answers => {
+        .then((answers) => {
           assert.equal(answers.prompt1, 'prompt1NewValue');
           assert.equal(answers.prompt2, 'prompt2NewValue');
           assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
@@ -1808,8 +1868,8 @@ describe('Base', () => {
         });
     });
 
-    it('passes correct askAnswered option to adapter', function() {
-      return this.dummy.prompt([input1Prompt], this.dummy.config).then(_ => {
+    it('passes correct askAnswered option to adapter', function () {
+      return this.dummy.prompt([input1Prompt], this.dummy.config).then((_) => {
         assert.deepEqual(promptSpy.getCall(0).args[0][0].askAnswered, true);
       });
     });
