@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v2.1.4
+      - run: npm install -g npm@latest
       - uses: actions/checkout@v2
         with:
           path: source
