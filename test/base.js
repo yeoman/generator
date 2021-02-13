@@ -18,7 +18,6 @@ mockery.enable({
 const assert = require('yeoman-assert');
 const helpers = require('yeoman-test');
 const {TestAdapter} = require('yeoman-test/lib/adapter');
-const Conflicter = require('yeoman-environment/lib/util/conflicter');
 const Base = require('..');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
@@ -453,76 +452,6 @@ describe('Base', () => {
 
       return testGen.run().then(() => {
         assert.equal(fs.readFileSync(filepath, 'utf8'), 'var a = 1;\n');
-      });
-    });
-
-    it('does not prompt again for skipped files', function () {
-      const action = {action: 'skip'};
-      const filepath = path.join(__dirname, '/fixtures/conflict.js');
-      const filepath2 = path.join(__dirname, '/fixtures/file-conflict.txt');
-
-      sinon.spy(Conflicter.prototype, 'collision');
-      const env = yeoman.createEnv(
-        [],
-        {'skip-install': true},
-        new TestAdapter(action)
-      );
-      env.registerStub(this.Dummy, 'dummy:app');
-
-      // The composed generator need to write at least one file for it to go through it's
-      // file writing cycle
-      this.Dummy.prototype.writing = function () {
-        this.fs.write(filepath2, 'foo');
-      };
-
-      this.TestGenerator.prototype.writing = function () {
-        this.fs.write(filepath, 'some new content');
-        this.composeWith('dummy:app');
-      };
-
-      const testGen = new this.TestGenerator([], {
-        resolved: 'generator/app/index.js',
-        namespace: 'dummy',
-        env
-      });
-
-      return testGen.run().then(() => {
-        sinon.assert.calledTwice(Conflicter.prototype.collision);
-        Conflicter.prototype.collision.restore();
-      });
-    });
-
-    it('does not pass config file to conflicter', function () {
-      sinon.spy(Conflicter.prototype, 'collision');
-
-      this.TestGenerator.prototype.writing = function () {
-        fs.writeFileSync(this.destinationPath('.yo-rc.json'), '{"foo": 3}');
-        fs.writeFileSync(
-          path.join(os.homedir(), '.yo-rc-global.json'),
-          '{"foo": 3}'
-        );
-        this.config.set('bar', 1);
-        this._globalConfig.set('bar', 1);
-      };
-
-      return this.testGen.run().then(() => {
-        sinon.assert.notCalled(Conflicter.prototype.collision);
-        Conflicter.prototype.collision.restore();
-      });
-    });
-
-    it('does not pass file with pre-defined status to conflicter', function () {
-      sinon.spy(Conflicter.prototype, 'collision');
-
-      this.TestGenerator.prototype.writing = function () {
-        this.fs.write('test.json', '{"foo": 3}');
-        const file = this.env.sharedFs.get('test.json');
-        file.conflicter = 'skip';
-      };
-
-      return this.testGen.run().then(() => {
-        sinon.assert.notCalled(Conflicter.prototype.collision);
-        Conflicter.prototype.collision.restore();
       });
     });
 
