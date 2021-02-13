@@ -1,6 +1,6 @@
 {
   "name": "yeoman-generator",
-  "version": "5.0.0-beta.0",
+  "version": "5.0.0-beta.1",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
   "homepage": "http://yeoman.io",
   "author": "Yeoman",
