@@ -259,6 +259,55 @@ describe('Storage', () => {
     });
   });
 
+  describe('#merge()', () => {
+    beforeEach(function () {
+      this.store.set('val1', 1);
+    });
+
+    it('should merge values if not predefined', function () {
+      this.store.merge({val1: 3, val2: 4});
+
+      assert.strictEqual(this.store.get('val1'), 3);
+      assert.strictEqual(this.store.get('val2'), 4);
+    });
+
+    it('should require an Object as argument', function () {
+      assert.throws(this.store.defaults.bind(this.store, 'foo'));
+    });
+
+    describe('@return', () => {
+      beforeEach(function () {
+        this.storePath = path.join(tmpdir, 'defaultreturn.json');
+        this.store = new Storage('test', this.fs, this.storePath);
+        this.store.set('val1', 1);
+        this.store.set('foo', 'bar');
+      });
+
+      afterEach(function () {
+        rm(this.storePath);
+      });
+
+      it('should return the original object', function () {
+        assert.deepStrictEqual(this.store.merge({}), {foo: 'bar', val1: 1});
+      });
+
+      it('should return an object with replaced values', function () {
+        assert.deepStrictEqual(this.store.merge({foo: 'baz'}), {
+          foo: 'baz',
+          val1: 1
+        });
+      });
+
+      it('should return an object with new values', function () {
+        assert.deepStrictEqual(this.store.merge({food: 'pizza'}), {
+          foo: 'bar',
+          val1: 1,
+          food: 'pizza'
+        });
+      });
+    });
+  });
+
   it('stores sharing the same store file with and without namespace', function () {
     const store = new Storage(this.fs, this.storePath);
     store.set('test', {bar: 'foo'});
@@ -352,11 +401,11 @@ describe('Storage', () => {
       this.store.get('foo');
     });
 
-    it('loads', function () {
+    it('should load', function () {
       assert(this.store._cachedStore);
     });
 
-    it("doesn't loads when disabled", function () {
+    it('should not load when disabled', function () {
       const store = new Storage('test', this.fs, this.storePath, {
         disableCache: true
       });
