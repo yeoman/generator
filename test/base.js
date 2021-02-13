@@ -236,16 +236,6 @@ describe('Base', () => {
       });
     });
 
-    it('resolve conflicts after it ran', function () {
-      let resolveSpy;
-      this.testGen.env.on('run', () => {
-        resolveSpy = sinon.spy(this.testGen.env.conflicter, 'resolve');
-      });
-      return this.testGen.run().then(() => {
-        assert.equal(resolveSpy.callCount, 1);
-      });
-    });
-
     it('can emit error from async methods', function (done) {
       this.TestGenerator.prototype.throwing = function () {
         this.async()('some error');
@@ -1643,7 +1633,9 @@ describe('Base', () => {
             'dummy#prePrompting1',
             'dummy#prompting',
             'writing',
+            'transform',
             'conflicts',
+            'environment:conflicts',
             'install',
             'end',
             'dummy#afterEnd'
