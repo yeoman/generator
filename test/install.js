@@ -5,6 +5,9 @@ const assert = require('yeoman-assert');
 const {TestAdapter} = require('yeoman-test/lib/adapter');
 const Base = require('..');
 const chalk = require('chalk');
+const _ = require('lodash');
+
+_.extend(Base.prototype, require('../lib/actions/install'));
 
 const asyncStub = {
   on(key, cb) {
