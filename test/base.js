@@ -1101,10 +1101,16 @@ describe('Base', () => {
     it('is updated when destinationRoot change', function () {
       sinon.spy(this.Dummy.prototype, '_getStorage');
       this.dummy.destinationRoot('foo');
+      // eslint-disable-next-line no-unused-expressions
+      this.dummy.config;
       assert.equal(this.Dummy.prototype._getStorage.callCount, 1);
       this.dummy.destinationRoot();
+      // eslint-disable-next-line no-unused-expressions
+      this.dummy.config;
       assert.equal(this.Dummy.prototype._getStorage.callCount, 1);
       this.dummy.destinationRoot('foo');
+      // eslint-disable-next-line no-unused-expressions
+      this.dummy.config;
       assert.equal(this.Dummy.prototype._getStorage.callCount, 2);
       this.Dummy.prototype._getStorage.restore();
     });
