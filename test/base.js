@@ -1160,12 +1160,12 @@ describe('Base', () => {
       this.TestGenerator.prototype.writing = function () {
         this.fs.write(self.filepath, 'not correct');
 
-        this.registerTransformStream(
+        this.queueTransformStream(
           through.obj((file, enc, cb) => {
             file.contents = Buffer.from('a');
             cb(null, file);
           })
-        ).registerTransformStream(
+        ).queueTransformStream(
           through.obj((file, enc, cb) => {
             file.contents = Buffer.from(file.contents.toString() + 'b');
             cb(null, file);
@@ -1183,7 +1183,7 @@ describe('Base', () => {
       this.TestGenerator.prototype.writing = function () {
         this.fs.write(self.filepath, 'not correct');
 
-        this.registerTransformStream([
+        this.queueTransformStream([
           through.obj((file, enc, cb) => {
             file.contents = Buffer.from('a');
             cb(null, file);
