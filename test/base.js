@@ -112,7 +112,7 @@ describe('Base', () => {
       return helpers
         .create(
           path.join(__dirname, './fixtures/options-generator'),
-          {},
+          {namespace: 'options-generator'},
           {createEnv: yeoman.createEnv}
         )
         .withOptions({testOption: false})
@@ -211,7 +211,7 @@ describe('Base', () => {
     });
 
     it('turn on _running flag', function () {
-      this.testGen.run();
+      this.testGen.queueTasks();
       assert.ok(this.testGen._running);
     });
 
@@ -1553,6 +1553,7 @@ describe('Base', () => {
             afterEnd: {priorityName: 'afterEnd', queueName: 'dummy#afterEnd'}
           });
           assert.deepStrictEqual(this.env.runLoop.queueNames, [
+            'environment:run',
             'initializing',
             'prompting',
             'common#preConfiguring1',
