@@ -89,30 +89,6 @@ describe('Multiples generators', () => {
             this.spyEnd1,
             this.spyEnd2
           );
-          assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
-          assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
           assert(this.spyInit1.calledAfter(runSpy));
           assert(this.spyInit2.calledAfter(this.spyInit1));
           assert(this.spyExec1.calledAfter(this.spyInit2));
@@ -143,30 +119,6 @@ describe('Multiples generators', () => {
             this.spyEnd2,
             this.spyEnd1
           );
-          assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
-          assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
           assert(this.spyInit2.calledAfter(runSpy));
           assert(this.spyInit1.calledAfter(this.spyInit2));
           assert(this.spyExec2.calledAfter(this.spyInit1));
@@ -211,42 +163,6 @@ describe('Multiples generators', () => {
             this.spyEnd1,
             this.spyEnd2
           );
-          assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
-          assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
-          assert.equal(this.spyExec3.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec3.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec3.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec3.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec3.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec3.thisValues[0].options['skip-cache'], true);
           assert(this.spyInit1.calledAfter(runSpy));
           assert(this.spyInit2.calledAfter(this.spyInit1));
           assert(this.spyInit3.calledAfter(this.spyInit2));
@@ -307,30 +223,6 @@ describe('Multiples generators', () => {
             this.spyEnd1,
             this.spyEnd2
           );
-          assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
-          assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
           assert(writingSpy1.calledAfter(runSpy));
           assert(this.spyInit1.calledAfter(writingSpy1));
           assert(this.spyInit2.calledAfter(this.spyInit1));
@@ -404,30 +296,6 @@ describe('Multiples generators', () => {
             this.spyEnd1,
             this.spyEnd2
           );
-          assert.equal(this.spyExec1.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec1.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec1.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec1.thisValues[0].options['skip-cache'], true);
-          assert.equal(this.spyExec2.thisValues[0].options.skipInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['skip-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.forceInstall, true);
-          assert.equal(
-            this.spyExec2.thisValues[0].options['force-install'],
-            true
-          );
-          assert.equal(this.spyExec2.thisValues[0].options.skipCache, true);
-          assert.equal(this.spyExec2.thisValues[0].options['skip-cache'], true);
           assert(writingSpy1.calledAfter(runSpy));
           assert(this.spyInit1.calledAfter(writingSpy1));
           assert(this.spyExec1.calledAfter(this.spyInit1));

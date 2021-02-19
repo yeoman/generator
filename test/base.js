@@ -828,12 +828,6 @@ describe('Base', () => {
       setTimeout(() => {
         this.dummy.run().then(() => {
           sinon.assert.callOrder(runSpy, this.spy);
-          assert.equal(this.spy.thisValues[0].options.skipInstall, true);
-          assert.equal(this.spy.thisValues[0].options['skip-install'], true);
-          assert.equal(this.spy.thisValues[0].options.forceInstall, true);
-          assert.equal(this.spy.thisValues[0].options['force-install'], true);
-          assert.equal(this.spy.thisValues[0].options.skipCache, true);
-          assert.equal(this.spy.thisValues[0].options['skip-cache'], true);
           assert(this.spy.calledAfter(runSpy));
           done();
         });
