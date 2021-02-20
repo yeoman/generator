@@ -1541,6 +1541,7 @@ describe('Base', () => {
               before: 'writing'
             },
             writing: {priorityName: 'writing', queueName: 'writing'},
+            transform: {priorityName: 'transform', queueName: 'transform'},
             conflicts: {priorityName: 'conflicts', queueName: 'conflicts'},
             install: {priorityName: 'install', queueName: 'install'},
             end: {priorityName: 'end', queueName: 'end'},
