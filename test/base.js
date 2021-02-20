@@ -1792,12 +1792,20 @@ describe('Base', () => {
     });
 
     it("should return namespace as uniqueBy when unique is 'namespace'", function () {
-      const gen = new Base([], {unique: 'namespace', namespace: 'foo', env: this.env});
+      const gen = new Base([], {
+        unique: 'namespace',
+        namespace: 'foo',
+        env: this.env
+      });
       assert.equal(gen.getFeatures().uniqueBy, 'foo');
     });
 
     it("should return namespace with first argument as uniqueBy when unique is 'namespace'", function () {
-      const gen = new Base(['bar'], {unique: 'argument', namespace: 'foo', env: this.env});
+      const gen = new Base(['bar'], {
+        unique: 'argument',
+        namespace: 'foo',
+        env: this.env
+      });
       assert.equal(gen.getFeatures().uniqueBy, 'foo#bar');
     });
   });
