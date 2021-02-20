@@ -23,7 +23,6 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: yeoman/yeoman-test
-        ref: v3
         path: yeoman-test
 
     - name: Checkout yeoman-generator
