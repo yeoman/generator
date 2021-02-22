@@ -11,7 +11,11 @@
     "unicorn/no-fn-reference-in-iterator": "off",
     "prefer-spread": "off",
     "default-param-last": "off",
-    "unicorn/explicit-length-check": "off"
+    "unicorn/explicit-length-check": "off",
+    "unicorn/no-this-assignment": "off",
+    "unicorn/no-array-for-each": "off",
+    "unicorn/no-array-callback-reference": "off"
+    
   }
 }
 

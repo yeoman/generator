@@ -9,7 +9,7 @@ const Base = require('../lib');
 
 const randomString = () => Math.random().toString(36).slice(7);
 
-describe('generators.Base (actions/fs)', function () {
+describe('generators.Base (actions/fs)', () => {
   const baseReturns = {
     templatePath: `templatePath${randomString()}`,
     destinationPath: `destinationPath${randomString()}`
@@ -36,7 +36,7 @@ describe('generators.Base (actions/fs)', function () {
       },
       fs: {}
     };
-    [
+    for (const op of [
       'read',
       'copy',
       'write',
@@ -45,15 +45,16 @@ describe('generators.Base (actions/fs)', function () {
       'move',
       'exists',
       'copyTpl'
-    ].forEach((op) => {
+    ]) {
       const returnValue = randomString();
       this.base.fs[op] = sinon.stub().returns(returnValue);
       returns[op] = returnValue;
-    });
+    }
+
     Object.assign(this.base, fsAction);
   });
 
-  [
+  for (const operation of [
     {name: 'readTemplate', first: 'templatePath', dest: 'read'},
     {
       name: 'copyTemplate',
@@ -85,7 +86,7 @@ describe('generators.Base (actions/fs)', function () {
       dest: 'copyTpl',
       returnsUndefined: true
     }
-  ].forEach((operation) => {
+  ]) {
     const passedArg1 = randomString();
     const passedArg2 = randomString();
     const passedArg3 = {};
@@ -112,19 +113,19 @@ describe('generators.Base (actions/fs)', function () {
         secondArgumentHandler = this.base[operation.second];
       });
 
-      it('exists on the generator', function () {
+      it('exists on the generator', () => {
         assert(Base.prototype[operation.name]);
       });
 
-      it('returns the correct value', function () {
+      it('returns the correct value', () => {
         assert.equal(returnValue, expectedReturn);
       });
 
-      it('handles the first parameter', function () {
+      it('handles the first parameter', () => {
         assert.equal(firstArgumentHandler.getCall(0).args[0], passedArg1);
       });
 
-      it('handles the second parameter', function () {
+      it('handles the second parameter', () => {
         if (operation.second && operation.first === operation.second) {
           assert(secondArgumentHandler.calledTwice);
           assert.equal(secondArgumentHandler.getCall(1).args[0], passedArg2);
@@ -153,7 +154,7 @@ describe('generators.Base (actions/fs)', function () {
         assert.equal(call.args[3].foo, passedArg4.foo);
       });
     });
-  });
+  }
 
   describe('#renderTemplate', () => {
     const getAllReturn = {};
@@ -165,11 +166,11 @@ describe('generators.Base (actions/fs)', function () {
       sinon.stub(this.gen.config, 'getAll').returns(getAllReturn);
       sinon.stub(this.gen.config, 'getPath').returns(getPathReturn);
 
-      ['copyTpl'].forEach((op) => {
+      for (const op of ['copyTpl']) {
         const returnValue = randomString();
         sinon.stub(this.gen.fs, op).returns(returnValue);
         returns[op] = returnValue;
-      });
+      }
     });
 
     afterEach(function () {
@@ -177,7 +178,7 @@ describe('generators.Base (actions/fs)', function () {
       this.gen.destinationRoot.restore();
       this.gen.config.getAll.restore();
       this.gen.config.getPath.restore();
-      ['copyTpl'].forEach((op) => this.gen.fs[op].restore());
+      for (const op of ['copyTpl']) this.gen.fs[op].restore();
     });
 
     it('gets default data from config', function () {
@@ -219,17 +220,17 @@ describe('generators.Base (actions/fs)', function () {
       sinon.stub(this.gen, 'sourceRoot').returns('');
       sinon.stub(this.gen, 'destinationRoot').returns('');
 
-      ['copyTpl'].forEach((op) => {
+      for (const op of ['copyTpl']) {
         const returnValue = randomString();
         sinon.stub(this.gen.fs, op).returns(returnValue);
         returns[op] = returnValue;
-      });
+      }
     });
 
     afterEach(function () {
       this.gen.sourceRoot.restore();
       this.gen.destinationRoot.restore();
-      ['copyTpl'].forEach((op) => this.gen.fs[op].restore());
+      for (const op of ['copyTpl']) this.gen.fs[op].restore();
     });
 
     it('handles 1 template', function () {

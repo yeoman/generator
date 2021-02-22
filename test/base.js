@@ -240,8 +240,8 @@ describe('Base', () => {
         this.async()('some error');
       };
 
-      this.testGen.env.on('error', (err) => {
-        assert.equal(err, 'some error');
+      this.testGen.env.on('error', (error) => {
+        assert.equal(error, 'some error');
         done();
       });
 
@@ -249,14 +249,14 @@ describe('Base', () => {
     });
 
     it('can emit error from sync methods', function (done) {
-      const error = new Error();
+      const error = new Error('Some error');
 
       this.TestGenerator.prototype.throwing = () => {
         throw error;
       };
 
-      this.testGen.env.on('error', (err) => {
-        assert.equal(err, error);
+      this.testGen.env.on('error', (error_) => {
+        assert.equal(error_, error);
         done();
       });
 
@@ -264,7 +264,7 @@ describe('Base', () => {
     });
 
     it('stop queue processing once an error is thrown', function () {
-      const error = new Error();
+      const error = new Error('Some error');
       const spy = sinon.spy();
 
       this.TestGenerator.prototype.throwing = () => {
@@ -308,8 +308,8 @@ describe('Base', () => {
         });
       };
 
-      this.testGen.env.on('error', (err) => {
-        assert.equal(err.message, 'some error');
+      this.testGen.env.on('error', (error) => {
+        assert.equal(error.message, 'some error');
         done();
       });
 
@@ -973,11 +973,11 @@ describe('Base', () => {
         ''
       ];
 
-      help.split('\n').forEach((line, i) => {
+      for (const [i, line] of help.split('\n').entries()) {
         // Do not test whitespace; we care about the content, not formatting.
         // formatting is best left up to the tests for module "text-table"
         assert.textEqual(line.trim().replace(/\s+/g, ' '), expected[i]);
-      });
+      }
     });
   });
 
@@ -1708,7 +1708,7 @@ describe('Base', () => {
       this.dummy.config.set('prompt2', 'prompt2Value');
       this.dummy.config.set('notUsed', 'notUsedValue');
     });
-    afterEach(function () {
+    afterEach(() => {
       promptSpy.restore();
     });
 

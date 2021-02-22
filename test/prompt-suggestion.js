@@ -125,9 +125,9 @@ describe('PromptSuggestion', () => {
           question
         )[0];
 
-        result.choices.forEach((choice) => {
+        for (const choice of result.choices) {
           assert.equal(choice.checked, false);
-        });
+        }
 
         assert.deepEqual(result.default, ['foo']);
       });
@@ -181,9 +181,9 @@ describe('PromptSuggestion', () => {
             question
           )[0];
 
-          result.choices.forEach((choice) => {
+          for (const choice of result.choices) {
             assert.equal(choice.checked, false);
-          });
+          }
 
           assert.deepEqual(result.default, ['foo', 'bar']);
         });

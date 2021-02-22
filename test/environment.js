@@ -158,7 +158,7 @@ describe('Generator with environment version', () => {
       });
     });
 
-    describe('#prompt with storage', function () {
+    describe('#prompt with storage', () => {
       it('with incompatible inquirer', function () {
         this.getVersionStub.withArgs().returns('3.0.0');
         this.getVersionStub.withArgs('inquirer').returns('7.0.0');

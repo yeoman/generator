@@ -69,7 +69,7 @@ describe('Generators module', () => {
     );
   });
 
-  describe('#run', function () {
+  describe('#run', () => {
     beforeEach(function () {
       const Generator = class extends Base {};
       Generator.prototype.throwing = () => {
@@ -90,7 +90,7 @@ describe('Generators module', () => {
     });
   });
 
-  describe('#createStorage', function () {
+  describe('#createStorage', () => {
     beforeEach(function () {
       this.generator = new Base({
         env: this.env,
@@ -114,7 +114,7 @@ describe('Generators module', () => {
     });
   });
 
-  it('running standalone', function (done) {
+  it('running standalone', (done) => {
     const Generator = class extends Base {};
     try {
       // eslint-disable-next-line no-new
@@ -125,7 +125,7 @@ describe('Generators module', () => {
     }
   });
 
-  it('running with an empty env', function (done) {
+  it('running with an empty env', (done) => {
     const Generator = class extends Base {};
     try {
       // eslint-disable-next-line no-new
