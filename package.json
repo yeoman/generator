@@ -21,6 +21,9 @@
     "yeoman",
     "app"
   ],
+  "config": {
+    "doc_path": "../yeoman-generator-doc"
+  },
   "devDependencies": {
     "coveralls": "^3.0.3",
     "inquirer": "^7.3.2",
@@ -49,8 +52,10 @@
   "scripts": {
     "pretest": "xo",
     "test": "nyc mocha",
-    "doc": "jsdoc -c jsdoc.json -d ../yeoman-generator-doc",
-    "doc:prettier": "prettier ../yeoman-generator-doc --write --ignore-path .prettierignore-doc",
+    "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
+    "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path",
+    "doc:prettier": "prettier $npm_package_config_doc_path --write --ignore-path .prettierignore-doc",
+    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path/global.html",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {

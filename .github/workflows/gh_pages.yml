@@ -6,14 +6,19 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      path:
+        description: 'Destination path to generate'
+        required: false
 
 jobs:
   build:
     name: Update api docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v2.1.4
+      - uses: actions/setup-node@v2
       - run: npm install -g npm@latest
+        continue-on-error: true
       - uses: actions/checkout@v2
         with:
           path: source
@@ -21,14 +26,12 @@ jobs:
         with:
           ref: gh-pages
           path: yeoman-generator-doc
-      - name: Update jsdoc
+      - run: npm ci
         working-directory: source
-        run: |
-          npm ci
-          npm run doc
-          sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' ../yeoman-generator-doc/global.html
-          npm install prettier@latest
-          npm run doc:prettier
+      - run: npm config set yeoman-generator:doc_path ../yeoman-generator-doc/${{ github.event.inputs.path }}
+        working-directory: source
+      - run: npm run doc
+        working-directory: source
       - name: Create commit
         working-directory: yeoman-generator-doc
         if: always()
