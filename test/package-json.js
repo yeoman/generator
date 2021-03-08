@@ -4,6 +4,7 @@ const os = require('os');
 const path = require('path');
 const makeDir = require('make-dir');
 const rimraf = require('rimraf');
+const semver = require('semver');
 const Environment = require('yeoman-environment');
 
 const Base = require('..');
@@ -35,6 +36,17 @@ describe('Base#package-json', function () {
   });
 
   describe('_resolvePackageJsonDependencies()', () => {
+    it('should accept empty version and resolve', async function () {
+      if (semver.lte(env.getVersion(), '3.1.0')) {
+        this.skip();
+      }
+
+      const dependencies = await generator._resolvePackageJsonDependencies(
+        'yeoman-generator'
+      );
+      assert.ok(dependencies['yeoman-generator']);
+    });
+
     it('should accept semver version', async () => {
       assert.deepStrictEqual(
         await generator._resolvePackageJsonDependencies('yeoman-generator@^2'),
@@ -61,8 +73,21 @@ describe('Base#package-json', function () {
     });
 
     it('should accept object and return it', async () => {
-      const a = {};
-      assert.strictEqual(await generator._resolvePackageJsonDependencies(a), a);
+      const a = {'yeoman-generator': '^4'};
+      assert.deepStrictEqual(
+        await generator._resolvePackageJsonDependencies(a),
+        a
+      );
+    });
+
+    it('should resolve object with empty version and resolve', async function () {
+      if (semver.lte(env.getVersion(), '3.1.0')) {
+        this.skip();
+      }
+
+      const a = {'yeoman-generator': ''};
+      const dependencies = await generator._resolvePackageJsonDependencies(a);
+      assert.ok(dependencies['yeoman-generator']);
     });
 
     it('should accept arrays', async () => {
