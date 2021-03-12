@@ -29,6 +29,7 @@
     "inquirer": "^7.3.2",
     "jsdoc": "^3.6.3",
     "mem-fs": "^1.2.0",
+    "mem-fs-editor": "^8.0.0",
     "mocha": "^8.0.1",
     "mockery": "^2.1.0",
     "nock": "^13.0.2",
