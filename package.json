@@ -73,5 +73,13 @@
     "semver": "^7.2.1",
     "shelljs": "^0.8.4",
     "text-table": "^0.2.0"
+  },
+  "peerDependencies": {
+    "yeoman-environment": ">=3.1.0"
+  },
+  "peerDependenciesMeta": {
+    "yeoman-environment": {
+      "optional": true
+    }
   }
 }
