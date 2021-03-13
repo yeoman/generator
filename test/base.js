@@ -1788,26 +1788,91 @@ describe('Base', () => {
 
   describe('#getFeatures', () => {
     it('should return namespace as uniqueBy when unique is true', function () {
-      const gen = new Base([], {unique: true, namespace: 'foo', env: this.env});
+      const gen = new Base(
+        [],
+        {namespace: 'foo', env: this.env},
+        {unique: true}
+      );
       assert.equal(gen.getFeatures().uniqueBy, 'foo');
     });
 
     it("should return namespace as uniqueBy when unique is 'namespace'", function () {
-      const gen = new Base([], {
-        unique: 'namespace',
-        namespace: 'foo',
-        env: this.env
-      });
+      const gen = new Base(
+        [],
+        {
+          namespace: 'foo',
+          env: this.env
+        },
+        {
+          unique: 'namespace'
+        }
+      );
       assert.equal(gen.getFeatures().uniqueBy, 'foo');
     });
 
     it("should return namespace with first argument as uniqueBy when unique is 'namespace'", function () {
-      const gen = new Base(['bar'], {
-        unique: 'argument',
-        namespace: 'foo',
-        env: this.env
-      });
+      const gen = new Base(
+        ['bar'],
+        {
+          namespace: 'foo',
+          env: this.env
+        },
+        {
+          unique: 'argument'
+        }
+      );
       assert.equal(gen.getFeatures().uniqueBy, 'foo#bar');
+    });
+  });
+
+  describe('getTaskNames', () => {
+    class TestGen extends Base {
+      constructor(args, options, features) {
+        super(
+          args,
+          {
+            ...options,
+            customPriorities: [
+              {
+                name: 'customPriority',
+                before: 'prompting'
+              }
+            ]
+          },
+          features
+        );
+      }
+
+      anyMethod() {}
+      default() {}
+      customPriority() {}
+    }
+    it('should return any public member when tasksMatchingPriority is undefined', function () {
+      const gen = new TestGen(
+        [],
+        {
+          namespace: 'foo',
+          env: this.env
+        },
+        {}
+      );
+      assert.deepStrictEqual(gen.getTaskNames(), [
+        'anyMethod',
+        'default',
+        'customPriority'
+      ]);
+    });
+
+    it('should return any public member when tasksMatchingPriority is true', function () {
+      const gen = new TestGen(
+        [],
+        {
+          namespace: 'foo',
+          env: this.env
+        },
+        {tasksMatchingPriority: true}
+      );
+      assert.deepStrictEqual(gen.getTaskNames(), ['default', 'customPriority']);
     });
   });
 });
