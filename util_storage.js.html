@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.13.0</span>
+        <span class="version">v5.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -53,33 +53,16 @@
         <h3>Classes</h3>
         <ul>
           <li>
-            <a href="Conflicter.html">Conflicter</a>
-            <button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="Conflicter_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
-                <li>
-                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
-                </li>
-                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
-                <li>
-                  <a href="Conflicter.html#checkForCollision">
-                    checkForCollision
-                  </a>
-                </li>
-                <li><a href="Conflicter.html#collision">collision</a></li>
-                <li><a href="Conflicter.html#resolve">resolve</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
             <a href="Generator.html">Generator</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <div class="hidden" id="Generator_sub">
+              <div class="member-type">Members</div>
+              <ul class="inner">
+                <li><a href="Generator.html#config">config</a></li>
+                <li><a href="Generator.html#packageJson">packageJson</a></li>
+              </ul>
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li>
@@ -125,6 +108,7 @@
                     existsDestination
                   </a>
                 </li>
+                <li><a href="Generator.html#getFeatures">getFeatures</a></li>
                 <li><a href="Generator.html#help">help</a></li>
                 <li>
                   <a href="Generator.html#installDependencies">
@@ -139,13 +123,15 @@
                 <li><a href="Generator.html#option">option</a></li>
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
-                <li>
-                  <a href="Generator.html#queueBasicTasks">queueBasicTasks</a>
-                </li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
                 <li><a href="Generator.html#queueTask">queueTask</a></li>
                 <li>
                   <a href="Generator.html#queueTaskGroup">queueTaskGroup</a>
+                </li>
+                <li>
+                  <a href="Generator.html#queueTransformStream">
+                    queueTransformStream
+                  </a>
                 </li>
                 <li>
                   <a href="Generator.html#readDestination">readDestination</a>
@@ -164,11 +150,6 @@
                 <li>
                   <a href="Generator.html#registerPriorities">
                     registerPriorities
-                  </a>
-                </li>
-                <li>
-                  <a href="Generator.html#registerTransformStream">
-                    registerTransformStream
                   </a>
                 </li>
                 <li>
@@ -193,6 +174,7 @@
                     scheduleInstallTask
                   </a>
                 </li>
+                <li><a href="Generator.html#setFeatures">setFeatures</a></li>
                 <li><a href="Generator.html#sourceRoot">sourceRoot</a></li>
                 <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
                 <li>
@@ -231,6 +213,7 @@
                 <li><a href="Storage.html#get">get</a></li>
                 <li><a href="Storage.html#getAll">getAll</a></li>
                 <li><a href="Storage.html#getPath">getPath</a></li>
+                <li><a href="Storage.html#merge">merge</a></li>
                 <li><a href="Storage.html#save">save</a></li>
                 <li><a href="Storage.html#set">set</a></li>
                 <li><a href="Storage.html#setPath">setPath</a></li>
@@ -353,6 +336,13 @@
             </div>
           </li>
           <li>
+            <a href="actions_packege-json.html">actions/packege-json</a>
+            <button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="actions/packege-json_sub"></div>
+          </li>
+          <li>
             <a href="actions_spawn-command.html">actions/spawn-command</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -396,6 +386,10 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li><a href="global.html#addDependencies">addDependencies</a></li>
+          <li>
+            <a href="global.html#addDevDependencies">addDevDependencies</a>
+          </li>
           <li class="hidden"><a href="global.html#Priority">Priority</a></li>
           <li><a href="global.html#proxyHandler">proxyHandler</a></li>
           <li class="hidden">
@@ -476,7 +470,7 @@ class Storage {
     }
 
     if (typeof options === 'boolean') {
-      options = { lodashPath: options };
+      options = {lodashPath: options};
     }
 
     _.defaults(options, {
@@ -497,7 +491,7 @@ class Storage {
 
     this.existed = Object.keys(this._store).length > 0;
 
-    this.fs.store.on('change', filename => {
+    this.fs.store.on('change', (filename) => {
       // At mem-fs 1.1.3 filename is not passed to the event.
       if (this.disableCacheByFile || (filename &amp;&amp; filename !== this.path)) {
         return;
@@ -530,17 +524,17 @@ class Storage {
    * @param {Object} val - current configuration values
    * @private
    */
-  _persist(val) {
+  _persist(value) {
     let fullStore;
     if (this.name) {
       fullStore = this.fs.readJSON(this.path, {});
       if (this.lodashPath) {
-        _.set(fullStore, this.name, val);
+        _.set(fullStore, this.name, value);
       } else {
-        fullStore[this.name] = val;
+        fullStore[this.name] = value;
       }
     } else {
-      fullStore = val;
+      fullStore = value;
     }
 
     this.fs.writeJSON(this.path, fullStore, null, this.indent);
@@ -585,19 +579,19 @@ class Storage {
    * @param {*} val  Any valid JSON type value (String, Number, Array, Object).
    * @return {*} val  Whatever was passed in as val.
    */
-  set(key, val) {
-    assert(!_.isFunction(val), "Storage value can't be a function");
+  set(key, value) {
+    assert(!_.isFunction(value), "Storage value can't be a function");
 
     const store = this._store;
 
     if (_.isObject(key)) {
-      val = _.assignIn(store, key);
+      value = _.assignIn(store, key);
     } else {
-      store[key] = val;
+      store[key] = value;
     }
 
     this._persist(store);
-    return val;
+    return value;
   }
 
   /**
@@ -606,13 +600,13 @@ class Storage {
    * @param {*} val  Any valid JSON type value (String, Number, Array, Object).
    * @return {*} val  Whatever was passed in as val.
    */
-  setPath(path, val) {
-    assert(!_.isFunction(val), "Storage value can't be a function");
+  setPath(path, value) {
+    assert(!_.isFunction(value), "Storage value can't be a function");
 
     const store = this._store;
-    _.set(store, path, val);
+    _.set(store, path, value);
     this._persist(store);
-    return val;
+    return value;
   }
 
   /**
@@ -632,10 +626,24 @@ class Storage {
    * @return {*} val  Returns the merged options.
    */
   defaults(defaults) {
-    assert(_.isObject(defaults), 'Storage `defaults` method only accept objects');
-    const val = _.defaults(this.getAll(), defaults);
-    this.set(val);
-    return val;
+    assert(
+      _.isObject(defaults),
+      'Storage `defaults` method only accept objects'
+    );
+    const store = _.defaults({}, this._store, defaults);
+    this._persist(store);
+    return this.getAll();
+  }
+
+  /**
+   * @param  {Object} defaults  Key-value object to store.
+   * @return {*} val  Returns the merged object.
+   */
+  merge(source) {
+    assert(_.isObject(source), 'Storage `merge` method only accept objects');
+    const value = _.merge({}, this._store, source);
+    this._persist(value);
+    return this.getAll();
   }
 
   /**

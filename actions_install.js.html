@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.13.0</span>
+        <span class="version">v5.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -53,33 +53,16 @@
         <h3>Classes</h3>
         <ul>
           <li>
-            <a href="Conflicter.html">Conflicter</a>
-            <button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="Conflicter_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
-                <li>
-                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
-                </li>
-                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
-                <li>
-                  <a href="Conflicter.html#checkForCollision">
-                    checkForCollision
-                  </a>
-                </li>
-                <li><a href="Conflicter.html#collision">collision</a></li>
-                <li><a href="Conflicter.html#resolve">resolve</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
             <a href="Generator.html">Generator</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <div class="hidden" id="Generator_sub">
+              <div class="member-type">Members</div>
+              <ul class="inner">
+                <li><a href="Generator.html#config">config</a></li>
+                <li><a href="Generator.html#packageJson">packageJson</a></li>
+              </ul>
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li>
@@ -125,6 +108,7 @@
                     existsDestination
                   </a>
                 </li>
+                <li><a href="Generator.html#getFeatures">getFeatures</a></li>
                 <li><a href="Generator.html#help">help</a></li>
                 <li>
                   <a href="Generator.html#installDependencies">
@@ -139,13 +123,15 @@
                 <li><a href="Generator.html#option">option</a></li>
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
-                <li>
-                  <a href="Generator.html#queueBasicTasks">queueBasicTasks</a>
-                </li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
                 <li><a href="Generator.html#queueTask">queueTask</a></li>
                 <li>
                   <a href="Generator.html#queueTaskGroup">queueTaskGroup</a>
+                </li>
+                <li>
+                  <a href="Generator.html#queueTransformStream">
+                    queueTransformStream
+                  </a>
                 </li>
                 <li>
                   <a href="Generator.html#readDestination">readDestination</a>
@@ -164,11 +150,6 @@
                 <li>
                   <a href="Generator.html#registerPriorities">
                     registerPriorities
-                  </a>
-                </li>
-                <li>
-                  <a href="Generator.html#registerTransformStream">
-                    registerTransformStream
                   </a>
                 </li>
                 <li>
@@ -193,6 +174,7 @@
                     scheduleInstallTask
                   </a>
                 </li>
+                <li><a href="Generator.html#setFeatures">setFeatures</a></li>
                 <li><a href="Generator.html#sourceRoot">sourceRoot</a></li>
                 <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
                 <li>
@@ -231,6 +213,7 @@
                 <li><a href="Storage.html#get">get</a></li>
                 <li><a href="Storage.html#getAll">getAll</a></li>
                 <li><a href="Storage.html#getPath">getPath</a></li>
+                <li><a href="Storage.html#merge">merge</a></li>
                 <li><a href="Storage.html#save">save</a></li>
                 <li><a href="Storage.html#set">set</a></li>
                 <li><a href="Storage.html#setPath">setPath</a></li>
@@ -353,6 +336,13 @@
             </div>
           </li>
           <li>
+            <a href="actions_packege-json.html">actions/packege-json</a>
+            <button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="actions/packege-json_sub"></div>
+          </li>
+          <li>
             <a href="actions_spawn-command.html">actions/spawn-command</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -396,6 +386,10 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li><a href="global.html#addDependencies">addDependencies</a></li>
+          <li>
+            <a href="global.html#addDevDependencies">addDevDependencies</a>
+          </li>
           <li class="hidden"><a href="global.html#Priority">Priority</a></li>
           <li><a href="global.html#proxyHandler">proxyHandler</a></li>
           <li class="hidden">
@@ -417,6 +411,7 @@
       <section>
         <article>
           <pre class="prettyprint source linenums"><code>'use strict';
+/* eslint-disable unicorn/prefer-spread */
 const assert = require('assert');
 const _ = require('lodash');
 const dargs = require('dargs');
@@ -429,6 +424,7 @@ const chalk = require('chalk');
 const install = module.exports;
 
 /**
+ * @deprecated
  * Combine package manager cmd line arguments and run the `install` command.
  *
  * During the `install` step, every command will be scheduled to run once, on the
@@ -441,7 +437,12 @@ const install = module.exports;
  *                                https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
  */
 
-install.scheduleInstallTask = function(installer, paths, options, spawnOptions) {
+install.scheduleInstallTask = function (
+  installer,
+  paths,
+  options,
+  spawnOptions
+) {
   options = options || {};
   spawnOptions = spawnOptions || {};
   paths = Array.isArray(paths) ? paths : (paths &amp;&amp; paths.split(' ')) || [];
@@ -455,23 +456,24 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
 
   // Only for npm, use a minimum cache of one day
   if (installer === 'npm') {
-    args = args.concat(['--cache-min', 24 * 60 * 60]);
+    args = [...args, '--cache-min', 24 * 60 * 60];
   }
 
   // Return early if we're skipping installation
   if (this.options.skipInstall || this.options['skip-install']) {
     this.log(
-      'Skipping install command: ' + chalk.yellow(installer + ' ' + args.join(' '))
+      'Skipping install command: ' +
+        chalk.yellow(installer + ' ' + args.join(' '))
     );
     return;
   }
 
   this.env.runLoop.add(
     'install',
-    done => {
+    (done) => {
       this.emit(`${installer}Install`, paths);
       this.spawnCommand(installer, args, spawnOptions)
-        .on('error', error => {
+        .on('error', (error) => {
           this.log(
             chalk.red('Could not finish installation. \n') +
               'Please install ' +
@@ -498,7 +500,11 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
           ) {
             return this.emit(
               'error',
-              new Error(`Installation of ${installer} failed with code ${code || signal}`)
+              new Error(
+                `Installation of ${installer} failed with code ${
+                  code || signal
+                }`
+              )
             );
           }
 
@@ -506,13 +512,15 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
         });
     },
     {
-      once: installer + ' ' + args.join(' ') + ' ' + JSON.stringify(spawnOptions),
+      once:
+        installer + ' ' + args.join(' ') + ' ' + JSON.stringify(spawnOptions),
       run: false
     }
   );
 };
 
 /**
+ * @deprecated
  * Runs `npm` and `bower`, in sequence, in the generated directory and prints a
  * message to let the user know.
  *
@@ -530,13 +538,13 @@ install.scheduleInstallTask = function(installer, paths, options, spawnOptions) 
  *
  * @param {Object} [options] - options
  * @param {Boolean|Object} [options.npm=true] - whether to run `npm install` or can be options to pass to `dargs` as arguments
- * @param {Boolean|Object} [options.bower=true] - whether to run `bower install` or can be options to pass to `dargs` as arguments
+ * @param {Boolean|Object} [options.bower=false] - whether to run `bower install` or can be options to pass to `dargs` as arguments
  * @param {Boolean|Object} [options.yarn=false] - whether to run `yarn install` or can be options to pass to `dargs` as arguments
  * @param {Boolean} [options.skipMessage=false] - whether to log the used commands
  */
-install.installDependencies = function(options) {
+install.installDependencies = function (options) {
   options = options || {};
-  const msg = {
+  const message = {
     commands: [],
     template: _.template(
       "\n\nI'm all done. " +
@@ -546,27 +554,27 @@ install.installDependencies = function(options) {
     )
   };
 
-  const getOptions = options => {
+  const getOptions = (options) => {
     return typeof options === 'object' ? options : null;
   };
 
   if (options.npm !== false) {
-    msg.commands.push('npm install');
+    message.commands.push('npm install');
     this.npmInstall(null, getOptions(options.npm));
   }
 
   if (options.yarn) {
-    msg.commands.push('yarn install');
+    message.commands.push('yarn install');
     this.yarnInstall(null, getOptions(options.yarn));
   }
 
-  if (options.bower !== false) {
-    msg.commands.push('bower install');
+  if (options.bower) {
+    message.commands.push('bower install');
     this.bowerInstall(null, getOptions(options.bower));
   }
 
   assert(
-    msg.commands.length,
+    message.commands.length,
     'installDependencies needs at least one of `npm`, `bower` or `yarn` to run.'
   );
 
@@ -577,14 +585,15 @@ install.installDependencies = function(options) {
       },
       this.options,
       {
-        commands: chalk.yellow.bold(msg.commands.join(' &amp;&amp; '))
+        commands: chalk.yellow.bold(message.commands.join(' &amp;&amp; '))
       }
     );
-    this.log(msg.template(tplValues));
+    this.log(message.template(tplValues));
   }
 };
 
 /**
+ * @deprecated
  * Receives a list of `components` and an `options` object to install through bower.
  *
  * The installation will automatically run during the run loop `install` phase.
@@ -593,11 +602,12 @@ install.installDependencies = function(options) {
  * @param {Object} [options] Options to pass to `dargs` as arguments
  * @param {Object} [spawnOptions] Options to pass `child_process.spawn`.
  */
-install.bowerInstall = function(cmpnt, options, spawnOptions) {
+install.bowerInstall = function (cmpnt, options, spawnOptions) {
   this.scheduleInstallTask('bower', cmpnt, options, spawnOptions);
 };
 
 /**
+ * @deprecated
  * Receives a list of `packages` and an `options` object to install through npm.
  *
  * The installation will automatically run during the run loop `install` phase.
@@ -606,11 +616,12 @@ install.bowerInstall = function(cmpnt, options, spawnOptions) {
  * @param {Object} [options] Options to pass to `dargs` as arguments
  * @param {Object} [spawnOptions] Options to pass `child_process.spawn`.
  */
-install.npmInstall = function(pkgs, options, spawnOptions) {
+install.npmInstall = function (pkgs, options, spawnOptions) {
   this.scheduleInstallTask('npm', pkgs, options, spawnOptions);
 };
 
 /**
+ * @deprecated
  * Receives a list of `packages` and an `options` object to install through yarn.
  *
  * The installation will automatically run during the run loop `install` phase.
@@ -619,9 +630,11 @@ install.npmInstall = function(pkgs, options, spawnOptions) {
  * @param {Object} [options] Options to pass to `dargs` as arguments
  * @param {Object} [spawnOptions] Options to pass `child_process.spawn`.
  */
-install.yarnInstall = function(pkgs, options, spawnOptions) {
+install.yarnInstall = function (pkgs, options, spawnOptions) {
   this.scheduleInstallTask('yarn', pkgs, options, spawnOptions);
 };
+
+/* eslint-enable unicorn/prefer-spread */
 </code></pre>
         </article>
       </section>
