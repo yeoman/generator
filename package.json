@@ -42,7 +42,7 @@
     "tui-jsdoc-template": "^1.2.2",
     "xo": "^0.38.1",
     "yeoman-assert": "^3.1.1",
-    "yeoman-environment": "^3.1.0",
+    "yeoman-environment": "^3.2.0",
     "yeoman-generator": "^5.0.0",
     "yeoman-test": "^5.1.0"
   },
@@ -75,7 +75,7 @@
     "text-table": "^0.2.0"
   },
   "peerDependencies": {
-    "yeoman-environment": "^3.1.0"
+    "yeoman-environment": "^3.2.0"
   },
   "peerDependenciesMeta": {
     "yeoman-environment": {
