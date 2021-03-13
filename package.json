@@ -53,7 +53,7 @@
   },
   "scripts": {
     "pretest": "xo",
-    "test": "nyc mocha",
+    "test": "nyc mocha --forbid-only",
     "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
     "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path",
     "doc:prettier": "prettier $npm_package_config_doc_path --write --ignore-path .prettierignore-doc",
