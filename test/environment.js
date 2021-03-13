@@ -85,11 +85,20 @@ describe('Generator with environment version', () => {
           this.getVersionStub.returns('3.0.0');
         });
 
-        it('returns true', function () {
+        it('should throw', function () {
           assert.throws(
             () => this.dummy.checkEnvironmentVersion('3.0.1'),
             /requires yeoman-environment at least 3.0.1, current version is 3.0.0/
           );
+        });
+
+        describe('with warning', () => {
+          it('should return false', function () {
+            assert.equal(
+              this.dummy.checkEnvironmentVersion('3.0.1', true),
+              false
+            );
+          });
         });
 
         describe('with ignoreVersionCheck', () => {
@@ -137,6 +146,15 @@ describe('Generator with environment version', () => {
             () => this.dummy.checkEnvironmentVersion('inquirer', '7.1.1'),
             /requires inquirer at least 7.1.1, current version is 7.1.0/
           );
+        });
+
+        describe('with warning', () => {
+          it('returns false', function () {
+            assert.equal(
+              this.dummy.checkEnvironmentVersion('inquirer', '7.1.1', true),
+              false
+            );
+          });
         });
 
         describe('with ignoreVersionCheck', () => {
