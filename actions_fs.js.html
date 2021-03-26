@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.13.0</span>
+        <span class="version">v5.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -53,33 +53,16 @@
         <h3>Classes</h3>
         <ul>
           <li>
-            <a href="Conflicter.html">Conflicter</a>
-            <button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="Conflicter_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
-                <li>
-                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
-                </li>
-                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
-                <li>
-                  <a href="Conflicter.html#checkForCollision">
-                    checkForCollision
-                  </a>
-                </li>
-                <li><a href="Conflicter.html#collision">collision</a></li>
-                <li><a href="Conflicter.html#resolve">resolve</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
             <a href="Generator.html">Generator</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <div class="hidden" id="Generator_sub">
+              <div class="member-type">Members</div>
+              <ul class="inner">
+                <li><a href="Generator.html#config">config</a></li>
+                <li><a href="Generator.html#packageJson">packageJson</a></li>
+              </ul>
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li>
@@ -125,6 +108,7 @@
                     existsDestination
                   </a>
                 </li>
+                <li><a href="Generator.html#getFeatures">getFeatures</a></li>
                 <li><a href="Generator.html#help">help</a></li>
                 <li>
                   <a href="Generator.html#installDependencies">
@@ -139,13 +123,15 @@
                 <li><a href="Generator.html#option">option</a></li>
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
-                <li>
-                  <a href="Generator.html#queueBasicTasks">queueBasicTasks</a>
-                </li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
                 <li><a href="Generator.html#queueTask">queueTask</a></li>
                 <li>
                   <a href="Generator.html#queueTaskGroup">queueTaskGroup</a>
+                </li>
+                <li>
+                  <a href="Generator.html#queueTransformStream">
+                    queueTransformStream
+                  </a>
                 </li>
                 <li>
                   <a href="Generator.html#readDestination">readDestination</a>
@@ -164,11 +150,6 @@
                 <li>
                   <a href="Generator.html#registerPriorities">
                     registerPriorities
-                  </a>
-                </li>
-                <li>
-                  <a href="Generator.html#registerTransformStream">
-                    registerTransformStream
                   </a>
                 </li>
                 <li>
@@ -193,6 +174,7 @@
                     scheduleInstallTask
                   </a>
                 </li>
+                <li><a href="Generator.html#setFeatures">setFeatures</a></li>
                 <li><a href="Generator.html#sourceRoot">sourceRoot</a></li>
                 <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
                 <li>
@@ -231,6 +213,7 @@
                 <li><a href="Storage.html#get">get</a></li>
                 <li><a href="Storage.html#getAll">getAll</a></li>
                 <li><a href="Storage.html#getPath">getPath</a></li>
+                <li><a href="Storage.html#merge">merge</a></li>
                 <li><a href="Storage.html#save">save</a></li>
                 <li><a href="Storage.html#set">set</a></li>
                 <li><a href="Storage.html#setPath">setPath</a></li>
@@ -353,6 +336,13 @@
             </div>
           </li>
           <li>
+            <a href="actions_packege-json.html">actions/packege-json</a>
+            <button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="actions/packege-json_sub"></div>
+          </li>
+          <li>
             <a href="actions_spawn-command.html">actions/spawn-command</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -396,6 +386,10 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li><a href="global.html#addDependencies">addDependencies</a></li>
+          <li>
+            <a href="global.html#addDevDependencies">addDevDependencies</a>
+          </li>
           <li class="hidden"><a href="global.html#Priority">Priority</a></li>
           <li><a href="global.html#proxyHandler">proxyHandler</a></li>
           <li class="hidden">
@@ -436,7 +430,7 @@ const fs = module.exports;
  * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.readTemplate = function(filepath, ...args) {
+fs.readTemplate = function (filepath, ...args) {
   return this.fs.read(this.templatePath(filepath), ...args);
 };
 
@@ -450,8 +444,12 @@ fs.readTemplate = function(filepath, ...args) {
  * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.copyTemplate = function(from, to, ...args) {
-  return this.fs.copy(this.templatePath(from), this.destinationPath(to), ...args);
+fs.copyTemplate = function (from, to, ...args) {
+  return this.fs.copy(
+    this.templatePath(from),
+    this.destinationPath(to),
+    ...args
+  );
 };
 
 /**
@@ -463,7 +461,7 @@ fs.copyTemplate = function(from, to, ...args) {
  * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.readDestination = function(filepath, ...args) {
+fs.readDestination = function (filepath, ...args) {
   return this.fs.read(this.destinationPath(filepath), ...args);
 };
 
@@ -476,7 +474,7 @@ fs.readDestination = function(filepath, ...args) {
  * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.readDestinationJSON = function(filepath, ...args) {
+fs.readDestinationJSON = function (filepath, ...args) {
   return this.fs.readJSON(this.destinationPath(filepath), ...args);
 };
 
@@ -489,7 +487,7 @@ fs.readDestinationJSON = function(filepath, ...args) {
  * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.writeDestination = function(filepath, ...args) {
+fs.writeDestination = function (filepath, ...args) {
   return this.fs.write(this.destinationPath(filepath), ...args);
 };
 
@@ -502,7 +500,7 @@ fs.writeDestination = function(filepath, ...args) {
  * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.writeDestinationJSON = function(filepath, ...args) {
+fs.writeDestinationJSON = function (filepath, ...args) {
   return this.fs.writeJSON(this.destinationPath(filepath), ...args);
 };
 
@@ -515,7 +513,7 @@ fs.writeDestinationJSON = function(filepath, ...args) {
  * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.deleteDestination = function(filepath, ...args) {
+fs.deleteDestination = function (filepath, ...args) {
   return this.fs.delete(this.destinationPath(filepath), ...args);
 };
 
@@ -529,8 +527,12 @@ fs.deleteDestination = function(filepath, ...args) {
  * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.copyDestination = function(from, to, ...args) {
-  return this.fs.copy(this.destinationPath(from), this.destinationPath(to), ...args);
+fs.copyDestination = function (from, to, ...args) {
+  return this.fs.copy(
+    this.destinationPath(from),
+    this.destinationPath(to),
+    ...args
+  );
 };
 
 /**
@@ -542,8 +544,12 @@ fs.copyDestination = function(from, to, ...args) {
  * @param {String} to - absolute file path or relative to destination folder.
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.moveDestination = function(from, to, ...args) {
-  return this.fs.move(this.destinationPath(from), this.destinationPath(to), ...args);
+fs.moveDestination = function (from, to, ...args) {
+  return this.fs.move(
+    this.destinationPath(from),
+    this.destinationPath(to),
+    ...args
+  );
 };
 
 /**
@@ -555,7 +561,7 @@ fs.moveDestination = function(from, to, ...args) {
  * @param {...*} args - for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  * @returns {*} for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}
  */
-fs.existsDestination = function(filepath, ...args) {
+fs.existsDestination = function (filepath, ...args) {
   return this.fs.exists(this.destinationPath(filepath), ...args);
 };
 
@@ -568,7 +574,7 @@ fs.existsDestination = function(filepath, ...args) {
  * @param {Object} [templateOptions] - ejs options
  * @param {Object} [copyOptions] - mem-fs-editor copy options
  */
-fs.renderTemplate = function(
+fs.renderTemplate = function (
   source = '',
   destination = source,
   templateData = this._templateData(),
@@ -579,7 +585,7 @@ fs.renderTemplate = function(
     templateData = this._templateData(templateData);
   }
 
-  templateOptions = { context: this, ...templateOptions };
+  templateOptions = {context: this, ...templateOptions};
 
   source = Array.isArray(source) ? source : [source];
   const templatePath = this.templatePath(...source);
@@ -607,23 +613,29 @@ fs.renderTemplate = function(
  * @param {Object} [templates.copyOptions] - mem-fs-editor copy options
  * @param {Object} [templateData] - ejs data
  */
-fs.renderTemplates = function(templates, templateData = this._templateData()) {
+fs.renderTemplates = function (templates, templateData = this._templateData()) {
   assert(Array.isArray(templates), 'Templates must an array');
   if (typeof templateData === 'string') {
     templateData = this._templateData(templateData);
   }
 
   const self = this;
-  const renderEachTemplate = template => {
+  const renderEachTemplate = (template) => {
     if (template.when &amp;&amp; !template.when(templateData, this)) {
       return;
     }
 
-    const { source, destination, templateOptions, copyOptions } = template;
-    self.renderTemplate(source, destination, templateData, templateOptions, copyOptions);
+    const {source, destination, templateOptions, copyOptions} = template;
+    self.renderTemplate(
+      source,
+      destination,
+      templateData,
+      templateOptions,
+      copyOptions
+    );
   };
 
-  templates.forEach(template => renderEachTemplate(template));
+  for (const template of templates) renderEachTemplate(template);
 };
 
 /**
@@ -632,7 +644,7 @@ fs.renderTemplates = function(templates, templateData = this._templateData()) {
  * @param {String} path - path to the storage key.
  * @return {Object} data to be passed to the templates.
  */
-fs._templateData = function(path) {
+fs._templateData = function (path) {
   if (path) {
     return this.config.getPath(path);
   }

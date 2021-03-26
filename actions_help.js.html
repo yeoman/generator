@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.13.0</span>
+        <span class="version">v5.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -53,33 +53,16 @@
         <h3>Classes</h3>
         <ul>
           <li>
-            <a href="Conflicter.html">Conflicter</a>
-            <button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="Conflicter_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
-                <li>
-                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
-                </li>
-                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
-                <li>
-                  <a href="Conflicter.html#checkForCollision">
-                    checkForCollision
-                  </a>
-                </li>
-                <li><a href="Conflicter.html#collision">collision</a></li>
-                <li><a href="Conflicter.html#resolve">resolve</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
             <a href="Generator.html">Generator</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <div class="hidden" id="Generator_sub">
+              <div class="member-type">Members</div>
+              <ul class="inner">
+                <li><a href="Generator.html#config">config</a></li>
+                <li><a href="Generator.html#packageJson">packageJson</a></li>
+              </ul>
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li>
@@ -125,6 +108,7 @@
                     existsDestination
                   </a>
                 </li>
+                <li><a href="Generator.html#getFeatures">getFeatures</a></li>
                 <li><a href="Generator.html#help">help</a></li>
                 <li>
                   <a href="Generator.html#installDependencies">
@@ -139,13 +123,15 @@
                 <li><a href="Generator.html#option">option</a></li>
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
-                <li>
-                  <a href="Generator.html#queueBasicTasks">queueBasicTasks</a>
-                </li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
                 <li><a href="Generator.html#queueTask">queueTask</a></li>
                 <li>
                   <a href="Generator.html#queueTaskGroup">queueTaskGroup</a>
+                </li>
+                <li>
+                  <a href="Generator.html#queueTransformStream">
+                    queueTransformStream
+                  </a>
                 </li>
                 <li>
                   <a href="Generator.html#readDestination">readDestination</a>
@@ -164,11 +150,6 @@
                 <li>
                   <a href="Generator.html#registerPriorities">
                     registerPriorities
-                  </a>
-                </li>
-                <li>
-                  <a href="Generator.html#registerTransformStream">
-                    registerTransformStream
                   </a>
                 </li>
                 <li>
@@ -193,6 +174,7 @@
                     scheduleInstallTask
                   </a>
                 </li>
+                <li><a href="Generator.html#setFeatures">setFeatures</a></li>
                 <li><a href="Generator.html#sourceRoot">sourceRoot</a></li>
                 <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
                 <li>
@@ -231,6 +213,7 @@
                 <li><a href="Storage.html#get">get</a></li>
                 <li><a href="Storage.html#getAll">getAll</a></li>
                 <li><a href="Storage.html#getPath">getPath</a></li>
+                <li><a href="Storage.html#merge">merge</a></li>
                 <li><a href="Storage.html#save">save</a></li>
                 <li><a href="Storage.html#set">set</a></li>
                 <li><a href="Storage.html#setPath">setPath</a></li>
@@ -353,6 +336,13 @@
             </div>
           </li>
           <li>
+            <a href="actions_packege-json.html">actions/packege-json</a>
+            <button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="actions/packege-json_sub"></div>
+          </li>
+          <li>
             <a href="actions_spawn-command.html">actions/spawn-command</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -396,6 +386,10 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li><a href="global.html#addDependencies">addDependencies</a></li>
+          <li>
+            <a href="global.html#addDevDependencies">addDevDependencies</a>
+          </li>
           <li class="hidden"><a href="global.html#Priority">Priority</a></li>
           <li><a href="global.html#proxyHandler">proxyHandler</a></li>
           <li class="hidden">
@@ -434,7 +428,7 @@ const help = module.exports;
  *
  * @return {String} Help message of the generator
  */
-help.help = function() {
+help.help = function () {
   const filepath = path.resolve(this.sourceRoot(), '../USAGE');
   const exists = fs.existsSync(filepath);
 
@@ -442,12 +436,12 @@ help.help = function() {
 
   // Build options
   if (Object.keys(this._options).length > 0) {
-    out = out.concat(['Options:', this.optionsHelp(), '']);
+    out = [...out, 'Options:', this.optionsHelp(), ''];
   }
 
   // Build arguments
   if (this._arguments.length > 0) {
-    out = out.concat(['Arguments:', this.argumentsHelp(), '']);
+    out = [...out, 'Arguments:', this.argumentsHelp(), ''];
   }
 
   // Append USAGE file is any
@@ -474,7 +468,7 @@ function formatArg(config) {
  *
  * @return {String} Usage information of the generator
  */
-help.usage = function() {
+help.usage = function () {
   const options = Object.keys(this._options).length ? '[options]' : '';
   let name = this.options.namespace;
   let args = '';
@@ -499,7 +493,7 @@ help.usage = function() {
  * @param {String} description
  */
 
-help.desc = function(description) {
+help.desc = function (description) {
   this.description = description || '';
   return this;
 };
@@ -508,8 +502,8 @@ help.desc = function(description) {
  * Get help text for arguments
  * @returns {String} Text of options in formatted table
  */
-help.argumentsHelp = function() {
-  const rows = this._arguments.map(config => {
+help.argumentsHelp = function () {
+  const rows = this._arguments.map((config) => {
     return [
       '',
       config.name ? config.name : '',
@@ -526,16 +520,18 @@ help.argumentsHelp = function() {
  * Get help text for options
  * @returns {String} Text of options in formatted table
  */
-help.optionsHelp = function() {
-  const options = _.reject(this._options, x => x.hide);
+help.optionsHelp = function () {
+  const options = _.reject(this._options, (x) => x.hide);
 
-  const rows = options.map(opt => {
+  const rows = options.map((opt) => {
     return [
       '',
       opt.alias ? `-${opt.alias}, ` : '',
       `--${opt.name}`,
       opt.description ? `# ${opt.description}` : '',
-      opt.default !== undefined &amp;&amp; opt.default !== '' ? 'Default: ' + opt.default : ''
+      opt.default !== undefined &amp;&amp; opt.default !== ''
+        ? 'Default: ' + opt.default
+        : ''
     ];
   });
 

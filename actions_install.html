@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v4.13.0</span>
+        <span class="version">v5.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -53,33 +53,16 @@
         <h3>Classes</h3>
         <ul>
           <li>
-            <a href="Conflicter.html">Conflicter</a>
-            <button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="Conflicter_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
-                <li>
-                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
-                </li>
-                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
-                <li>
-                  <a href="Conflicter.html#checkForCollision">
-                    checkForCollision
-                  </a>
-                </li>
-                <li><a href="Conflicter.html#collision">collision</a></li>
-                <li><a href="Conflicter.html#resolve">resolve</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
             <a href="Generator.html">Generator</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <div class="hidden" id="Generator_sub">
+              <div class="member-type">Members</div>
+              <ul class="inner">
+                <li><a href="Generator.html#config">config</a></li>
+                <li><a href="Generator.html#packageJson">packageJson</a></li>
+              </ul>
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li>
@@ -125,6 +108,7 @@
                     existsDestination
                   </a>
                 </li>
+                <li><a href="Generator.html#getFeatures">getFeatures</a></li>
                 <li><a href="Generator.html#help">help</a></li>
                 <li>
                   <a href="Generator.html#installDependencies">
@@ -139,13 +123,15 @@
                 <li><a href="Generator.html#option">option</a></li>
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
-                <li>
-                  <a href="Generator.html#queueBasicTasks">queueBasicTasks</a>
-                </li>
                 <li><a href="Generator.html#queueMethod">queueMethod</a></li>
                 <li><a href="Generator.html#queueTask">queueTask</a></li>
                 <li>
                   <a href="Generator.html#queueTaskGroup">queueTaskGroup</a>
+                </li>
+                <li>
+                  <a href="Generator.html#queueTransformStream">
+                    queueTransformStream
+                  </a>
                 </li>
                 <li>
                   <a href="Generator.html#readDestination">readDestination</a>
@@ -164,11 +150,6 @@
                 <li>
                   <a href="Generator.html#registerPriorities">
                     registerPriorities
-                  </a>
-                </li>
-                <li>
-                  <a href="Generator.html#registerTransformStream">
-                    registerTransformStream
                   </a>
                 </li>
                 <li>
@@ -193,6 +174,7 @@
                     scheduleInstallTask
                   </a>
                 </li>
+                <li><a href="Generator.html#setFeatures">setFeatures</a></li>
                 <li><a href="Generator.html#sourceRoot">sourceRoot</a></li>
                 <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
                 <li>
@@ -231,6 +213,7 @@
                 <li><a href="Storage.html#get">get</a></li>
                 <li><a href="Storage.html#getAll">getAll</a></li>
                 <li><a href="Storage.html#getPath">getPath</a></li>
+                <li><a href="Storage.html#merge">merge</a></li>
                 <li><a href="Storage.html#save">save</a></li>
                 <li><a href="Storage.html#set">set</a></li>
                 <li><a href="Storage.html#setPath">setPath</a></li>
@@ -353,6 +336,13 @@
             </div>
           </li>
           <li>
+            <a href="actions_packege-json.html">actions/packege-json</a>
+            <button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="actions/packege-json_sub"></div>
+          </li>
+          <li>
             <a href="actions_spawn-command.html">actions/spawn-command</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -396,6 +386,10 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li><a href="global.html#addDependencies">addDependencies</a></li>
+          <li>
+            <a href="global.html#addDevDependencies">addDevDependencies</a>
+          </li>
           <li class="hidden"><a href="global.html#Priority">Priority</a></li>
           <li><a href="global.html#proxyHandler">proxyHandler</a></li>
           <li class="hidden">
@@ -450,27 +444,12 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line178">line 178</a>
+                    <a href="actions_install.js.html#line193">line 193</a>
                   </code>
                 </div>
               </h4>
             </dt>
             <dd>
-              <div class="description">
-                <p>
-                  Receives a list of
-                  <code>components</code>
-                  and an
-                  <code>options</code>
-                  object to install through bower.
-                </p>
-                <p>
-                  The installation will automatically run during the run loop
-                  <code>install</code>
-                  phase.
-                </p>
-              </div>
-
               <div class="container-params">
                 <h5>Parameters:</h5>
 
@@ -553,7 +532,18 @@
                 </table>
               </div>
 
-              <dl class="details"></dl>
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Receives a list of `components` and an `options` object to
+                      install through bower. The installation will automatically
+                      run during the run loop `install` phase.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
             </dd>
 
             <dt>
@@ -575,23 +565,12 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line119">line 119</a>
+                    <a href="actions_install.js.html#line133">line 133</a>
                   </code>
                 </div>
               </h4>
             </dt>
             <dd>
-              <div class="description">
-                <p>
-                  Runs
-                  <code>npm</code>
-                  and
-                  <code>bower</code>
-                  , in sequence, in the generated directory and prints a message
-                  to let the user know.
-                </p>
-              </div>
-
               <div class="container-params">
                 <h5>Parameters:</h5>
 
@@ -684,7 +663,7 @@
                                 <br />
                               </td>
 
-                              <td class="default">true</td>
+                              <td class="default">false</td>
 
                               <td class="description last">
                                 <p>
@@ -751,7 +730,17 @@
                 </table>
               </div>
 
-              <dl class="details"></dl>
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Runs `npm` and `bower`, in sequence, in the generated
+                      directory and prints a message to let the user know.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
 
               <h5>Examples</h5>
 
@@ -789,27 +778,12 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line191">line 191</a>
+                    <a href="actions_install.js.html#line207">line 207</a>
                   </code>
                 </div>
               </h4>
             </dt>
             <dd>
-              <div class="description">
-                <p>
-                  Receives a list of
-                  <code>packages</code>
-                  and an
-                  <code>options</code>
-                  object to install through npm.
-                </p>
-                <p>
-                  The installation will automatically run during the run loop
-                  <code>install</code>
-                  phase.
-                </p>
-              </div>
-
               <div class="container-params">
                 <h5>Parameters:</h5>
 
@@ -892,7 +866,18 @@
                 </table>
               </div>
 
-              <dl class="details"></dl>
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Receives a list of `packages` and an `options` object to
+                      install through npm. The installation will automatically
+                      run during the run loop `install` phase.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
             </dd>
 
             <dt>
@@ -918,26 +903,12 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line26">line 26</a>
+                    <a href="actions_install.js.html#line28">line 28</a>
                   </code>
                 </div>
               </h4>
             </dt>
             <dd>
-              <div class="description">
-                <p>
-                  Combine package manager cmd line arguments and run the
-                  <code>install</code>
-                  command.
-                </p>
-                <p>
-                  During the
-                  <code>install</code>
-                  step, every command will be scheduled to run once, on the run
-                  loop.
-                </p>
-              </div>
-
               <div class="container-params">
                 <h5>Parameters:</h5>
 
@@ -1038,7 +1009,18 @@
                 </table>
               </div>
 
-              <dl class="details"></dl>
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Combine package manager cmd line arguments and run the
+                      `install` command. During the `install` step, every
+                      command will be scheduled to run once, on the run loop.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
             </dd>
 
             <dt>
@@ -1064,27 +1046,12 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line204">line 204</a>
+                    <a href="actions_install.js.html#line221">line 221</a>
                   </code>
                 </div>
               </h4>
             </dt>
             <dd>
-              <div class="description">
-                <p>
-                  Receives a list of
-                  <code>packages</code>
-                  and an
-                  <code>options</code>
-                  object to install through yarn.
-                </p>
-                <p>
-                  The installation will automatically run during the run loop
-                  <code>install</code>
-                  phase.
-                </p>
-              </div>
-
               <div class="container-params">
                 <h5>Parameters:</h5>
 
@@ -1167,7 +1134,18 @@
                 </table>
               </div>
 
-              <dl class="details"></dl>
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Receives a list of `packages` and an `options` object to
+                      install through yarn. The installation will automatically
+                      run during the run loop `install` phase.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
             </dd>
           </dl>
         </article>
