@@ -130,6 +130,35 @@ describe('Base', () => {
 
       assert(generator.fs);
     });
+
+    it('setup required fields for a working generator for help', function () {
+      const generator = new Base([], {
+        env: this.env,
+        help: true,
+        resolved: 'test'
+      });
+
+      assert(generator.env);
+      assert(generator.fs);
+      assert(generator._debug);
+      assert(generator._);
+
+      generator.option('foo');
+      generator.argument('baz');
+    });
+
+    it('should not fail without an env for help', () => {
+      const generator = new Base([], {
+        help: true,
+        resolved: 'test'
+      });
+
+      assert(generator._debug);
+      assert(generator._);
+
+      generator.option('foo');
+      generator.argument('baz');
+    });
   });
 
   describe('prototype', () => {
