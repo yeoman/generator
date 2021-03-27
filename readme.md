@@ -15,6 +15,8 @@ The fastest way to get started is to use  [generator-generator](https://github.c
 
 After reading the getting started guide, you might want to read the code source or visit our [API documentation](http://yeoman.io/generator/) for a list of all methods available.
 
+[API documentation for v4.x](https://yeoman.github.io/yeoman-generator/4.x).
+
 
 ### Debugging
 
