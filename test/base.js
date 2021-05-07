@@ -550,6 +550,39 @@ describe('Base', () => {
     });
   });
 
+  describe('#run() with', () => {
+    beforeEach(function () {
+      this.TestGenerator = class extends Base {};
+      _.extend(this.TestGenerator.prototype, {
+        _private: sinon.spy(),
+        '#composed': sinon.spy(),
+        composed: sinon.spy(),
+        '#initializing': sinon.spy(),
+        initializing: sinon.spy()
+      });
+
+      this.testGen = new this.TestGenerator(
+        [],
+        {
+          resolved: 'generator-ember/all/index.js',
+          namespace: 'dummy',
+          env: this.env,
+          'skip-install': true
+        },
+        {taskPrefix: '#'}
+      );
+    });
+
+    it('should run hashtag prefixed method', async function () {
+      await this.testGen.run();
+      assert(this.TestGenerator.prototype['#composed'].calledOnce);
+      assert(this.TestGenerator.prototype.composed.notCalled);
+      assert(this.TestGenerator.prototype['#initializing'].calledOnce);
+      assert(this.TestGenerator.prototype.initializing.notCalled);
+      assert(this.TestGenerator.prototype._private.notCalled);
+    });
+  });
+
   describe('#argument()', () => {
     it('add a new argument to the generator instance', function () {
       assert.equal(this.dummy._arguments.length, 0);
