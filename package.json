@@ -44,7 +44,7 @@
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^3.2.0",
     "yeoman-generator": "^5.0.0",
-    "yeoman-test": "^5.1.0"
+    "yeoman-test": "^6.0.0"
   },
   "license": "BSD-2-Clause",
   "repository": "yeoman/generator",
