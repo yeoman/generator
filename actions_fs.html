@@ -84,6 +84,11 @@
                 </li>
                 <li><a href="Generator.html#copyTemplate">copyTemplate</a></li>
                 <li>
+                  <a href="Generator.html#copyTemplateAsync">
+                    copyTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="Generator.html#createStorage">createStorage</a>
                 </li>
                 <li><a href="Generator.html#debug">debug</a></li>
@@ -156,7 +161,17 @@
                   <a href="Generator.html#renderTemplate">renderTemplate</a>
                 </li>
                 <li>
+                  <a href="Generator.html#renderTemplateAsync">
+                    renderTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="Generator.html#renderTemplates">renderTemplates</a>
+                </li>
+                <li>
+                  <a href="Generator.html#renderTemplatesAsync">
+                    renderTemplatesAsync
+                  </a>
                 </li>
                 <li>
                   <a href="Generator.html#rootGeneratorName">
@@ -243,6 +258,11 @@
                   <a href="actions_fs.html#.copyTemplate">copyTemplate</a>
                 </li>
                 <li>
+                  <a href="actions_fs.html#.copyTemplateAsync">
+                    copyTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="actions_fs.html#.deleteDestination">
                     deleteDestination
                   </a>
@@ -270,7 +290,17 @@
                   <a href="actions_fs.html#.renderTemplate">renderTemplate</a>
                 </li>
                 <li>
+                  <a href="actions_fs.html#.renderTemplateAsync">
+                    renderTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="actions_fs.html#.renderTemplates">renderTemplates</a>
+                </li>
+                <li>
+                  <a href="actions_fs.html#.renderTemplatesAsync">
+                    renderTemplatesAsync
+                  </a>
                 </li>
                 <li>
                   <a href="actions_fs.html#.writeDestination">
@@ -433,7 +463,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line233">line 233</a></code>
+                  <code><a href="actions_fs.js.html#line322">line 322</a></code>
                 </div>
               </h4>
             </dt>
@@ -496,7 +526,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line116">line 116</a></code>
+                  <code><a href="actions_fs.js.html#line150">line 150</a></code>
                 </div>
               </h4>
             </dt>
@@ -617,7 +647,127 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line33">line 33</a></code>
+                  <code><a href="actions_fs.js.html#line48">line 48</a></code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>
+                  Copy file from templates folder to destination folder.
+                  mem-fs-editor method's shortcut, for more information see
+                  <a href="https://github.com/SBoudrias/mem-fs-editor">
+                    mem-fs-editor
+                  </a>
+                  . Shortcut for this.fs.copy(this.templatePath(from),
+                  this.destinationPath(to))
+                </p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>from</code></td>
+
+                      <td class="type">
+                        <span class="param-type">String</span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last">
+                        <p>
+                          absolute file path or relative to templates folder.
+                        </p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>to</code></td>
+
+                      <td class="type">
+                        <span class="param-type">String</span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last">
+                        <p>
+                          absolute file path or relative to destination folder.
+                        </p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>args</code></td>
+
+                      <td class="type">
+                        <span class="param-type">*</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;repeatable>
+                        <br />
+                      </td>
+
+                      <td class="description last">
+                        <p>
+                          for more information see
+                          <a href="https://github.com/SBoudrias/mem-fs-editor">
+                            mem-fs-editor
+                          </a>
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">*</span>
+
+                -
+                <p>
+                  for more information see
+                  <a href="https://github.com/SBoudrias/mem-fs-editor">
+                    mem-fs-editor
+                  </a>
+                </p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id=".copyTemplateAsync">
+                <span class="type-signature">
+                  <span class="icon green">static</span>
+                </span>
+                copyTemplateAsync
+                <span class="signature">(from, to, &hellip;args)</span>
+                <span class="type-signature">&rarr; {*}</span>
+
+                <div class="container-source members">
+                  <code><a href="actions_fs.js.html">actions/fs.js</a></code>
+                  ,
+                  <code><a href="actions_fs.js.html#line66">line 66</a></code>
                 </div>
               </h4>
             </dt>
@@ -737,7 +887,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line102">line 102</a></code>
+                  <code><a href="actions_fs.js.html#line136">line 136</a></code>
                 </div>
               </h4>
             </dt>
@@ -840,7 +990,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line150">line 150</a></code>
+                  <code><a href="actions_fs.js.html#line184">line 184</a></code>
                 </div>
               </h4>
             </dt>
@@ -943,7 +1093,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line133">line 133</a></code>
+                  <code><a href="actions_fs.js.html#line167">line 167</a></code>
                 </div>
               </h4>
             </dt>
@@ -1036,7 +1186,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line50">line 50</a></code>
+                  <code><a href="actions_fs.js.html#line84">line 84</a></code>
                 </div>
               </h4>
             </dt>
@@ -1139,7 +1289,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line63">line 63</a></code>
+                  <code><a href="actions_fs.js.html#line97">line 97</a></code>
                 </div>
               </h4>
             </dt>
@@ -1243,7 +1393,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line19">line 19</a></code>
+                  <code><a href="actions_fs.js.html#line34">line 34</a></code>
                 </div>
               </h4>
             </dt>
@@ -1356,7 +1506,150 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line163">line 163</a></code>
+                  <code><a href="actions_fs.js.html#line197">line 197</a></code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Copy a template from templates folder to the destination.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>source</code></td>
+
+                      <td class="type">
+                        <span class="param-type">String</span>
+                        |
+
+                        <span class="param-type">Array</span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last">
+                        <p>
+                          template file, absolute or relative to templatePath().
+                        </p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>destination</code></td>
+
+                      <td class="type">
+                        <span class="param-type">String</span>
+                        |
+
+                        <span class="param-type">Array</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last">
+                        <p>
+                          destination, absolute or relative to
+                          destinationPath().
+                        </p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>templateData</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last"><p>ejs data</p></td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>templateOptions</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last"><p>ejs options</p></td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>copyOptions</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last">
+                        <p>mem-fs-editor copy options</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id=".renderTemplateAsync">
+                <span class="type-signature">
+                  <span class="icon green">static</span>
+                </span>
+                renderTemplateAsync
+                <span class="signature">
+                  (source, destination
+                  <span class="signature-attributes">opt</span>
+                  , templateData
+                  <span class="signature-attributes">opt</span>
+                  , templateOptions
+                  <span class="signature-attributes">opt</span>
+                  , copyOptions
+                  <span class="signature-attributes">opt</span>
+                  )
+                </span>
+                <span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="actions_fs.js.html">actions/fs.js</a></code>
+                  ,
+                  <code><a href="actions_fs.js.html#line233">line 233</a></code>
                 </div>
               </h4>
             </dt>
@@ -1493,7 +1786,201 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line202">line 202</a></code>
+                  <code><a href="actions_fs.js.html#line273">line 273</a></code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Copy templates from templates folder to the destination.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>templates</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Array</span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last">
+                        <p>
+                          template file, absolute or relative to templatePath().
+                        </p>
+                        <h6>Properties</h6>
+
+                        <table class="params">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+
+                              <th>Type</th>
+
+                              <th>Attributes</th>
+
+                              <th class="last">Description</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <tr>
+                              <td class="name"><code>when</code></td>
+
+                              <td class="type">
+                                <span class="param-type">function</span>
+                              </td>
+
+                              <td class="attributes">
+                                &lt;optional>
+                                <br />
+                              </td>
+
+                              <td class="description last">
+                                <p>
+                                  conditional if the template should be written.
+                                  First argument is the templateData, second is
+                                  the generator.
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>source</code></td>
+
+                              <td class="type">
+                                <span class="param-type">String</span>
+                                |
+
+                                <span class="param-type">Array</span>
+                              </td>
+
+                              <td class="attributes"></td>
+
+                              <td class="description last">
+                                <p>
+                                  template file, absolute or relative to
+                                  templatePath().
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>destination</code></td>
+
+                              <td class="type">
+                                <span class="param-type">String</span>
+                                |
+
+                                <span class="param-type">Array</span>
+                              </td>
+
+                              <td class="attributes">
+                                &lt;optional>
+                                <br />
+                              </td>
+
+                              <td class="description last">
+                                <p>
+                                  destination, absolute or relative to
+                                  destinationPath().
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>templateOptions</code></td>
+
+                              <td class="type">
+                                <span class="param-type">Object</span>
+                              </td>
+
+                              <td class="attributes">
+                                &lt;optional>
+                                <br />
+                              </td>
+
+                              <td class="description last">
+                                <p>ejs options</p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>copyOptions</code></td>
+
+                              <td class="type">
+                                <span class="param-type">Object</span>
+                              </td>
+
+                              <td class="attributes">
+                                &lt;optional>
+                                <br />
+                              </td>
+
+                              <td class="description last">
+                                <p>mem-fs-editor copy options</p>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>templateData</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last"><p>ejs data</p></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id=".renderTemplatesAsync">
+                <span class="type-signature">
+                  <span class="icon green">static</span>
+                </span>
+                renderTemplatesAsync
+                <span class="signature">
+                  (templates, templateData
+                  <span class="signature-attributes">opt</span>
+                  )
+                </span>
+                <span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="actions_fs.js.html">actions/fs.js</a></code>
+                  ,
+                  <code><a href="actions_fs.js.html#line297">line 297</a></code>
                 </div>
               </h4>
             </dt>
@@ -1683,7 +2170,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line76">line 76</a></code>
+                  <code><a href="actions_fs.js.html#line110">line 110</a></code>
                 </div>
               </h4>
             </dt>
@@ -1786,7 +2273,7 @@
                 <div class="container-source members">
                   <code><a href="actions_fs.js.html">actions/fs.js</a></code>
                   ,
-                  <code><a href="actions_fs.js.html#line89">line 89</a></code>
+                  <code><a href="actions_fs.js.html#line123">line 123</a></code>
                 </div>
               </h4>
             </dt>

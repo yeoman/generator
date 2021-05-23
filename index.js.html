@@ -84,6 +84,11 @@
                 </li>
                 <li><a href="Generator.html#copyTemplate">copyTemplate</a></li>
                 <li>
+                  <a href="Generator.html#copyTemplateAsync">
+                    copyTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="Generator.html#createStorage">createStorage</a>
                 </li>
                 <li><a href="Generator.html#debug">debug</a></li>
@@ -156,7 +161,17 @@
                   <a href="Generator.html#renderTemplate">renderTemplate</a>
                 </li>
                 <li>
+                  <a href="Generator.html#renderTemplateAsync">
+                    renderTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="Generator.html#renderTemplates">renderTemplates</a>
+                </li>
+                <li>
+                  <a href="Generator.html#renderTemplatesAsync">
+                    renderTemplatesAsync
+                  </a>
                 </li>
                 <li>
                   <a href="Generator.html#rootGeneratorName">
@@ -243,6 +258,11 @@
                   <a href="actions_fs.html#.copyTemplate">copyTemplate</a>
                 </li>
                 <li>
+                  <a href="actions_fs.html#.copyTemplateAsync">
+                    copyTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="actions_fs.html#.deleteDestination">
                     deleteDestination
                   </a>
@@ -270,7 +290,17 @@
                   <a href="actions_fs.html#.renderTemplate">renderTemplate</a>
                 </li>
                 <li>
+                  <a href="actions_fs.html#.renderTemplateAsync">
+                    renderTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="actions_fs.html#.renderTemplates">renderTemplates</a>
+                </li>
+                <li>
+                  <a href="actions_fs.html#.renderTemplatesAsync">
+                    renderTemplatesAsync
+                  </a>
                 </li>
                 <li>
                   <a href="actions_fs.html#.writeDestination">
@@ -439,7 +469,7 @@ const Base = mixins.reduce((a, b) => b(a), EventEmitter);
 
 // Ensure a prototype method is a candidate run by default
 const methodIsValid = function (name) {
-  return !['_', '#'].includes(name.charAt(0)) &amp;&amp; name !== 'constructor';
+  return name.charAt(0) !== '_' &amp;&amp; name !== 'constructor';
 };
 
 /**
@@ -535,6 +565,7 @@ class Generator extends Base {
    *                                    The Environment will ignore duplicated identifiers.
    * @property {String}   unique      - uniqueBy calculation method (undefined/argument/namespace)
    * @property {boolean} tasksMatchingPriority - Only queue methods that matches a priority.
+   * @property {String}   taskPrefix  - Tasks methods starts with prefix. Allows api methods (non tasks) without prefix.
    * @property {boolean|Function} customInstallTask - Provides a custom install task. Environment >= 3.2.0
    *                                                  Environment built-in task will not be executed
    * @property {boolean|Function} customCommitTask - Provides a custom commit task. Environment >= 3.2.0
@@ -601,19 +632,28 @@ class Generator extends Base {
     });
 
     this.env = this.options.env;
-    if (!this.env) {
-      throw new Error('This generator requires an environment.');
-    }
 
     this.resolved = this.options.resolved || __dirname;
     this.description = this.description || '';
 
-    // Determine the app root
-    this.contextRoot = this.env.cwd;
-    this.destinationRoot(this.options.destinationRoot || this.env.cwd);
+    if (this.env) {
+      // Determine the app root
+      this.contextRoot = this.env.cwd;
+      this.destinationRoot(this.options.destinationRoot || this.env.cwd);
 
-    // Ensure source/destination path, can be configured from subclasses
-    this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
+      // Ensure source/destination path, can be configured from subclasses
+      this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
+
+      this.fs = this.env.fs;
+    }
+
+    // Add convenience debug object
+    this._debug = createDebug(
+      this.options.namespace || 'yeoman:unknownnamespace'
+    );
+
+    // Expose utilities for dependency-less generators.
+    this._ = _;
 
     if (this.options.help) {
       return;
@@ -644,8 +684,13 @@ class Generator extends Base {
       this.features.uniqueBy = uniqueBy;
     }
 
+    if (!this.env) {
+      throw new Error('This generator requires an environment.');
+    }
+
     // Ensure the environment support features this yeoman-generator version require.
     if (
+      !this.env ||
       !this.env.adapter ||
       !this.env.runLoop ||
       !this.env.sharedFs ||
@@ -656,22 +701,15 @@ class Generator extends Base {
       );
     }
 
-    this.fs = this.env.fs;
-
-    // Place holder for run-async callback.
-    this.async = () => () => {};
-
     // Mirror the adapter log method on the generator.
     //
     // example:
     // this.log('foo');
     // this.log.error('bar');
-    this.log = this.env.adapter.log;
+    this.log = this.env.adapter &amp;&amp; this.env.adapter.log;
 
-    // Add convenience debug object
-    this._debug = createDebug(
-      this.options.namespace || 'yeoman:unknownnamespace'
-    );
+    // Place holder for run-async callback.
+    this.async = () => () => {};
 
     this.appname = this.determineAppname();
 
@@ -703,9 +741,6 @@ class Generator extends Base {
     }
 
     this.compose = this.options.compose;
-
-    // Expose utilities for dependency-less generators.
-    this._ = _;
 
     // Requires environment 3
     if (!this.options.skipCheckEnv) {
@@ -936,9 +971,8 @@ class Generator extends Base {
         const value = questionStorage.getPath(name);
         if (value !== undefined) {
           question.default = value;
+          return [name, value];
         }
-
-        return [name, value];
       }
 
       return undefined;
@@ -957,18 +991,18 @@ class Generator extends Base {
 
     // Pre-fill answers with storage values.
     const answers = {};
-    questions
-      .map(getAnswerFromStorage)
-      .filter((a) => a)
-      .forEach(([key, value]) => {
-        answers[key] = value;
-      });
 
     questions = promptSuggestion.prefillQuestions(
       this._globalConfig,
       questions
     );
     questions = promptSuggestion.prefillQuestions(this.config, questions);
+    questions
+      .map(getAnswerFromStorage)
+      .filter((a) => a)
+      .forEach(([key, value]) => {
+        answers[key] = value;
+      });
 
     return this.env.adapter.prompt(questions, answers).then((answers) => {
       Object.entries(storageForQuestion).forEach(([name, questionStorage]) => {
@@ -1283,9 +1317,11 @@ class Generator extends Base {
    * @param {TaskOptions} [taskOptions]: options.
    */
   queueOwnTask(name, taskOptions = {}) {
+    const {taskPrefix} = this.features;
+    const propertyName = taskPrefix ? `${taskPrefix}${name}` : name;
     const property = Object.getOwnPropertyDescriptor(
       Object.getPrototypeOf(this),
-      name
+      propertyName
     );
     const item = property.value ? property.value : property.get.call(this);
 
@@ -1322,6 +1358,15 @@ class Generator extends Base {
   getTaskNames() {
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
     let validMethods = methods.filter(methodIsValid);
+    const {taskPrefix} = this.features;
+
+    if (taskPrefix) {
+      validMethods = validMethods
+        .filter((method) => method.startsWith(taskPrefix))
+        .map((method) => method.slice(taskPrefix.length));
+    } else {
+      validMethods = validMethods.filter((method) => method.charAt(0) !== '#');
+    }
 
     if (this.features.tasksMatchingPriority) {
       const queueNames = Object.keys(this._queues);
