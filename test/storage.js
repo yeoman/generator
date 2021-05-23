@@ -324,17 +324,37 @@ describe('Storage', () => {
   });
 
   describe('#getStorage()', () => {
-    beforeEach(function () {
-      this.pathStore = this.store.createStorage('path');
-    });
+    describe('with a path safe string', () => {
+      beforeEach(function () {
+        this.pathStore = this.store.createStorage('path');
+      });
 
-    it('get and set value', function () {
-      assert.equal(this.pathStore.setPath('name', 'initial'), 'initial');
-      assert.equal(this.store.get('path').name, 'initial');
-      this.store.set('path', {name: 'test'});
-      assert.equal(this.pathStore.get('name'), 'test');
-      this.pathStore.set('name', 'changed');
-      assert.equal(this.store.get('path').name, 'changed');
+      it('should get and set value', function () {
+        assert.equal(this.pathStore.setPath('name', 'initial'), 'initial');
+        assert.equal(this.store.get('path').name, 'initial');
+        assert.equal(this.store.getPath('path').name, 'initial');
+        this.store.set('path', {name: 'test'});
+        assert.equal(this.pathStore.get('name'), 'test');
+        this.pathStore.set('name', 'changed');
+        assert.equal(this.store.get('path').name, 'changed');
+      });
+    });
+    describe('with a path unsafe string', () => {
+      const keyName = 'path.key';
+
+      beforeEach(function () {
+        this.pathStore = this.store.createStorage(`["${keyName}"]`);
+      });
+
+      it('should get and set value', function () {
+        assert.equal(this.pathStore.setPath('name', 'initial'), 'initial');
+        assert.equal(this.store.get(keyName).name, 'initial');
+        assert.equal(this.store.getPath(`["${keyName}"]`).name, 'initial');
+        this.store.set(keyName, {name: 'test'});
+        assert.equal(this.pathStore.get('name'), 'test');
+        this.pathStore.set('name', 'changed');
+        assert.equal(this.store.get(keyName).name, 'changed');
+      });
     });
   });
 
