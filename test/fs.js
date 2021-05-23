@@ -28,7 +28,10 @@ describe('generators.Base (actions/fs)', () => {
       templatePath: sinon.stub().returns(baseReturns.templatePath),
       destinationPath: sinon.stub().returns(baseReturns.destinationPath),
       renderTemplate: Base.prototype.renderTemplate,
+      renderTemplateAsync: Base.prototype.renderTemplateAsync,
       renderTemplates: Base.prototype.renderTemplates,
+      renderTemplatesAsync: Base.prototype.renderTemplatesAsync,
+      checkEnvironmentVersion: () => {},
       config: {
         getAll() {
           return configGetAll;
@@ -39,12 +42,14 @@ describe('generators.Base (actions/fs)', () => {
     for (const op of [
       'read',
       'copy',
+      'copyAsync',
       'write',
       'writeJSON',
       'delete',
       'move',
       'exists',
-      'copyTpl'
+      'copyTpl',
+      'copyTplAsync'
     ]) {
       const returnValue = randomString();
       this.base.fs[op] = sinon.stub().returns(returnValue);
@@ -61,6 +66,12 @@ describe('generators.Base (actions/fs)', () => {
       first: 'templatePath',
       second: 'destinationPath',
       dest: 'copy'
+    },
+    {
+      name: 'copyTemplateAsync',
+      first: 'templatePath',
+      second: 'destinationPath',
+      dest: 'copyAsync'
     },
     {name: 'readDestination', first: 'destinationPath', dest: 'read'},
     {name: 'writeDestination', first: 'destinationPath', dest: 'write'},
@@ -85,6 +96,12 @@ describe('generators.Base (actions/fs)', () => {
       second: 'destinationPath',
       dest: 'copyTpl',
       returnsUndefined: true
+    },
+    {
+      name: 'renderTemplateAsync',
+      first: 'templatePath',
+      second: 'destinationPath',
+      dest: 'copyTplAsync'
     }
   ]) {
     const passedArg1 = randomString();
@@ -215,6 +232,65 @@ describe('generators.Base (actions/fs)', () => {
     });
   });
 
+  describe('#renderTemplateAsync', () => {
+    const getAllReturn = {};
+    const getPathReturn = {foo: 'bar'};
+
+    beforeEach(function () {
+      sinon.stub(this.gen, 'sourceRoot').returns('');
+      sinon.stub(this.gen, 'destinationRoot').returns('');
+      sinon.stub(this.gen.config, 'getAll').returns(getAllReturn);
+      sinon.stub(this.gen.config, 'getPath').returns(getPathReturn);
+
+      for (const op of ['copyTplAsync']) {
+        const returnValue = randomString();
+        sinon.stub(this.gen.fs, op).returns(returnValue);
+        returns[op] = returnValue;
+      }
+    });
+
+    afterEach(function () {
+      this.gen.sourceRoot.restore();
+      this.gen.destinationRoot.restore();
+      this.gen.config.getAll.restore();
+      this.gen.config.getPath.restore();
+      for (const op of ['copyTplAsync']) this.gen.fs[op].restore();
+    });
+
+    it('gets default data from config', function () {
+      this.gen.renderTemplateAsync('a', 'b');
+      const {copyTplAsync} = this.gen.fs;
+
+      assert(copyTplAsync.calledOnce);
+      const firsCall = copyTplAsync.getCall(0);
+      assert.equal(firsCall.args[2], getAllReturn);
+    });
+
+    it('gets data with path from config', function () {
+      this.gen.renderTemplateAsync('a', 'b', 'test');
+      const {copyTplAsync} = this.gen.fs;
+
+      assert(copyTplAsync.calledOnce);
+      const firsCall = copyTplAsync.getCall(0);
+      assert.equal(firsCall.args[2], getPathReturn);
+    });
+
+    it('concatenates source and destination', function () {
+      const source = ['a', 'b'];
+      const destination = ['b', 'a'];
+      const data = {};
+
+      this.gen.renderTemplateAsync(source, destination, data);
+      const {copyTplAsync} = this.gen.fs;
+
+      assert(copyTplAsync.calledOnce);
+      const firsCall = copyTplAsync.getCall(0);
+      assert.equal(firsCall.args[0], path.join(...source));
+      assert.equal(firsCall.args[1], path.join(...destination));
+      assert.equal(firsCall.args[2], data);
+    });
+  });
+
   describe('#renderTemplates', () => {
     beforeEach(function () {
       sinon.stub(this.gen, 'sourceRoot').returns('');
@@ -334,6 +410,130 @@ describe('generators.Base (actions/fs)', () => {
 
       const {copyTpl} = this.gen.fs;
       assert.equal(copyTpl.callCount, 0);
+
+      assert.equal(receivedData, templateData);
+    });
+  });
+
+  describe('#renderTemplatesAsync', () => {
+    beforeEach(function () {
+      sinon.stub(this.gen, 'sourceRoot').returns('');
+      sinon.stub(this.gen, 'destinationRoot').returns('');
+
+      for (const op of ['copyTplAsync']) {
+        const returnValue = randomString();
+        sinon.stub(this.gen.fs, op).returns(returnValue);
+        returns[op] = returnValue;
+      }
+    });
+
+    afterEach(function () {
+      this.gen.sourceRoot.restore();
+      this.gen.destinationRoot.restore();
+      for (const op of ['copyTplAsync']) this.gen.fs[op].restore();
+    });
+
+    it('handles 1 template', function () {
+      const passedArg1 = 'foo';
+      const data = {};
+      this.gen.renderTemplatesAsync([{source: passedArg1}], data);
+
+      const {copyTplAsync} = this.gen.fs;
+      assert.equal(copyTplAsync.callCount, 1);
+
+      const firsCall = copyTplAsync.getCall(0);
+      assert.equal(firsCall.args[0], passedArg1);
+      assert.equal(firsCall.args[1], passedArg1);
+      assert.equal(firsCall.args[2], data);
+    });
+
+    it('handles more than 1 template', function () {
+      const passedArg1 = 'foo';
+      const secondCallArg1 = 'bar';
+      const secondCallArg2 = 'bar2';
+      const data = {};
+      const templateOptions = {foo: '123'};
+      const copyOptions = {};
+
+      this.gen.renderTemplatesAsync(
+        [
+          {source: passedArg1},
+          {
+            source: secondCallArg1,
+            destination: secondCallArg2,
+            templateOptions,
+            copyOptions
+          }
+        ],
+        data
+      );
+
+      const {copyTplAsync} = this.gen.fs;
+      assert.equal(copyTplAsync.callCount, 2);
+
+      const firsCall = copyTplAsync.getCall(0);
+      assert.equal(firsCall.args[0], passedArg1);
+      assert.equal(firsCall.args[1], passedArg1);
+      assert.equal(firsCall.args[2], data);
+
+      const secondCall = copyTplAsync.getCall(1);
+      assert.equal(secondCall.args[0], secondCallArg1);
+      assert.equal(secondCall.args[1], secondCallArg2);
+      assert.equal(secondCall.args[2], data);
+      assert.equal(secondCall.args[3].foo, templateOptions.foo);
+      assert.equal(secondCall.args[4], copyOptions);
+    });
+
+    it('skips templates based on when callback', function () {
+      const passedArg1 = 'foo';
+      const secondCallArg1 = 'bar';
+      const secondCallArg2 = 'bar2';
+      const data = {};
+      const templateOptions = {};
+      const copyOptions = {};
+
+      this.gen.renderTemplatesAsync(
+        [
+          {source: passedArg1},
+          {
+            source: secondCallArg1,
+            when: () => false,
+            destination: secondCallArg2,
+            templateOptions,
+            copyOptions
+          }
+        ],
+        data
+      );
+
+      const {copyTplAsync} = this.gen.fs;
+      assert.equal(copyTplAsync.callCount, 1);
+
+      const firsCall = copyTplAsync.getCall(0);
+      assert.equal(firsCall.args[0], passedArg1);
+      assert.equal(firsCall.args[1], passedArg1);
+      assert.equal(firsCall.args[2], data);
+    });
+
+    it('passes the data to when callback', function () {
+      const passedArg1 = 'foo';
+      const templateData = {};
+      let receivedData;
+
+      this.gen.renderTemplatesAsync(
+        [
+          {
+            source: passedArg1,
+            when: (data) => {
+              receivedData = data;
+            }
+          }
+        ],
+        templateData
+      );
+
+      const {copyTplAsync} = this.gen.fs;
+      assert.equal(copyTplAsync.callCount, 0);
 
       assert.equal(receivedData, templateData);
     });
