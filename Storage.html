@@ -84,6 +84,11 @@
                 </li>
                 <li><a href="Generator.html#copyTemplate">copyTemplate</a></li>
                 <li>
+                  <a href="Generator.html#copyTemplateAsync">
+                    copyTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="Generator.html#createStorage">createStorage</a>
                 </li>
                 <li><a href="Generator.html#debug">debug</a></li>
@@ -156,7 +161,17 @@
                   <a href="Generator.html#renderTemplate">renderTemplate</a>
                 </li>
                 <li>
+                  <a href="Generator.html#renderTemplateAsync">
+                    renderTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="Generator.html#renderTemplates">renderTemplates</a>
+                </li>
+                <li>
+                  <a href="Generator.html#renderTemplatesAsync">
+                    renderTemplatesAsync
+                  </a>
                 </li>
                 <li>
                   <a href="Generator.html#rootGeneratorName">
@@ -243,6 +258,11 @@
                   <a href="actions_fs.html#.copyTemplate">copyTemplate</a>
                 </li>
                 <li>
+                  <a href="actions_fs.html#.copyTemplateAsync">
+                    copyTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="actions_fs.html#.deleteDestination">
                     deleteDestination
                   </a>
@@ -270,7 +290,17 @@
                   <a href="actions_fs.html#.renderTemplate">renderTemplate</a>
                 </li>
                 <li>
+                  <a href="actions_fs.html#.renderTemplateAsync">
+                    renderTemplateAsync
+                  </a>
+                </li>
+                <li>
                   <a href="actions_fs.html#.renderTemplates">renderTemplates</a>
+                </li>
+                <li>
+                  <a href="actions_fs.html#.renderTemplatesAsync">
+                    renderTemplatesAsync
+                  </a>
                 </li>
                 <li>
                   <a href="actions_fs.html#.writeDestination">
@@ -654,7 +684,7 @@
                   </code>
                   ,
                   <code>
-                    <a href="util_storage.js.html#line251">line 251</a>
+                    <a href="util_storage.js.html#line252">line 252</a>
                   </code>
                 </div>
               </h4>
@@ -693,7 +723,7 @@
                   </code>
                   ,
                   <code>
-                    <a href="util_storage.js.html#line242">line 242</a>
+                    <a href="util_storage.js.html#line243">line 243</a>
                   </code>
                 </div>
               </h4>
@@ -726,7 +756,11 @@
                       </td>
 
                       <td class="description last">
-                        <p>relative path of the key to create a new storage.</p>
+                        <p>
+                          relative path of the key to create a new storage. Some
+                          paths need to be escaped. Eg:
+                          [&quot;dotted.path&quot;]
+                        </p>
                       </td>
                     </tr>
                   </tbody>
