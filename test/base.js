@@ -212,6 +212,7 @@ describe('Base', () => {
     beforeEach(function () {
       this.TestGenerator = class extends Base {};
       _.extend(this.TestGenerator.prototype, {
+        _beforeQueue: sinon.spy(),
         exec: sinon.spy(),
         exec2: sinon.spy(),
         exec3: sinon.spy(),
@@ -242,6 +243,11 @@ describe('Base', () => {
     it('turn on _running flag', function () {
       this.testGen.queueTasks();
       assert.ok(this.testGen._running);
+    });
+
+    it('should call _beforeQueue', function () {
+      this.testGen.queueTasks();
+      assert.ok(this.testGen._beforeQueue.calledOnce);
     });
 
     it('run prototype methods (not instances one)', function () {
@@ -550,10 +556,11 @@ describe('Base', () => {
     });
   });
 
-  describe('#run() with', () => {
+  describe('#run() with task prefix', () => {
     beforeEach(function () {
       this.TestGenerator = class extends Base {};
       _.extend(this.TestGenerator.prototype, {
+        beforeQueue: sinon.spy(),
         _private: sinon.spy(),
         '#composed': sinon.spy(),
         composed: sinon.spy(),
@@ -580,6 +587,11 @@ describe('Base', () => {
       assert(this.TestGenerator.prototype['#initializing'].calledOnce);
       assert(this.TestGenerator.prototype.initializing.notCalled);
       assert(this.TestGenerator.prototype._private.notCalled);
+    });
+
+    it('should call beforeQueue', function () {
+      this.testGen.queueTasks();
+      assert.ok(this.testGen.beforeQueue.calledOnce);
     });
   });
 
