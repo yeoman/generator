@@ -886,10 +886,19 @@ describe('Base', () => {
       this.env.registerStub(this.GenCompose, 'composed:gen');
     });
 
-    it('returns the composed generator when pass true', function () {
-      assert(
-        this.dummy.composeWith('composed:gen', true) instanceof this.GenCompose
-      );
+    it('returns the composed generator', function () {
+      assert(this.dummy.composeWith('composed:gen') instanceof this.GenCompose);
+    });
+
+    it('should add to _composedWith', function () {
+      const generator = this.dummy.composeWith('composed:gen');
+      assert(generator instanceof this.GenCompose);
+      assert(generator === this.dummy._composedWith[0]);
+    });
+
+    it('should not add to _composedWith when immediately is true', function () {
+      this.dummy.composeWith('composed:gen', undefined, undefined, true);
+      assert.strictEqual(this.dummy._composedWith.length, 0);
     });
 
     it('runs the composed generators', function (done) {
