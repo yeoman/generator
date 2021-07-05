@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v5.2.0</span>
+        <span class="version">v5.4.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -133,6 +133,7 @@
                 <li>
                   <a href="Generator.html#queueTaskGroup">queueTaskGroup</a>
                 </li>
+                <li><a href="Generator.html#queueTasks">queueTasks</a></li>
                 <li>
                   <a href="Generator.html#queueTransformStream">
                     queueTransformStream
@@ -1562,20 +1563,52 @@ class Generator extends Base {
     return this.env.runGenerator(this);
   }
 
+  /**
+   * Queue generator tasks.
+   *
+   * @return {Promise}
+   */
   queueTasks() {
+    const beforeQueueCallback =
+      (this.features.taskPrefix &amp;&amp; this.beforeQueue) || this._beforeQueue;
+    if (beforeQueueCallback) {
+      const maybePromise = beforeQueueCallback.call(this);
+      if (maybePromise &amp;&amp; maybePromise.then) {
+        this.checkEnvironmentVersion('3.5.0');
+        return maybePromise.then(() => this._queueTasks());
+      }
+    }
+
+    return this._queueTasks();
+  }
+
+  _queueTasks() {
     debug(
       `Queueing generator ${this.options.namespace} with generator version ${this.yoGeneratorVersion}`
     );
     this.queueOwnTasks();
-    for (const generator of this._composedWith)
-      this.env.queueGenerator(generator, false);
+    let promise;
+    for (const generator of this._composedWith) {
+      if (promise) {
+        promise.then(() => this.env.queueGenerator(generator, false));
+      } else {
+        const maybePromise = this.env.queueGenerator(generator, false);
+        if (maybePromise.then) {
+          promise = maybePromise;
+        }
+      }
+    }
+
     this._composedWith = [];
+    return promise;
   }
 
   /**
    * Compose this generator with another one.
    * @param  {String|Object|Array} generator  The path to the generator module or an object (see examples)
+   * @param  {Array}  [args]       Arguments passed to the Generator
    * @param  {Object}  [options]   The options passed to the Generator
+   * @param  {boolean}  [immediately] Boolean whether to queue the Generator immediately
    * @return {Generator}    The composed generator
    *
    * @example &lt;caption>Using a peerDependency generator&lt;/caption>
@@ -1587,7 +1620,7 @@ class Generator extends Base {
    * @example &lt;caption>Passing a Generator class&lt;/caption>
    * this.composeWith({ Generator: MyGenerator, path: '../generator-bootstrap/app/main.js' }, { sass: true });
    */
-  composeWith(generator, args, options) {
+  composeWith(generator, args, options, immediately = false) {
     if (typeof args === 'boolean') {
       args = [];
     } else if (!Array.isArray(args) &amp;&amp; typeof args === 'object') {
@@ -1675,7 +1708,7 @@ this.composeWith({
       return instantiatedGenerator;
     }
 
-    if (this._running) {
+    if (this._running || immediately) {
       this.env.queueGenerator(instantiatedGenerator);
     } else {
       this._composedWith.push(instantiatedGenerator);
