@@ -28,18 +28,21 @@ jobs:
           node-version: 16
       - run: npm ci
         working-directory: source
-      - run: npm run doc
+      - name: Generate doc
+        run: |
+          rm *.html
+          npm run doc
         working-directory: source
         env:
           DOC_FOLDER: ${{ github.event.inputs.path }}
-      - run: echo "::set-output name=version::$(node -e "console.log(require('./package.json').version);")"
+      - name: Detect version
+        run: echo "::set-output name=version::$(node -e "console.log(require('./package.json').version);")"
         working-directory: source
         id: version
       - name: Create commit
         working-directory: yeoman-generator-doc
         if: always()
         run: |
-          rm *.html
           git add .
           git config --local user.email ""
           git config --local user.name "Github Actions"
