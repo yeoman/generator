@@ -2,7 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Class: Storage | Generator</title>
+    <title>
+      Mixin: actions/install Not included by default since 5.0.0 | Generator
+    </title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -462,45 +464,36 @@ Not included by default since 5.0.0_sub"
     <div class="main" id="main">
       <section>
         <header>
-          <h2>
-            <span class="attribs"><span class="type-signature"></span></span>
-            Storage
-            <span class="signature">
-              (name
-              <span class="signature-attributes">opt</span>
-              , fs, configPath, options
-              <span class="signature-attributes">opt</span>
-              )
-            </span>
-            <span class="type-signature"></span>
-          </h2>
-
-          <div class="class-description">
-            <p>
-              Storage instances handle a json file where Generator authors can
-              store data.
-            </p>
-            <p>
-              The
-              <code>Generator</code>
-              class instantiate the storage named
-              <code>config</code>
-              by default.
-            </p>
-          </div>
+          <h2>actions/install Not included by default since 5.0.0</h2>
         </header>
 
         <article>
           <div class="container-overview">
+            <dl class="details"></dl>
+
+            <h3>Example</h3>
+
+            <pre
+              class="prettyprint"
+            ><code>const Generator = require('yeoman-generator');
+_.extend(Generator.prototype, require('yeoman-generator/lib/actions/install'));</code></pre>
+          </div>
+
+          <h3 class="subsection-title">Methods</h3>
+
+          <dl>
             <dt>
-              <h4 class="name" id="Storage">
-                new
-                <span class="type-signature"></span>
-                Storage
+              <h4 class="name" id=".bowerInstall">
+                <span class="type-signature">
+                  <span class="icon green">static</span>
+                </span>
+                bowerInstall
                 <span class="signature">
-                  (name
+                  (cmpnt
                   <span class="signature-attributes">opt</span>
-                  , fs, configPath, options
+                  , options
+                  <span class="signature-attributes">opt</span>
+                  , spawnOptions
                   <span class="signature-attributes">opt</span>
                   )
                 </span>
@@ -508,10 +501,12 @@ Not included by default since 5.0.0_sub"
 
                 <div class="container-source members">
                   <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
+                    <a href="actions_install.js.html">actions/install.js</a>
                   </code>
                   ,
-                  <code><a href="util_storage.js.html#line52">line 52</a></code>
+                  <code>
+                    <a href="actions_install.js.html#line197">line 197</a>
+                  </code>
                 </div>
               </h4>
             </dt>
@@ -534,10 +529,13 @@ Not included by default since 5.0.0_sub"
 
                   <tbody>
                     <tr>
-                      <td class="name"><code>name</code></td>
+                      <td class="name"><code>cmpnt</code></td>
 
                       <td class="type">
                         <span class="param-type">String</span>
+                        |
+
+                        <span class="param-type">Array</span>
                       </td>
 
                       <td class="attributes">
@@ -546,35 +544,7 @@ Not included by default since 5.0.0_sub"
                       </td>
 
                       <td class="description last">
-                        <p>The name of the new storage (this is a namespace)</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>fs</code></td>
-
-                      <td class="type">
-                        <span class="param-type">mem-fs-editor</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>A mem-fs editor instance</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>configPath</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>The filepath used as a storage.</p>
+                        <p>Components to install</p>
                       </td>
                     </tr>
 
@@ -591,7 +561,108 @@ Not included by default since 5.0.0_sub"
                       </td>
 
                       <td class="description last">
-                        <p>Storage options.</p>
+                        <p>
+                          Options to pass to
+                          <code>dargs</code>
+                          as arguments
+                        </p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>spawnOptions</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last">
+                        <p>
+                          Options to pass
+                          <code>child_process.spawn</code>
+                          .
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Receives a list of `components` and an `options` object to
+                      install through bower. The installation will automatically
+                      run during the run loop `install` phase.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id=".installDependencies">
+                <span class="type-signature">
+                  <span class="icon green">static</span>
+                </span>
+                installDependencies
+                <span class="signature">
+                  (options
+                  <span class="signature-attributes">opt</span>
+                  )
+                </span>
+                <span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code>
+                    <a href="actions_install.js.html">actions/install.js</a>
+                  </code>
+                  ,
+                  <code>
+                    <a href="actions_install.js.html#line137">line 137</a>
+                  </code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>options</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last">
+                        <p>options</p>
                         <h6>Properties</h6>
 
                         <table class="params">
@@ -611,10 +682,13 @@ Not included by default since 5.0.0_sub"
 
                           <tbody>
                             <tr>
-                              <td class="name"><code>lodashPath</code></td>
+                              <td class="name"><code>npm</code></td>
 
                               <td class="type">
                                 <span class="param-type">Boolean</span>
+                                |
+
+                                <span class="param-type">Object</span>
                               </td>
 
                               <td class="attributes">
@@ -622,39 +696,27 @@ Not included by default since 5.0.0_sub"
                                 <br />
                               </td>
 
-                              <td class="default">false</td>
+                              <td class="default">true</td>
 
                               <td class="description last">
-                                <p>Set true to treat name as a lodash path.</p>
+                                <p>
+                                  whether to run
+                                  <code>npm install</code>
+                                  or can be options to pass to
+                                  <code>dargs</code>
+                                  as arguments
+                                </p>
                               </td>
                             </tr>
 
                             <tr>
-                              <td class="name"><code>disableCache</code></td>
+                              <td class="name"><code>bower</code></td>
 
                               <td class="type">
                                 <span class="param-type">Boolean</span>
-                              </td>
+                                |
 
-                              <td class="attributes">
-                                &lt;optional>
-                                <br />
-                              </td>
-
-                              <td class="default">false</td>
-
-                              <td class="description last">
-                                <p>Set true to disable json object cache.</p>
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td class="name">
-                                <code>disableCacheByFile</code>
-                              </td>
-
-                              <td class="type">
-                                <span class="param-type">Boolean</span>
+                                <span class="param-type">Object</span>
                               </td>
 
                               <td class="attributes">
@@ -666,8 +728,59 @@ Not included by default since 5.0.0_sub"
 
                               <td class="description last">
                                 <p>
-                                  Set true to cleanup cache for every fs change.
+                                  whether to run
+                                  <code>bower install</code>
+                                  or can be options to pass to
+                                  <code>dargs</code>
+                                  as arguments
                                 </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>yarn</code></td>
+
+                              <td class="type">
+                                <span class="param-type">Boolean</span>
+                                |
+
+                                <span class="param-type">Object</span>
+                              </td>
+
+                              <td class="attributes">
+                                &lt;optional>
+                                <br />
+                              </td>
+
+                              <td class="default">false</td>
+
+                              <td class="description last">
+                                <p>
+                                  whether to run
+                                  <code>yarn install</code>
+                                  or can be options to pass to
+                                  <code>dargs</code>
+                                  as arguments
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>skipMessage</code></td>
+
+                              <td class="type">
+                                <span class="param-type">Boolean</span>
+                              </td>
+
+                              <td class="attributes">
+                                &lt;optional>
+                                <br />
+                              </td>
+
+                              <td class="default">false</td>
+
+                              <td class="description last">
+                                <p>whether to log the used commands</p>
                               </td>
                             </tr>
                           </tbody>
@@ -678,83 +791,60 @@ Not included by default since 5.0.0_sub"
                 </table>
               </div>
 
-              <dl class="details"></dl>
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Runs `npm` and `bower`, in sequence, in the generated
+                      directory and prints a message to let the user know.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
 
-              <h5>Example</h5>
+              <h5>Examples</h5>
 
-              <pre class="prettyprint"><code>class extend Generator {
-  writing: function() {
-    this.config.set('coffeescript', false);
-  }
-}</code></pre>
-            </dd>
-          </div>
+              <pre class="prettyprint"><code>this.installDependencies({
+  bower: true,
+  npm: true
+});</code></pre>
 
-          <h3 class="subsection-title">Methods</h3>
-
-          <dl>
-            <dt>
-              <h4 class="name" id="createProxy">
-                <span class="type-signature"></span>
-                createProxy
-                <span class="signature">()</span>
-                <span class="type-signature">&rarr; {Object}</span>
-
-                <div class="container-source members">
-                  <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
-                  </code>
-                  ,
-                  <code>
-                    <a href="util_storage.js.html#line252">line 252</a>
-                  </code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Creates a proxy object.</p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">Object</span>
-
-                -
-                <p>proxy.</p>
-              </div>
-
-              <dl class="details"></dl>
+              <pre class="prettyprint"><code>this.installDependencies({
+  yarn: {force: true},
+  npm: false
+});</code></pre>
             </dd>
 
             <dt>
-              <h4 class="name" id="createStorage">
-                <span class="type-signature"></span>
-                createStorage
-                <span class="signature">(path)</span>
+              <h4 class="name" id=".npmInstall">
                 <span class="type-signature">
-                  &rarr; {
-                  <a href="Storage.html">Storage</a>
-                  }
+                  <span class="icon green">static</span>
                 </span>
+                npmInstall
+                <span class="signature">
+                  (pkgs
+                  <span class="signature-attributes">opt</span>
+                  , options
+                  <span class="signature-attributes">opt</span>
+                  , spawnOptions
+                  <span class="signature-attributes">opt</span>
+                  )
+                </span>
+                <span class="type-signature"></span>
 
                 <div class="container-source members">
                   <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
+                    <a href="actions_install.js.html">actions/install.js</a>
                   </code>
                   ,
                   <code>
-                    <a href="util_storage.js.html#line243">line 243</a>
+                    <a href="actions_install.js.html#line211">line 211</a>
                   </code>
                 </div>
               </h4>
             </dt>
             <dd>
-              <div class="description">
-                <p>Create a child storage.</p>
-              </div>
-
               <div class="container-params">
                 <h5>Parameters:</h5>
 
@@ -765,443 +855,121 @@ Not included by default since 5.0.0_sub"
 
                       <th>Type</th>
 
+                      <th>Attributes</th>
+
                       <th class="last">Description</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     <tr>
-                      <td class="name"><code>path</code></td>
+                      <td class="name"><code>pkgs</code></td>
 
                       <td class="type">
                         <span class="param-type">String</span>
+                        |
+
+                        <span class="param-type">Array</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
                       </td>
 
                       <td class="description last">
-                        <p>
-                          relative path of the key to create a new storage. Some
-                          paths need to be escaped. Eg:
-                          [&quot;dotted.path&quot;]
-                        </p>
+                        <p>Packages to install</p>
                       </td>
                     </tr>
-                  </tbody>
-                </table>
-              </div>
 
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">
-                  <a href="Storage.html">Storage</a>
-                </span>
-
-                -
-                <p>Returns a new Storage.</p>
-              </div>
-
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="defaults">
-                <span class="type-signature"></span>
-                defaults
-                <span class="signature">(defaults)</span>
-                <span class="type-signature">&rarr; {*}</span>
-
-                <div class="container-source members">
-                  <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
-                  </code>
-                  ,
-                  <code>
-                    <a href="util_storage.js.html#line216">line 216</a>
-                  </code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Setup the store with defaults value and schedule a save. If
-                  keys already exist, the initial value is kept.
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
                     <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>defaults</code></td>
+                      <td class="name"><code>options</code></td>
 
                       <td class="type">
                         <span class="param-type">Object</span>
                       </td>
 
-                      <td class="description last">
-                        <p>Key-value object to store.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">*</span>
-
-                -
-                <p>val Returns the merged options.</p>
-              </div>
-
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="delete">
-                <span class="type-signature"></span>
-                delete
-                <span class="signature">(key)</span>
-                <span class="type-signature"></span>
-
-                <div class="container-source members">
-                  <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
-                  </code>
-                  ,
-                  <code>
-                    <a href="util_storage.js.html#line204">line 204</a>
-                  </code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Delete a key from the store and schedule a save.</p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>key</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
                       </td>
 
                       <td class="description last">
-                        <p>The key under which the value is stored.</p>
+                        <p>
+                          Options to pass to
+                          <code>dargs</code>
+                          as arguments
+                        </p>
                       </td>
                     </tr>
-                  </tbody>
-                </table>
-              </div>
 
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="get">
-                <span class="type-signature"></span>
-                get
-                <span class="signature">(key)</span>
-                <span class="type-signature">&rarr; {*}</span>
-
-                <div class="container-source members">
-                  <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
-                  </code>
-                  ,
-                  <code>
-                    <a href="util_storage.js.html#line143">line 143</a>
-                  </code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Get a stored value</p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
                     <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>key</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                      </td>
-
-                      <td class="description last">
-                        <p>The key under which the value is stored.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">*</span>
-
-                -
-                <p>The stored value. Any JSON valid type could be returned</p>
-              </div>
-
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="getAll">
-                <span class="type-signature"></span>
-                getAll
-                <span class="signature">()</span>
-                <span class="type-signature">&rarr; {Object}</span>
-
-                <div class="container-source members">
-                  <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
-                  </code>
-                  ,
-                  <code>
-                    <a href="util_storage.js.html#line160">line 160</a>
-                  </code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Get all the stored values</p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">Object</span>
-
-                -
-                <p>key-value object</p>
-              </div>
-
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="getPath">
-                <span class="type-signature"></span>
-                getPath
-                <span class="signature">(path)</span>
-                <span class="type-signature">&rarr; {*}</span>
-
-                <div class="container-source members">
-                  <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
-                  </code>
-                  ,
-                  <code>
-                    <a href="util_storage.js.html#line152">line 152</a>
-                  </code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Get a stored value from a lodash path</p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>path</code></td>
-
-                      <td class="type">
-                        <span class="param-type">String</span>
-                      </td>
-
-                      <td class="description last">
-                        <p>The path under which the value is stored.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">*</span>
-
-                -
-                <p>The stored value. Any JSON valid type could be returned</p>
-              </div>
-
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="merge">
-                <span class="type-signature"></span>
-                merge
-                <span class="signature">(defaults)</span>
-                <span class="type-signature">&rarr; {*}</span>
-
-                <div class="container-source members">
-                  <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
-                  </code>
-                  ,
-                  <code>
-                    <a href="util_storage.js.html#line230">line 230</a>
-                  </code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>defaults</code></td>
+                      <td class="name"><code>spawnOptions</code></td>
 
                       <td class="type">
                         <span class="param-type">Object</span>
                       </td>
 
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
                       <td class="description last">
-                        <p>Key-value object to store.</p>
+                        <p>
+                          Options to pass
+                          <code>child_process.spawn</code>
+                          .
+                        </p>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">*</span>
-
-                -
-                <p>val Returns the merged object.</p>
-              </div>
-
-              <dl class="details"></dl>
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Receives a list of `packages` and an `options` object to
+                      install through npm. The installation will automatically
+                      run during the run loop `install` phase.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
             </dd>
 
             <dt>
-              <h4 class="name" id="save">
-                <span class="type-signature"></span>
-                save
-                <span class="signature">()</span>
+              <h4 class="name" id=".scheduleInstallTask">
+                <span class="type-signature">
+                  <span class="icon green">static</span>
+                </span>
+                scheduleInstallTask
+                <span class="signature">
+                  (installer, paths
+                  <span class="signature-attributes">opt</span>
+                  , options
+                  <span class="signature-attributes">opt</span>
+                  , spawnOptions
+                  <span class="signature-attributes">opt</span>
+                  )
+                </span>
                 <span class="type-signature"></span>
 
                 <div class="container-source members">
                   <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
+                    <a href="actions_install.js.html">actions/install.js</a>
                   </code>
                   ,
                   <code>
-                    <a href="util_storage.js.html#line134">line 134</a>
+                    <a href="actions_install.js.html#line32">line 32</a>
                   </code>
                 </div>
               </h4>
             </dt>
             <dd>
-              <div class="description">
-                <p>Save a new object of values</p>
-              </div>
-
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="set">
-                <span class="type-signature"></span>
-                set
-                <span class="signature">(key, val)</span>
-                <span class="type-signature">&rarr; {*}</span>
-
-                <div class="container-source members">
-                  <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
-                  </code>
-                  ,
-                  <code>
-                    <a href="util_storage.js.html#line170">line 170</a>
-                  </code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Assign a key to a value and schedule a save.</p>
-              </div>
-
               <div class="container-params">
                 <h5>Parameters:</h5>
 
@@ -1212,34 +980,89 @@ Not included by default since 5.0.0_sub"
 
                       <th>Type</th>
 
+                      <th>Attributes</th>
+
                       <th class="last">Description</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     <tr>
-                      <td class="name"><code>key</code></td>
+                      <td class="name"><code>installer</code></td>
 
                       <td class="type">
                         <span class="param-type">String</span>
                       </td>
 
+                      <td class="attributes"></td>
+
                       <td class="description last">
-                        <p>The key under which the value is stored</p>
+                        <p>Which package manager to use</p>
                       </td>
                     </tr>
 
                     <tr>
-                      <td class="name"><code>val</code></td>
+                      <td class="name"><code>paths</code></td>
 
                       <td class="type">
-                        <span class="param-type">*</span>
+                        <span class="param-type">String</span>
+                        |
+
+                        <span class="param-type">Array</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
                       </td>
 
                       <td class="description last">
                         <p>
-                          Any valid JSON type value (String, Number, Array,
-                          Object).
+                          Packages to install. Use an empty string for
+                          <code>npm install</code>
+                        </p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>options</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last">
+                        <p>
+                          Options to pass to
+                          <code>dargs</code>
+                          as arguments
+                        </p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>spawnOptions</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last">
+                        <p>
+                          Options to pass
+                          <code>child_process.spawn</code>
+                          . ref
+                          https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
                         </p>
                       </td>
                     </tr>
@@ -1247,41 +1070,49 @@ Not included by default since 5.0.0_sub"
                 </table>
               </div>
 
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">*</span>
-
-                -
-                <p>val Whatever was passed in as val.</p>
-              </div>
-
-              <dl class="details"></dl>
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Combine package manager cmd line arguments and run the
+                      `install` command. During the `install` step, every
+                      command will be scheduled to run once, on the run loop.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
             </dd>
 
             <dt>
-              <h4 class="name" id="setPath">
+              <h4 class="name" id=".yarnInstall">
+                <span class="type-signature">
+                  <span class="icon green">static</span>
+                </span>
+                yarnInstall
+                <span class="signature">
+                  (pkgs
+                  <span class="signature-attributes">opt</span>
+                  , options
+                  <span class="signature-attributes">opt</span>
+                  , spawnOptions
+                  <span class="signature-attributes">opt</span>
+                  )
+                </span>
                 <span class="type-signature"></span>
-                setPath
-                <span class="signature">(path, val)</span>
-                <span class="type-signature">&rarr; {*}</span>
 
                 <div class="container-source members">
                   <code>
-                    <a href="util_storage.js.html">util/storage.js</a>
+                    <a href="actions_install.js.html">actions/install.js</a>
                   </code>
                   ,
                   <code>
-                    <a href="util_storage.js.html#line191">line 191</a>
+                    <a href="actions_install.js.html#line225">line 225</a>
                   </code>
                 </div>
               </h4>
             </dt>
             <dd>
-              <div class="description">
-                <p>Assign a lodash path to a value and schedule a save.</p>
-              </div>
-
               <div class="container-params">
                 <h5>Parameters:</h5>
 
@@ -1292,34 +1123,71 @@ Not included by default since 5.0.0_sub"
 
                       <th>Type</th>
 
+                      <th>Attributes</th>
+
                       <th class="last">Description</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     <tr>
-                      <td class="name"><code>path</code></td>
+                      <td class="name"><code>pkgs</code></td>
 
                       <td class="type">
                         <span class="param-type">String</span>
+                        |
+
+                        <span class="param-type">Array</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
                       </td>
 
                       <td class="description last">
-                        <p>The key under which the value is stored</p>
+                        <p>Packages to install</p>
                       </td>
                     </tr>
 
                     <tr>
-                      <td class="name"><code>val</code></td>
+                      <td class="name"><code>options</code></td>
 
                       <td class="type">
-                        <span class="param-type">*</span>
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
                       </td>
 
                       <td class="description last">
                         <p>
-                          Any valid JSON type value (String, Number, Array,
-                          Object).
+                          Options to pass to
+                          <code>dargs</code>
+                          as arguments
+                        </p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>spawnOptions</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">
+                        &lt;optional>
+                        <br />
+                      </td>
+
+                      <td class="description last">
+                        <p>
+                          Options to pass
+                          <code>child_process.spawn</code>
+                          .
                         </p>
                       </td>
                     </tr>
@@ -1327,16 +1195,18 @@ Not included by default since 5.0.0_sub"
                 </table>
               </div>
 
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">*</span>
-
-                -
-                <p>val Whatever was passed in as val.</p>
-              </div>
-
-              <dl class="details"></dl>
+              <dl class="details">
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>
+                      Receives a list of `packages` and an `options` object to
+                      install through yarn. The installation will automatically
+                      run during the run loop `install` phase.
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
             </dd>
           </dl>
         </article>
@@ -1359,17 +1229,14 @@ Not included by default since 5.0.0_sub"
     <script src="scripts/linenumber.js"></script>
 
     <script>
-      var id = "Storage_sub".replace(/"/g, "_");
-      var selectedApi = document.getElementById(id); // do not use jquery selector
-      var $selectedApi = $(selectedApi);
+              var id = 'actions/install
+      Not included by default since 5.0.0_sub'.replace(/"/g, '_');
+              var selectedApi = document.getElementById(id); // do not use jquery selector
+              var $selectedApi = $(selectedApi);
 
-      $selectedApi.removeClass("hidden");
-      $selectedApi
-        .parent()
-        .find(".glyphicon")
-        .removeClass("glyphicon-plus")
-        .addClass("glyphicon-minus");
-      showLnbApi();
+              $selectedApi.removeClass('hidden');
+              $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+              showLnbApi();
     </script>
   </body>
 </html>

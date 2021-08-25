@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Source: util/prompt-suggestion.js | Generator</title>
+    <title>Mixin: actions/package-json | Generator</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -461,201 +461,184 @@ Not included by default since 5.0.0_sub"
 
     <div class="main" id="main">
       <section>
+        <header>
+          <h2>actions/package-json</h2>
+        </header>
+
         <article>
-          <pre class="prettyprint source linenums"><code>'use strict';
-const assert = require('assert');
-const _ = require('lodash');
+          <div class="container-overview">
+            <dl class="details"></dl>
+          </div>
 
-/**
- * @module promptSuggestion
- * @description Utilities to allow remembering answers to Inquirer.js prompts
- */
-const promptSuggestion = module.exports;
+          <h3 class="subsection-title">Methods</h3>
 
-/**
- * Returns the default value for a checkbox
- *
- * @param  {Object} question Inquirer prompt item
- * @param  {*} defaultValue  The stored default value
- * @return {*}               Default value to set
- * @private
- */
-const getCheckboxDefault = (question, defaultValue) => {
-  // For simplicity we uncheck all boxes and use .default to set the active ones
-  for (const choice of question.choices) {
-    if (typeof choice === 'object') {
-      choice.checked = false;
-    }
-  }
+          <dl>
+            <dt>
+              <h4 class="name" id="addDependencies">
+                <span class="type-signature">
+                  <span class="icon green">async</span>
+                </span>
+                addDependencies
+                <span class="signature">(dependencies)</span>
+                <span class="type-signature">&rarr; {Promise}</span>
 
-  return defaultValue;
-};
+                <div class="container-source members">
+                  <code>
+                    <a href="actions_package-json.js.html">
+                      actions/package-json.js
+                    </a>
+                  </code>
+                  ,
+                  <code>
+                    <a href="actions_package-json.js.html#line51">line 51</a>
+                  </code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Add dependencies to the destination the package.json.</p>
+                <p>
+                  Environment watches for package.json changes at
+                  <code>this.env.cwd</code>
+                  , and triggers an package manager install if it has been
+                  committed to disk. If package.json is at a different folder,
+                  like a changed generator root, propagate it to the Environment
+                  like
+                  <code>this.env.cwd = this.destinationPath()</code>
+                  .
+                </p>
+              </div>
 
-/**
- * Returns the default value for a list
- *
- * @param  {Object} question    Inquirer prompt item
- * @param  {*} defaultValue     The stored default value
- * @return {*}                  Default value to set
- * @private
- */
-const getListDefault = (question, defaultValue) => {
-  const choiceValues = question.choices.map((choice) =>
-    typeof choice === 'object' ? choice.value : choice
-  );
-  return choiceValues.indexOf(defaultValue);
-};
+              <div class="container-params">
+                <h5>Parameters:</h5>
 
-/**
- * Return true if the answer should be store in
- * the global store, otherwise false
- *
- * @param  {Object}       question Inquirer prompt item
- * @param  {String|Array} answer   The inquirer answer
- * @param  {Boolean}      storeAll Should store default values
- * @return {Boolean}               Answer to be stored
- * @private
- */
-const storeListAnswer = (question, answer, storeAll) => {
-  const choiceValues = question.choices.map((choice) => {
-    if (Object.prototype.hasOwnProperty.call(choice, 'value')) {
-      return choice.value;
-    }
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
 
-    return choice;
-  });
+                      <th>Type</th>
 
-  const choiceIndex = choiceValues.indexOf(answer);
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
 
-  // Check if answer is not equal to default value
-  if (storeAll || question.default !== choiceIndex) {
-    return true;
-  }
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>dependencies</code></td>
 
-  return false;
-};
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                        |
 
-/**
- * Return true if the answer should be store in
- * the global store, otherwise false
- *
- * @param  {Object}       question Inquirer prompt item
- * @param  {String|Array} answer   The inquirer answer
- * @param  {Boolean}      storeAll Should store default values
- * @return {Boolean}               Answer to be stored
- * @private
- */
-const storeAnswer = (question, answer, storeAll) => {
-  // Check if answer is not equal to default value or is undefined
-  if (answer !== undefined &amp;&amp; (storeAll || question.default !== answer)) {
-    return true;
-  }
+                        <span class="param-type">string</span>
+                        |
 
-  return false;
-};
+                        <span class="param-type">Array.&lt;string></span>
+                      </td>
 
-/**
- * Prefill the defaults with values from the global store
- *
- * @param  {Store}        store     `.yo-rc-global` global config
- * @param  {Array|Object} questions Original prompt questions
- * @return {Array}                  Prompt questions array with prefilled values.
- */
-promptSuggestion.prefillQuestions = (store, questions) => {
-  assert(store, 'A store parameter is required');
-  assert(questions, 'A questions parameter is required');
+                      <td class="description last"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-  const promptValues = store.get('promptValues') || {};
+              <div class="container-returns">
+                <h5>Returns:</h5>
 
-  if (!Array.isArray(questions)) {
-    questions = [questions];
-  }
+                <span class="param-type">Promise</span>
 
-  questions = questions.map(_.clone);
+                -
+                <p>a 'packageName: packageVersion' object</p>
+              </div>
 
-  // Write user defaults back to prompt
-  return questions.map((question) => {
-    if (question.store !== true) {
-      return question;
-    }
+              <dl class="details"></dl>
+            </dd>
 
-    const storedValue = promptValues[question.name];
+            <dt>
+              <h4 class="name" id="addDevDependencies">
+                <span class="type-signature">
+                  <span class="icon green">async</span>
+                </span>
+                addDevDependencies
+                <span class="signature">(dependencies)</span>
+                <span class="type-signature">&rarr; {Promise}</span>
 
-    if (storedValue === undefined || _.isFunction(question.choices)) {
-      // Do not override prompt default when question.choices is a function,
-      // since can't guarantee that the `storedValue` will even be in the returned choices
-      return question;
-    }
+                <div class="container-source members">
+                  <code>
+                    <a href="actions_package-json.js.html">
+                      actions/package-json.js
+                    </a>
+                  </code>
+                  ,
+                  <code>
+                    <a href="actions_package-json.js.html#line66">line 66</a>
+                  </code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Add dependencies to the destination the package.json.</p>
+                <p>
+                  Environment watches for package.json changes at
+                  <code>this.env.cwd</code>
+                  , and triggers an package manager install if it has been
+                  committed to disk. If package.json is at a different folder,
+                  like a changed generator root, propagate it to the Environment
+                  like
+                  <code>this.env.cwd = this.destinationPath()</code>
+                  .
+                </p>
+              </div>
 
-    // Override prompt default with the user's default
-    switch (question.type) {
-      case 'rawlist':
-      case 'expand':
-        question.default = getListDefault(question, storedValue);
-        break;
-      case 'checkbox':
-        question.default = getCheckboxDefault(question, storedValue);
-        break;
-      default:
-        question.default = storedValue;
-        break;
-    }
+              <div class="container-params">
+                <h5>Parameters:</h5>
 
-    return question;
-  });
-};
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
 
-/**
- * Store the answers in the global store
- *
- * @param  {Store}        store     `.yo-rc-global` global config
- * @param  {Array|Object} questions Original prompt questions
- * @param  {Object}       answers   The inquirer answers
- * @param  {Boolean}      storeAll  Should store default values
- */
-promptSuggestion.storeAnswers = (store, questions, answers, storeAll) => {
-  assert(store, 'A store parameter is required');
-  assert(answers, 'A answers parameter is required');
-  assert(questions, 'A questions parameter is required');
-  assert.ok(_.isObject(answers), 'answers must be a object');
+                      <th>Type</th>
 
-  storeAll = storeAll || false;
-  const promptValues = store.get('promptValues') || {};
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
 
-  if (!Array.isArray(questions)) {
-    questions = [questions];
-  }
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>dependencies</code></td>
 
-  _.each(questions, (question) => {
-    if (question.store !== true) {
-      return;
-    }
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                        |
 
-    let saveAnswer;
-    const key = question.name;
-    const answer = answers[key];
+                        <span class="param-type">string</span>
+                        |
 
-    switch (question.type) {
-      case 'rawlist':
-      case 'expand':
-        saveAnswer = storeListAnswer(question, answer, storeAll);
-        break;
+                        <span class="param-type">Array.&lt;string></span>
+                      </td>
 
-      default:
-        saveAnswer = storeAnswer(question, answer, storeAll);
-        break;
-    }
+                      <td class="description last"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-    if (saveAnswer) {
-      promptValues[key] = answer;
-    }
-  });
+              <div class="container-returns">
+                <h5>Returns:</h5>
 
-  if (Object.keys(promptValues).length > 0) {
-    store.set('promptValues', promptValues);
-  }
-};
-</code></pre>
+                <span class="param-type">Promise</span>
+
+                -
+                <p>a 'packageName: packageVersion' object</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+          </dl>
         </article>
       </section>
     </div>
@@ -676,7 +659,7 @@ promptSuggestion.storeAnswers = (store, questions, answers, storeAll) => {
     <script src="scripts/linenumber.js"></script>
 
     <script>
-      var id = "_sub".replace(/"/g, "_");
+      var id = "actions/package-json_sub".replace(/"/g, "_");
       var selectedApi = document.getElementById(id); // do not use jquery selector
       var $selectedApi = $(selectedApi);
 
