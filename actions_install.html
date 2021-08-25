@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v5.4.0</span>
+        <span class="version">v5.4.2</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -68,11 +68,18 @@
                 <li>
                   <a href="Generator.html#_templateData">_templateData</a>
                 </li>
+                <li>
+                  <a href="Generator.html#addDependencies">addDependencies</a>
+                </li>
+                <li>
+                  <a href="Generator.html#addDevDependencies">
+                    addDevDependencies
+                  </a>
+                </li>
                 <li><a href="Generator.html#argument">argument</a></li>
                 <li>
                   <a href="Generator.html#argumentsHelp">argumentsHelp</a>
                 </li>
-                <li><a href="Generator.html#bowerInstall">bowerInstall</a></li>
                 <li>
                   <a href="Generator.html#cancelCancellableTasks">
                     cancelCancellableTasks
@@ -116,15 +123,9 @@
                 <li><a href="Generator.html#getFeatures">getFeatures</a></li>
                 <li><a href="Generator.html#help">help</a></li>
                 <li>
-                  <a href="Generator.html#installDependencies">
-                    installDependencies
-                  </a>
-                </li>
-                <li>
                   <a href="Generator.html#moveDestination">moveDestination</a>
                 </li>
                 <li><a href="Generator.html#git.name">git.name</a></li>
-                <li><a href="Generator.html#npmInstall">npmInstall</a></li>
                 <li><a href="Generator.html#option">option</a></li>
                 <li><a href="Generator.html#optionsHelp">optionsHelp</a></li>
                 <li><a href="Generator.html#prompt">prompt</a></li>
@@ -185,11 +186,6 @@
                   </a>
                 </li>
                 <li><a href="Generator.html#run">run</a></li>
-                <li>
-                  <a href="Generator.html#scheduleInstallTask">
-                    scheduleInstallTask
-                  </a>
-                </li>
                 <li><a href="Generator.html#setFeatures">setFeatures</a></li>
                 <li><a href="Generator.html#sourceRoot">sourceRoot</a></li>
                 <li><a href="Generator.html#spawnCommand">spawnCommand</a></li>
@@ -210,7 +206,6 @@
                     writeDestinationJSON
                   </a>
                 </li>
-                <li><a href="Generator.html#yarnInstall">yarnInstall</a></li>
               </ul>
             </div>
           </li>
@@ -367,11 +362,25 @@
             </div>
           </li>
           <li>
-            <a href="actions_packege-json.html">actions/packege-json</a>
+            <a href="actions_package-json.html">actions/package-json</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
-            <div class="hidden" id="actions/packege-json_sub"></div>
+            <div class="hidden" id="actions/package-json_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="actions_package-json.html#addDependencies">
+                    addDependencies
+                  </a>
+                </li>
+                <li>
+                  <a href="actions_package-json.html#addDevDependencies">
+                    addDevDependencies
+                  </a>
+                </li>
+              </ul>
+            </div>
           </li>
           <li>
             <a href="actions_spawn-command.html">actions/spawn-command</a>
@@ -417,10 +426,6 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
-          <li><a href="global.html#addDependencies">addDependencies</a></li>
-          <li>
-            <a href="global.html#addDevDependencies">addDevDependencies</a>
-          </li>
           <li class="hidden"><a href="global.html#Priority">Priority</a></li>
           <li><a href="global.html#proxyHandler">proxyHandler</a></li>
           <li class="hidden">
@@ -446,7 +451,21 @@
 
         <article>
           <div class="container-overview">
-            <dl class="details"></dl>
+            <dl class="details">
+              <dt class="important tag-deprecated">Deprecated:</dt>
+              <dd>
+                <ul class="dummy">
+                  <li>since version 5.0.0. Not included by default.</li>
+                </ul>
+              </dd>
+            </dl>
+
+            <h3>Example</h3>
+
+            <pre
+              class="prettyprint"
+            ><code>const Generator = require('yeoman-generator');
+_.extend(Generator.prototype, require('yeoman-generator/lib/actions/install'));</code></pre>
           </div>
 
           <h3 class="subsection-title">Methods</h3>
@@ -475,7 +494,7 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line193">line 193</a>
+                    <a href="actions_install.js.html#line199">line 199</a>
                   </code>
                 </div>
               </h4>
@@ -596,7 +615,7 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line133">line 133</a>
+                    <a href="actions_install.js.html#line139">line 139</a>
                   </code>
                 </div>
               </h4>
@@ -809,7 +828,7 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line207">line 207</a>
+                    <a href="actions_install.js.html#line213">line 213</a>
                   </code>
                 </div>
               </h4>
@@ -934,7 +953,7 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line28">line 28</a>
+                    <a href="actions_install.js.html#line34">line 34</a>
                   </code>
                 </div>
               </h4>
@@ -1077,7 +1096,7 @@
                   </code>
                   ,
                   <code>
-                    <a href="actions_install.js.html#line221">line 221</a>
+                    <a href="actions_install.js.html#line227">line 227</a>
                   </code>
                 </div>
               </h4>
