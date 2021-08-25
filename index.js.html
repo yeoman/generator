@@ -68,6 +68,14 @@
                 <li>
                   <a href="Generator.html#_templateData">_templateData</a>
                 </li>
+                <li>
+                  <a href="Generator.html#addDependencies">addDependencies</a>
+                </li>
+                <li>
+                  <a href="Generator.html#addDevDependencies">
+                    addDevDependencies
+                  </a>
+                </li>
                 <li><a href="Generator.html#argument">argument</a></li>
                 <li>
                   <a href="Generator.html#argumentsHelp">argumentsHelp</a>
@@ -324,55 +332,31 @@
             </div>
           </li>
           <li>
-            <a
-              href="actions_install%250ANot%2520included%2520by%2520default%2520since%25205.0.0.html"
-            >
-              actions/install Not included by default since 5.0.0
-            </a>
+            <a href="actions_install.html">actions/install</a>
             <button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
-            <div
-              class="hidden"
-              id="actions/install
-Not included by default since 5.0.0_sub"
-            >
+            <div class="hidden" id="actions/install_sub">
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li>
-                  <a
-                    href="actions_install%25250ANot%252520included%252520by%252520default%252520since%2525205.0.0.html#.bowerInstall"
-                  >
-                    bowerInstall
-                  </a>
+                  <a href="actions_install.html#.bowerInstall">bowerInstall</a>
                 </li>
                 <li>
-                  <a
-                    href="actions_install%25250ANot%252520included%252520by%252520default%252520since%2525205.0.0.html#.installDependencies"
-                  >
+                  <a href="actions_install.html#.installDependencies">
                     installDependencies
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="actions_install%25250ANot%252520included%252520by%252520default%252520since%2525205.0.0.html#.npmInstall"
-                  >
-                    npmInstall
-                  </a>
+                  <a href="actions_install.html#.npmInstall">npmInstall</a>
                 </li>
                 <li>
-                  <a
-                    href="actions_install%25250ANot%252520included%252520by%252520default%252520since%2525205.0.0.html#.scheduleInstallTask"
-                  >
+                  <a href="actions_install.html#.scheduleInstallTask">
                     scheduleInstallTask
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="actions_install%25250ANot%252520included%252520by%252520default%252520since%2525205.0.0.html#.yarnInstall"
-                  >
-                    yarnInstall
-                  </a>
+                  <a href="actions_install.html#.yarnInstall">yarnInstall</a>
                 </li>
               </ul>
             </div>
@@ -565,11 +549,11 @@ class Generator extends Base {
    * Every generator should extend this base class.
    *
    * @constructor
+   * @augments actions/package-json
    * @mixes actions/help
    * @mixes actions/spawn-command
    * @mixes actions/user
    * @mixes actions/fs
-   * @mixes actions/package-json
    * @mixes nodejs/EventEmitter
    *
    * @param {string[]} args           - Provide arguments at initialization
@@ -1539,7 +1523,23 @@ class Generator extends Base {
   }
 
   /**
-   * Package.json Storage.
+   * Package.json Storage resolved to `this.destinationPath('package.json')`.
+   *
+   * Environment watches for package.json changes at `this.env.cwd`, and triggers an package manager install if it has been committed to disk.
+   * If package.json is at a different folder, like a changed generator root, propagate it to the Environment like `this.env.cwd = this.destinationPath()`.
+   *
+   * @example
+   * this.packageJson.merge({
+   *   scripts: {
+   *     start: 'webpack --serve',
+   *   },
+   *   dependencies: {
+   *     ...
+   *   },
+   *   peerDependencies: {
+   *     ...
+   *   },
+   * });
    */
   get packageJson() {
     if (!this._packageJson) {
