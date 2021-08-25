@@ -28,10 +28,11 @@ jobs:
           node-version: 16
       - run: npm ci
         working-directory: source
+      - name: Cleanup
+        working-directory: yeoman-generator-doc
+        run: rm *.html
       - name: Generate doc
-        run: |
-          rm *.html
-          npm run doc
+        run: npm run doc
         working-directory: source
         env:
           DOC_FOLDER: ${{ github.event.inputs.path }}
