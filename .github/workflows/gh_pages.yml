@@ -39,6 +39,7 @@ jobs:
         working-directory: yeoman-generator-doc
         if: always()
         run: |
+          rm *.html
           git add .
           git config --local user.email ""
           git config --local user.name "Github Actions"
