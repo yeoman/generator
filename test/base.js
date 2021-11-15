@@ -1486,7 +1486,7 @@ describe('Base', () => {
       };
     });
 
-    it('queued method with function and options', function () {
+    it('queued method with function and options', function (done) {
       const env = yeoman.createEnv(
         [],
         {'skip-install': true},
@@ -1500,15 +1500,18 @@ describe('Base', () => {
       });
 
       sinon.spy(env.runLoop, 'add');
-      const method = () => {};
+      const method = sinon.fake();
       const taskName = 'foo';
       const queueName = 'configuring';
+      const arg = {};
+
       gen.queueTask({
         method,
         queueName,
         taskName,
         once: true,
-        run: false
+        run: false,
+        args: [arg]
       });
 
       assert(env.runLoop.add.calledOnce);
@@ -1520,6 +1523,12 @@ describe('Base', () => {
         },
         env.runLoop.add.getCall(0).args[2]
       );
+
+      env.runLoop.add.getCall(0).args[1](() => {
+        assert(method.calledOnce);
+        assert.equal(arg, method.getCall(0).args[0]);
+        done();
+      });
     });
 
     it('queued method with function and options with reject', function () {
