@@ -72,6 +72,7 @@
     "run-async": "^2.0.0",
     "semver": "^7.2.1",
     "shelljs": "^0.8.4",
+    "sort-keys": "^4.2.0",
     "text-table": "^0.2.0"
   },
   "peerDependencies": {

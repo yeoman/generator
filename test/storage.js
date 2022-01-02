@@ -24,16 +24,16 @@ describe('Storage', () => {
     this.storePath = path.join(tmpdir, 'new-config.json');
     this.memFs = memFs.create();
     this.fs = FileEditor.create(this.memFs);
-    this.store = new Storage('test', this.fs, this.storePath);
-    this.store.set('foo', 'bar');
   });
 
   afterEach(function () {
-    const json = this.fs.read(this.storePath);
-    assert.ok(json.endsWith('\n'));
-    assert.ok(!json.endsWith('\n\n'));
-    rm(this.storePath);
-    process.chdir(this.beforeDir);
+    if (fs.existsSync(this.storePath)) {
+      const json = this.fs.read(this.storePath);
+      assert.ok(json.endsWith('\n'));
+      assert.ok(!json.endsWith('\n\n'));
+      rm(this.storePath);
+      process.chdir(this.beforeDir);
+    }
   });
 
   describe('.constructor()', () => {
@@ -69,12 +69,6 @@ describe('Storage', () => {
     });
   });
 
-  it('namespace each store sharing the same store file', function () {
-    const store = new Storage('foobar', this.fs, this.storePath);
-    store.set('foo', 'something else');
-    assert.equal(this.store.get('foo'), 'bar');
-  });
-
   it('a config path is required', () => {
     assert.throws(function () {
       new Storage('yo', this.fs); // eslint-disable-line no-new
@@ -82,6 +76,17 @@ describe('Storage', () => {
   });
 
   describe('#get()', () => {
+    beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
+    });
+
+    it('namespace each store sharing the same store file', function () {
+      const store = new Storage('foobar', this.fs, this.storePath);
+      store.set('foo', 'something else');
+      assert.equal(this.store.get('foo'), 'bar');
+    });
+
     beforeEach(function () {
       this.store.set('testFramework', 'mocha');
       this.store.set('name', 'test');
@@ -94,6 +99,11 @@ describe('Storage', () => {
   });
 
   describe('#set()', () => {
+    beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
+    });
+
     it('set values', function () {
       this.store.set('name', 'Yeoman!');
       assert.equal(this.store.get('name'), 'Yeoman!');
@@ -186,6 +196,11 @@ describe('Storage', () => {
 
   describe('#getAll()', () => {
     beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
+    });
+
+    beforeEach(function () {
       this.store.set({foo: 'bar', john: 'doe'});
     });
 
@@ -201,6 +216,8 @@ describe('Storage', () => {
 
   describe('#delete()', () => {
     beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
       this.store.set('name', 'test');
     });
 
@@ -212,6 +229,8 @@ describe('Storage', () => {
 
   describe('#defaults()', () => {
     beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
       this.store.set('val1', 1);
     });
 
@@ -261,6 +280,8 @@ describe('Storage', () => {
 
   describe('#merge()', () => {
     beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
       this.store.set('val1', 1);
     });
 
@@ -308,22 +329,40 @@ describe('Storage', () => {
     });
   });
 
-  it('stores sharing the same store file with and without namespace', function () {
-    const store = new Storage(this.fs, this.storePath);
-    store.set('test', {bar: 'foo'});
-    assert.equal(this.store.get('bar'), 'foo');
+  describe('with namespace', () => {
+    beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
+    });
+
+    it('stores sharing the same store file with and without namespace', function () {
+      const store = new Storage(this.fs, this.storePath);
+      store.set('test', {bar: 'foo'});
+      assert.equal(this.store.get('bar'), 'foo');
+    });
   });
 
-  it('#getPath() & #setPath()', function () {
-    this.store.set('name', {name: 'test'});
-    assert.ok(this.store.getPath('name'));
-    assert.equal(this.store.getPath('name.name'), 'test');
-    assert.equal(this.store.setPath('name.name', 'changed'), 'changed');
-    assert.equal(this.store.getPath('name.name'), 'changed');
-    assert.equal(this.store.get('name').name, 'changed');
+  describe('#getPath() & #setPath()', () => {
+    beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
+    });
+
+    it('#getPath() & #setPath()', function () {
+      this.store.set('name', {name: 'test'});
+      assert.ok(this.store.getPath('name'));
+      assert.equal(this.store.getPath('name.name'), 'test');
+      assert.equal(this.store.setPath('name.name', 'changed'), 'changed');
+      assert.equal(this.store.getPath('name.name'), 'changed');
+      assert.equal(this.store.get('name').name, 'changed');
+    });
   });
 
   describe('#getStorage()', () => {
+    beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
+    });
     describe('with a path safe string', () => {
       beforeEach(function () {
         this.pathStore = this.store.createStorage('path');
@@ -360,6 +399,8 @@ describe('Storage', () => {
 
   describe('.constructor() with lodashPath', () => {
     beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
       this.pathStore = new Storage('test.path', this.fs, this.storePath, true);
     });
 
@@ -376,6 +417,8 @@ describe('Storage', () => {
   describe('#createProxy()', () => {
     let proxy;
     beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
       proxy = this.store.createProxy();
     });
 
@@ -416,6 +459,9 @@ describe('Storage', () => {
 
   describe('caching', () => {
     beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
+
       // Make sure the cache is loaded.
       // on instantiation a change event is emitted when the file loads to mem-fs
       this.store.get('foo');
@@ -454,6 +500,63 @@ describe('Storage', () => {
     it('cleanups when change event argument is undefined', function () {
       this.memFs.emit('change');
       assert(this.store._cachedStore === undefined);
+    });
+  });
+
+  describe('non sorted store', () => {
+    beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath);
+      this.store.set('foo', 'bar');
+      this.store.set('bar', 'foo');
+      this.store.set('array', [3, 2, 1]);
+    });
+    it('should write non sorted file', function () {
+      assert.strictEqual(
+        this.fs.read(this.storePath),
+        `{
+  "test": {
+    "foo": "bar",
+    "bar": "foo",
+    "array": [
+      3,
+      2,
+      1
+    ]
+  }
+}
+`
+      );
+    });
+  });
+
+  describe('sorted store', () => {
+    beforeEach(function () {
+      this.store = new Storage('test', this.fs, this.storePath, {sorted: true});
+      this.store.set('foo', 'bar');
+      this.store.set('bar', 'foo');
+      this.store.set('array', [3, 2, 1]);
+      this.store.set('object', {b: 'shouldBeLast', a: 'shouldBeFirst'});
+    });
+    it('should write sorted file', function () {
+      assert.strictEqual(
+        this.fs.read(this.storePath),
+        `{
+  "test": {
+    "array": [
+      3,
+      2,
+      1
+    ],
+    "bar": "foo",
+    "foo": "bar",
+    "object": {
+      "a": "shouldBeFirst",
+      "b": "shouldBeLast"
+    }
+  }
+}
+`
+      );
     });
   });
 });
