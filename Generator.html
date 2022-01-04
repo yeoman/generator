@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v5.5.0</span>
+        <span class="version">v5.5.1</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -1998,7 +1998,7 @@ module.exports = class extends Generator {
                 <span class="signature">
                   (storePath, path
                   <span class="signature-attributes">opt</span>
-                  , lodashPath
+                  , options
                   <span class="signature-attributes">opt</span>
                   )
                 </span>
@@ -2032,8 +2032,6 @@ module.exports = class extends Generator {
 
                       <th>Attributes</th>
 
-                      <th>Default</th>
-
                       <th class="last">Description</th>
                     </tr>
                   </thead>
@@ -2047,8 +2045,6 @@ module.exports = class extends Generator {
                       </td>
 
                       <td class="attributes"></td>
-
-                      <td class="default"></td>
 
                       <td class="description last">
                         <p>The path of the json file</p>
@@ -2067,26 +2063,25 @@ module.exports = class extends Generator {
                         <br />
                       </td>
 
-                      <td class="default"></td>
-
                       <td class="description last">
                         <p>The name in which is stored inside the json</p>
                       </td>
                     </tr>
 
                     <tr>
-                      <td class="name"><code>lodashPath</code></td>
+                      <td class="name"><code>options</code></td>
 
                       <td class="type">
-                        <span class="param-type">String</span>
+                        <span class="param-type">boolean</span>
+                        |
+
+                        <span class="param-type">Object</span>
                       </td>
 
                       <td class="attributes">
                         &lt;optional>
                         <br />
                       </td>
-
-                      <td class="default">false</td>
 
                       <td class="description last">
                         <p>Treat path as an lodash path</p>
@@ -2358,7 +2353,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code>
                   ,
-                  <code><a href="index.js.html#line1487">line 1487</a></code>
+                  <code><a href="index.js.html#line1493">line 1493</a></code>
                 </div>
               </h4>
             </dt>
@@ -2424,7 +2419,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code>
                   ,
-                  <code><a href="index.js.html#line1436">line 1436</a></code>
+                  <code><a href="index.js.html#line1442">line 1442</a></code>
                 </div>
               </h4>
             </dt>
@@ -2493,7 +2488,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code>
                   ,
-                  <code><a href="index.js.html#line1505">line 1505</a></code>
+                  <code><a href="index.js.html#line1511">line 1511</a></code>
                 </div>
               </h4>
             </dt>
@@ -3613,7 +3608,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code>
                   ,
-                  <code><a href="index.js.html#line1528">line 1528</a></code>
+                  <code><a href="index.js.html#line1534">line 1534</a></code>
                 </div>
               </h4>
             </dt>
@@ -5188,7 +5183,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code>
                   ,
-                  <code><a href="index.js.html#line1459">line 1459</a></code>
+                  <code><a href="index.js.html#line1465">line 1465</a></code>
                 </div>
               </h4>
             </dt>
@@ -5557,7 +5552,7 @@ module.exports = class extends Generator {
                 <div class="container-source members">
                   <code><a href="index.js.html">index.js</a></code>
                   ,
-                  <code><a href="index.js.html#line1472">line 1472</a></code>
+                  <code><a href="index.js.html#line1478">line 1478</a></code>
                 </div>
               </h4>
             </dt>
