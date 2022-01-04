@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v5.5.1</span>
+        <span class="version">v5.5.2</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -1840,6 +1840,7 @@ this.composeWith({
   createStorage(storePath, path, options) {
     if (typeof path === 'object') {
       options = path;
+      path = undefined;
     } else if (typeof options === 'boolean') {
       options = {lodashPath: options};
     }
