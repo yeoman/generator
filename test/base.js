@@ -819,6 +819,26 @@ describe('Base', () => {
     });
   });
 
+  describe('#registerPriorities()', () => {
+    it('adds a new priority', function () {
+      const priority = {
+        priorityName: 'foo',
+        before: 'initializing'
+      };
+      this.dummy.registerPriorities([priority]);
+      assert.ok(this.dummy._queues.foo);
+    });
+    it('edits a existing priority', function () {
+      const priority = {
+        priorityName: 'initializing',
+        args: 'an arg array'
+      };
+      this.dummy.registerPriorities([priority]);
+      assert.equal(this.dummy._queues.initializing.args, 'an arg array');
+      assert.equal(this.dummy._queues.initializing.edit, undefined);
+    });
+  });
+
   describe('#parseOptions()', () => {
     beforeEach(function () {
       this.dummy = new this.Dummy(
