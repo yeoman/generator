@@ -71,7 +71,7 @@
     "read-pkg-up": "^7.0.1",
     "run-async": "^2.0.0",
     "semver": "^7.2.1",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "sort-keys": "^4.2.0",
     "text-table": "^0.2.0"
   },
