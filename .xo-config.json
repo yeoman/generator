@@ -3,6 +3,7 @@
   "envs": ["es2020", "node", "mocha"],
   "prettier": true,
   "rules": {
+    "import/extensions": "off",
     "promise/prefer-await-to-then": "off",
     "prefer-rest-params": "off",
     "node/prefer-promises/fs": "off",
