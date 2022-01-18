@@ -1,0 +1,28 @@
+name: Package lock maintenance
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Bump transitional dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+      - name: Create commit
+        run: |
+          rm package-lock.json
+          npm install
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3.12.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'Bump transitional dependencies'
+          committer: 'Github Actions <41898282+github-actions[bot]@users.noreply.github.com>'
+          author: 'Github Actions <41898282+github-actions[bot]@users.noreply.github.com>'
+          title: 'Bump transitional dependencies'
+          body: Transitional dependencies bump.
+          labels: 'dependencies'
