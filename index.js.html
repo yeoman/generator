@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v5.5.2</span>
+        <span class="version">v5.6.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -783,10 +783,27 @@ class Generator extends Base {
    *
    * @param  {Object[]} priorities - Priorities
    * @param  {String} priorities.priorityName - Priority name
-   * @param  {String} priorities.before - The new priority will be queued before the `before` priority.
+   * @param  {String} [priorities.before] - The new priority will be queued before the `before` priority. Required for new priorities.
    * @param  {String} [priorities.queueName] - Name to be used at grouped-queue
+   * @param  {boolean} [priorities.edit] - Edit a priority
+   * @param  {boolean} [priorities.skip] - Queued manually only
+   * @param  {Object[]|function} [priorities.args] - Arguments to pass to tasks
    */
   registerPriorities(priorities) {
+    priorities = priorities.filter((priority) => {
+      if (priority.edit) {
+        const queue = this._queues[priority.priorityName];
+        if (!queue) {
+          throw new Error(
+            `Error editing priority ${priority.priorityName}, not found`
+          );
+        }
+
+        Object.assign(queue, {...priority, edit: undefined});
+      }
+
+      return !priority.edit;
+    });
     const customPriorities = priorities.map((customPriority) => {
       // Keep backward compatibility with name
       const newPriority = {
@@ -1316,16 +1333,6 @@ class Generator extends Base {
    * @param {TaskOptions} [taskOptions]: options.
    */
   extractTasksFromPriority(name, taskOptions = {}) {
-    const {taskPrefix} = this.features;
-    const propertyName = taskPrefix ? `${taskPrefix}${name}` : name;
-    const property = Object.getOwnPropertyDescriptor(
-      Object.getPrototypeOf(this),
-      propertyName
-    );
-    if (!property) return [];
-
-    const item = property.value ? property.value : property.get.call(this);
-
     const priority = this._queues[name];
     taskOptions = {
       ...priority,
@@ -1334,19 +1341,26 @@ class Generator extends Base {
       ...taskOptions
     };
 
-    if (!item || (taskOptions.auto &amp;&amp; priority &amp;&amp; priority.skip)) {
+    if (taskOptions.auto &amp;&amp; priority &amp;&amp; priority.skip) {
       return [];
     }
 
+    const {taskPrefix} = this.features;
+    const propertyName = taskPrefix ? `${taskPrefix}${name}` : name;
+    const property = Object.getOwnPropertyDescriptor(
+      taskOptions.taskOrigin || Object.getPrototypeOf(this),
+      propertyName
+    );
+    if (!property) return [];
+
+    const item = property.value ? property.value : property.get.call(this);
+
     // Name points to a function; single task
     if (typeof item === 'function') {
-      taskOptions.taskName = name;
-      taskOptions.method = item;
-      return [taskOptions];
+      return [{...taskOptions, taskName: name, method: item}];
     }
 
-    // Not a queue hash; stop
-    if (!priority) {
+    if (!item || !priority) {
       return [];
     }
 
