@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v5.6.0</span>
+        <span class="version">v5.6.1</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -639,13 +639,15 @@ class Generator extends Base {
 
     this.env = this.options.env;
 
-    this.resolved = this.options.resolved || __dirname;
+    this.resolved = this.options.resolved || __filename;
     this.description = this.description || '';
 
     if (this.env) {
       // Determine the app root
       this.contextRoot = this.env.cwd;
       this.destinationRoot(this.options.destinationRoot || this.env.cwd);
+      // Clear destionationRoot, _destinationRoot will take priority when composing, but not override passed options.
+      delete this.options.destinationRoot;
 
       // Ensure source/destination path, can be configured from subclasses
       this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
@@ -1345,7 +1347,7 @@ class Generator extends Base {
       return [];
     }
 
-    const {taskPrefix} = this.features;
+    const {taskPrefix = this.features.taskPrefix || ''} = taskOptions;
     const propertyName = taskPrefix ? `${taskPrefix}${name}` : name;
     const property = Object.getOwnPropertyDescriptor(
       taskOptions.taskOrigin || Object.getPrototypeOf(this),
@@ -1520,7 +1522,6 @@ class Generator extends Base {
         method
       } = task;
       const {namespace = ''} = this.options || {};
-      args = typeof args === 'function' ? args(this) : args;
 
       const priority = Object.entries(this._queues).find(
         ([_, options]) => options.queueName === queueName
@@ -1538,6 +1539,7 @@ class Generator extends Base {
       const generator = this;
 
       runAsync(function () {
+        args = typeof args === 'function' ? args(generator) : args;
         generator.async = () => this.async();
         generator.runningState = {namespace, queueName, methodName};
         return method.apply(generator, args);
@@ -1738,12 +1740,12 @@ class Generator extends Base {
 
     // Pass down the default options so they're correctly mirrored down the chain.
     options = {
+      destinationRoot: this._destinationRoot,
       ...options,
       skipInstall: this.options.skipInstall,
       skipCache: this.options.skipCache,
       forceInstall: this.options.forceInstall,
-      skipLocalCache: this.options.skipLocalCache,
-      destinationRoot: this._destinationRoot
+      skipLocalCache: this.options.skipLocalCache
     };
 
     const instantiate = (Generator, path) => {
