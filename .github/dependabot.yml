@@ -22,6 +22,15 @@ updates:
           - dependency-name: 'execa'
             versions: ['>=6']
             update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+          - dependency-name: 'read-pkg-up'
+            versions: ['>=8']
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+          - dependency-name: 'sort-keys'
+            versions: ['>=5']
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+          - dependency-name: 'chalk'
+            versions: ['>=5']
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
     - package-ecosystem: "github-actions"
       directory: "/"
