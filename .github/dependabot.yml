@@ -31,6 +31,9 @@ updates:
           - dependency-name: 'chalk'
             versions: ['>=5']
             update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+          - dependency-name: 'github-username'
+            versions: ['>=7']
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
     - package-ecosystem: "github-actions"
       directory: "/"
