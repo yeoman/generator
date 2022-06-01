@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "chalk": "^4.1.0",
-    "dargs": "^7.0.0",
+    "dargs": "^8.1.0",
     "debug": "^4.1.1",
     "execa": "^4.1.0",
     "github-username": "^6.0.0",
