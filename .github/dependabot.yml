@@ -8,6 +8,17 @@ updates:
       ignore:
           - dependency-name: '*'
             update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+          # node support !== >=12.10.0
+          - dependency-name: 'mocha'
+            versions: ['>=10']
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+          - dependency-name: 'sinon'
+            versions: ['>=14']
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+          # ESM only version
+          - dependency-name: 'dargs'
+            versions: ['>=8']
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
     - package-ecosystem: "github-actions"
       directory: "/"
