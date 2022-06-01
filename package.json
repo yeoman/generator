@@ -65,7 +65,7 @@
     "dargs": "^7.0.0",
     "debug": "^4.1.1",
     "execa": "^4.1.0",
-    "github-username": "^6.0.0",
+    "github-username": "^7.0.0",
     "lodash": "^4.17.11",
     "minimist": "^1.2.5",
     "read-pkg-up": "^7.0.1",
