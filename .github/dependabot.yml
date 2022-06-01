@@ -19,6 +19,9 @@ updates:
           - dependency-name: 'dargs'
             versions: ['>=8']
             update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+          - dependency-name: 'execa'
+            versions: ['>=6']
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
     - package-ecosystem: "github-actions"
       directory: "/"
