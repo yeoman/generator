@@ -61,7 +61,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
-    "chalk": "^4.1.0",
+    "chalk": "^5.0.1",
     "dargs": "^7.0.0",
     "debug": "^4.1.1",
     "execa": "^4.1.0",
