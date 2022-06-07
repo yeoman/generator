@@ -1847,14 +1847,9 @@ describe('Base', () => {
       return this.dummy
         .prompt([input1Prompt, input2Prompt], this.dummy.config)
         .then((_) => {
-          assert.deepEqual(
-            promptSpy.getCall(0).args[0][0].default,
-            'prompt1Value'
-          );
-          assert.deepEqual(
-            promptSpy.getCall(0).args[0][1].default,
-            'prompt2Value'
-          );
+          const [prompts, answers] = promptSpy.getCall(0).args;
+          assert.deepEqual(prompts[0].default(answers), 'prompt1Value');
+          assert.deepEqual(prompts[1].default(answers), 'prompt2Value');
         });
     });
 
