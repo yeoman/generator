@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v5.6.1</span>
+        <span class="version">v5.7.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -995,7 +995,7 @@ class Generator extends Base {
         storageForQuestion[name] = questionStorage;
         const value = questionStorage.getPath(name);
         if (value !== undefined) {
-          question.default = value;
+          question.default = (answers) => answers[name];
           return [name, value];
         }
       }
@@ -1014,20 +1014,14 @@ class Generator extends Base {
       }
     }
 
-    // Pre-fill answers with storage values.
-    const answers = {};
-
     questions = promptSuggestion.prefillQuestions(
       this._globalConfig,
       questions
     );
     questions = promptSuggestion.prefillQuestions(this.config, questions);
-    questions
-      .map(getAnswerFromStorage)
-      .filter((a) => a)
-      .forEach(([key, value]) => {
-        answers[key] = value;
-      });
+    const answers = Object.fromEntries(
+      questions.map(getAnswerFromStorage).filter(Boolean)
+    );
 
     return this.env.adapter.prompt(questions, answers).then((answers) => {
       Object.entries(storageForQuestion).forEach(([name, questionStorage]) => {
@@ -1559,10 +1553,13 @@ class Generator extends Base {
           resolve();
         })
         .catch((error) => {
-          debug(
-            `An error occured while running ${namespace}#${methodName}`,
-            error
-          );
+          const errorMessage = `An error occured while running ${namespace}#${methodName}`;
+          if (this.log.error) {
+            this.log.error(errorMessage);
+          } else {
+            debug(errorMessage);
+          }
+
           if (reject) {
             debug('Rejecting task promise, queue will continue normally');
             reject(error);
