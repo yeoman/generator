@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "coveralls": "^3.0.3",
-    "inquirer": "^8.2.4",
+    "inquirer": "^9.1.1",
     "jsdoc": "^3.6.7",
     "mem-fs": "^2.1.0",
     "mem-fs-editor": "^9.0.0",
