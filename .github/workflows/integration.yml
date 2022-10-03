@@ -39,7 +39,7 @@ jobs:
         repository: mshima/environment
         path: yeoman-environment
 
-    - uses: actions/setup-node@v3.4.1
+    - uses: actions/setup-node@v3.5.0
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install -g npm@7.11.2
