@@ -24,7 +24,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3.4.1
+    - uses: actions/setup-node@v3.5.1
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install -g npm@latest
