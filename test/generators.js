@@ -4,6 +4,7 @@ const Environment = require('yeoman-environment');
 const assert = require('yeoman-assert');
 const path = require('path');
 const os = require('os');
+const semver = require('semver');
 
 const Base = require('..');
 
@@ -23,6 +24,10 @@ describe('Generators module', () => {
         namespace: NAMESPACE,
         resolved: 'test'
       });
+    });
+
+    it('should expose yeomanGeneratorVersion', function () {
+      assert(semver.valid(this.generator.yoGeneratorVersion));
     });
 
     it('is an EventEmitter', function (done) {
