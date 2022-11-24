@@ -1,8 +1,7 @@
-'use strict';
-const assert = require('assert');
-const chalk = require('chalk');
-const sinon = require('sinon');
-const deprecate = require('../lib/util/deprecate');
+import assert from 'assert';
+import chalk from 'chalk';
+import sinon from 'sinon';
+import deprecate from '../lib/util/deprecate.js';
 
 describe('deprecate()', () => {
   beforeEach(() => {

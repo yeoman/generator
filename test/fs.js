@@ -1,11 +1,10 @@
-'use strict';
-const assert = require('assert');
-const path = require('path');
-const sinon = require('sinon');
-const Environment = require('yeoman-environment');
+import assert from 'assert';
+import path from 'path';
+import sinon from 'sinon';
+import Environment from 'yeoman-environment';
 
-const fsAction = require('../lib/actions/fs');
-const Base = require('../lib');
+import fsAction from '../lib/actions/fs.js';
+import Base from '../lib/index.js';
 
 const randomString = () => Math.random().toString(36).slice(7);
 

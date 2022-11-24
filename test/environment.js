@@ -1,13 +1,12 @@
-'use strict';
-const os = require('os');
-const path = require('path');
-const sinon = require('sinon');
-const Environment = require('yeoman-environment');
-const assert = require('assert');
-const helpers = require('yeoman-test');
-const {TestAdapter} = require('yeoman-test/lib/adapter');
+import os from 'os';
+import path from 'path';
+import sinon from 'sinon';
+import Environment from 'yeoman-environment';
+import assert from 'assert';
+import helpers from 'yeoman-test';
+import {TestAdapter} from 'yeoman-test/lib/adapter.js';
 
-const Base = require('..');
+import Base from '../lib/index.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-generator-environment');
 

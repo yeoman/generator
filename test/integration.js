@@ -1,9 +1,12 @@
-'use strict';
-const fs = require('fs');
-const path = require('path');
-const assert = require('yeoman-assert');
-const Environment = require('yeoman-environment');
-const helpers = require('yeoman-test');
+import fs from 'fs';
+import path, {dirname} from 'path';
+import assert from 'yeoman-assert';
+import Environment from 'yeoman-environment';
+import helpers from 'yeoman-test';
+import {fileURLToPath} from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('Integration', () => {
   let content;

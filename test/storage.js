@@ -1,12 +1,15 @@
-'use strict';
-const assert = require('assert');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const FileEditor = require('mem-fs-editor');
-const helpers = require('yeoman-test');
-const Storage = require('../lib/util/storage');
-const memFs = require('mem-fs');
+import assert from 'assert';
+import fs from 'fs';
+import os from 'os';
+import path, {dirname} from 'path';
+import FileEditor from 'mem-fs-editor';
+import helpers from 'yeoman-test';
+import memFs from 'mem-fs';
+import {fileURLToPath} from 'url';
+import Storage from '../lib/util/storage.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-storage');
 

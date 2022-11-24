@@ -1,20 +1,19 @@
-'use strict';
-const os = require('os');
-const path = require('path');
-const sinon = require('sinon');
-const makeDir = require('make-dir');
-const mockery = require('mockery');
-const yeoman = require('yeoman-environment');
+import os from 'os';
+import path from 'path';
+import sinon from 'sinon';
+import makeDir from 'make-dir';
+import mockery from 'mockery';
+import yeoman from 'yeoman-environment';
 
 mockery.enable({
   warnOnReplace: false,
   warnOnUnregistered: false
 });
 
-const assert = require('yeoman-assert');
-const helpers = require('yeoman-test');
-const {TestAdapter} = require('yeoman-test/lib/adapter');
-const Base = require('..');
+import assert from 'yeoman-assert';
+import helpers from 'yeoman-test';
+import {TestAdapter} from 'yeoman-test/lib/adapter.js';
+import Base from '../lib/index.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');

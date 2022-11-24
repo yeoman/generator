@@ -1,15 +1,16 @@
-'use strict';
-const assert = require('assert');
-const os = require('os');
-const path = require('path');
-const makeDir = require('make-dir');
-const nock = require('nock');
-const proxyquire = require('proxyquire');
-const rimraf = require('rimraf');
-const shell = require('shelljs');
-const sinon = require('sinon');
-const Base = require('..');
+import assert from 'assert';
+import os from 'os';
+import path from 'path';
+import makeDir from 'make-dir';
+import nock from 'nock';
+import rimraf from 'rimraf';
+import shell from 'shelljs';
+import sinon from 'sinon';
+import {createRequire} from 'module';
+import Base from '../lib/index.js';
 
+const require = createRequire(import.meta.url);
+const proxyquire = require('proxyquire');
 /* eslint max-nested-callbacks: ["warn", 5] */
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-user');

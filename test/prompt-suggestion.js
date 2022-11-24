@@ -1,13 +1,12 @@
-'use strict';
-const path = require('path');
-const assert = require('assert');
-const os = require('os');
-const rimraf = require('rimraf');
-const inquirer = require('inquirer');
-const env = require('yeoman-environment');
-const FileEditor = require('mem-fs-editor');
-const Storage = require('../lib/util/storage');
-const promptSuggestion = require('../lib/util/prompt-suggestion');
+import path from 'path';
+import assert from 'assert';
+import os from 'os';
+import rimraf from 'rimraf';
+import inquirer from 'inquirer';
+import env from 'yeoman-environment';
+import FileEditor from 'mem-fs-editor';
+import Storage from '../lib/util/storage.js';
+import promptSuggestion from '../lib/util/prompt-suggestion.js';
 
 /* eslint max-nested-callbacks: ["warn", 6] */
 

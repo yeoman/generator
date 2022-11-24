@@ -1,13 +1,12 @@
-'use strict';
-const assert = require('assert');
-const os = require('os');
-const path = require('path');
-const makeDir = require('make-dir');
-const rimraf = require('rimraf');
-const semver = require('semver');
-const Environment = require('yeoman-environment');
+import assert from 'assert';
+import os from 'os';
+import path from 'path';
+import makeDir from 'make-dir';
+import rimraf from 'rimraf';
+import semver from 'semver';
+import Environment from 'yeoman-environment';
 
-const Base = require('..');
+import Base from '../lib/index.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-package-json');
 

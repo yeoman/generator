@@ -1,12 +1,11 @@
-'use strict';
-const EventEmitter = require('events');
-const Environment = require('yeoman-environment');
-const assert = require('yeoman-assert');
-const path = require('path');
-const os = require('os');
-const semver = require('semver');
+import EventEmitter from 'events';
+import Environment from 'yeoman-environment';
+import assert from 'yeoman-assert';
+import path from 'path';
+import os from 'os';
+import semver from 'semver';
 
-const Base = require('..');
+import Base from '../lib/index.js';
 
 const NAMESPACE = 'somenamespace';
 
