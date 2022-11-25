@@ -12,20 +12,18 @@
 // It works with simple generator, if you need to do a bit more complex
 // stuff, extends from Generator.Base and defines your generator steps
 // in several methods.
-var util = require('util');
-var Base = require('../../../');
+import Base from '../../../lib/index.js';
 
-module.exports = function(args, options) {
-  Base.apply(this, arguments);
-  console.log('Executing generator with', args, options);
+class Generator extends Base {
+  notEmpty() {}
 };
-util.inherits(module.exports, Base);
 
-module.exports.name = 'You can name your generator';
-module.exports.description =
+Generator.description =
   'Ana add a custom description by adding a `description` property to your function.';
-module.exports.usage = 'Usage can be used to customize the help output';
+Generator.usage = 'Usage can be used to customize the help output';
 
 // Namespace is resolved depending on the location of this generator,
 // unless you specifically define it.
-module.exports.namespace = 'mocha:generator';
+Generator.namespace = 'mocha:generator';
+
+export default Generator;

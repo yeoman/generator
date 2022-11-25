@@ -1,19 +1,13 @@
 import fs from 'fs';
 import os from 'os';
-import path, {dirname} from 'path';
+import path, {dirname, join} from 'path';
 import _ from 'lodash';
 import sinon from 'sinon';
 import makeDir from 'make-dir';
-import mockery from 'mockery';
 import rimraf from 'rimraf';
 import through from 'through2';
 import yeoman from 'yeoman-environment';
 import {fileURLToPath} from 'url';
-
-mockery.enable({
-  warnOnReplace: false,
-  warnOnUnregistered: false
-});
 
 import assert from 'yeoman-assert';
 import helpers from 'yeoman-test';
@@ -114,18 +108,17 @@ describe('Base', () => {
       assert.equal(generator.options.baz, 'bar');
     });
 
-    it('set options with false values', () => {
-      return helpers
+    it('set options with false values', async () => {
+      const runResult = await helpers
         .create(
           path.join(__dirname, './fixtures/options-generator'),
           {namespace: 'options-generator'},
           {createEnv: yeoman.createEnv}
         )
         .withOptions({testOption: false})
-        .run()
-        .then((runResult) => {
-          assert.equal(runResult.env.rootGenerator().options.testOption, false);
-        });
+        .run();
+
+      assert.equal(runResult.env.rootGenerator().options.testOption, false);
     });
 
     it('setup fs editor', function () {
@@ -246,13 +239,13 @@ describe('Base', () => {
       return this.testGen.run();
     });
 
-    it('turn on _running flag', function () {
-      this.testGen.queueTasks();
+    it('turn on _running flag', async function () {
+      await this.testGen.queueTasks();
       assert.ok(this.testGen._running);
     });
 
-    it('should call _beforeQueue', function () {
-      this.testGen.queueTasks();
+    it('should call _beforeQueue', async function () {
+      await this.testGen.queueTasks();
       assert.ok(this.testGen._beforeQueue.calledOnce);
     });
 
@@ -595,8 +588,8 @@ describe('Base', () => {
       assert(this.TestGenerator.prototype._private.notCalled);
     });
 
-    it('should call beforeQueue', function () {
-      this.testGen.queueTasks();
+    it('should call beforeQueue', async function () {
+      await this.testGen.queueTasks();
       assert.ok(this.testGen.beforeQueue.calledOnce);
     });
   });
@@ -912,58 +905,52 @@ describe('Base', () => {
       this.env.registerStub(this.GenCompose, 'composed:gen');
     });
 
-    it('returns the composed generator', function () {
-      assert(this.dummy.composeWith('composed:gen') instanceof this.GenCompose);
+    it('returns the composed generator', async function () {
+      assert(
+        (await this.dummy.composeWith('composed:gen')) instanceof
+          this.GenCompose
+      );
     });
 
-    it('should add to _composedWith', function () {
-      const generator = this.dummy.composeWith('composed:gen');
+    it('should add to _composedWith', async function () {
+      const generator = await this.dummy.composeWith('composed:gen');
       assert(generator instanceof this.GenCompose);
       assert(generator === this.dummy._composedWith[0]);
     });
 
-    it('should not add to _composedWith when immediately is true', function () {
-      this.dummy.composeWith('composed:gen', undefined, undefined, true);
+    it('should not add to _composedWith when immediately is true', async function () {
+      await this.dummy.composeWith('composed:gen', undefined, undefined, true);
       assert.strictEqual(this.dummy._composedWith.length, 0);
     });
 
-    it('runs the composed generators', function (done) {
-      this.dummy.composeWith('composed:gen');
+    it('runs the composed generators', async function () {
+      await this.dummy.composeWith('composed:gen');
 
       const runSpy = sinon.spy(this.dummy, 'run');
-
-      // I use a setTimeout here just to make sure composeWith() doesn't start the
-      // generator before the base one is ran.
-      setTimeout(() => {
-        this.dummy.run().then(() => {
-          sinon.assert.callOrder(runSpy, this.spy);
-          assert(this.spy.calledAfter(runSpy));
-          done();
-        });
-      }, 100);
+      await this.dummy.run();
+      sinon.assert.callOrder(runSpy, this.spy);
+      assert(this.spy.calledAfter(runSpy));
     });
 
-    it('runs the composed Generator class in the passed path', function () {
+    it('runs the composed Generator class in the passed path', async function () {
       this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
 
-      this.dummy.composeWith({
+      await this.dummy.composeWith({
         Generator: this.GenCompose,
         path: this.stubPath
       });
-
-      return this.dummy.run().then(() => {
-        assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
-        assert.equal(
-          this.spy.firstCall.thisValue.options.resolved,
-          require.resolve(this.stubPath)
-        );
-      });
+      await this.dummy.run();
+      assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
+      assert.equal(
+        this.spy.firstCall.thisValue.options.resolved,
+        createRequire(import.meta.url).resolve(this.stubPath)
+      );
     });
 
     describe('object as first argument', () => {
       it('fails for missing Generator property', function () {
         const gen = this.dummy;
-        assert.throws(
+        assert.rejects(
           () =>
             gen.composeWith({
               path: 'foo-path'
@@ -974,7 +961,7 @@ describe('Base', () => {
 
       it('fails for missing path property', function () {
         const gen = this.dummy;
-        assert.throws(
+        assert.rejects(
           () =>
             gen.composeWith({
               Generator: this.GenCompose
@@ -985,8 +972,8 @@ describe('Base', () => {
     });
 
     it('run the composed generator even if main generator is already running.', function () {
-      this.Dummy.prototype.writing = function () {
-        this.composeWith('composed:gen');
+      this.Dummy.prototype.writing = async function () {
+        await this.composeWith('composed:gen');
       };
 
       return this.dummy.run().then(() => {
@@ -994,8 +981,8 @@ describe('Base', () => {
       });
     });
 
-    it('pass options and arguments to the composed generators', function () {
-      this.dummy.composeWith('composed:gen', {
+    it('pass options and arguments to the composed generators', async function () {
+      await this.dummy.composeWith('composed:gen', {
         foo: 'bar',
         'skip-install': true
       });
@@ -1006,41 +993,42 @@ describe('Base', () => {
     });
 
     describe('when passing a local path to a generator', () => {
-      beforeEach(function () {
+      beforeEach(async function () {
         this.spy = sinon.spy();
-        this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
-        this.LocalDummy = class extends Base {};
+        this.dummy.resolved = __filename;
+        this.stubPath = './fixtures/generator-mocha';
+        this.resolvedStub = require.resolve(this.stubPath);
+        this.LocalDummy = (await import(this.resolvedStub)).default;
         this.LocalDummy.prototype.exec = this.spy;
-        mockery.registerMock(this.stubPath, this.LocalDummy);
       });
 
-      it('runs the composed generator', function () {
-        this.dummy.composeWith(this.stubPath, {});
-        return this.dummy.run().then(() => {
-          assert(this.LocalDummy.prototype.exec.called);
-        });
+      afterEach(function () {
+        delete this.LocalDummy.prototype.exec;
       });
 
-      it('pass options and arguments to the composed generators', function () {
-        this.dummy.composeWith(this.stubPath, {
+      it('runs the composed generator', async function () {
+        await this.dummy.composeWith(this.stubPath, {});
+        await this.dummy.run();
+        assert(this.LocalDummy.prototype.exec.called);
+      });
+
+      it('pass options and arguments to the composed generators', async function () {
+        await this.dummy.composeWith(this.stubPath, {
           foo: 'bar',
           'skip-install': true
         });
-
-        return this.dummy.run().then(() => {
-          assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
-        });
+        await this.dummy.run();
+        assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
       });
 
-      it('sets correct metadata on the Generator constructor', function () {
-        this.dummy.composeWith(this.stubPath, {});
-        return this.dummy.run().then(() => {
-          assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
-          assert.equal(
-            this.spy.firstCall.thisValue.options.resolved,
-            require.resolve(this.stubPath)
-          );
-        });
+      it('sets correct metadata on the Generator constructor', async function () {
+        await this.dummy.composeWith(this.stubPath, {});
+        await this.dummy.run();
+        assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
+        assert.equal(
+          this.spy.firstCall.thisValue.options.resolved,
+          this.resolvedStub
+        );
       });
     });
   });
@@ -1116,8 +1104,11 @@ describe('Base', () => {
   });
 
   describe('#config', () => {
-    it('provide a storage instance', function () {
-      assert.ok(this.dummy.config instanceof require('../lib/util/storage'));
+    it('provide a storage instance', async function () {
+      assert.ok(
+        this.dummy.config instanceof
+          (await import('../lib/util/storage.js')).default
+      );
     });
 
     it('is updated when destinationRoot change', function () {
@@ -1736,7 +1727,7 @@ describe('Base', () => {
       });
     });
 
-    it('correctly run custom priority with once option', function () {
+    it('correctly run custom priority with once option', async function () {
       const commonPreConfiguring = sinon.spy();
       const customPreConfiguring1 = sinon.spy();
       const customPreConfiguring2 = sinon.spy();
@@ -1766,7 +1757,7 @@ describe('Base', () => {
         'skip-install': true
       });
 
-      this.testGen.composeWith({
+      await this.testGen.composeWith({
         Generator: this.TestGenerator3,
         path: 'unknown'
       });

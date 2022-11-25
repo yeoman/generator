@@ -1,3 +1,3 @@
-module.exports = [
+export default [
   { name: 'extra', type: String, storage: 'config' }
 ];

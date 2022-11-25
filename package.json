@@ -8,6 +8,7 @@
     "lib"
   ],
   "main": "lib",
+  "type": "module",
   "keywords": [
     "development",
     "dev",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "coveralls": "^3.0.3",
+    "esmock": "^2.0.7",
     "inquirer": "^8.2.4",
     "jsdoc": "^3.6.7",
     "mem-fs": "^2.1.0",
@@ -42,7 +44,7 @@
     "tui-jsdoc-template": "^1.2.2",
     "xo": "^0.38.1",
     "yeoman-assert": "^3.1.1",
-    "yeoman-environment": "^3.2.0",
+    "yeoman-environment": "^3.12.1",
     "yeoman-generator": "^5.0.0",
     "yeoman-test": "^6.0.0"
   },

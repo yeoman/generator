@@ -25,8 +25,11 @@ describe('Generators module', () => {
       });
     });
 
-    it('should expose yeomanGeneratorVersion', function () {
-      assert(semver.valid(this.generator.yoGeneratorVersion));
+    it('should expose yoGeneratorVersion', function () {
+      assert(
+        semver.valid(this.generator.yoGeneratorVersion),
+        `Not valid version ${this.generator.yoGeneratorVersion}`
+      );
     });
 
     it('is an EventEmitter', function (done) {

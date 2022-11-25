@@ -6,11 +6,9 @@ import nock from 'nock';
 import rimraf from 'rimraf';
 import shell from 'shelljs';
 import sinon from 'sinon';
-import {createRequire} from 'module';
+import esmock from 'esmock';
 import Base from '../lib/index.js';
 
-const require = createRequire(import.meta.url);
-const proxyquire = require('proxyquire');
 /* eslint max-nested-callbacks: ["warn", 5] */
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-user');
@@ -33,12 +31,12 @@ describe('Base#user', function () {
     rimraf(tmpdir, done);
   });
 
-  beforeEach(function () {
+  beforeEach(async function () {
     process.chdir(this.tmp);
     this.shell = shell;
     sinon.spy(this.shell, 'exec');
 
-    this.user = proxyquire('../lib/actions/user', {
+    this.user = await esmock('../lib/actions/user', {
       shelljs: this.shell
     });
   });
@@ -47,8 +45,11 @@ describe('Base#user', function () {
     this.shell.exec.restore();
   });
 
-  it('is exposed on the Base generator', () => {
-    assert.equal(require('../lib/actions/user'), Base.prototype.user);
+  it('is exposed on the Base generator', async () => {
+    assert.equal(
+      (await import('../lib/actions/user.js')).default,
+      Base.prototype.user
+    );
   });
 
   describe('.git', () => {

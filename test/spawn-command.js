@@ -1,16 +1,13 @@
 import sinon from 'sinon';
-import {createRequire} from 'module';
-
-const require = createRequire(import.meta.url);
-const proxyquire = require('proxyquire');
+import esmock from 'esmock';
 
 describe('generators.Base (actions/spawn-command)', () => {
   let cwd;
 
-  beforeEach(function () {
+  beforeEach(async function () {
     this.crossSpawn = sinon.spy();
     this.crossSpawn.sync = sinon.spy();
-    this.spawn = proxyquire('../lib/actions/spawn-command', {
+    this.spawn = await esmock('../lib/actions/spawn-command', {
       execa: this.crossSpawn
     });
     cwd = Math.random().toString(36).slice(7);

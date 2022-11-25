@@ -9,6 +9,7 @@ import {TestAdapter} from 'yeoman-test/lib/adapter.js';
 import Base from '../lib/index.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-generator-environment');
+const REQUIRED_ENVIROMENT = '3.12.1';
 
 /* eslint-disable max-nested-callbacks */
 describe('Generator with environment version', () => {

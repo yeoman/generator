@@ -3,6 +3,7 @@
   "name": "options-generator",
   "version": "0.0.0",
   "main": "main.js",
+  "type": "module",
   "dependencies": {},
   "devDependencies": {},
   "optionalDependencies": {},
