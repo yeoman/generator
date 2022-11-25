@@ -1,4 +1,4 @@
-import fs, {rmSync} from 'node:fs';
+import fs, {mkdirSync, rmSync} from 'node:fs';
 import os from 'node:os';
 import path, {dirname} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
@@ -7,7 +7,6 @@ import process from 'node:process';
 import {Buffer} from 'node:buffer';
 import _ from 'lodash';
 import sinon from 'sinon';
-import makeDir from 'make-dir';
 import through from 'through2';
 import yeoman from 'yeoman-environment';
 
@@ -32,7 +31,7 @@ describe('Base', () => {
     // Ignore error forwarded to environment
     this.env.on('error', (_) => {});
 
-    makeDir.sync(resolveddir);
+    mkdirSync(resolveddir, {recursive: true});
     this.Dummy = class extends Base {};
     this.Dummy.prototype.exec = sinon.spy();
 

@@ -1,9 +1,8 @@
 import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
-import {rmSync} from 'node:fs';
+import {mkdirSync, rmSync} from 'node:fs';
 import process from 'node:process';
-import makeDir from 'make-dir';
 import nock from 'nock';
 import shell from 'shelljs';
 import sinon from 'sinon';
@@ -20,7 +19,7 @@ describe('Base#user', function () {
   beforeEach(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
-    makeDir.sync(path.join(tmpdir, 'subdir'));
+    mkdirSync(path.join(tmpdir, 'subdir'), {recursive: true});
     process.chdir(tmpdir);
     shell.exec('git init --quiet');
     shell.exec('git config --local user.name Yeoman');

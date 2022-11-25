@@ -1,7 +1,7 @@
 import os from 'node:os';
 import path from 'node:path';
+import {mkdirSync} from 'node:fs';
 import sinon from 'sinon';
-import makeDir from 'make-dir';
 import yeoman from 'yeoman-environment';
 
 import assert from 'yeoman-assert';
@@ -17,7 +17,7 @@ describe('Multiples generators', () => {
 
   beforeEach(function () {
     this.env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter());
-    makeDir.sync(resolveddir);
+    mkdirSync(resolveddir, {recursive: true});
     this.Dummy = class extends Base {};
     this.spyExec = sinon.spy();
     this.Dummy.prototype.exec = this.spyExec;

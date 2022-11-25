@@ -1,9 +1,8 @@
 import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
-import {rmSync} from 'node:fs';
+import {rmSync, mkdirSync} from 'node:fs';
 import process from 'node:process';
-import makeDir from 'make-dir';
 import semver from 'semver';
 import Environment from 'yeoman-environment';
 
@@ -19,7 +18,7 @@ describe('Base#package-json', function () {
   beforeEach(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
-    makeDir.sync(path.join(tmpdir, 'subdir'));
+    mkdirSync(path.join(tmpdir, 'subdir'), {recursive: true});
     process.chdir(tmpdir);
 
     env = Environment.createEnv();
