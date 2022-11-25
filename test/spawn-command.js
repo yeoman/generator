@@ -1,5 +1,8 @@
+import {createRequire} from 'node:module';
 import sinon from 'sinon';
 import esmock from 'esmock';
+
+const require = createRequire(import.meta.url);
 
 describe('generators.Base (actions/spawn-command)', () => {
   let cwd;
@@ -7,7 +10,7 @@ describe('generators.Base (actions/spawn-command)', () => {
   beforeEach(async function () {
     this.crossSpawn = sinon.spy();
     this.crossSpawnSync = sinon.spy();
-    this.spawn = await esmock('../lib/actions/spawn-command', {
+    this.spawn = await esmock(require.resolve('../lib/actions/spawn-command'), {
       execa: {
         execa: this.crossSpawn,
         execaSync: this.crossSpawnSync,

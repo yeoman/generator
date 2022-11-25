@@ -1,7 +1,7 @@
 import fs, {rmSync} from 'node:fs';
 import os from 'node:os';
 import path, {dirname} from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {createRequire} from 'node:module';
 import process from 'node:process';
 import {Buffer} from 'node:buffer';
@@ -942,7 +942,8 @@ describe('Base', () => {
       assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
       assert.equal(
         this.spy.firstCall.thisValue.options.resolved,
-        createRequire(import.meta.url).resolve(this.stubPath),
+        pathToFileURL(createRequire(import.meta.url).resolve(this.stubPath))
+          .href,
       );
     });
 
@@ -996,7 +997,7 @@ describe('Base', () => {
         this.spy = sinon.spy();
         this.dummy.resolved = __filename;
         this.stubPath = './fixtures/generator-mocha';
-        this.resolvedStub = require.resolve(this.stubPath);
+        this.resolvedStub = pathToFileURL(require.resolve(this.stubPath)).href;
         const module = await import(this.resolvedStub);
         this.LocalDummy = module.default;
         this.LocalDummy.prototype.exec = this.spy;
