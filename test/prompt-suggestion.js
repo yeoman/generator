@@ -1,12 +1,12 @@
-import path from 'path';
-import assert from 'assert';
-import os from 'os';
+import path from 'node:path';
+import assert from 'node:assert';
+import os from 'node:os';
+import {rmSync} from 'node:fs';
 import inquirer from 'inquirer';
 import env from 'yeoman-environment';
 import FileEditor from 'mem-fs-editor';
 import Storage from '../lib/util/storage.js';
 import promptSuggestion from '../lib/util/prompt-suggestion.js';
-import { rmSync } from 'fs';
 
 /* eslint max-nested-callbacks: ["warn", 6] */
 
@@ -40,7 +40,7 @@ describe('PromptSuggestion', () => {
       const question = {
         name: 'respuesta',
         default: 'bar',
-        store: true
+        store: true,
       };
       const result = promptSuggestion.prefillQuestions(this.store, question)[0];
       assert.equal(result.default, 'foo');
@@ -51,8 +51,8 @@ describe('PromptSuggestion', () => {
         {
           name: 'respuesta',
           default: 'bar',
-          store: true
-        }
+          store: true,
+        },
       ];
       const result = promptSuggestion.prefillQuestions(this.store, question)[0];
       assert.equal(result.default, 'foo');
@@ -62,7 +62,7 @@ describe('PromptSuggestion', () => {
       const question = {
         name: 'respuesta',
         default: 'bar',
-        store: false
+        store: false,
       };
       const result = promptSuggestion.prefillQuestions(this.store, question)[0];
       assert.equal(result.default, 'bar');
@@ -72,7 +72,7 @@ describe('PromptSuggestion', () => {
       const question = {
         name: 'respuesta',
         default: 'bar',
-        store: true
+        store: true,
       };
       const result = promptSuggestion.prefillQuestions(this.store, question)[0];
       assert.equal(result.default, 'foo');
@@ -84,7 +84,7 @@ describe('PromptSuggestion', () => {
         name: 'respuesta',
         default: ['bar'],
         store: true,
-        choices: [new inquirer.Separator('spacer')]
+        choices: [new inquirer.Separator('spacer')],
       };
       const result = promptSuggestion.prefillQuestions(this.store, question)[0];
       assert.ok(result.choices[0] instanceof inquirer.Separator);
@@ -93,7 +93,7 @@ describe('PromptSuggestion', () => {
     describe('take a checkbox', () => {
       beforeEach(function () {
         this.store.set('promptValues', {
-          respuesta: ['foo']
+          respuesta: ['foo'],
         });
       });
 
@@ -106,22 +106,22 @@ describe('PromptSuggestion', () => {
           choices: [
             {
               value: 'foo',
-              name: 'foo'
+              name: 'foo',
             },
             new inquirer.Separator('spacer'),
             {
               value: 'bar',
-              name: 'bar'
+              name: 'bar',
             },
             {
               value: 'baz',
-              name: 'baz'
-            }
-          ]
+              name: 'baz',
+            },
+          ],
         };
         const result = promptSuggestion.prefillQuestions(
           this.store,
-          question
+          question,
         )[0];
 
         for (const choice of result.choices) {
@@ -137,11 +137,11 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: ['bar'],
           store: true,
-          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
         const result = promptSuggestion.prefillQuestions(
           this.store,
-          question
+          question,
         )[0];
         assert.deepEqual(result.default, ['foo']);
       });
@@ -149,7 +149,7 @@ describe('PromptSuggestion', () => {
       describe('with multiple defaults', () => {
         beforeEach(function () {
           this.store.set('promptValues', {
-            respuesta: ['foo', 'bar']
+            respuesta: ['foo', 'bar'],
           });
         });
 
@@ -162,22 +162,22 @@ describe('PromptSuggestion', () => {
             choices: [
               {
                 value: 'foo',
-                name: 'foo'
+                name: 'foo',
               },
               new inquirer.Separator('spacer'),
               {
                 value: 'bar',
-                name: 'bar'
+                name: 'bar',
               },
               {
                 value: 'baz',
-                name: 'baz'
-              }
-            ]
+                name: 'baz',
+              },
+            ],
           };
           const result = promptSuggestion.prefillQuestions(
             this.store,
-            question
+            question,
           )[0];
 
           for (const choice of result.choices) {
@@ -193,11 +193,11 @@ describe('PromptSuggestion', () => {
             name: 'respuesta',
             default: ['bar'],
             store: true,
-            choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+            choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
           };
           const result = promptSuggestion.prefillQuestions(
             this.store,
-            question
+            question,
           )[0];
           assert.deepEqual(result.default, ['foo', 'bar']);
         });
@@ -207,7 +207,7 @@ describe('PromptSuggestion', () => {
     describe('take a checkbox with choices from a function', () => {
       beforeEach(function () {
         this.store.set('promptValues', {
-          respuesta: ['foo']
+          respuesta: ['foo'],
         });
       });
 
@@ -220,22 +220,22 @@ describe('PromptSuggestion', () => {
           choices: () => [
             {
               value: 'foo',
-              name: 'foo'
+              name: 'foo',
             },
             new inquirer.Separator('spacer'),
             {
               value: 'bar',
-              name: 'bar'
+              name: 'bar',
             },
             {
               value: 'baz',
-              name: 'baz'
-            }
-          ]
+              name: 'baz',
+            },
+          ],
         };
         const result = promptSuggestion.prefillQuestions(
           this.store,
-          question
+          question,
         )[0];
 
         assert.deepEqual(result.default, ['bar']);
@@ -247,11 +247,16 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: ['bar'],
           store: true,
-          choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+          choices: () => [
+            'foo',
+            new inquirer.Separator('spacer'),
+            'bar',
+            'baz',
+          ],
         };
         const result = promptSuggestion.prefillQuestions(
           this.store,
-          question
+          question,
         )[0];
         assert.deepEqual(result.default, ['bar']);
       });
@@ -259,7 +264,7 @@ describe('PromptSuggestion', () => {
       describe('does not override even with multiple defaults', () => {
         beforeEach(function () {
           this.store.set('promptValues', {
-            respuesta: ['foo', 'bar']
+            respuesta: ['foo', 'bar'],
           });
         });
 
@@ -272,22 +277,22 @@ describe('PromptSuggestion', () => {
             choices: () => [
               {
                 value: 'foo',
-                name: 'foo'
+                name: 'foo',
               },
               new inquirer.Separator('spacer'),
               {
                 value: 'bar',
-                name: 'bar'
+                name: 'bar',
               },
               {
                 value: 'baz',
-                name: 'baz'
-              }
-            ]
+                name: 'baz',
+              },
+            ],
           };
           const result = promptSuggestion.prefillQuestions(
             this.store,
-            question
+            question,
           )[0];
 
           assert.deepEqual(result.default, ['bar']);
@@ -303,12 +308,12 @@ describe('PromptSuggestion', () => {
               'foo',
               new inquirer.Separator('spacer'),
               'bar',
-              'baz'
-            ]
+              'baz',
+            ],
           };
           const result = promptSuggestion.prefillQuestions(
             this.store,
-            question
+            question,
           )[0];
           assert.deepEqual(result.default, ['bar']);
         });
@@ -318,7 +323,7 @@ describe('PromptSuggestion', () => {
     describe('take a rawlist / expand', () => {
       beforeEach(function () {
         this.store.set('promptValues', {
-          respuesta: 'bar'
+          respuesta: 'bar',
         });
       });
 
@@ -331,22 +336,22 @@ describe('PromptSuggestion', () => {
           choices: [
             {
               value: 'foo',
-              name: 'foo'
+              name: 'foo',
             },
             new inquirer.Separator('spacer'),
             {
               value: 'bar',
-              name: 'bar'
+              name: 'bar',
             },
             {
               value: 'baz',
-              name: 'baz'
-            }
-          ]
+              name: 'baz',
+            },
+          ],
         };
         const result = promptSuggestion.prefillQuestions(
           this.store,
-          question
+          question,
         )[0];
         assert.equal(result.default, 2);
       });
@@ -357,11 +362,11 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: 0,
           store: true,
-          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
         const result = promptSuggestion.prefillQuestions(
           this.store,
-          question
+          question,
         )[0];
         assert.equal(result.default, 2);
       });
@@ -397,11 +402,11 @@ describe('PromptSuggestion', () => {
       const question = {
         name: 'respuesta',
         default: 'bar',
-        store: true
+        store: true,
       };
 
       const mockAnswers = {
-        respuesta: 'baz'
+        respuesta: 'baz',
       };
 
       promptSuggestion.prefillQuestions(this.store, question);
@@ -413,11 +418,11 @@ describe('PromptSuggestion', () => {
       const question = {
         name: 'respuesta',
         default: 'bar',
-        store: true
+        store: true,
       };
 
       const mockAnswers = {
-        respuesta: 'bar'
+        respuesta: 'bar',
       };
 
       this.store.delete('promptValues');
@@ -430,11 +435,11 @@ describe('PromptSuggestion', () => {
       const question = {
         name: 'respuesta',
         default: 'bar',
-        store: true
+        store: true,
       };
 
       const mockAnswers = {
-        respuesta: 'bar'
+        respuesta: 'bar',
       };
 
       this.store.delete('promptValues');
@@ -447,11 +452,11 @@ describe('PromptSuggestion', () => {
       const question = {
         name: 'respuesta',
         default: 'bar',
-        store: false
+        store: false,
       };
 
       const mockAnswers = {
-        respuesta: 'baz'
+        respuesta: 'baz',
       };
 
       promptSuggestion.prefillQuestions(this.store, question);
@@ -465,11 +470,11 @@ describe('PromptSuggestion', () => {
         name: 'respuesta',
         default: 0,
         store: true,
-        choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+        choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
       };
 
       const mockAnswers = {
-        respuesta: 'baz'
+        respuesta: 'baz',
       };
 
       promptSuggestion.prefillQuestions(this.store, question);
@@ -487,11 +492,11 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: 0,
           store: true,
-          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
 
         const mockAnswers = {
-          respuesta: 'foo'
+          respuesta: 'foo',
         };
 
         promptSuggestion.prefillQuestions(this.store, question);
@@ -505,11 +510,11 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: 0,
           store: true,
-          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz']
+          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
 
         const mockAnswers = {
-          respuesta: 'foo'
+          respuesta: 'foo',
         };
 
         promptSuggestion.prefillQuestions(this.store, question);
@@ -522,11 +527,11 @@ describe('PromptSuggestion', () => {
       const question = {
         name: 'respuesta',
         default: true,
-        store: true
+        store: true,
       };
 
       const mockAnswers = {
-        respuesta: false
+        respuesta: false,
       };
 
       promptSuggestion.prefillQuestions(this.store, question);

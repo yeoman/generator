@@ -22,7 +22,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       this.spawn.spawnCommand('foo');
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -30,7 +30,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       this.spawn.spawnCommand('foo', 'bar');
       sinon.assert.calledWith(this.crossSpawn, 'foo', 'bar', {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -39,7 +39,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
         cwd,
         foo: 1,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -47,7 +47,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       this.spawn.spawnCommand('foo', undefined, {stdio: 'ignore'});
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
         cwd,
-        stdio: 'ignore'
+        stdio: 'ignore',
       });
     });
   });
@@ -57,7 +57,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       this.spawn.spawnCommandSync('foo');
       sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -65,7 +65,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       this.spawn.spawnCommandSync('foo', 'bar');
       sinon.assert.calledWith(this.crossSpawnSync, 'foo', 'bar', {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -74,7 +74,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
         foo: 1,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -82,7 +82,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       this.spawn.spawnCommandSync('foo', undefined, {stdio: 'wut'});
       sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
-        stdio: 'wut'
+        stdio: 'wut',
       });
     });
   });

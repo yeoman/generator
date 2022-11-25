@@ -46,7 +46,7 @@
   "license": "BSD-2-Clause",
   "repository": "yeoman/generator",
   "engines": {
-    "node": ">=12.10.0"
+    "node": "^16.13.0 || >=18.8.0"
   },
   "scripts": {
     "coverage": "c8 report --reporter=text-lcov | coveralls",

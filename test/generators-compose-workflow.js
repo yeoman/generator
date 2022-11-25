@@ -1,5 +1,5 @@
-import os from 'os';
-import path from 'path';
+import os from 'node:os';
+import path from 'node:path';
 import sinon from 'sinon';
 import makeDir from 'make-dir';
 import yeoman from 'yeoman-environment';
@@ -12,7 +12,6 @@ import Base from '../lib/index.js';
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 
-/* eslint-disable max-nested-callbacks */
 describe('Multiples generators', () => {
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
@@ -32,7 +31,7 @@ describe('Multiples generators', () => {
         env: this.env,
         'skip-install': true,
         'force-install': true,
-        'skip-cache': true
+        'skip-cache': true,
       });
 
       this.spyExec1 = sinon.spy();
@@ -79,7 +78,7 @@ describe('Multiples generators', () => {
         this.spyWrite1,
         this.spyWrite2,
         this.spyEnd1,
-        this.spyEnd2
+        this.spyEnd2,
       );
       assert(this.spyInit1.calledAfter(runSpy));
       assert(this.spyInit2.calledAfter(this.spyInit1));
@@ -103,7 +102,7 @@ describe('Multiples generators', () => {
         this.spyWrite2,
         this.spyWrite1,
         this.spyEnd2,
-        this.spyEnd1
+        this.spyEnd1,
       );
       assert(this.spyInit2.calledAfter(runSpy));
       assert(this.spyInit1.calledAfter(this.spyInit2));
@@ -123,7 +122,7 @@ describe('Multiples generators', () => {
       await this.dummy.composeWith([
         'composed:gen',
         'composed:gen2',
-        'composed:gen3'
+        'composed:gen3',
       ]);
 
       const runSpy = sinon.spy(this.dummy, 'run');
@@ -141,7 +140,7 @@ describe('Multiples generators', () => {
         this.spyWrite1,
         this.spyWrite2,
         this.spyEnd1,
-        this.spyEnd2
+        this.spyEnd2,
       );
       assert(this.spyInit1.calledAfter(runSpy));
       assert(this.spyInit2.calledAfter(this.spyInit1));
@@ -168,7 +167,7 @@ describe('Multiples generators', () => {
         },
         writingSpy2() {
           writingSpy2();
-        }
+        },
       };
 
       this.dummy2 = new Dummy2([], {
@@ -177,7 +176,7 @@ describe('Multiples generators', () => {
         env: this.env,
         'skip-install': true,
         'force-install': true,
-        'skip-cache': true
+        'skip-cache': true,
       });
 
       const runSpy = sinon.spy(this.dummy2, 'run');
@@ -198,7 +197,7 @@ describe('Multiples generators', () => {
             this.spyWrite2,
             endSpy,
             this.spyEnd1,
-            this.spyEnd2
+            this.spyEnd2,
           );
           assert(writingSpy1.calledAfter(runSpy));
           assert(this.spyInit1.calledAfter(writingSpy1));
@@ -240,7 +239,7 @@ describe('Multiples generators', () => {
         },
         writingSpy3() {
           writingSpy3();
-        }
+        },
       };
 
       this.dummy2 = new Dummy2([], {
@@ -249,7 +248,7 @@ describe('Multiples generators', () => {
         env: this.env,
         'skip-install': true,
         'force-install': true,
-        'skip-cache': true
+        'skip-cache': true,
       });
 
       const runSpy = sinon.spy(this.dummy2, 'run');
@@ -271,7 +270,7 @@ describe('Multiples generators', () => {
             this.spyWrite2,
             endSpy,
             this.spyEnd1,
-            this.spyEnd2
+            this.spyEnd2,
           );
           assert(writingSpy1.calledAfter(runSpy));
           assert(this.spyInit1.calledAfter(writingSpy1));
@@ -293,10 +292,6 @@ describe('Multiples generators', () => {
 
   it('#composeWith() inside _beforeQueue', async function () {
     const Generator = class extends Base {
-      constructor(args, options) {
-        super(args, options);
-      }
-
       async _beforeQueue() {
         await this.composeWith('composed:gen2');
       }
@@ -305,14 +300,10 @@ describe('Multiples generators', () => {
     Generator.prototype.writing = {
       compose1() {
         writingSpy1();
-      }
+      },
     };
 
     const Generator2 = class extends Base {
-      constructor(args, options) {
-        super(args, options);
-      }
-
       async _beforeQueue() {
         await this.composeWith('composed:gen3');
       }
@@ -321,7 +312,7 @@ describe('Multiples generators', () => {
     Generator2.prototype.writing = {
       compose2() {
         writingSpy2();
-      }
+      },
     };
 
     const Generator3 = class extends Base {};
@@ -329,7 +320,7 @@ describe('Multiples generators', () => {
     Generator3.prototype.writing = {
       compose3() {
         writingSpy3();
-      }
+      },
     };
 
     this.env.registerStub(Generator, 'composed:gen');
@@ -342,7 +333,7 @@ describe('Multiples generators', () => {
       env: this.env,
       'skip-install': true,
       'force-install': true,
-      'skip-cache': true
+      'skip-cache': true,
     });
 
     await dummy.run();

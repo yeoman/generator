@@ -1,20 +1,21 @@
-import assert from 'assert';
-import os from 'os';
-import path from 'path';
+import assert from 'node:assert';
+import os from 'node:os';
+import path from 'node:path';
+import {rmSync} from 'node:fs';
+import process from 'node:process';
 import makeDir from 'make-dir';
 import nock from 'nock';
 import shell from 'shelljs';
 import sinon from 'sinon';
 import esmock from 'esmock';
 import Base from '../lib/index.js';
-import { rmSync } from 'fs';
 
 /* eslint max-nested-callbacks: ["warn", 5] */
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 
 describe('Base#user', function () {
-  this.timeout(10000);
+  this.timeout(10_000);
 
   beforeEach(function () {
     this.prevCwd = process.cwd();
@@ -37,7 +38,7 @@ describe('Base#user', function () {
     sinon.spy(this.shell, 'exec');
 
     this.user = await esmock('../lib/actions/user', {
-      shelljs: this.shell
+      shelljs: this.shell,
     });
   });
 
@@ -46,10 +47,8 @@ describe('Base#user', function () {
   });
 
   it('is exposed on the Base generator', async () => {
-    assert.equal(
-      (await import('../lib/actions/user.js')).default,
-      Base.prototype.user
-    );
+    const userModule = await import('../lib/actions/user.js');
+    assert.equal(userModule.default, Base.prototype.user);
   });
 
   describe('.git', () => {
@@ -100,7 +99,7 @@ describe('Base#user', function () {
           .get('/search/users?q=XXX')
           .times(1)
           .reply(200, {
-            items: [{login: 'mockname'}]
+            items: [{login: 'mockname'}],
           });
       });
 

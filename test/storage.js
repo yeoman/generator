@@ -1,11 +1,12 @@
-import assert from 'assert';
-import fs from 'fs';
-import os from 'os';
-import path, {dirname} from 'path';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import os from 'node:os';
+import path, {dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import process from 'node:process';
 import FileEditor from 'mem-fs-editor';
 import helpers from 'yeoman-test';
 import memFs from 'mem-fs';
-import {fileURLToPath} from 'url';
 import Storage from '../lib/util/storage.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -56,7 +57,7 @@ describe('Storage', () => {
       const store = new Storage(
         'test',
         this.fs,
-        path.join(__dirname, './fixtures/config.json')
+        path.join(__dirname, './fixtures/config.json'),
       );
       assert.equal(store.get('testFramework'), 'mocha');
       assert.ok(store.existed);
@@ -65,7 +66,7 @@ describe('Storage', () => {
     it('take a fs and path parameter without name', function () {
       const store = new Storage(
         this.fs,
-        path.join(__dirname, './fixtures/config.json')
+        path.join(__dirname, './fixtures/config.json'),
       );
       assert.equal(store.get('test').testFramework, 'mocha');
       assert.ok(store.existed);
@@ -146,7 +147,7 @@ describe('Storage', () => {
       it('the saved value (without key)', function () {
         assert.deepEqual(this.store.set({foo: 'bar', john: 'doe'}), {
           foo: 'bar',
-          john: 'doe'
+          john: 'doe',
         });
       });
 
@@ -154,7 +155,7 @@ describe('Storage', () => {
         this.store.set({foo: 'bar', john: 'doe'});
         assert.deepEqual(this.store.set({foo: 'moo'}), {
           foo: 'moo',
-          john: 'doe'
+          john: 'doe',
         });
       });
     });
@@ -267,7 +268,7 @@ describe('Storage', () => {
       it('the saved value when passed the same key', function () {
         assert.deepEqual(this.store.defaults({foo: 'baz'}), {
           foo: 'bar',
-          val1: 1
+          val1: 1,
         });
       });
 
@@ -275,7 +276,7 @@ describe('Storage', () => {
         assert.deepEqual(this.store.defaults({food: 'pizza'}), {
           foo: 'bar',
           val1: 1,
-          food: 'pizza'
+          food: 'pizza',
         });
       });
     });
@@ -318,7 +319,7 @@ describe('Storage', () => {
       it('should return an object with replaced values', function () {
         assert.deepStrictEqual(this.store.merge({foo: 'baz'}), {
           foo: 'baz',
-          val1: 1
+          val1: 1,
         });
       });
 
@@ -326,7 +327,7 @@ describe('Storage', () => {
         assert.deepStrictEqual(this.store.merge({food: 'pizza'}), {
           foo: 'bar',
           val1: 1,
-          food: 'pizza'
+          food: 'pizza',
         });
       });
     });
@@ -476,7 +477,7 @@ describe('Storage', () => {
 
     it('should not load when disabled', function () {
       const store = new Storage('test', this.fs, this.storePath, {
-        disableCache: true
+        disableCache: true,
       });
       assert(store._cachedStore === undefined);
       store.get('foo');
@@ -527,7 +528,7 @@ describe('Storage', () => {
     ]
   }
 }
-`
+`,
       );
     });
   });
@@ -558,7 +559,7 @@ describe('Storage', () => {
     }
   }
 }
-`
+`,
       );
     });
   });

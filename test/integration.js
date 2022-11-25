@@ -1,9 +1,10 @@
-import fs from 'fs';
-import path, {dirname} from 'path';
+import fs from 'node:fs';
+import path, {dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import process from 'node:process';
 import assert from 'yeoman-assert';
 import Environment from 'yeoman-environment';
 import helpers from 'yeoman-test';
-import {fileURLToPath} from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -17,7 +18,7 @@ describe('Integration', () => {
       .create(
         path.join(__dirname, 'fixtures/generator-defaults/app'),
         {},
-        {createEnv: Environment.createEnv}
+        {createEnv: Environment.createEnv},
       )
       .inTmpDir(() => {
         temporaryDir = process.cwd();

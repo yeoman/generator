@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert';
+import path from 'node:path';
 import sinon from 'sinon';
 import Environment from 'yeoman-environment';
 
@@ -11,13 +11,13 @@ const randomString = () => Math.random().toString(36).slice(7);
 describe('generators.Base (actions/fs)', () => {
   const baseReturns = {
     templatePath: `templatePath${randomString()}`,
-    destinationPath: `destinationPath${randomString()}`
+    destinationPath: `destinationPath${randomString()}`,
   };
   const configGetAll = {foo: 'bar'};
   let returns;
 
   before(function () {
-    this.timeout(10000);
+    this.timeout(10_000);
     this.gen = new Base({env: Environment.createEnv()});
   });
 
@@ -30,13 +30,13 @@ describe('generators.Base (actions/fs)', () => {
       renderTemplateAsync: Base.prototype.renderTemplateAsync,
       renderTemplates: Base.prototype.renderTemplates,
       renderTemplatesAsync: Base.prototype.renderTemplatesAsync,
-      checkEnvironmentVersion: () => {},
+      checkEnvironmentVersion() {},
       config: {
         getAll() {
           return configGetAll;
-        }
+        },
       },
-      fs: {}
+      fs: {},
     };
     for (const op of [
       'read',
@@ -48,7 +48,7 @@ describe('generators.Base (actions/fs)', () => {
       'move',
       'exists',
       'copyTpl',
-      'copyTplAsync'
+      'copyTplAsync',
     ]) {
       const returnValue = randomString();
       this.base.fs[op] = sinon.stub().returns(returnValue);
@@ -64,13 +64,13 @@ describe('generators.Base (actions/fs)', () => {
       name: 'copyTemplate',
       first: 'templatePath',
       second: 'destinationPath',
-      dest: 'copy'
+      dest: 'copy',
     },
     {
       name: 'copyTemplateAsync',
       first: 'templatePath',
       second: 'destinationPath',
-      dest: 'copyAsync'
+      dest: 'copyAsync',
     },
     {name: 'readDestination', first: 'destinationPath', dest: 'read'},
     {name: 'writeDestination', first: 'destinationPath', dest: 'write'},
@@ -80,13 +80,13 @@ describe('generators.Base (actions/fs)', () => {
       name: 'copyDestination',
       first: 'destinationPath',
       second: 'destinationPath',
-      dest: 'copy'
+      dest: 'copy',
     },
     {
       name: 'moveDestination',
       first: 'destinationPath',
       second: 'destinationPath',
-      dest: 'move'
+      dest: 'move',
     },
     {name: 'existsDestination', first: 'destinationPath', dest: 'exists'},
     {
@@ -94,14 +94,14 @@ describe('generators.Base (actions/fs)', () => {
       first: 'templatePath',
       second: 'destinationPath',
       dest: 'copyTpl',
-      returnsUndefined: true
+      returnsUndefined: true,
     },
     {
       name: 'renderTemplateAsync',
       first: 'templatePath',
       second: 'destinationPath',
-      dest: 'copyTplAsync'
-    }
+      dest: 'copyTplAsync',
+    },
   ]) {
     const passedArg1 = randomString();
     const passedArg2 = randomString();
@@ -119,7 +119,7 @@ describe('generators.Base (actions/fs)', () => {
           passedArg1,
           passedArg2,
           passedArg3,
-          passedArg4
+          passedArg4,
         );
 
         expectedReturn = operation.returnsUndefined
@@ -337,10 +337,10 @@ describe('generators.Base (actions/fs)', () => {
             source: secondCallArg1,
             destination: secondCallArg2,
             templateOptions,
-            copyOptions
-          }
+            copyOptions,
+          },
         ],
-        data
+        data,
       );
 
       const {copyTpl} = this.gen.fs;
@@ -375,10 +375,10 @@ describe('generators.Base (actions/fs)', () => {
             when: () => false,
             destination: secondCallArg2,
             templateOptions,
-            copyOptions
-          }
+            copyOptions,
+          },
         ],
-        data
+        data,
       );
 
       const {copyTpl} = this.gen.fs;
@@ -399,12 +399,12 @@ describe('generators.Base (actions/fs)', () => {
         [
           {
             source: passedArg1,
-            when: (data) => {
+            when(data) {
               receivedData = data;
-            }
-          }
+            },
+          },
         ],
-        templateData
+        templateData,
       );
 
       const {copyTpl} = this.gen.fs;
@@ -461,10 +461,10 @@ describe('generators.Base (actions/fs)', () => {
             source: secondCallArg1,
             destination: secondCallArg2,
             templateOptions,
-            copyOptions
-          }
+            copyOptions,
+          },
         ],
-        data
+        data,
       );
 
       const {copyTplAsync} = this.gen.fs;
@@ -499,10 +499,10 @@ describe('generators.Base (actions/fs)', () => {
             when: () => false,
             destination: secondCallArg2,
             templateOptions,
-            copyOptions
-          }
+            copyOptions,
+          },
         ],
-        data
+        data,
       );
 
       const {copyTplAsync} = this.gen.fs;
@@ -523,12 +523,12 @@ describe('generators.Base (actions/fs)', () => {
         [
           {
             source: passedArg1,
-            when: (data) => {
+            when(data) {
               receivedData = data;
-            }
-          }
+            },
+          },
         ],
-        templateData
+        templateData,
       );
 
       const {copyTplAsync} = this.gen.fs;
