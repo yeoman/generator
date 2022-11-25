@@ -1,12 +1,12 @@
 import path from 'path';
 import assert from 'assert';
 import os from 'os';
-import rimraf from 'rimraf';
 import inquirer from 'inquirer';
 import env from 'yeoman-environment';
 import FileEditor from 'mem-fs-editor';
 import Storage from '../lib/util/storage.js';
 import promptSuggestion from '../lib/util/prompt-suggestion.js';
+import { rmSync } from 'fs';
 
 /* eslint max-nested-callbacks: ["warn", 6] */
 
@@ -19,8 +19,8 @@ describe('PromptSuggestion', () => {
     this.store.set('promptValues', {respuesta: 'foo'});
   });
 
-  afterEach(function (done) {
-    rimraf(this.storePath, done);
+  afterEach(function () {
+    rmSync(this.storePath, {force: true});
   });
 
   describe('.prefillQuestions()', () => {

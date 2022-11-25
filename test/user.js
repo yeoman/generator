@@ -3,11 +3,11 @@ import os from 'os';
 import path from 'path';
 import makeDir from 'make-dir';
 import nock from 'nock';
-import rimraf from 'rimraf';
 import shell from 'shelljs';
 import sinon from 'sinon';
 import esmock from 'esmock';
 import Base from '../lib/index.js';
+import { rmSync } from 'fs';
 
 /* eslint max-nested-callbacks: ["warn", 5] */
 
@@ -26,9 +26,9 @@ describe('Base#user', function () {
     shell.exec('git config --local user.email yo@yeoman.io');
   });
 
-  afterEach(function (done) {
+  afterEach(function () {
     process.chdir(this.prevCwd);
-    rimraf(tmpdir, done);
+    rmSync(tmpdir, {force: true, recursive: true});
   });
 
   beforeEach(async function () {

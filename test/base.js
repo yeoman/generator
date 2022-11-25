@@ -1,10 +1,9 @@
-import fs from 'fs';
+import fs, {rmSync} from 'fs';
 import os from 'os';
 import path, {dirname, join} from 'path';
 import _ from 'lodash';
 import sinon from 'sinon';
 import makeDir from 'make-dir';
-import rimraf from 'rimraf';
 import through from 'through2';
 import yeoman from 'yeoman-environment';
 import {fileURLToPath} from 'url';
@@ -178,10 +177,8 @@ describe('Base', () => {
     });
 
     afterEach(() => {
-      rimraf.sync('bower.json');
-      rimraf.sync('package.json');
-      delete require.cache[path.join(process.cwd(), 'bower.json')];
-      delete require.cache[path.join(process.cwd(), 'package.json')];
+      rmSync('bower.json', {force: true});
+      rmSync('package.json', {force: true});
     });
 
     it('returns appname from bower.json', function () {
@@ -1170,8 +1167,8 @@ describe('Base', () => {
       });
     });
 
-    afterEach(function (done) {
-      rimraf(this.filepath, done);
+    afterEach(function () {
+      rmSync(this.filepath, {force: true});
     });
 
     it('add the transform stream to the commit stream', function () {
@@ -1336,7 +1333,7 @@ describe('Base', () => {
 
   describe('#rootGeneratorName', () => {
     afterEach(() => {
-      rimraf.sync(path.join(resolveddir, 'package.json'));
+      rmSync(path.join(resolveddir, 'package.json'), {force: true});
     });
 
     it('returns the default name', function () {
@@ -1354,7 +1351,7 @@ describe('Base', () => {
 
   describe('#rootGeneratorVersion', () => {
     afterEach(() => {
-      rimraf.sync(path.join(resolveddir, 'package.json'));
+      rmSync(path.join(resolveddir, 'package.json'), {force: true});
     });
 
     it('returns the default version', function () {

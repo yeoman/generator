@@ -2,11 +2,11 @@ import assert from 'assert';
 import os from 'os';
 import path from 'path';
 import makeDir from 'make-dir';
-import rimraf from 'rimraf';
 import semver from 'semver';
 import Environment from 'yeoman-environment';
 
 import Base from '../lib/index.js';
+import { rmSync } from 'fs';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-package-json');
 
@@ -29,9 +29,9 @@ describe('Base#package-json', function () {
     });
   });
 
-  afterEach(function (done) {
+  afterEach(function () {
     process.chdir(this.prevCwd);
-    rimraf(tmpdir, done);
+    rmSync(tmpdir, {force: true, recursive: true});
   });
 
   describe('_resolvePackageJsonDependencies()', () => {
