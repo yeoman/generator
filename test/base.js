@@ -267,19 +267,6 @@ describe('Base', () => {
       });
     });
 
-    it('can emit error from async methods', function (done) {
-      this.TestGenerator.prototype.throwing = function () {
-        this.async()('some error');
-      };
-
-      this.testGen.env.on('error', (error) => {
-        assert.equal(error, 'some error');
-        done();
-      });
-
-      this.testGen.run().catch(() => {});
-    });
-
     it('can emit error from sync methods', function (done) {
       const error = new Error('Some error');
 
@@ -346,30 +333,6 @@ describe('Base', () => {
       });
 
       this.testGen.run().catch(() => {});
-    });
-
-    it('run methods in series', function (done) {
-      let async1Running = false;
-      let async1Ran = false;
-
-      this.TestGenerator.prototype.async1 = function () {
-        async1Running = true;
-        const cb = this.async();
-
-        setTimeout(() => {
-          async1Running = false;
-          async1Ran = true;
-          cb();
-        }, 10);
-      };
-
-      this.TestGenerator.prototype.async2 = () => {
-        assert(!async1Running);
-        assert(async1Ran);
-        done();
-      };
-
-      this.testGen.run();
     });
 
     it('throws if no method is available', function () {

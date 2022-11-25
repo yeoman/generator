@@ -67,7 +67,6 @@
     "lodash": "^4.17.11",
     "minimist": "^1.2.7",
     "read-pkg-up": "^9.1.0",
-    "run-async": "^2.0.0",
     "semver": "^7.2.1",
     "shelljs": "^0.8.5",
     "sort-keys": "^5.0.0",
