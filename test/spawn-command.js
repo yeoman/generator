@@ -6,9 +6,12 @@ describe('generators.Base (actions/spawn-command)', () => {
 
   beforeEach(async function () {
     this.crossSpawn = sinon.spy();
-    this.crossSpawn.sync = sinon.spy();
+    this.crossSpawnSync = sinon.spy();
     this.spawn = await esmock('../lib/actions/spawn-command', {
-      execa: this.crossSpawn
+      execa: {
+        execa: this.crossSpawn,
+        execaSync: this.crossSpawnSync,
+      },
     });
     cwd = Math.random().toString(36).slice(7);
     this.spawn.destinationRoot = sinon.stub().returns(cwd);
@@ -52,7 +55,7 @@ describe('generators.Base (actions/spawn-command)', () => {
   describe('#spawnCommandSync()', () => {
     it('provide default options', function () {
       this.spawn.spawnCommandSync('foo');
-      sinon.assert.calledWith(this.crossSpawn.sync, 'foo', undefined, {
+      sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
         stdio: 'inherit'
       });
@@ -60,7 +63,7 @@ describe('generators.Base (actions/spawn-command)', () => {
 
     it('pass arguments', function () {
       this.spawn.spawnCommandSync('foo', 'bar');
-      sinon.assert.calledWith(this.crossSpawn.sync, 'foo', 'bar', {
+      sinon.assert.calledWith(this.crossSpawnSync, 'foo', 'bar', {
         cwd,
         stdio: 'inherit'
       });
@@ -68,7 +71,7 @@ describe('generators.Base (actions/spawn-command)', () => {
 
     it('pass options', function () {
       this.spawn.spawnCommandSync('foo', undefined, {foo: 1});
-      sinon.assert.calledWith(this.crossSpawn.sync, 'foo', undefined, {
+      sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
         foo: 1,
         stdio: 'inherit'
@@ -77,7 +80,7 @@ describe('generators.Base (actions/spawn-command)', () => {
 
     it('allow overriding default options', function () {
       this.spawn.spawnCommandSync('foo', undefined, {stdio: 'wut'});
-      sinon.assert.calledWith(this.crossSpawn.sync, 'foo', undefined, {
+      sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
         stdio: 'wut'
       });
