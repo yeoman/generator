@@ -1,3 +1,3 @@
 module.exports = {
-  'node-option': ['loader=esmock', 'experimental-import-meta-resolve']
+  'node-option': ['loader=esmock'],
 };
