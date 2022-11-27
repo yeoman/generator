@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-spread */
 import assert from 'node:assert';
 import _ from 'lodash';
 import dargs from 'dargs';
@@ -227,5 +226,3 @@ install.npmInstall = function (pkgs, options, spawnOptions) {
 install.yarnInstall = function (pkgs, options, spawnOptions) {
   this.scheduleInstallTask('yarn', pkgs, options, spawnOptions);
 };
-
-/* eslint-enable unicorn/prefer-spread */

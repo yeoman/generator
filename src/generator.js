@@ -570,10 +570,12 @@ class Generator extends Base {
     );
 
     return this.env.adapter.prompt(questions, answers).then((answers) => {
-      Object.entries(storageForQuestion).forEach(([name, questionStorage]) => {
+      for (const [name, questionStorage] of Object.entries(
+        storageForQuestion,
+      )) {
         const answer = answers[name] === undefined ? null : answers[name];
         questionStorage.setPath(name, answer);
-      });
+      }
 
       if (!this.options.skipCache) {
         promptSuggestion.storeAnswers(
@@ -862,9 +864,9 @@ class Generator extends Base {
    * @param {TaskOptions} [taskOptions]: options.
    */
   queueTaskGroup(taskGroup, taskOptions) {
-    this.extractTasksFromGroup(taskGroup, taskOptions).forEach((task) => {
+    for (const task of this.extractTasksFromGroup(taskGroup, taskOptions)) {
       this.queueTask(task);
-    });
+    }
   }
 
   /**
@@ -937,9 +939,8 @@ class Generator extends Base {
    * @param {TaskOptions} [taskOptions]: options.
    */
   queueOwnTask(name, taskOptions) {
-    this.extractTasksFromPriority(name, taskOptions).forEach((task) =>
-      this.queueTask(task),
-    );
+    for (const task of this.extractTasksFromPriority(name, taskOptions))
+      this.queueTask(task);
   }
 
   /**

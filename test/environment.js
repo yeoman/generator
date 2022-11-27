@@ -6,11 +6,10 @@ import Environment from 'yeoman-environment';
 import helpers from 'yeoman-test';
 import {TestAdapter} from 'yeoman-test/lib/adapter.js';
 
-import Base from '../lib/index.js';
+import Base from '../src/generator.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-generator-environment');
 
-/* eslint-disable max-nested-callbacks */
 describe('Generator with environment version', () => {
   before(helpers.setUpTestDirectory(tmpdir));
   describe('mocked 3.0.0', () => {

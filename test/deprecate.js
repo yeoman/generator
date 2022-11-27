@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import chalk from 'chalk';
 import sinon from 'sinon';
-import deprecate from '../lib/util/deprecate.js';
+import deprecate from '../src/util/deprecate.js';
 
 describe('deprecate()', () => {
   beforeEach(() => {

@@ -57,7 +57,7 @@ function formatArg(config) {
  * @return {String} Usage information of the generator
  */
 help.usage = function () {
-  const options = Object.keys(this._options).length ? '[options]' : '';
+  const options = Object.keys(this._options).length > 0 ? '[options]' : '';
   let name = this.options.namespace;
   let args = '';
 

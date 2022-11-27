@@ -7,7 +7,7 @@
 // object, which means that you can use the API as if you were extending
 // `Base`.
 
-import Base from '../../../lib/index.js';
+import Base from '../../../src/generator.js';
 
 export default class Generator extends Base {
   constructor(args, opts) {

@@ -6,7 +6,7 @@ import process from 'node:process';
 import semver from 'semver';
 import Environment from 'yeoman-environment';
 
-import Base from '../lib/index.js';
+import Base from '../src/generator.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-package-json');
 

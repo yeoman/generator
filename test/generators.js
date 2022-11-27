@@ -5,7 +5,7 @@ import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
 import semver from 'semver';
 
-import Base from '../lib/index.js';
+import Base from '../src/generator.js';
 
 const NAMESPACE = 'somenamespace';
 
