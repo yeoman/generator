@@ -7,7 +7,6 @@
   "files": [
     "lib"
   ],
-  "main": "lib",
   "type": "module",
   "keywords": [
     "development",
@@ -42,7 +41,8 @@
     "xo": "^0.53.1",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^3.12.1",
-    "yeoman-test": "^6.0.0"
+    "yeoman-test": "^6.0.0",
+    "typescript": "^4.9.3"
   },
   "license": "BSD-2-Clause",
   "repository": "yeoman/generator",
@@ -56,7 +56,9 @@
     "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
     "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path$DOC_FOLDER",
     "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
-    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path$DOC_FOLDER/global.html || true"
+    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path$DOC_FOLDER/global.html || true",
+    "prepare": "npm run build",
+    "build": "tsc"
   },
   "dependencies": {
     "chalk": "^5.1.2",
@@ -78,6 +80,15 @@
   "peerDependenciesMeta": {
     "yeoman-environment": {
       "optional": true
+    }
+  },
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./typed": {
+      "types": "./dist/index.d.js",
+      "default": "./dist/index.js"
     }
   }
 }
