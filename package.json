@@ -8,6 +8,15 @@
     "lib"
   ],
   "type": "module",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./typed": {
+      "types": "./dist/index.d.js",
+      "default": "./dist/index.js"
+    }
+  },
   "keywords": [
     "development",
     "dev",
@@ -38,27 +47,27 @@
     "sinon": "^14.0.2",
     "through2": "^4.0.2",
     "tui-jsdoc-template": "^1.2.2",
+    "typescript": "^4.9.3",
     "xo": "^0.53.1",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^3.12.1",
-    "yeoman-test": "^6.0.0",
-    "typescript": "^4.9.3"
+    "yeoman-test": "^6.0.0"
   },
   "license": "BSD-2-Clause",
   "repository": "yeoman/generator",
   "engines": {
-    "node": "^16.13.0 || >=18.8.0"
+    "node": "^14.15.0 || ^16.13.0 || >=18.12.0"
   },
   "scripts": {
     "coverage": "c8 report --reporter=text-lcov | coveralls",
+    "build": "tsc",
+    "prepare": "npm run build",
     "pretest": "xo",
     "test": "c8 mocha --forbid-only",
     "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
     "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path$DOC_FOLDER",
     "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
-    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path$DOC_FOLDER/global.html || true",
-    "prepare": "npm run build",
-    "build": "tsc"
+    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path$DOC_FOLDER/global.html || true"
   },
   "dependencies": {
     "chalk": "^5.1.2",
@@ -80,15 +89,6 @@
   "peerDependenciesMeta": {
     "yeoman-environment": {
       "optional": true
-    }
-  },
-  "exports": {
-    ".": {
-      "default": "./dist/index.js"
-    },
-    "./typed": {
-      "types": "./dist/index.d.js",
-      "default": "./dist/index.js"
     }
   }
 }
