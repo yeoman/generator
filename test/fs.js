@@ -3,8 +3,8 @@ import path from 'node:path';
 import sinon from 'sinon';
 import Environment from 'yeoman-environment';
 
-import fsAction from '../lib/actions/fs.js';
-import Base from '../lib/index.js';
+import fsAction from '../src/actions/fs.js';
+import Base from '../src/generator.js';
 
 const randomString = () => Math.random().toString(36).slice(7);
 

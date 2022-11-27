@@ -7,7 +7,7 @@ import process from 'node:process';
 import FileEditor from 'mem-fs-editor';
 import helpers from 'yeoman-test';
 import memFs from 'mem-fs';
-import Storage from '../lib/util/storage.js';
+import Storage from '../src/util/storage.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

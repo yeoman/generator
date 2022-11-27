@@ -7,7 +7,7 @@ import yeoman from 'yeoman-environment';
 import assert from 'yeoman-assert';
 import helpers from 'yeoman-test';
 import {TestAdapter} from 'yeoman-test/lib/adapter.js';
-import Base from '../lib/index.js';
+import Base from '../src/generator.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');

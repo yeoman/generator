@@ -10,11 +10,11 @@
   "type": "module",
   "exports": {
     ".": {
-      "default": "./dist/index.js"
+      "import": "./dist/index.js"
     },
     "./typed": {
       "types": "./dist/index.d.js",
-      "default": "./dist/index.js"
+      "import": "./dist/index.js"
     }
   },
   "keywords": [
@@ -81,7 +81,8 @@
     "semver": "^7.2.1",
     "shelljs": "^0.8.5",
     "sort-keys": "^5.0.0",
-    "text-table": "^0.2.0"
+    "text-table": "^0.2.0",
+    "@types/node": "^16.18.3"
   },
   "peerDependencies": {
     "yeoman-environment": "^3.2.0"

@@ -13,7 +13,7 @@ import yeoman from 'yeoman-environment';
 import assert from 'yeoman-assert';
 import helpers from 'yeoman-test';
 import {TestAdapter} from 'yeoman-test/lib/adapter.js';
-import Base from '../lib/index.js';
+import Base from '../src/generator.js';
 
 const require = createRequire(import.meta.url);
 
@@ -1068,7 +1068,7 @@ describe('Base', () => {
 
   describe('#config', () => {
     it('provide a storage instance', async function () {
-      const module = await import('../lib/util/storage.js');
+      const module = await import('../src/util/storage.js');
       assert.ok(this.dummy.config instanceof module.default);
     });
 

@@ -10,7 +10,7 @@ describe('generators.Base (actions/spawn-command)', () => {
   beforeEach(async function () {
     this.crossSpawn = sinon.spy();
     this.crossSpawnSync = sinon.spy();
-    this.spawn = await esmock(require.resolve('../lib/actions/spawn-command'), {
+    this.spawn = await esmock(require.resolve('../src/actions/spawn-command'), {
       execa: {
         execa: this.crossSpawn,
         execaSync: this.crossSpawnSync,

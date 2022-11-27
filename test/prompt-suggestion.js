@@ -5,8 +5,8 @@ import {rmSync} from 'node:fs';
 import inquirer from 'inquirer';
 import env from 'yeoman-environment';
 import FileEditor from 'mem-fs-editor';
-import Storage from '../lib/util/storage.js';
-import promptSuggestion from '../lib/util/prompt-suggestion.js';
+import Storage from '../src/util/storage.js';
+import promptSuggestion from '../src/util/prompt-suggestion.js';
 
 /* eslint max-nested-callbacks: ["warn", 6] */
 

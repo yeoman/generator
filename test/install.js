@@ -5,8 +5,8 @@ import chalk from 'chalk';
 import _ from 'lodash';
 
 import {TestAdapter} from 'yeoman-test/lib/adapter.js';
-import Base from '../lib/index.js';
-import installAction from '../lib/actions/install.js';
+import Base from '../src/generator.js';
+import installAction from '../src/actions/install.js';
 
 _.extend(Base.prototype, installAction);
 
