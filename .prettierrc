@@ -12,3 +12,5 @@ arrowParens: avoid
 # jsx and tsx rules:
 bracketSameLine: false
 bracketSpacing: true
+
+endOfLine: auto
