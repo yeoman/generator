@@ -10,12 +10,16 @@ describe('generators.Base (actions/spawn-command)', () => {
   beforeEach(async function () {
     this.crossSpawn = sinon.spy();
     this.crossSpawnSync = sinon.spy();
-    this.spawn = await esmock(require.resolve('../src/actions/spawn-command'), {
-      execa: {
-        execa: this.crossSpawn,
-        execaSync: this.crossSpawnSync,
+    const module = await esmock(
+      require.resolve('../src/actions/spawn-command'),
+      {
+        execa: {
+          execa: this.crossSpawn,
+          execaSync: this.crossSpawnSync,
+        },
       },
-    });
+    );
+    this.spawn = new (module.default(class Foo {}))();
     cwd = Math.random().toString(36).slice(7);
     this.spawn.destinationRoot = sinon.stub().returns(cwd);
   });

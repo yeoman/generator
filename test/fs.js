@@ -23,7 +23,9 @@ describe('generators.Base (actions/fs)', () => {
 
   beforeEach(function () {
     returns = {};
-    this.base = {
+    this.base = new (fsAction(class Foo {}))();
+
+    Object.assign(this.base, {
       templatePath: sinon.stub().returns(baseReturns.templatePath),
       destinationPath: sinon.stub().returns(baseReturns.destinationPath),
       renderTemplate: Base.prototype.renderTemplate,
@@ -37,7 +39,7 @@ describe('generators.Base (actions/fs)', () => {
         },
       },
       fs: {},
-    };
+    });
     for (const op of [
       'read',
       'copy',
@@ -54,8 +56,6 @@ describe('generators.Base (actions/fs)', () => {
       this.base.fs[op] = sinon.stub().returns(returnValue);
       returns[op] = returnValue;
     }
-
-    Object.assign(this.base, fsAction);
   });
 
   for (const operation of [

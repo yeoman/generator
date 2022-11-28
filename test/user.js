@@ -7,7 +7,6 @@ import nock from 'nock';
 import shell from 'shelljs';
 import sinon from 'sinon';
 import esmock from 'esmock';
-import Base from '../src/generator.js';
 
 /* eslint max-nested-callbacks: ["warn", 5] */
 
@@ -36,18 +35,14 @@ describe('Base#user', function () {
     this.shell = shell;
     sinon.spy(this.shell, 'exec');
 
-    this.user = await esmock('../src/actions/user', {
+    const module = await esmock('../src/actions/user.js', {
       shelljs: this.shell,
     });
+    this.user = new (module.default(class Foo {}))();
   });
 
   afterEach(function () {
     this.shell.exec.restore();
-  });
-
-  it('is exposed on the Base generator', async () => {
-    const userModule = await import('../src/actions/user.js');
-    assert.equal(userModule.default, Base.prototype.user);
   });
 
   describe('.git', () => {
