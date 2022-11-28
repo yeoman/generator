@@ -4,9 +4,9 @@ import path from 'node:path';
 import { mkdirSync, rmSync } from 'node:fs';
 import process from 'node:process';
 import nock from 'nock';
-import shell from 'shelljs';
-import sinon from 'sinon';
-import esmock from 'esmock';
+import { simpleGit } from 'simple-git';
+
+import userMixin from '../src/actions/user.js';
 
 /* eslint max-nested-callbacks: ["warn", 5] */
 
@@ -15,14 +15,16 @@ const tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 describe('Base#user', function () {
   this.timeout(10_000);
 
-  beforeEach(function () {
+  beforeEach(async function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
     mkdirSync(path.join(tmpdir, 'subdir'), { recursive: true });
     process.chdir(tmpdir);
-    shell.exec('git init --quiet');
-    shell.exec('git config --local user.name Yeoman');
-    shell.exec('git config --local user.email yo@yeoman.io');
+    const git = simpleGit();
+    await git
+      .init()
+      .addConfig('user.name', 'Yeoman')
+      .addConfig('user.email', 'yo@yeoman.io');
   });
 
   afterEach(function () {
@@ -32,55 +34,27 @@ describe('Base#user', function () {
 
   beforeEach(async function () {
     process.chdir(this.tmp);
-    this.shell = shell;
-    sinon.spy(this.shell, 'exec');
+    this.user = new (userMixin(
+      class Foo {
+        destinationPath() {
+          return tmpdir;
+        }
 
-    const module = await esmock('../src/actions/user.js', {
-      shelljs: this.shell,
-    });
-    this.user = new (module.default(class Foo {}))();
-  });
-
-  afterEach(function () {
-    this.shell.exec.restore();
+        on() {}
+      },
+    ))();
   });
 
   describe('.git', () => {
     describe('.name()', () => {
-      it('is the name used by git', function () {
-        assert.equal(this.user.git.name(), 'Yeoman');
-      });
-
-      it('cache the value', function () {
-        this.user.git.name();
-        this.user.git.name();
-        assert.equal(this.shell.exec.callCount, 1);
-      });
-
-      it('cache is linked to the CWD', function () {
-        this.user.git.name();
-        process.chdir('subdir');
-        this.user.git.name();
-        assert.equal(this.shell.exec.callCount, 2);
+      it('is the name used by git', async function () {
+        assert.equal(await this.user.git.name(), 'Yeoman');
       });
     });
 
     describe('.email()', () => {
-      it('is the email used by git', function () {
-        assert.equal(this.user.git.email(), 'yo@yeoman.io');
-      });
-
-      it('handle cache', function () {
-        this.user.git.email();
-        this.user.git.email();
-        assert.equal(this.shell.exec.callCount, 1);
-      });
-
-      it('cache is linked to the CWD', function () {
-        this.user.git.email();
-        process.chdir('subdir');
-        this.user.git.email();
-        assert.equal(this.shell.exec.callCount, 2);
+      it('is the email used by git', async function () {
+        assert.equal(await this.user.git.email(), 'yo@yeoman.io');
       });
     });
   });
@@ -101,10 +75,8 @@ describe('Base#user', function () {
         nock.restore();
       });
 
-      it('is the username used by GitHub', function () {
-        return this.user.github.username().then(resolved => {
-          assert.equal(resolved, 'mockname');
-        });
+      it('is the username used by GitHub', async function () {
+        assert.equal(await this.user.github.username(), 'mockname');
       });
     });
   });
