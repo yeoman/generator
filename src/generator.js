@@ -17,6 +17,7 @@ import { readPackageUpSync } from 'read-pkg-up';
 import chalk from 'chalk';
 import minimist from 'minimist';
 import createDebug from 'debug';
+import memFsEditor from 'mem-fs-editor';
 
 import Storage from './util/storage.js';
 import promptSuggestion from './util/prompt-suggestion.js';
@@ -25,6 +26,7 @@ import spawnCommandMixin from './actions/spawn-command.js';
 import fsMixin from './actions/fs.js';
 import packageJsonMixin from './actions/package-json.js';
 import userMixin from './actions/user.js';
+import { DESTINATION_ROOT_CHANGE_EVENT } from './constants.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,16 +38,11 @@ const packageJson = JSON.parse(
   readFileSync(pathJoin(__dirname, '../package.json'), 'utf8'),
 );
 
-const mixins = [
-  packageJsonMixin,
-  helpMixin,
-  spawnCommandMixin,
-  fsMixin,
-  userMixin,
-];
-
 // eslint-disable-next-line unicorn/no-array-reduce
-const Base = mixins.reduce((a, b) => b(a), EventEmitter);
+const Base = [packageJsonMixin, spawnCommandMixin].reduce(
+  (a, b) => b(a),
+  EventEmitter,
+);
 
 // Ensure a prototype method is a candidate run by default
 const methodIsValid = function (name) {
@@ -80,7 +77,7 @@ const methodIsValid = function (name) {
  * @property {string} taskName - Name of the task.
  */
 
-class Generator extends Base {
+export class BaseGenerator extends Base {
   // If for some reason environment adds more queues, we should use or own for stability.
   static get queues() {
     return [
@@ -212,7 +209,7 @@ class Generator extends Base {
       // Ensure source/destination path, can be configured from subclasses
       this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
 
-      this.fs = this.env.fs;
+      this.fs = memFsEditor.create(this.env.sharedFs);
     }
 
     // Add convenience debug object
@@ -261,8 +258,7 @@ class Generator extends Base {
       !this.env ||
       !this.env.adapter ||
       !this.env.runLoop ||
-      !this.env.sharedFs ||
-      !this.env.fs
+      !this.env.sharedFs
     ) {
       throw new Error(
         "Current environment doesn't provides some necessary feature this generator needs.",
@@ -1434,6 +1430,7 @@ await this.composeWith({
         fs.mkdirSync(this._destinationRoot, { recursive: true });
       }
 
+      this.emit(DESTINATION_ROOT_CHANGE_EVENT, this._destinationRoot);
       // Reset the storage
       this._config = undefined;
       // Reset packageJson
@@ -1534,5 +1531,11 @@ await this.composeWith({
     return this;
   }
 }
+
+// eslint-disable-next-line unicorn/no-array-reduce
+const Generator = [helpMixin, fsMixin, userMixin].reduce(
+  (a, b) => b(a),
+  BaseGenerator,
+);
 
 export default Generator;

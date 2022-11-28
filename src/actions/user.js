@@ -1,9 +1,6 @@
 import process from 'node:process';
-import shell from 'shelljs';
 import githubUsername from 'github-username';
-
-const nameCache = new Map();
-const emailCache = new Map();
+import { simpleGit } from 'simple-git';
 
 class GitUtil {
   #parent;
@@ -15,51 +12,45 @@ class GitUtil {
   /**
    * Retrieves user's name from Git in the global scope or the project scope
    * (it'll take what Git will use in the current context)
-   * @return {String} configured git name or undefined
+   * @return {Promise<string>} configured git name or undefined
    */
-  name() {
-    let name = nameCache.get(process.cwd());
-
-    if (name) {
-      return name;
-    }
-
-    if (shell.which('git')) {
-      name = shell
-        .exec('git config --get user.name', { silent: true })
-        .stdout.trim();
-      nameCache.set(process.cwd(), name);
-    }
-
-    return name;
+  async name() {
+    const { value } = await this.#parent.simpleGit.getConfig('user.name');
+    return value;
   }
 
   /**
    * Retrieves user's email from Git in the global scope or the project scope
    * (it'll take what Git will use in the current context)
-   * @return {String} configured git email or undefined
+   * @return {Promise<string>} configured git email or undefined
    */
-  email() {
-    let email = emailCache.get(process.cwd());
-
-    if (email) {
-      return email;
-    }
-
-    if (shell.which('git')) {
-      email = shell
-        .exec('git config --get user.email', { silent: true })
-        .stdout.trim();
-      emailCache.set(process.cwd(), email);
-    }
-
-    return email;
+  async email() {
+    const { value } = await this.#parent.simpleGit.getConfig('user.email');
+    return value;
   }
 }
 
 const userMixin = Parent =>
   class GitMixin extends Parent {
     #git;
+    #simpleGit;
+
+    /**
+     * @return {import('simple-git').SimpleGit}
+     */
+    get simpleGit() {
+      if (!this.#simpleGit) {
+        this.#simpleGit = simpleGit({ baseDir: this.destinationPath() }).env({
+          ...process.env,
+          LANG: 'en',
+        });
+        this.on('destinationRootChange', () => {
+          this.#simpleGit = undefined;
+        });
+      }
+
+      return this.#simpleGit;
+    }
 
     get git() {
       if (!this.#git) {
@@ -76,7 +67,7 @@ const userMixin = Parent =>
          * @return {Promise} Resolved with the GitHub username or rejected if unable to
          *                   get the information
          */
-        username: () => githubUsername(this.git.email()),
+        username: async () => githubUsername(await this.git.email()),
       };
     }
   };
