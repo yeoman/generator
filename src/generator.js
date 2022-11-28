@@ -36,7 +36,13 @@ const packageJson = JSON.parse(
   readFileSync(pathJoin(__dirname, '../package.json'), 'utf8'),
 );
 
-const mixins = [packageJsonMixin];
+const mixins = [
+  packageJsonMixin,
+  helpMixin,
+  spawnCommandMixin,
+  fsMixin,
+  userMixin,
+];
 
 // eslint-disable-next-line unicorn/no-array-reduce
 const Base = mixins.reduce((a, b) => b(a), EventEmitter);
@@ -1552,12 +1558,5 @@ await this.composeWith({
     return this;
   }
 }
-
-// Mixin the actions modules
-_.extend(Generator.prototype, helpMixin);
-_.extend(Generator.prototype, spawnCommandMixin);
-_.extend(Generator.prototype, fsMixin);
-_.extend(Generator.prototype, packageJsonMixin);
-Generator.prototype.user = userMixin;
 
 export default Generator;
