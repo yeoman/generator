@@ -1,3 +1,1 @@
-export default [
-  { name: 'extra', type: String, storage: 'config' }
-];
+export default [{ name: 'extra', type: String, storage: 'config' }];

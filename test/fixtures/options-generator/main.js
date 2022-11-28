@@ -16,13 +16,13 @@ export default class Generator extends Base {
     this.option('testOption', {
       type: Boolean,
       desc: 'Testing falsey values for option',
-      defaults: true
+      defaults: true,
     });
   }
 
   testOption() {
     return 'foo';
   }
-};
+}
 
 Generator.namespace = 'options:generator';

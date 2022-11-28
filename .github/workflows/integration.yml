@@ -13,7 +13,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -22,50 +21,50 @@ jobs:
         node-version: [14.x]
 
     steps:
-    - name: Checkout yeoman-test
-      uses: actions/checkout@v3
-      with:
-        repository: yeoman/yeoman-test
-        path: yeoman-test
+      - name: Checkout yeoman-test
+        uses: actions/checkout@v3
+        with:
+          repository: yeoman/yeoman-test
+          path: yeoman-test
 
-    - name: Checkout yeoman-generator
-      uses: actions/checkout@v3
-      with:
-        path: yeoman-generator
+      - name: Checkout yeoman-generator
+        uses: actions/checkout@v3
+        with:
+          path: yeoman-generator
 
-    - name: Checkout yeoman-environment
-      uses: actions/checkout@v3
-      with:
-        repository: mshima/environment
-        path: yeoman-environment
+      - name: Checkout yeoman-environment
+        uses: actions/checkout@v3
+        with:
+          repository: mshima/environment
+          path: yeoman-environment
 
-    - uses: actions/setup-node@v3.4.1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install -g npm@7.11.2
+      - uses: actions/setup-node@v3.4.1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install -g npm@7.11.2
 
-    - name: Run yeoman-test test
-      run: |
-        cd $GITHUB_WORKSPACE/yeoman-test
-        npm ci
-        npm install ${{ github.repository }}#$GITHUB_SHA
-        npm install yeoman/environment#main
-        npm test
+      - name: Run yeoman-test test
+        run: |
+          cd $GITHUB_WORKSPACE/yeoman-test
+          npm ci
+          npm install ${{ github.repository }}#$GITHUB_SHA
+          npm install yeoman/environment#main
+          npm test
 
-    - name: Run yeoman-generator test
-      if: always()
-      run: |
-        cd $GITHUB_WORKSPACE/yeoman-generator
-        npm ci
-        npm install yeoman/yeoman-test#main
-        npm install yeoman/environment#main
-        npm test
+      - name: Run yeoman-generator test
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/yeoman-generator
+          npm ci
+          npm install yeoman/yeoman-test#main
+          npm install yeoman/environment#main
+          npm test
 
-    - name: Run yeoman-environment test
-      if: always()
-      run: |
-        cd $GITHUB_WORKSPACE/yeoman-environment
-        npm ci
-        npm install ${{ github.repository }}#$GITHUB_SHA
-        npm install yeoman/yeoman-test#main
-        npm test
+      - name: Run yeoman-environment test
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/yeoman-environment
+          npm ci
+          npm install ${{ github.repository }}#$GITHUB_SHA
+          npm install yeoman/yeoman-test#main
+          npm test

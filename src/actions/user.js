@@ -26,7 +26,7 @@ class GitUtil {
 
     if (shell.which('git')) {
       name = shell
-        .exec('git config --get user.name', {silent: true})
+        .exec('git config --get user.name', { silent: true })
         .stdout.trim();
       nameCache.set(process.cwd(), name);
     }
@@ -48,7 +48,7 @@ class GitUtil {
 
     if (shell.which('git')) {
       email = shell
-        .exec('git config --get user.email', {silent: true})
+        .exec('git config --get user.email', { silent: true })
         .stdout.trim();
       emailCache.set(process.cwd(), email);
     }
@@ -57,7 +57,7 @@ class GitUtil {
   }
 }
 
-const userMixin = (Parent) =>
+const userMixin = Parent =>
   class GitMixin extends Parent {
     #git;
 

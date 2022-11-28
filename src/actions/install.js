@@ -63,10 +63,10 @@ install.scheduleInstallTask = function (
 
   this.env.runLoop.add(
     'install',
-    (done) => {
+    done => {
       this.emit(`${installer}Install`, paths);
       this.spawnCommand(installer, args, spawnOptions)
-        .on('error', (error) => {
+        .on('error', error => {
           this.log(
             chalk.red('Could not finish installation. \n') +
               'Please install ' +
@@ -147,7 +147,7 @@ install.installDependencies = function (options) {
     ),
   };
 
-  const getOptions = (options) => {
+  const getOptions = options => {
     return typeof options === 'object' ? options : null;
   };
 

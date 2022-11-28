@@ -4,7 +4,7 @@ import assert from 'node:assert';
 import sinon from 'sinon';
 import Environment from 'yeoman-environment';
 import helpers from 'yeoman-test';
-import {TestAdapter} from 'yeoman-test/lib/adapter.js';
+import { TestAdapter } from 'yeoman-test/lib/adapter.js';
 
 import Base from '../src/generator.js';
 
@@ -17,7 +17,7 @@ describe('Generator with environment version', () => {
       this.timeout(100_000);
       this.env = Environment.createEnv(
         [],
-        {'skip-install': true},
+        { 'skip-install': true },
         new TestAdapter(),
       );
       this.env.getVersion = this.env.getVersion || (() => {});
@@ -198,7 +198,7 @@ describe('Generator with environment version', () => {
       this.timeout(100_000);
       this.env = Environment.createEnv(
         [],
-        {'skip-install': true},
+        { 'skip-install': true },
         new TestAdapter(),
       );
       this.getVersion = Environment.prototype.getVersion;

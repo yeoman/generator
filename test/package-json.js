@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
-import {rmSync, mkdirSync} from 'node:fs';
+import { rmSync, mkdirSync } from 'node:fs';
 import process from 'node:process';
 import semver from 'semver';
 import Environment from 'yeoman-environment';
@@ -18,7 +18,7 @@ describe('Base#package-json', function () {
   beforeEach(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
-    mkdirSync(path.join(tmpdir, 'subdir'), {recursive: true});
+    mkdirSync(path.join(tmpdir, 'subdir'), { recursive: true });
     process.chdir(tmpdir);
 
     env = Environment.createEnv();
@@ -31,7 +31,7 @@ describe('Base#package-json', function () {
 
   afterEach(function () {
     process.chdir(this.prevCwd);
-    rmSync(tmpdir, {force: true, recursive: true});
+    rmSync(tmpdir, { force: true, recursive: true });
   });
 
   describe('_resolvePackageJsonDependencies()', () => {
@@ -49,7 +49,7 @@ describe('Base#package-json', function () {
     it('should accept semver version', async () => {
       assert.deepStrictEqual(
         await generator._resolvePackageJsonDependencies('yeoman-generator@^2'),
-        {'yeoman-generator': '^2'},
+        { 'yeoman-generator': '^2' },
       );
     });
 
@@ -58,7 +58,9 @@ describe('Base#package-json', function () {
         await generator._resolvePackageJsonDependencies(
           'yeoman/generator#v4.13.0',
         ),
-        {'yeoman-generator': 'github:yeoman/generator#v4.13.0'},
+        {
+          'yeoman-generator': 'github:yeoman/generator#v4.13.0',
+        },
       );
     });
 
@@ -67,12 +69,14 @@ describe('Base#package-json', function () {
         await generator._resolvePackageJsonDependencies(
           'yeoman-generator@yeoman/generator#v4.13.0',
         ),
-        {'yeoman-generator': 'github:yeoman/generator#v4.13.0'},
+        {
+          'yeoman-generator': 'github:yeoman/generator#v4.13.0',
+        },
       );
     });
 
     it('should accept object and return it', async () => {
-      const a = {'yeoman-generator': '^4'};
+      const a = { 'yeoman-generator': '^4' };
       assert.deepStrictEqual(
         await generator._resolvePackageJsonDependencies(a),
         a,
@@ -84,7 +88,7 @@ describe('Base#package-json', function () {
         this.skip();
       }
 
-      const a = {'yeoman-generator': ''};
+      const a = { 'yeoman-generator': '' };
       const dependencies = await generator._resolvePackageJsonDependencies(a);
       assert.ok(dependencies['yeoman-generator']);
     });
@@ -95,7 +99,10 @@ describe('Base#package-json', function () {
           'yeoman-generator@^2',
           'yeoman-environment@^2',
         ]),
-        {'yeoman-generator': '^2', 'yeoman-environment': '^2'},
+        {
+          'yeoman-generator': '^2',
+          'yeoman-environment': '^2',
+        },
       );
     });
   });
@@ -104,14 +111,14 @@ describe('Base#package-json', function () {
     it('should generate dependencies inside package.json', async () => {
       await generator.addDependencies('yeoman-generator@^2');
       assert.deepStrictEqual(generator.packageJson.getAll(), {
-        dependencies: {'yeoman-generator': '^2'},
+        dependencies: { 'yeoman-generator': '^2' },
       });
     });
 
     it('should accept object and merge inside package.json', async () => {
-      await generator.addDependencies({'yeoman-generator': '^2'});
+      await generator.addDependencies({ 'yeoman-generator': '^2' });
       assert.deepStrictEqual(generator.packageJson.getAll(), {
-        dependencies: {'yeoman-generator': '^2'},
+        dependencies: { 'yeoman-generator': '^2' },
       });
     });
   });
@@ -120,14 +127,14 @@ describe('Base#package-json', function () {
     it('should generate dependencies inside package.json', async () => {
       await generator.addDevDependencies('yeoman-generator@^2');
       assert.deepStrictEqual(generator.packageJson.getAll(), {
-        devDependencies: {'yeoman-generator': '^2'},
+        devDependencies: { 'yeoman-generator': '^2' },
       });
     });
 
     it('should accept object and merge devDependencies inside package.json', async () => {
-      await generator.addDevDependencies({'yeoman-generator': '^2'});
+      await generator.addDevDependencies({ 'yeoman-generator': '^2' });
       assert.deepStrictEqual(generator.packageJson.getAll(), {
-        devDependencies: {'yeoman-generator': '^2'},
+        devDependencies: { 'yeoman-generator': '^2' },
       });
     });
   });

@@ -13,12 +13,12 @@ describe('generators.Base (actions/fs)', () => {
     templatePath: `templatePath${randomString()}`,
     destinationPath: `destinationPath${randomString()}`,
   };
-  const configGetAll = {foo: 'bar'};
+  const configGetAll = { foo: 'bar' };
   let returns;
 
   before(function () {
     this.timeout(10_000);
-    this.gen = new Base({env: Environment.createEnv()});
+    this.gen = new Base({ env: Environment.createEnv() });
   });
 
   beforeEach(function () {
@@ -59,7 +59,7 @@ describe('generators.Base (actions/fs)', () => {
   });
 
   for (const operation of [
-    {name: 'readTemplate', first: 'templatePath', dest: 'read'},
+    { name: 'readTemplate', first: 'templatePath', dest: 'read' },
     {
       name: 'copyTemplate',
       first: 'templatePath',
@@ -72,10 +72,14 @@ describe('generators.Base (actions/fs)', () => {
       second: 'destinationPath',
       dest: 'copyAsync',
     },
-    {name: 'readDestination', first: 'destinationPath', dest: 'read'},
-    {name: 'writeDestination', first: 'destinationPath', dest: 'write'},
-    {name: 'writeDestinationJSON', first: 'destinationPath', dest: 'writeJSON'},
-    {name: 'deleteDestination', first: 'destinationPath', dest: 'delete'},
+    { name: 'readDestination', first: 'destinationPath', dest: 'read' },
+    { name: 'writeDestination', first: 'destinationPath', dest: 'write' },
+    {
+      name: 'writeDestinationJSON',
+      first: 'destinationPath',
+      dest: 'writeJSON',
+    },
+    { name: 'deleteDestination', first: 'destinationPath', dest: 'delete' },
     {
       name: 'copyDestination',
       first: 'destinationPath',
@@ -88,7 +92,7 @@ describe('generators.Base (actions/fs)', () => {
       second: 'destinationPath',
       dest: 'move',
     },
-    {name: 'existsDestination', first: 'destinationPath', dest: 'exists'},
+    { name: 'existsDestination', first: 'destinationPath', dest: 'exists' },
     {
       name: 'renderTemplate',
       first: 'templatePath',
@@ -106,7 +110,7 @@ describe('generators.Base (actions/fs)', () => {
     const passedArg1 = randomString();
     const passedArg2 = randomString();
     const passedArg3 = {};
-    const passedArg4 = {foo: 'bar'};
+    const passedArg4 = { foo: 'bar' };
 
     describe(`#${operation.name}`, () => {
       let returnValue;
@@ -174,7 +178,7 @@ describe('generators.Base (actions/fs)', () => {
 
   describe('#renderTemplate', () => {
     const getAllReturn = {};
-    const getPathReturn = {foo: 'bar'};
+    const getPathReturn = { foo: 'bar' };
 
     beforeEach(function () {
       sinon.stub(this.gen, 'sourceRoot').returns('');
@@ -199,7 +203,7 @@ describe('generators.Base (actions/fs)', () => {
 
     it('gets default data from config', function () {
       this.gen.renderTemplate('a', 'b');
-      const {copyTpl} = this.gen.fs;
+      const { copyTpl } = this.gen.fs;
 
       assert(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
@@ -208,7 +212,7 @@ describe('generators.Base (actions/fs)', () => {
 
     it('gets data with path from config', function () {
       this.gen.renderTemplate('a', 'b', 'test');
-      const {copyTpl} = this.gen.fs;
+      const { copyTpl } = this.gen.fs;
 
       assert(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
@@ -221,7 +225,7 @@ describe('generators.Base (actions/fs)', () => {
       const data = {};
 
       this.gen.renderTemplate(source, destination, data);
-      const {copyTpl} = this.gen.fs;
+      const { copyTpl } = this.gen.fs;
 
       assert(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
@@ -233,7 +237,7 @@ describe('generators.Base (actions/fs)', () => {
 
   describe('#renderTemplateAsync', () => {
     const getAllReturn = {};
-    const getPathReturn = {foo: 'bar'};
+    const getPathReturn = { foo: 'bar' };
 
     beforeEach(function () {
       sinon.stub(this.gen, 'sourceRoot').returns('');
@@ -258,7 +262,7 @@ describe('generators.Base (actions/fs)', () => {
 
     it('gets default data from config', function () {
       this.gen.renderTemplateAsync('a', 'b');
-      const {copyTplAsync} = this.gen.fs;
+      const { copyTplAsync } = this.gen.fs;
 
       assert(copyTplAsync.calledOnce);
       const firsCall = copyTplAsync.getCall(0);
@@ -267,7 +271,7 @@ describe('generators.Base (actions/fs)', () => {
 
     it('gets data with path from config', function () {
       this.gen.renderTemplateAsync('a', 'b', 'test');
-      const {copyTplAsync} = this.gen.fs;
+      const { copyTplAsync } = this.gen.fs;
 
       assert(copyTplAsync.calledOnce);
       const firsCall = copyTplAsync.getCall(0);
@@ -280,7 +284,7 @@ describe('generators.Base (actions/fs)', () => {
       const data = {};
 
       this.gen.renderTemplateAsync(source, destination, data);
-      const {copyTplAsync} = this.gen.fs;
+      const { copyTplAsync } = this.gen.fs;
 
       assert(copyTplAsync.calledOnce);
       const firsCall = copyTplAsync.getCall(0);
@@ -311,9 +315,9 @@ describe('generators.Base (actions/fs)', () => {
     it('handles 1 template', function () {
       const passedArg1 = 'foo';
       const data = {};
-      this.gen.renderTemplates([{source: passedArg1}], data);
+      this.gen.renderTemplates([{ source: passedArg1 }], data);
 
-      const {copyTpl} = this.gen.fs;
+      const { copyTpl } = this.gen.fs;
       assert.equal(copyTpl.callCount, 1);
 
       const firsCall = copyTpl.getCall(0);
@@ -327,12 +331,12 @@ describe('generators.Base (actions/fs)', () => {
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
       const data = {};
-      const templateOptions = {foo: '123'};
+      const templateOptions = { foo: '123' };
       const copyOptions = {};
 
       this.gen.renderTemplates(
         [
-          {source: passedArg1},
+          { source: passedArg1 },
           {
             source: secondCallArg1,
             destination: secondCallArg2,
@@ -343,7 +347,7 @@ describe('generators.Base (actions/fs)', () => {
         data,
       );
 
-      const {copyTpl} = this.gen.fs;
+      const { copyTpl } = this.gen.fs;
       assert.equal(copyTpl.callCount, 2);
 
       const firsCall = copyTpl.getCall(0);
@@ -369,7 +373,7 @@ describe('generators.Base (actions/fs)', () => {
 
       this.gen.renderTemplates(
         [
-          {source: passedArg1},
+          { source: passedArg1 },
           {
             source: secondCallArg1,
             when: () => false,
@@ -381,7 +385,7 @@ describe('generators.Base (actions/fs)', () => {
         data,
       );
 
-      const {copyTpl} = this.gen.fs;
+      const { copyTpl } = this.gen.fs;
       assert.equal(copyTpl.callCount, 1);
 
       const firsCall = copyTpl.getCall(0);
@@ -407,7 +411,7 @@ describe('generators.Base (actions/fs)', () => {
         templateData,
       );
 
-      const {copyTpl} = this.gen.fs;
+      const { copyTpl } = this.gen.fs;
       assert.equal(copyTpl.callCount, 0);
 
       assert.equal(receivedData, templateData);
@@ -435,9 +439,9 @@ describe('generators.Base (actions/fs)', () => {
     it('handles 1 template', function () {
       const passedArg1 = 'foo';
       const data = {};
-      this.gen.renderTemplatesAsync([{source: passedArg1}], data);
+      this.gen.renderTemplatesAsync([{ source: passedArg1 }], data);
 
-      const {copyTplAsync} = this.gen.fs;
+      const { copyTplAsync } = this.gen.fs;
       assert.equal(copyTplAsync.callCount, 1);
 
       const firsCall = copyTplAsync.getCall(0);
@@ -451,12 +455,12 @@ describe('generators.Base (actions/fs)', () => {
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
       const data = {};
-      const templateOptions = {foo: '123'};
+      const templateOptions = { foo: '123' };
       const copyOptions = {};
 
       this.gen.renderTemplatesAsync(
         [
-          {source: passedArg1},
+          { source: passedArg1 },
           {
             source: secondCallArg1,
             destination: secondCallArg2,
@@ -467,7 +471,7 @@ describe('generators.Base (actions/fs)', () => {
         data,
       );
 
-      const {copyTplAsync} = this.gen.fs;
+      const { copyTplAsync } = this.gen.fs;
       assert.equal(copyTplAsync.callCount, 2);
 
       const firsCall = copyTplAsync.getCall(0);
@@ -493,7 +497,7 @@ describe('generators.Base (actions/fs)', () => {
 
       this.gen.renderTemplatesAsync(
         [
-          {source: passedArg1},
+          { source: passedArg1 },
           {
             source: secondCallArg1,
             when: () => false,
@@ -505,7 +509,7 @@ describe('generators.Base (actions/fs)', () => {
         data,
       );
 
-      const {copyTplAsync} = this.gen.fs;
+      const { copyTplAsync } = this.gen.fs;
       assert.equal(copyTplAsync.callCount, 1);
 
       const firsCall = copyTplAsync.getCall(0);
@@ -531,7 +535,7 @@ describe('generators.Base (actions/fs)', () => {
         templateData,
       );
 
-      const {copyTplAsync} = this.gen.fs;
+      const { copyTplAsync } = this.gen.fs;
       assert.equal(copyTplAsync.callCount, 0);
 
       assert.equal(receivedData, templateData);

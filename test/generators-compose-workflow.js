@@ -1,12 +1,12 @@
 import os from 'node:os';
 import path from 'node:path';
-import {mkdirSync} from 'node:fs';
+import { mkdirSync } from 'node:fs';
 import sinon from 'sinon';
 import yeoman from 'yeoman-environment';
 
 import assert from 'yeoman-assert';
 import helpers from 'yeoman-test';
-import {TestAdapter} from 'yeoman-test/lib/adapter.js';
+import { TestAdapter } from 'yeoman-test/lib/adapter.js';
 import Base from '../src/generator.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
@@ -16,8 +16,12 @@ describe('Multiples generators', () => {
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    this.env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter());
-    mkdirSync(resolveddir, {recursive: true});
+    this.env = yeoman.createEnv(
+      [],
+      { 'skip-install': true },
+      new TestAdapter(),
+    );
+    mkdirSync(resolveddir, { recursive: true });
     this.Dummy = class extends Base {};
     this.spyExec = sinon.spy();
     this.Dummy.prototype.exec = this.spyExec;

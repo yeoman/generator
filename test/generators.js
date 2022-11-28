@@ -41,7 +41,7 @@ describe('Generators module', () => {
     });
 
     it('emits done event', function (done) {
-      this.env.on(`done$${NAMESPACE}#exec`, (data) => {
+      this.env.on(`done$${NAMESPACE}#exec`, data => {
         assert(data.generator === this.generator);
         assert(`done$${NAMESPACE}#exec`.includes(data.namespace));
         assert(data.namespace === NAMESPACE);
@@ -121,7 +121,7 @@ describe('Generators module', () => {
     });
   });
 
-  it('running standalone', (done) => {
+  it('running standalone', done => {
     const Generator = class extends Base {};
     try {
       // eslint-disable-next-line no-new
@@ -132,11 +132,11 @@ describe('Generators module', () => {
     }
   });
 
-  it('running with an empty env', (done) => {
+  it('running with an empty env', done => {
     const Generator = class extends Base {};
     try {
       // eslint-disable-next-line no-new
-      new Generator({env: {}});
+      new Generator({ env: {} });
     } catch (error) {
       assert.equal(
         error.message,

@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
-import {mkdirSync, rmSync} from 'node:fs';
+import { mkdirSync, rmSync } from 'node:fs';
 import process from 'node:process';
 import nock from 'nock';
 import shell from 'shelljs';
@@ -18,7 +18,7 @@ describe('Base#user', function () {
   beforeEach(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
-    mkdirSync(path.join(tmpdir, 'subdir'), {recursive: true});
+    mkdirSync(path.join(tmpdir, 'subdir'), { recursive: true });
     process.chdir(tmpdir);
     shell.exec('git init --quiet');
     shell.exec('git config --local user.name Yeoman');
@@ -27,7 +27,7 @@ describe('Base#user', function () {
 
   afterEach(function () {
     process.chdir(this.prevCwd);
-    rmSync(tmpdir, {force: true, recursive: true});
+    rmSync(tmpdir, { force: true, recursive: true });
   });
 
   beforeEach(async function () {
@@ -93,7 +93,7 @@ describe('Base#user', function () {
           .get('/search/users?q=XXX')
           .times(1)
           .reply(200, {
-            items: [{login: 'mockname'}],
+            items: [{ login: 'mockname' }],
           });
       });
 
@@ -102,7 +102,7 @@ describe('Base#user', function () {
       });
 
       it('is the username used by GitHub', function () {
-        return this.user.github.username().then((resolved) => {
+        return this.user.github.username().then(resolved => {
           assert.equal(resolved, 'mockname');
         });
       });

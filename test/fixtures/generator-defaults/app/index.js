@@ -19,6 +19,6 @@ export default class App extends Base {
 
     this.registerConfigPrompts(prompts);
   }
-};
+}
 
 App.namespace = 'options:generator';

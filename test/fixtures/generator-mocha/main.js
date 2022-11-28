@@ -16,7 +16,7 @@ import Base from '../../../src/generator.js';
 
 class Generator extends Base {
   notEmpty() {}
-};
+}
 
 Generator.description =
   'Ana add a custom description by adding a `description` property to your function.';

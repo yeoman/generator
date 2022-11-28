@@ -1,4 +1,4 @@
-const packageJsonMixin = (cls) =>
+const packageJsonMixin = cls =>
   /**
    * @mixin
    * @alias actions/package-json
@@ -59,7 +59,7 @@ const packageJsonMixin = (cls) =>
       }
 
       const entries = await Promise.all(
-        dependencies.map((dependency) => this.env.resolvePackage(dependency)),
+        dependencies.map(dependency => this.env.resolvePackage(dependency)),
       );
       return Object.fromEntries(entries);
     }
@@ -75,7 +75,7 @@ const packageJsonMixin = (cls) =>
      */
     async addDependencies(dependencies) {
       dependencies = await this._resolvePackageJsonDependencies(dependencies);
-      this.packageJson.merge({dependencies});
+      this.packageJson.merge({ dependencies });
       return dependencies;
     }
 
@@ -92,7 +92,7 @@ const packageJsonMixin = (cls) =>
       devDependencies = await this._resolvePackageJsonDependencies(
         devDependencies,
       );
-      this.packageJson.merge({devDependencies});
+      this.packageJson.merge({ devDependencies });
       return devDependencies;
     }
   };

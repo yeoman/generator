@@ -1,0 +1,4 @@
+dist
+coverage
+.nyc_output
+**/fixtures/**
