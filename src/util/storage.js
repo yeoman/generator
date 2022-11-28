@@ -59,7 +59,7 @@ class Storage {
     }
 
     if (typeof options === 'boolean') {
-      options = {lodashPath: options};
+      options = { lodashPath: options };
     }
 
     _.defaults(options, {
@@ -82,7 +82,7 @@ class Storage {
 
     this.existed = Object.keys(this._store).length > 0;
 
-    this.fs.store.on('change', (filename) => {
+    this.fs.store.on('change', filename => {
       // At mem-fs 1.1.3 filename is not passed to the event.
       if (this.disableCacheByFile || (filename && filename !== this.path)) {
         return;
@@ -133,7 +133,7 @@ class Storage {
    */
   _persist(value) {
     if (this.sorted) {
-      value = sortKeys(value, {deep: true});
+      value = sortKeys(value, { deep: true });
     }
 
     let fullStore;

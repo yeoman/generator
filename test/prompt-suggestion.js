@@ -1,7 +1,7 @@
 import path from 'node:path';
 import assert from 'node:assert';
 import os from 'node:os';
-import {rmSync} from 'node:fs';
+import { rmSync } from 'node:fs';
 import inquirer from 'inquirer';
 import env from 'yeoman-environment';
 import FileEditor from 'mem-fs-editor';
@@ -16,11 +16,11 @@ describe('PromptSuggestion', () => {
     this.fs = FileEditor.create(this.memFs);
     this.storePath = path.join(os.tmpdir(), 'suggestion-config.json');
     this.store = new Storage('suggestion', this.fs, this.storePath);
-    this.store.set('promptValues', {respuesta: 'foo'});
+    this.store.set('promptValues', { respuesta: 'foo' });
   });
 
   afterEach(function () {
-    rmSync(this.storePath, {force: true});
+    rmSync(this.storePath, { force: true });
   });
 
   describe('.prefillQuestions()', () => {
@@ -375,7 +375,7 @@ describe('PromptSuggestion', () => {
 
   describe('.storeAnswers()', () => {
     beforeEach(function () {
-      this.store.set('promptValues', {respuesta: 'foo'});
+      this.store.set('promptValues', { respuesta: 'foo' });
     });
 
     it('require a store parameter', () => {

@@ -1,5 +1,5 @@
-import fs, {readFileSync} from 'node:fs';
-import {stat} from 'node:fs/promises';
+import fs, { readFileSync } from 'node:fs';
+import { stat } from 'node:fs/promises';
 import path, {
   isAbsolute,
   dirname,
@@ -9,11 +9,11 @@ import path, {
 import os from 'node:os';
 import EventEmitter from 'node:events';
 import assert from 'node:assert';
-import {fileURLToPath, pathToFileURL} from 'node:url';
-import {createRequire} from 'node:module';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { createRequire } from 'node:module';
 import _ from 'lodash';
 import semver from 'semver';
-import {readPackageUpSync} from 'read-pkg-up';
+import { readPackageUpSync } from 'read-pkg-up';
 import chalk from 'chalk';
 import minimist from 'minimist';
 import createDebug from 'debug';
@@ -165,7 +165,7 @@ class Generator extends Base {
     this._composedWith = [];
     this._namespace = this.options.namespace;
     this._namespaceId = this.options.namespaceId;
-    this.features = features || {unique: this.options.unique};
+    this.features = features || { unique: this.options.unique };
 
     this.option('help', {
       type: Boolean,
@@ -228,7 +228,7 @@ class Generator extends Base {
     }
 
     if (this.features.unique && !this.features.uniqueBy) {
-      const {namespace} = this.options;
+      const { namespace } = this.options;
       let uniqueBy;
       if (
         this.features.unique === true ||
@@ -241,7 +241,7 @@ class Generator extends Base {
       ) {
         const namespaceId = this.env
           .requireNamespace(namespace)
-          .with({instanceId: this._args[0]});
+          .with({ instanceId: this._args[0] });
         uniqueBy = namespaceId.id;
       } else {
         throw new Error(
@@ -297,7 +297,7 @@ class Generator extends Base {
 
     // Add original queues.
     for (const queue of Generator.queues) {
-      this._queues[queue] = {priorityName: queue, queueName: queue};
+      this._queues[queue] = { priorityName: queue, queueName: queue };
     }
 
     // Add custom queues
@@ -344,7 +344,7 @@ class Generator extends Base {
    * @param  {Object[]|function} [priorities.args] - Arguments to pass to tasks
    */
   registerPriorities(priorities) {
-    priorities = priorities.filter((priority) => {
+    priorities = priorities.filter(priority => {
       if (priority.edit) {
         const queue = this._queues[priority.priorityName];
         if (!queue) {
@@ -353,12 +353,12 @@ class Generator extends Base {
           );
         }
 
-        Object.assign(queue, {...priority, edit: undefined});
+        Object.assign(queue, { ...priority, edit: undefined });
       }
 
       return !priority.edit;
     });
-    const customPriorities = priorities.map((customPriority) => {
+    const customPriorities = priorities.map(customPriority => {
       // Keep backward compatibility with name
       const newPriority = {
         priorityName: customPriority.name,
@@ -416,7 +416,7 @@ class Generator extends Base {
     }
 
     version = version || ENV_VER_WITH_VER_API;
-    const returnError = (currentVersion) => {
+    const returnError = currentVersion => {
       return new Error(
         `This generator (${this.options.namespace}) requires ${packageDependency} at least ${version}, current version is ${currentVersion}, try reinstalling latest version of 'yo' or use '--ignore-version-check' option`,
       );
@@ -471,7 +471,7 @@ class Generator extends Base {
    */
   registerConfigPrompts(questions) {
     questions = Array.isArray(questions) ? questions : [questions];
-    const getOptionTypeFromInquirerType = (type) => {
+    const getOptionTypeFromInquirerType = type => {
       if (type === 'number') {
         return Number;
       }
@@ -488,7 +488,7 @@ class Generator extends Base {
     };
 
     for (const q of questions) {
-      const question = {...q};
+      const question = { ...q };
       if (q.exportOption) {
         const option =
           typeof q.exportOption === 'boolean' ? {} : q.exportOption;
@@ -534,7 +534,7 @@ class Generator extends Base {
 
     const storageForQuestion = {};
 
-    const getAnswerFromStorage = (question) => {
+    const getAnswerFromStorage = question => {
       let questionStorage = question.storage || storage;
       questionStorage =
         typeof questionStorage === 'string'
@@ -543,11 +543,11 @@ class Generator extends Base {
       if (questionStorage) {
         checkInquirer();
 
-        const {name} = question;
+        const { name } = question;
         storageForQuestion[name] = questionStorage;
         const value = questionStorage.getPath(name);
         if (value !== undefined) {
-          question.default = (answers) => answers[name];
+          question.default = answers => answers[name];
           return [name, value];
         }
       }
@@ -575,7 +575,7 @@ class Generator extends Base {
       questions.map(getAnswerFromStorage).filter(Boolean),
     );
 
-    return this.env.adapter.prompt(questions, answers).then((answers) => {
+    return this.env.adapter.prompt(questions, answers).then(answers => {
       for (const [name, questionStorage] of Object.entries(
         storageForQuestion,
       )) {
@@ -734,7 +734,7 @@ class Generator extends Base {
       default: {},
     };
 
-    _.each(this._options, (option) => {
+    _.each(this._options, option => {
       if (option.type === Boolean) {
         minimistDef.boolean.push(option.name);
         if (!('default' in option) && !option.required) {
@@ -895,7 +895,7 @@ class Generator extends Base {
       return [];
     }
 
-    const {taskPrefix = this.features.taskPrefix || ''} = taskOptions;
+    const { taskPrefix = this.features.taskPrefix || '' } = taskOptions;
     const propertyName = taskPrefix ? `${taskPrefix}${name}` : name;
     const property = Object.getOwnPropertyDescriptor(
       taskOptions.taskOrigin || Object.getPrototypeOf(this),
@@ -907,7 +907,7 @@ class Generator extends Base {
 
     // Name points to a function; single task
     if (typeof item === 'function') {
-      return [{...taskOptions, taskName: name, method: item}];
+      return [{ ...taskOptions, taskName: name, method: item }];
     }
 
     if (!item || !priority) {
@@ -958,21 +958,19 @@ class Generator extends Base {
   getTaskNames() {
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
     let validMethods = methods.filter(methodIsValid);
-    const {taskPrefix} = this.features;
+    const { taskPrefix } = this.features;
 
     if (taskPrefix) {
       validMethods = validMethods
-        .filter((method) => method.startsWith(taskPrefix))
-        .map((method) => method.slice(taskPrefix.length));
+        .filter(method => method.startsWith(taskPrefix))
+        .map(method => method.slice(taskPrefix.length));
     } else {
-      validMethods = validMethods.filter((method) => method.charAt(0) !== '#');
+      validMethods = validMethods.filter(method => method.charAt(0) !== '#');
     }
 
     if (this.features.tasksMatchingPriority) {
       const queueNames = Object.keys(this._queues);
-      validMethods = validMethods.filter((method) =>
-        queueNames.includes(method),
-      );
+      validMethods = validMethods.filter(method => queueNames.includes(method));
     }
 
     return validMethods;
@@ -986,7 +984,7 @@ class Generator extends Base {
    */
   queueOwnTasks(taskOptions) {
     this._running = true;
-    this._taskStatus = {cancelled: false, timestamp: new Date()};
+    this._taskStatus = { cancelled: false, timestamp: new Date() };
 
     const validMethods = this.getTaskNames();
     if (validMethods.length === 0 && this._prompts.length === 0) {
@@ -1027,11 +1025,11 @@ class Generator extends Base {
    * @param {Task} task: Task to be queued.
    */
   queueTask(task) {
-    const {queueName = 'default', taskName: methodName, run, once} = task;
+    const { queueName = 'default', taskName: methodName, run, once } = task;
 
-    const {runLoop} = this.env;
-    const {_taskStatus: taskStatus, options = {}} = this;
-    const {namespace = ''} = options;
+    const { runLoop } = this.env;
+    const { _taskStatus: taskStatus, options = {} } = this;
+    const { namespace = '' } = options;
 
     debug(
       `Queueing ${namespace}#${methodName} with options %o`,
@@ -1040,11 +1038,11 @@ class Generator extends Base {
     runLoop.add(
       queueName,
       // Run-queue's done(continue), pause
-      async (continueQueue) => {
+      async continueQueue => {
         await this.executeTask(task, undefined, taskStatus);
         continueQueue();
       },
-      {once: once ? methodName : undefined, run},
+      { once: once ? methodName : undefined, run },
     );
   }
 
@@ -1062,8 +1060,13 @@ class Generator extends Base {
     args = task.args || this.args,
     taskStatus = this._taskStatus || {},
   ) {
-    const {reject, queueName = 'default', taskName: methodName, method} = task;
-    const {namespace = ''} = this.options || {};
+    const {
+      reject,
+      queueName = 'default',
+      taskName: methodName,
+      method,
+    } = task;
+    const { namespace = '' } = this.options || {};
     const priority = Object.entries(this._queues).find(
       ([_, options]) => options.queueName === queueName,
     );
@@ -1077,7 +1080,7 @@ class Generator extends Base {
     }
 
     args = typeof args === 'function' ? args(this) : args;
-    this.runningState = {namespace, queueName, methodName};
+    this.runningState = { namespace, queueName, methodName };
     try {
       await method.apply(this, args);
       delete this.runningState;
@@ -1145,7 +1148,7 @@ class Generator extends Base {
   startOver(options = {}) {
     this.cancelCancellableTasks();
     Object.assign(this.options, options);
-    this.queueOwnTasks({auto: true});
+    this.queueOwnTasks({ auto: true });
   }
 
   /**
@@ -1181,7 +1184,7 @@ class Generator extends Base {
     debug(
       `Queueing generator ${this.options.namespace} with generator version ${this.yoGeneratorVersion}`,
     );
-    this.queueOwnTasks({auto: true});
+    this.queueOwnTasks({ auto: true });
 
     for (const generator of this._composedWith) {
       await this.env.queueGenerator(generator, false);
@@ -1237,7 +1240,7 @@ class Generator extends Base {
       forceInstall: this.options.forceInstall,
       skipLocalCache: this.options.skipLocalCache,
     };
-    const resolveGeneratorPath = async (maybePath) => {
+    const resolveGeneratorPath = async maybePath => {
       // Allows to run a local generator without namespace.
       // Resolve the generator absolute path to current generator;
       const generatorFile = isAbsolute(maybePath)
@@ -1295,8 +1298,8 @@ class Generator extends Base {
         }
       }
     } else {
-      const {Generator} = generator;
-      let {path: generatorFile} = generator;
+      const { Generator } = generator;
+      let { path: generatorFile } = generator;
       assert(
         Generator,
         `${chalk.red('Missing Generator property')}
@@ -1350,8 +1353,8 @@ await this.composeWith({
    * @return {String} The name of the root generator
    */
   rootGeneratorName() {
-    const {packageJson: {name = '*'} = {}} =
-      readPackageUpSync({cwd: this.resolved}) || {};
+    const { packageJson: { name = '*' } = {} } =
+      readPackageUpSync({ cwd: this.resolved }) || {};
     return name;
   }
 
@@ -1360,8 +1363,8 @@ await this.composeWith({
    * @return {String} The version of the root generator
    */
   rootGeneratorVersion() {
-    const {packageJson: {version = '0.0.0'} = {}} =
-      readPackageUpSync({cwd: this.resolved}) || {};
+    const { packageJson: { version = '0.0.0' } = {} } =
+      readPackageUpSync({ cwd: this.resolved }) || {};
     return version;
   }
 
@@ -1377,7 +1380,7 @@ await this.composeWith({
       options = path;
       path = undefined;
     } else if (typeof options === 'boolean') {
-      options = {lodashPath: options};
+      options = { lodashPath: options };
     }
 
     storePath = this.destinationPath(storePath);
@@ -1428,7 +1431,7 @@ await this.composeWith({
       this._destinationRoot = pathResolve(rootPath);
 
       if (!fs.existsSync(this._destinationRoot)) {
-        fs.mkdirSync(this._destinationRoot, {recursive: true});
+        fs.mkdirSync(this._destinationRoot, { recursive: true });
       }
 
       // Reset the storage

@@ -2,21 +2,6 @@
   "name": "yeoman-generator",
   "version": "5.7.0",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
-  "homepage": "http://yeoman.io",
-  "author": "Yeoman",
-  "files": [
-    "lib"
-  ],
-  "type": "module",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js"
-    },
-    "./typed": {
-      "types": "./dist/index.d.js",
-      "import": "./dist/index.js"
-    }
-  },
   "keywords": [
     "development",
     "dev",
@@ -30,8 +15,52 @@
     "yeoman",
     "app"
   ],
+  "homepage": "http://yeoman.io",
+  "repository": "yeoman/generator",
+  "license": "BSD-2-Clause",
+  "author": "Yeoman",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./typed": {
+      "types": "./dist/index.d.js",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "coverage": "c8 report --reporter=text-lcov | coveralls",
+    "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
+    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path$DOC_FOLDER/global.html || true",
+    "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path$DOC_FOLDER",
+    "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
+    "prepare": "npm run build",
+    "pretest": "xo",
+    "test": "c8 mocha --forbid-only"
+  },
   "config": {
     "doc_path": "../yeoman-generator-doc/"
+  },
+  "dependencies": {
+    "@types/node": "^16.18.3",
+    "chalk": "^5.1.2",
+    "dargs": "^8.1.0",
+    "debug": "^4.1.1",
+    "execa": "^6.1.0",
+    "github-username": "^7.0.0",
+    "lodash": "^4.17.11",
+    "minimist": "^1.2.7",
+    "prettier-plugin-packagejson": "^2.3.0",
+    "read-pkg-up": "^9.1.0",
+    "semver": "^7.2.1",
+    "shelljs": "^0.8.5",
+    "sort-keys": "^5.0.0",
+    "text-table": "^0.2.0"
   },
   "devDependencies": {
     "c8": "^7.12.0",
@@ -53,37 +82,6 @@
     "yeoman-environment": "^3.12.1",
     "yeoman-test": "^6.0.0"
   },
-  "license": "BSD-2-Clause",
-  "repository": "yeoman/generator",
-  "engines": {
-    "node": "^14.15.0 || ^16.13.0 || >=18.12.0"
-  },
-  "scripts": {
-    "coverage": "c8 report --reporter=text-lcov | coveralls",
-    "build": "tsc",
-    "prepare": "npm run build",
-    "pretest": "xo",
-    "test": "c8 mocha --forbid-only",
-    "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
-    "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path$DOC_FOLDER",
-    "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
-    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path$DOC_FOLDER/global.html || true"
-  },
-  "dependencies": {
-    "chalk": "^5.1.2",
-    "dargs": "^8.1.0",
-    "debug": "^4.1.1",
-    "execa": "^6.1.0",
-    "github-username": "^7.0.0",
-    "lodash": "^4.17.11",
-    "minimist": "^1.2.7",
-    "read-pkg-up": "^9.1.0",
-    "semver": "^7.2.1",
-    "shelljs": "^0.8.5",
-    "sort-keys": "^5.0.0",
-    "text-table": "^0.2.0",
-    "@types/node": "^16.18.3"
-  },
   "peerDependencies": {
     "yeoman-environment": "^3.2.0"
   },
@@ -91,5 +89,8 @@
     "yeoman-environment": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": "^14.15.0 || ^16.13.0 || >=18.12.0"
   }
 }

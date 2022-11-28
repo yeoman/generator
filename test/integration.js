@@ -1,6 +1,6 @@
 import fs from 'node:fs';
-import path, {dirname} from 'node:path';
-import {fileURLToPath} from 'node:url';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 import assert from 'yeoman-assert';
 import Environment from 'yeoman-environment';
@@ -18,13 +18,13 @@ describe('Integration', () => {
       .create(
         path.join(__dirname, 'fixtures/generator-defaults/app'),
         {},
-        {createEnv: Environment.createEnv},
+        { createEnv: Environment.createEnv },
       )
       .inTmpDir(() => {
         temporaryDir = process.cwd();
       })
-      .withPrompts({foo: 'fooValue'})
-      .withOptions({extra: 'extraValue'})
+      .withPrompts({ foo: 'fooValue' })
+      .withOptions({ extra: 'extraValue' })
       .run();
     const file = path.join(temporaryDir, 'foo-template.js');
     content = fs.readFileSync(path.resolve(file)).toString();

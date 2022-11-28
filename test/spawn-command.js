@@ -1,4 +1,4 @@
-import {createRequire} from 'node:module';
+import { createRequire } from 'node:module';
 import sinon from 'sinon';
 import esmock from 'esmock';
 
@@ -42,7 +42,7 @@ describe('generators.Base (actions/spawn-command)', () => {
     });
 
     it('pass options', function () {
-      this.spawn.spawnCommand('foo', undefined, {foo: 1});
+      this.spawn.spawnCommand('foo', undefined, { foo: 1 });
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
         cwd,
         foo: 1,
@@ -51,7 +51,7 @@ describe('generators.Base (actions/spawn-command)', () => {
     });
 
     it('allow overriding default options', function () {
-      this.spawn.spawnCommand('foo', undefined, {stdio: 'ignore'});
+      this.spawn.spawnCommand('foo', undefined, { stdio: 'ignore' });
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
         cwd,
         stdio: 'ignore',
@@ -77,7 +77,7 @@ describe('generators.Base (actions/spawn-command)', () => {
     });
 
     it('pass options', function () {
-      this.spawn.spawnCommandSync('foo', undefined, {foo: 1});
+      this.spawn.spawnCommandSync('foo', undefined, { foo: 1 });
       sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
         foo: 1,
@@ -86,7 +86,7 @@ describe('generators.Base (actions/spawn-command)', () => {
     });
 
     it('allow overriding default options', function () {
-      this.spawn.spawnCommandSync('foo', undefined, {stdio: 'wut'});
+      this.spawn.spawnCommandSync('foo', undefined, { stdio: 'wut' });
       sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
         stdio: 'wut',

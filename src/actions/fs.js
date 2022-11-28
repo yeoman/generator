@@ -6,7 +6,7 @@ const renderEachTemplate = (template, templateData, context, callback) => {
     return;
   }
 
-  const {source, destination, templateOptions, copyOptions} = template;
+  const { source, destination, templateOptions, copyOptions } = template;
   return callback(
     source,
     destination,
@@ -16,7 +16,7 @@ const renderEachTemplate = (template, templateData, context, callback) => {
   );
 };
 
-const fsMixin = (Parent) =>
+const fsMixin = Parent =>
   class FsMixin extends Parent {
     /**
      * Read file from templates folder.
@@ -201,7 +201,7 @@ const fsMixin = (Parent) =>
         templateData = this._templateData(templateData);
       }
 
-      templateOptions = {context: this, ...templateOptions};
+      templateOptions = { context: this, ...templateOptions };
 
       source = Array.isArray(source) ? source : [source];
       const templatePath = this.templatePath(...source);
@@ -238,7 +238,7 @@ const fsMixin = (Parent) =>
         templateData = this._templateData(templateData);
       }
 
-      templateOptions = {context: this, ...templateOptions};
+      templateOptions = { context: this, ...templateOptions };
 
       source = Array.isArray(source) ? source : [source];
       const templatePath = this.templatePath(...source);
@@ -298,7 +298,7 @@ const fsMixin = (Parent) =>
       }
 
       return Promise.all(
-        templates.map((template) =>
+        templates.map(template =>
           renderEachTemplate(template, templateData, this, (...args) =>
             this.renderTemplateAsync(...args),
           ),

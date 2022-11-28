@@ -4,7 +4,7 @@ import assert from 'yeoman-assert';
 import chalk from 'chalk';
 import _ from 'lodash';
 
-import {TestAdapter} from 'yeoman-test/lib/adapter.js';
+import { TestAdapter } from 'yeoman-test/lib/adapter.js';
 import Base from '../src/generator.js';
 import installAction from '../src/actions/install.js';
 
@@ -144,7 +144,7 @@ describe('Base (actions/install mixin)', () => {
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
-        this.dummy.on('error', (error) => {
+        this.dummy.on('error', error => {
           sinon.assert.calledOnce(this.spawnCommandStub);
           assert(error instanceof Error);
           assert.equal(error.message, 'Installation of npm failed with code 1');
@@ -165,7 +165,7 @@ describe('Base (actions/install mixin)', () => {
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
-        this.dummy.on('error', (error) => {
+        this.dummy.on('error', error => {
           sinon.assert.calledOnce(this.spawnCommandStub);
           assert(error instanceof Error);
           assert.equal(
@@ -189,7 +189,7 @@ describe('Base (actions/install mixin)', () => {
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
-        this.dummy.on('error', (error) => {
+        this.dummy.on('error', error => {
           sinon.assert.calledOnce(this.spawnCommandStub);
           assert(error instanceof Error);
           assert.equal(error.message, 'Process not found');
@@ -223,7 +223,7 @@ describe('Base (actions/install mixin)', () => {
       });
 
       it('logs the skipped install command', function (done) {
-        this.dummy.scheduleInstallTask('npm', ['some-package'], {save: true});
+        this.dummy.scheduleInstallTask('npm', ['some-package'], { save: true });
         this.dummy.run().then(() => {
           sinon.assert.calledWith(
             this.dummy.log.invoke,
@@ -259,7 +259,7 @@ describe('Base (actions/install mixin)', () => {
     });
 
     it('spawn a bower process with formatted options', function (done) {
-      this.dummy.bowerInstall('jquery', {saveDev: true});
+      this.dummy.bowerInstall('jquery', { saveDev: true });
       this.dummy.run().then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
@@ -290,7 +290,7 @@ describe('Base (actions/install mixin)', () => {
     });
 
     it('run with options', function (done) {
-      this.dummy.npmInstall('yo', {save: true});
+      this.dummy.npmInstall('yo', { save: true });
       this.dummy.run().then(() => {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
@@ -303,8 +303,8 @@ describe('Base (actions/install mixin)', () => {
     });
 
     it('spawn separate install processes if spawnOptions differs', function (done) {
-      this.dummy.npmInstall(null, null, {cwd: 'path1'});
-      this.dummy.npmInstall(null, null, {cwd: 'path2'});
+      this.dummy.npmInstall(null, null, { cwd: 'path1' });
+      this.dummy.npmInstall(null, null, { cwd: 'path2' });
       this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         done();
@@ -329,7 +329,7 @@ describe('Base (actions/install mixin)', () => {
     });
 
     it('run with options', function (done) {
-      this.dummy.yarnInstall('yo', {dev: true});
+      this.dummy.yarnInstall('yo', { dev: true });
       this.dummy.run().then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
@@ -343,8 +343,8 @@ describe('Base (actions/install mixin)', () => {
     });
 
     it('spawn separate install processes if spawnOptions differs', function (done) {
-      this.dummy.yarnInstall(null, null, {cwd: 'path1'});
-      this.dummy.yarnInstall(null, null, {cwd: 'path2'});
+      this.dummy.yarnInstall(null, null, { cwd: 'path1' });
+      this.dummy.yarnInstall(null, null, { cwd: 'path2' });
       this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         done();
@@ -354,7 +354,7 @@ describe('Base (actions/install mixin)', () => {
 
   describe('#installDependencies()', () => {
     it('spawn npm and bower', function (done) {
-      this.dummy.installDependencies({bower: true});
+      this.dummy.installDependencies({ bower: true });
       this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
@@ -374,7 +374,7 @@ describe('Base (actions/install mixin)', () => {
     });
 
     it('spawn yarn', function (done) {
-      this.dummy.installDependencies({yarn: true, npm: false, bower: true});
+      this.dummy.installDependencies({ yarn: true, npm: false, bower: true });
       this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
         sinon.assert.calledWithExactly(
@@ -395,8 +395,8 @@ describe('Base (actions/install mixin)', () => {
 
     it('spawn yarn and bower with options', function (done) {
       this.dummy.installDependencies({
-        yarn: {force: true},
-        bower: {depth: 0},
+        yarn: { force: true },
+        bower: { depth: 0 },
         npm: false,
       });
       this.dummy.run().then(() => {

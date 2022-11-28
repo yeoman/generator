@@ -1,10 +1,10 @@
-import fs, {mkdirSync, rmSync} from 'node:fs';
+import fs, { mkdirSync, rmSync } from 'node:fs';
 import os from 'node:os';
-import path, {dirname} from 'node:path';
-import {fileURLToPath, pathToFileURL} from 'node:url';
-import {createRequire} from 'node:module';
+import path, { dirname } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { createRequire } from 'node:module';
 import process from 'node:process';
-import {Buffer} from 'node:buffer';
+import { Buffer } from 'node:buffer';
 import _ from 'lodash';
 import sinon from 'sinon';
 import through from 'through2';
@@ -12,7 +12,7 @@ import yeoman from 'yeoman-environment';
 
 import assert from 'yeoman-assert';
 import helpers from 'yeoman-test';
-import {TestAdapter} from 'yeoman-test/lib/adapter.js';
+import { TestAdapter } from 'yeoman-test/lib/adapter.js';
 import Base from '../src/generator.js';
 
 const require = createRequire(import.meta.url);
@@ -27,11 +27,15 @@ describe('Base', () => {
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    this.env = yeoman.createEnv([], {'skip-install': true}, new TestAdapter());
+    this.env = yeoman.createEnv(
+      [],
+      { 'skip-install': true },
+      new TestAdapter(),
+    );
     // Ignore error forwarded to environment
-    this.env.on('error', (_) => {});
+    this.env.on('error', _ => {});
 
-    mkdirSync(resolveddir, {recursive: true});
+    mkdirSync(resolveddir, { recursive: true });
     this.Dummy = class extends Base {};
     this.Dummy.prototype.exec = sinon.spy();
 
@@ -112,10 +116,10 @@ describe('Base', () => {
       const runResult = await helpers
         .create(
           path.join(__dirname, './fixtures/options-generator'),
-          {namespace: 'options-generator'},
-          {createEnv: yeoman.createEnv},
+          { namespace: 'options-generator' },
+          { createEnv: yeoman.createEnv },
         )
-        .withOptions({testOption: false})
+        .withOptions({ testOption: false })
         .run();
 
       assert.equal(runResult.env.rootGenerator().options.testOption, false);
@@ -178,8 +182,8 @@ describe('Base', () => {
     });
 
     afterEach(() => {
-      rmSync('bower.json', {force: true});
-      rmSync('package.json', {force: true});
+      rmSync('bower.json', { force: true });
+      rmSync('package.json', { force: true });
     });
 
     it('returns appname from bower.json', function () {
@@ -274,7 +278,7 @@ describe('Base', () => {
         throw error;
       };
 
-      this.testGen.env.on('error', (error_) => {
+      this.testGen.env.on('error', error_ => {
         assert.equal(error_, error);
         done();
       });
@@ -293,7 +297,7 @@ describe('Base', () => {
       this.TestGenerator.prototype.afterError = spy;
 
       this.testGen.on('error', sinon.spy());
-      return this.testGen.run().catch((error_) => {
+      return this.testGen.run().catch(error_ => {
         assert.equal(error_, error);
       });
     });
@@ -303,7 +307,7 @@ describe('Base', () => {
       const spy2 = sinon.spy();
 
       this.TestGenerator.prototype.first = () => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           setTimeout(() => {
             spy1();
             resolve();
@@ -327,7 +331,7 @@ describe('Base', () => {
         });
       };
 
-      this.testGen.env.on('error', (error) => {
+      this.testGen.env.on('error', error => {
         assert.equal(error.message, 'some error');
         done();
       });
@@ -342,7 +346,7 @@ describe('Base', () => {
         env: this.env,
       });
 
-      return gen.run().catch((error) => {
+      return gen.run().catch(error => {
         assert(error.toString().includes('This Generator is empty'));
       });
     });
@@ -426,7 +430,7 @@ describe('Base', () => {
     });
 
     it('allow skipping file writes to disk', function () {
-      const action = {action: 'skip'};
+      const action = { action: 'skip' };
       const filepath = path.join(__dirname, '/fixtures/conflict.js');
       assert(fs.existsSync(filepath));
 
@@ -436,7 +440,7 @@ describe('Base', () => {
 
       const env = yeoman.createEnv(
         [],
-        {'skip-install': true},
+        { 'skip-install': true },
         new TestAdapter(action),
       );
       const testGen = new this.TestGenerator([], {
@@ -479,7 +483,7 @@ describe('Base', () => {
       this.TestGenerator.prototype.cancel = function () {
         spy1();
         if (!this.startedOver) {
-          this.startOver({startedOver: true});
+          this.startOver({ startedOver: true });
           this.startedOver = true;
         }
       };
@@ -536,7 +540,7 @@ describe('Base', () => {
           env: this.env,
           'skip-install': true,
         },
-        {taskPrefix: '#'},
+        { taskPrefix: '#' },
       );
     });
 
@@ -572,7 +576,7 @@ describe('Base', () => {
         constructor(args, options) {
           super(args, options);
 
-          this.argument('bar', {default: 'baz'});
+          this.argument('bar', { default: 'baz' });
         }
       };
 
@@ -589,7 +593,7 @@ describe('Base', () => {
         constructor(args, options) {
           super(args, options);
 
-          this.argument('bar', {default: 'baz'});
+          this.argument('bar', { default: 'baz' });
         }
       };
 
@@ -606,7 +610,7 @@ describe('Base', () => {
         constructor(args, options) {
           super(args, options);
 
-          this.argument('bar', {default: 'baz'});
+          this.argument('bar', { default: 'baz' });
         }
       };
 
@@ -620,7 +624,7 @@ describe('Base', () => {
     });
 
     it('slice positional arguments when config.type is Array', function () {
-      this.dummy.argument('bar', {type: Array});
+      this.dummy.argument('bar', { type: Array });
       assert.deepEqual(this.dummy.options.bar, ['bar', 'baz', 'bom']);
     });
 
@@ -631,7 +635,7 @@ describe('Base', () => {
       });
 
       try {
-        dummy.argument('foo', {required: true});
+        dummy.argument('foo', { required: true });
       } catch (error) {
         assert(error.message.startsWith('Did not provide required argument '));
         done();
@@ -646,7 +650,9 @@ describe('Base', () => {
       });
 
       assert.equal(dummy._arguments.length, 0);
-      assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', {required: true}));
+      assert.doesNotThrow(
+        dummy.argument.bind(dummy, 'foo', { required: true }),
+      );
       assert.equal(dummy._arguments.length, 1);
     });
 
@@ -657,7 +663,7 @@ describe('Base', () => {
       });
 
       dummy.argument('baz');
-      dummy.option('foo', {type: String});
+      dummy.option('foo', { type: String });
 
       assert.equal(dummy.options.baz, 'baz');
     });
@@ -706,7 +712,7 @@ describe('Base', () => {
         constructor(args, options) {
           super(args, options);
 
-          this.option('undef', {type: Boolean});
+          this.option('undef', { type: Boolean });
         }
       };
 
@@ -917,7 +923,7 @@ describe('Base', () => {
             gen.composeWith({
               path: 'foo-path',
             }),
-          (error) => error.message.includes('Missing Generator property'),
+          error => error.message.includes('Missing Generator property'),
         );
       });
 
@@ -928,7 +934,7 @@ describe('Base', () => {
             gen.composeWith({
               Generator: this.GenCompose,
             }),
-          (error) => error.message.includes('path property is not a string'),
+          error => error.message.includes('path property is not a string'),
         );
       });
     });
@@ -1132,7 +1138,7 @@ describe('Base', () => {
     });
 
     afterEach(function () {
-      rmSync(this.filepath, {force: true});
+      rmSync(this.filepath, { force: true });
     });
 
     it('add the transform stream to the commit stream', function () {
@@ -1229,7 +1235,7 @@ describe('Base', () => {
       angular.run();
     });
 
-    it('only call the end event once (bug #402)', (done) => {
+    it('only call the end event once (bug #402)', done => {
       class GeneratorOnce extends Base {
         constructor(args, options) {
           super(args, options);
@@ -1269,7 +1275,7 @@ describe('Base', () => {
       generatorOnce.run();
     });
 
-    it('triggers end event after all generators methods are ran (#709)', (done) => {
+    it('triggers end event after all generators methods are ran (#709)', done => {
       const endSpy = sinon.spy();
       const GeneratorEnd = class extends Base {
         constructor(args, options) {
@@ -1297,7 +1303,7 @@ describe('Base', () => {
 
   describe('#rootGeneratorName', () => {
     afterEach(() => {
-      rmSync(path.join(resolveddir, 'package.json'), {force: true});
+      rmSync(path.join(resolveddir, 'package.json'), { force: true });
     });
 
     it('returns the default name', function () {
@@ -1315,7 +1321,7 @@ describe('Base', () => {
 
   describe('#rootGeneratorVersion', () => {
     afterEach(() => {
-      rmSync(path.join(resolveddir, 'package.json'), {force: true});
+      rmSync(path.join(resolveddir, 'package.json'), { force: true });
     });
 
     it('returns the default version', function () {
@@ -1400,7 +1406,7 @@ describe('Base', () => {
     it('queued method with function, methodName and reject', function () {
       const env = yeoman.createEnv(
         [],
-        {'skip-install': true},
+        { 'skip-install': true },
         new TestAdapter(),
       );
       const gen = new this.Generator({
@@ -1421,7 +1427,7 @@ describe('Base', () => {
     it('queued method with object, queueName and reject', function () {
       const env = yeoman.createEnv(
         [],
-        {'skip-install': true},
+        { 'skip-install': true },
         new TestAdapter(),
       );
       const gen = new this.Generator({
@@ -1467,7 +1473,7 @@ describe('Base', () => {
     it('queued method with function and options', function (done) {
       const env = yeoman.createEnv(
         [],
-        {'skip-install': true},
+        { 'skip-install': true },
         new TestAdapter(),
       );
       const gen = new this.Generator({
@@ -1599,7 +1605,7 @@ describe('Base', () => {
               priorityName: 'configuring',
               queueName: 'configuring',
             },
-            default: {priorityName: 'default', queueName: 'default'},
+            default: { priorityName: 'default', queueName: 'default' },
             prePrompting1: {
               priorityName: 'prePrompting1',
               queueName: 'dummy#prePrompting1',
@@ -1610,12 +1616,12 @@ describe('Base', () => {
               queueName: 'dummy#prompting',
               before: 'writing',
             },
-            writing: {priorityName: 'writing', queueName: 'writing'},
-            transform: {priorityName: 'transform', queueName: 'transform'},
-            conflicts: {priorityName: 'conflicts', queueName: 'conflicts'},
-            install: {priorityName: 'install', queueName: 'install'},
-            end: {priorityName: 'end', queueName: 'end'},
-            afterEnd: {priorityName: 'afterEnd', queueName: 'dummy#afterEnd'},
+            writing: { priorityName: 'writing', queueName: 'writing' },
+            transform: { priorityName: 'transform', queueName: 'transform' },
+            conflicts: { priorityName: 'conflicts', queueName: 'conflicts' },
+            install: { priorityName: 'install', queueName: 'install' },
+            end: { priorityName: 'end', queueName: 'end' },
+            afterEnd: { priorityName: 'afterEnd', queueName: 'dummy#afterEnd' },
           });
           assert.deepStrictEqual(this.env.runLoop.queueNames, [
             'environment:run',
@@ -1695,19 +1701,19 @@ describe('Base', () => {
 
       _.extend(this.TestGenerator.prototype, {
         get preConfiguring1() {
-          return {commonPreConfiguring};
+          return { commonPreConfiguring };
         },
       });
 
       this.TestGenerator2 = class extends this.TestGenerator {
         get preConfiguring1() {
-          return {...super.preConfiguring1, customPreConfiguring1};
+          return { ...super.preConfiguring1, customPreConfiguring1 };
         }
       };
 
       this.TestGenerator3 = class extends this.TestGenerator {
         get preConfiguring1() {
-          return {...super.preConfiguring1, customPreConfiguring2};
+          return { ...super.preConfiguring1, customPreConfiguring2 };
         }
       };
 
@@ -1765,8 +1771,8 @@ describe('Base', () => {
 
   describe('#prompt', () => {
     let promptSpy;
-    const input1Prompt = {type: 'input', name: 'prompt1'};
-    const input2Prompt = {type: 'input', name: 'prompt2'};
+    const input1Prompt = { type: 'input', name: 'prompt1' };
+    const input2Prompt = { type: 'input', name: 'prompt2' };
     beforeEach(function () {
       this.dummy.env.adapter = new TestAdapter({
         prompt1: 'prompt1NewValue',
@@ -1783,8 +1789,8 @@ describe('Base', () => {
     });
 
     it('passes config value as answer to adapter', function () {
-      const expectedAnswers = {prompt1: 'prompt1Value'};
-      return this.dummy.prompt(input1Prompt, this.dummy.config).then((_) => {
+      const expectedAnswers = { prompt1: 'prompt1Value' };
+      return this.dummy.prompt(input1Prompt, this.dummy.config).then(_ => {
         assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
       });
     });
@@ -1796,7 +1802,7 @@ describe('Base', () => {
       };
       return this.dummy
         .prompt([input1Prompt, input2Prompt], this.dummy.config)
-        .then((_) => {
+        .then(_ => {
           assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
         });
     });
@@ -1804,7 +1810,7 @@ describe('Base', () => {
     it('passes config values as the question default', function () {
       return this.dummy
         .prompt([input1Prompt, input2Prompt], this.dummy.config)
-        .then((_) => {
+        .then(_ => {
           const [prompts, answers] = promptSpy.getCall(0).args;
           assert.deepEqual(prompts[0].default(answers), 'prompt1Value');
           assert.deepEqual(prompts[1].default(answers), 'prompt2Value');
@@ -1814,7 +1820,7 @@ describe('Base', () => {
     it('saves answers to config', function () {
       return this.dummy
         .prompt([input1Prompt, input2Prompt], this.dummy.config)
-        .then((answers) => {
+        .then(answers => {
           assert.equal(answers.prompt1, 'prompt1NewValue');
           assert.equal(answers.prompt2, 'prompt2NewValue');
           assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
@@ -1824,8 +1830,8 @@ describe('Base', () => {
 
     it('saves answers to config when specified as a property name', function () {
       return this.dummy
-        .prompt([{...input1Prompt, storage: 'config'}, input2Prompt])
-        .then((answers) => {
+        .prompt([{ ...input1Prompt, storage: 'config' }, input2Prompt])
+        .then(answers => {
           assert.equal(answers.prompt1, 'prompt1NewValue');
           assert.equal(answers.prompt2, 'prompt2NewValue');
           assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
@@ -1835,8 +1841,8 @@ describe('Base', () => {
 
     it('saves answers to specific storage', function () {
       return this.dummy
-        .prompt([{...input1Prompt, storage: this.dummy.config}, input2Prompt])
-        .then((answers) => {
+        .prompt([{ ...input1Prompt, storage: this.dummy.config }, input2Prompt])
+        .then(answers => {
           assert.equal(answers.prompt1, 'prompt1NewValue');
           assert.equal(answers.prompt2, 'prompt2NewValue');
           assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
@@ -1845,7 +1851,7 @@ describe('Base', () => {
     });
 
     it('passes correct askAnswered option to adapter', function () {
-      return this.dummy.prompt([input1Prompt], this.dummy.config).then((_) => {
+      return this.dummy.prompt([input1Prompt], this.dummy.config).then(_ => {
         assert.deepEqual(promptSpy.getCall(0).args[0][0].askAnswered, true);
       });
     });
@@ -1855,8 +1861,8 @@ describe('Base', () => {
     it('should return namespace as uniqueBy when unique is true', function () {
       const gen = new Base(
         [],
-        {namespace: 'foo', env: this.env},
-        {unique: true},
+        { namespace: 'foo', env: this.env },
+        { unique: true },
       );
       assert.equal(gen.getFeatures().uniqueBy, 'foo');
     });
@@ -1935,7 +1941,7 @@ describe('Base', () => {
           namespace: 'foo',
           env: this.env,
         },
-        {tasksMatchingPriority: true},
+        { tasksMatchingPriority: true },
       );
       assert.deepStrictEqual(gen.getTaskNames(), ['default', 'customPriority']);
     });

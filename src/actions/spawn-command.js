@@ -1,6 +1,6 @@
-import {execa, execaSync} from 'execa';
+import { execa, execaSync } from 'execa';
 
-const spawnCommandMixin = (Parent) =>
+const spawnCommandMixin = Parent =>
   class SpawnCommandMixin extends Parent {
     /**
      * Normalize a command across OS and spawn it (asynchronously).

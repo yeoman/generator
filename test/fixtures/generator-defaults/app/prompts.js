@@ -4,6 +4,6 @@ export default [
     type: 'input',
     message: 'Test foo value',
     default: 'bar',
-    exportOption: true
-  }
+    exportOption: true,
+  },
 ];

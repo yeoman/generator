@@ -1,9 +1,9 @@
 {
-  "author": "",
   "name": "options-generator",
   "version": "0.0.0",
-  "main": "main.js",
+  "author": "",
   "type": "module",
+  "main": "main.js",
   "dependencies": {},
   "devDependencies": {},
   "optionalDependencies": {},

@@ -1,12 +1,8 @@
 {
   "space": true,
   "envs": ["es2020", "node", "mocha"],
-  "prettier": {
-    "printWidth": 120
-  },
-  "ignores": [
- 		"test/fixtures"
- 	],
+  "prettier": true,
+  "ignores": ["test/fixtures"],
   "rules": {
     "no-await-in-loop": "off",
     "prefer-rest-params": "off",
@@ -25,4 +21,3 @@
     }
   ]
 }
-

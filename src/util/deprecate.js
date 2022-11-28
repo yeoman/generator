@@ -8,7 +8,7 @@ const deprecate = (message, fn) => {
   };
 };
 
-deprecate.log = (message) => {
+deprecate.log = message => {
   console.log(chalk.yellow('(!) ') + message);
 };
 
@@ -24,7 +24,7 @@ deprecate.object = (message, object) => {
       continue;
     }
 
-    mirror[name] = deprecate(messageTpl({name}), func);
+    mirror[name] = deprecate(messageTpl({ name }), func);
   }
 
   return mirror;

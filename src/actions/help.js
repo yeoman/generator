@@ -13,7 +13,7 @@ function formatArg(config) {
   return arg;
 }
 
-const helpMixin = (Parent) =>
+const helpMixin = Parent =>
   class HelpMixin extends Parent {
     /**
      * Tries to get the description from a USAGE file one folder above the
@@ -86,7 +86,7 @@ const helpMixin = (Parent) =>
      * @returns {String} Text of options in formatted table
      */
     argumentsHelp() {
-      const rows = this._arguments.map((config) => {
+      const rows = this._arguments.map(config => {
         return [
           '',
           config.name ?? '',
@@ -104,9 +104,9 @@ const helpMixin = (Parent) =>
      * @returns {String} Text of options in formatted table
      */
     optionsHelp() {
-      const options = _.reject(this._options, (x) => x.hide);
+      const options = _.reject(this._options, x => x.hide);
 
-      const rows = options.map((opt) => {
+      const rows = options.map(opt => {
         return [
           '',
           opt.alias ? `-${opt.alias}, ` : '',
