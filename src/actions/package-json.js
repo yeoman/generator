@@ -5,6 +5,33 @@ const packageJsonMixin = (cls) =>
    */
   class extends cls {
     /**
+     * Package.json Storage resolved to `this.destinationPath('package.json')`.
+     *
+     * Environment watches for package.json changes at `this.env.cwd`, and triggers an package manager install if it has been committed to disk.
+     * If package.json is at a different folder, like a changed generator root, propagate it to the Environment like `this.env.cwd = this.destinationPath()`.
+     *
+     * @example
+     * this.packageJson.merge({
+     *   scripts: {
+     *     start: 'webpack --serve',
+     *   },
+     *   dependencies: {
+     *     ...
+     *   },
+     *   peerDependencies: {
+     *     ...
+     *   },
+     * });
+     */
+    get packageJson() {
+      if (!this._packageJson) {
+        this._packageJson = this.createStorage('package.json');
+      }
+
+      return this._packageJson;
+    }
+
+    /**
      * @private
      * Resolve the dependencies to be added to the package.json.
      *
