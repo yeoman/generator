@@ -80,7 +80,7 @@
     "xo": "^0.53.1",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^3.12.1",
-    "yeoman-test": "^6.0.0"
+    "yeoman-test": "github:yeoman/yeoman-test#main"
   },
   "peerDependencies": {
     "yeoman-environment": "^3.2.0"

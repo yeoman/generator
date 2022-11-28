@@ -11,8 +11,7 @@ import through from 'through2';
 import yeoman from 'yeoman-environment';
 
 import assert from 'yeoman-assert';
-import helpers from 'yeoman-test';
-import { TestAdapter } from 'yeoman-test/lib/adapter.js';
+import helpers, { TestAdapter } from 'yeoman-test';
 import Base from '../src/generator.js';
 
 const require = createRequire(import.meta.url);

@@ -4,7 +4,7 @@ import assert from 'yeoman-assert';
 import chalk from 'chalk';
 import _ from 'lodash';
 
-import { TestAdapter } from 'yeoman-test/lib/adapter.js';
+import { TestAdapter } from 'yeoman-test';
 import Base from '../src/generator.js';
 import installAction from '../src/actions/install.js';
 

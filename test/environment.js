@@ -3,8 +3,7 @@ import path from 'node:path';
 import assert from 'node:assert';
 import sinon from 'sinon';
 import Environment from 'yeoman-environment';
-import helpers from 'yeoman-test';
-import { TestAdapter } from 'yeoman-test/lib/adapter.js';
+import helpers, { TestAdapter } from 'yeoman-test';
 
 import Base from '../src/generator.js';
 
