@@ -1,8 +1,7 @@
-'use strict';
-const assert = require('assert');
-const chalk = require('chalk');
-const sinon = require('sinon');
-const deprecate = require('../lib/util/deprecate');
+import assert from 'node:assert';
+import chalk from 'chalk';
+import sinon from 'sinon';
+import deprecate from '../lib/util/deprecate.js';
 
 describe('deprecate()', () => {
   beforeEach(() => {
@@ -26,7 +25,7 @@ describe('deprecate()', () => {
     it('wrap an object and log a message', () => {
       const dummy = {
         foo: 1,
-        func: sinon.spy()
+        func: sinon.spy(),
       };
       const wrapped = deprecate.object('<%= name %> is deprecated', dummy);
 
@@ -38,7 +37,7 @@ describe('deprecate()', () => {
       sinon.assert.calledWith(dummy.func, 2);
       sinon.assert.calledWith(
         console.log,
-        chalk.yellow('(!) ') + 'func is deprecated'
+        chalk.yellow('(!) ') + 'func is deprecated',
       );
     });
   });
@@ -46,7 +45,7 @@ describe('deprecate()', () => {
   describe('.property()', () => {
     it('wrap a property getter and log a message', () => {
       const dummy = {
-        foo: 1
+        foo: 1,
       };
       deprecate.property('foo is deprecated', dummy, 'foo');
 
@@ -56,7 +55,7 @@ describe('deprecate()', () => {
       // Wrap methods
       sinon.assert.calledWith(
         console.log,
-        chalk.yellow('(!) ') + 'foo is deprecated'
+        chalk.yellow('(!) ') + 'foo is deprecated',
       );
     });
   });

@@ -1,15 +1,20 @@
-'use strict';
-const proxyquire = require('proxyquire');
-const sinon = require('sinon');
+import {createRequire} from 'node:module';
+import sinon from 'sinon';
+import esmock from 'esmock';
+
+const require = createRequire(import.meta.url);
 
 describe('generators.Base (actions/spawn-command)', () => {
   let cwd;
 
-  beforeEach(function () {
+  beforeEach(async function () {
     this.crossSpawn = sinon.spy();
-    this.crossSpawn.sync = sinon.spy();
-    this.spawn = proxyquire('../lib/actions/spawn-command', {
-      execa: this.crossSpawn
+    this.crossSpawnSync = sinon.spy();
+    this.spawn = await esmock(require.resolve('../lib/actions/spawn-command'), {
+      execa: {
+        execa: this.crossSpawn,
+        execaSync: this.crossSpawnSync,
+      },
     });
     cwd = Math.random().toString(36).slice(7);
     this.spawn.destinationRoot = sinon.stub().returns(cwd);
@@ -20,7 +25,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       this.spawn.spawnCommand('foo');
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -28,7 +33,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       this.spawn.spawnCommand('foo', 'bar');
       sinon.assert.calledWith(this.crossSpawn, 'foo', 'bar', {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -37,7 +42,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
         cwd,
         foo: 1,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -45,7 +50,7 @@ describe('generators.Base (actions/spawn-command)', () => {
       this.spawn.spawnCommand('foo', undefined, {stdio: 'ignore'});
       sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
         cwd,
-        stdio: 'ignore'
+        stdio: 'ignore',
       });
     });
   });
@@ -53,34 +58,34 @@ describe('generators.Base (actions/spawn-command)', () => {
   describe('#spawnCommandSync()', () => {
     it('provide default options', function () {
       this.spawn.spawnCommandSync('foo');
-      sinon.assert.calledWith(this.crossSpawn.sync, 'foo', undefined, {
+      sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
     it('pass arguments', function () {
       this.spawn.spawnCommandSync('foo', 'bar');
-      sinon.assert.calledWith(this.crossSpawn.sync, 'foo', 'bar', {
+      sinon.assert.calledWith(this.crossSpawnSync, 'foo', 'bar', {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
     it('pass options', function () {
       this.spawn.spawnCommandSync('foo', undefined, {foo: 1});
-      sinon.assert.calledWith(this.crossSpawn.sync, 'foo', undefined, {
+      sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
         foo: 1,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
     it('allow overriding default options', function () {
       this.spawn.spawnCommandSync('foo', undefined, {stdio: 'wut'});
-      sinon.assert.calledWith(this.crossSpawn.sync, 'foo', undefined, {
+      sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
         cwd,
-        stdio: 'wut'
+        stdio: 'wut',
       });
     });
   });

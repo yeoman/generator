@@ -1,13 +1,12 @@
-'use strict';
-const os = require('os');
-const path = require('path');
-const sinon = require('sinon');
-const Environment = require('yeoman-environment');
-const assert = require('assert');
-const helpers = require('yeoman-test');
-const {TestAdapter} = require('yeoman-test/lib/adapter');
+import os from 'node:os';
+import path from 'node:path';
+import assert from 'node:assert';
+import sinon from 'sinon';
+import Environment from 'yeoman-environment';
+import helpers from 'yeoman-test';
+import {TestAdapter} from 'yeoman-test/lib/adapter.js';
 
-const Base = require('..');
+import Base from '../lib/index.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-generator-environment');
 
@@ -16,11 +15,11 @@ describe('Generator with environment version', () => {
   before(helpers.setUpTestDirectory(tmpdir));
   describe('mocked 3.0.0', () => {
     before(function () {
-      this.timeout(100000);
+      this.timeout(100_000);
       this.env = Environment.createEnv(
         [],
         {'skip-install': true},
-        new TestAdapter()
+        new TestAdapter(),
       );
       this.env.getVersion = this.env.getVersion || (() => {});
       this.getVersionStub = sinon.stub(this.env, 'getVersion');
@@ -32,7 +31,7 @@ describe('Generator with environment version', () => {
         namespace: 'dummy',
         env: this.env,
         'skip-install': true,
-        skipCheckEnv: true
+        skipCheckEnv: true,
       });
     });
 
@@ -88,7 +87,7 @@ describe('Generator with environment version', () => {
         it('should throw', function () {
           assert.throws(
             () => this.dummy.checkEnvironmentVersion('3.0.1'),
-            /requires yeoman-environment at least 3.0.1, current version is 3.0.0/
+            /requires yeoman-environment at least 3.0.1, current version is 3.0.0/,
           );
         });
 
@@ -96,7 +95,7 @@ describe('Generator with environment version', () => {
           it('should return false', function () {
             assert.equal(
               this.dummy.checkEnvironmentVersion('3.0.1', true),
-              false
+              false,
             );
           });
         });
@@ -121,7 +120,7 @@ describe('Generator with environment version', () => {
           this.getVersionStub.withArgs('inquirer').returns('7.1.0');
           assert.equal(
             this.dummy.checkEnvironmentVersion('inquirer', '7.1.0'),
-            true
+            true,
           );
         });
       });
@@ -131,7 +130,7 @@ describe('Generator with environment version', () => {
           this.getVersionStub.withArgs('inquirer').returns('7.1.1');
           assert.equal(
             this.dummy.checkEnvironmentVersion('inquirer', '7.1.0'),
-            true
+            true,
           );
         });
       });
@@ -144,7 +143,7 @@ describe('Generator with environment version', () => {
         it('throws exception', function () {
           assert.throws(
             () => this.dummy.checkEnvironmentVersion('inquirer', '7.1.1'),
-            /requires inquirer at least 7.1.1, current version is 7.1.0/
+            /requires inquirer at least 7.1.1, current version is 7.1.0/,
           );
         });
 
@@ -152,7 +151,7 @@ describe('Generator with environment version', () => {
           it('returns false', function () {
             assert.equal(
               this.dummy.checkEnvironmentVersion('inquirer', '7.1.1', true),
-              false
+              false,
             );
           });
         });
@@ -169,7 +168,7 @@ describe('Generator with environment version', () => {
           it('returns false', function () {
             assert.equal(
               this.dummy.checkEnvironmentVersion('inquirer', '7.1.1'),
-              false
+              false,
             );
           });
         });
@@ -182,7 +181,7 @@ describe('Generator with environment version', () => {
         this.getVersionStub.withArgs('inquirer').returns('7.0.0');
         assert.throws(
           () => this.dummy.prompt([], this.dummy.config),
-          /requires inquirer at least 7.1.0, current version is 7.0.0/
+          /requires inquirer at least 7.1.0, current version is 7.0.0/,
         );
       });
 
@@ -197,11 +196,11 @@ describe('Generator with environment version', () => {
 
   describe('mocked 2.8.1', () => {
     before(function () {
-      this.timeout(100000);
+      this.timeout(100_000);
       this.env = Environment.createEnv(
         [],
         {'skip-install': true},
-        new TestAdapter()
+        new TestAdapter(),
       );
       this.getVersion = Environment.prototype.getVersion;
       delete Environment.prototype.getVersion;
@@ -213,7 +212,7 @@ describe('Generator with environment version', () => {
         namespace: 'dummy',
         env: this.env,
         skipCheckEnv: true,
-        'skip-install': true
+        'skip-install': true,
       });
     });
 
@@ -226,7 +225,7 @@ describe('Generator with environment version', () => {
         it('throws exception', function () {
           assert.throws(
             () => this.dummy.checkEnvironmentVersion(),
-            /requires yeoman-environment at least 2.9.0, current version is less than 2.9.0/
+            /requires yeoman-environment at least 2.9.0, current version is less than 2.9.0/,
           );
         });
       });

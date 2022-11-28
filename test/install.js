@@ -1,13 +1,14 @@
-'use strict';
-const yeoman = require('yeoman-environment');
-const sinon = require('sinon');
-const assert = require('yeoman-assert');
-const {TestAdapter} = require('yeoman-test/lib/adapter');
-const Base = require('..');
-const chalk = require('chalk');
-const _ = require('lodash');
+import yeoman from 'yeoman-environment';
+import sinon from 'sinon';
+import assert from 'yeoman-assert';
+import chalk from 'chalk';
+import _ from 'lodash';
 
-_.extend(Base.prototype, require('../lib/actions/install'));
+import {TestAdapter} from 'yeoman-test/lib/adapter.js';
+import Base from '../lib/index.js';
+import installAction from '../lib/actions/install.js';
+
+_.extend(Base.prototype, installAction);
 
 const asyncStub = {
   on(key, cb) {
@@ -16,11 +17,11 @@ const asyncStub = {
     }
 
     return asyncStub;
-  }
+  },
 };
 
 describe('Base (actions/install mixin)', () => {
-  beforeEach(() => {
+  beforeEach(function () {
     this.env = yeoman.createEnv([], {}, new TestAdapter());
     const Dummy = class extends Base {
       exec() {}
@@ -34,14 +35,14 @@ describe('Base (actions/install mixin)', () => {
   });
 
   describe('#scheduleInstallTask()', () => {
-    it('takes a config object and passes it to the spawned process', (done) => {
+    it('takes a config object and passes it to the spawned process', function (done) {
       const options = {
-        save: true
+        save: true,
       };
       const spawnEnv = {
         env: {
-          PATH: '/path/to/bin'
-        }
+          PATH: '/path/to/bin',
+        },
       };
 
       // Args: installer, paths, options, cb
@@ -49,26 +50,26 @@ describe('Base (actions/install mixin)', () => {
         'nestedScript',
         ['path1', 'path2'],
         options,
-        spawnEnv
+        spawnEnv,
       );
       this.dummy.run().then(() => {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'nestedScript',
           ['install', 'path1', 'path2', '--save'],
-          spawnEnv
+          spawnEnv,
         );
         done();
       });
     });
 
     describe('without --force-install', () => {
-      beforeEach(() => {
+      beforeEach(function () {
         this.dummy = this.env.create('dummy', {});
         this.spawnCommandStub = sinon.stub(this.dummy, 'spawnCommand');
       });
 
-      it('should not fail on bad exit code without forceInstall', (done) => {
+      it('should not fail on bad exit code without forceInstall', function (done) {
         const asyncStub = {
           on(key, cb) {
             if (key === 'exit') {
@@ -76,7 +77,7 @@ describe('Base (actions/install mixin)', () => {
             }
 
             return asyncStub;
-          }
+          },
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
@@ -86,7 +87,7 @@ describe('Base (actions/install mixin)', () => {
         });
       });
 
-      it('should not fail on exit signal without forceInstall', (done) => {
+      it('should not fail on exit signal without forceInstall', function (done) {
         const asyncStub = {
           on(key, cb) {
             if (key === 'exit') {
@@ -94,7 +95,7 @@ describe('Base (actions/install mixin)', () => {
             }
 
             return asyncStub;
-          }
+          },
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
@@ -104,7 +105,7 @@ describe('Base (actions/install mixin)', () => {
         });
       });
 
-      it('should not fail on error without forceInstall', (done) => {
+      it('should not fail on error without forceInstall', function (done) {
         const asyncStub = {
           on(key, cb) {
             if (key === 'error') {
@@ -112,7 +113,7 @@ describe('Base (actions/install mixin)', () => {
             }
 
             return asyncStub;
-          }
+          },
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
@@ -124,14 +125,14 @@ describe('Base (actions/install mixin)', () => {
     });
 
     describe('with --force-install', () => {
-      beforeEach(() => {
+      beforeEach(function () {
         this.dummy = this.env.create('dummy', {
-          args: ['--force-install']
+          args: ['--force-install'],
         });
         this.spawnCommandStub = sinon.stub(this.dummy, 'spawnCommand');
       });
 
-      it('fails on bad exit code with forceInstall', (done) => {
+      it('fails on bad exit code with forceInstall', function (done) {
         const asyncStub = {
           on(key, cb) {
             if (key === 'exit') {
@@ -139,7 +140,7 @@ describe('Base (actions/install mixin)', () => {
             }
 
             return asyncStub;
-          }
+          },
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
@@ -152,7 +153,7 @@ describe('Base (actions/install mixin)', () => {
         this.dummy.run();
       });
 
-      it('fails on exit signal with forceInstall', (done) => {
+      it('fails on exit signal with forceInstall', function (done) {
         const asyncStub = {
           on(key, cb) {
             if (key === 'exit') {
@@ -160,7 +161,7 @@ describe('Base (actions/install mixin)', () => {
             }
 
             return asyncStub;
-          }
+          },
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
@@ -169,14 +170,14 @@ describe('Base (actions/install mixin)', () => {
           assert(error instanceof Error);
           assert.equal(
             error.message,
-            'Installation of npm failed with code SIGKILL'
+            'Installation of npm failed with code SIGKILL',
           );
           done();
         });
         this.dummy.run();
       });
 
-      it('fails on error with forceInstall', (done) => {
+      it('fails on error with forceInstall', function (done) {
         const asyncStub = {
           on(key, cb) {
             if (key === 'error') {
@@ -184,7 +185,7 @@ describe('Base (actions/install mixin)', () => {
             }
 
             return asyncStub;
-          }
+          },
         };
         this.spawnCommandStub.returns(asyncStub);
         this.dummy.scheduleInstallTask('npm', ['install']);
@@ -199,13 +200,13 @@ describe('Base (actions/install mixin)', () => {
     });
 
     describe('with --skip-install', () => {
-      beforeEach(() => {
+      beforeEach(function () {
         this.dummy = this.env.create('dummy', {
-          args: ['--skip-install']
+          args: ['--skip-install'],
         });
       });
 
-      it('does not spawn anything with skipInstall', (done) => {
+      it('does not spawn anything with skipInstall', function (done) {
         this.dummy.scheduleInstallTask('npm', ['install']);
         this.dummy.run().then(() => {
           sinon.assert.notCalled(this.spawnCommandStub);
@@ -213,7 +214,7 @@ describe('Base (actions/install mixin)', () => {
         });
       });
 
-      it('does not spawn anything with skipInstall', (done) => {
+      it('does not spawn anything with skipInstall', function (done) {
         this.dummy.scheduleInstallTask('yarn', ['install']);
         this.dummy.run().then(() => {
           sinon.assert.notCalled(this.spawnCommandStub);
@@ -221,7 +222,7 @@ describe('Base (actions/install mixin)', () => {
         });
       });
 
-      it('logs the skipped install command', (done) => {
+      it('logs the skipped install command', function (done) {
         this.dummy.scheduleInstallTask('npm', ['some-package'], {save: true});
         this.dummy.run().then(() => {
           sinon.assert.calledWith(
@@ -231,9 +232,9 @@ describe('Base (actions/install mixin)', () => {
             [
               'Skipping install command: ' +
                 chalk.yellow(
-                  'npm install some-package --save --cache-min 86400'
-                )
-            ]
+                  'npm install some-package --save --cache-min 86400',
+                ),
+            ],
           );
           done();
         });
@@ -242,7 +243,7 @@ describe('Base (actions/install mixin)', () => {
   });
 
   describe('#bowerInstall()', () => {
-    it('spawn a bower process once per commands', (done) => {
+    it('spawn a bower process once per commands', function (done) {
       this.dummy.bowerInstall();
       this.dummy.bowerInstall();
       this.dummy.run().then(() => {
@@ -251,13 +252,13 @@ describe('Base (actions/install mixin)', () => {
           this.spawnCommandStub,
           'bower',
           ['install'],
-          {}
+          {},
         );
         done();
       });
     });
 
-    it('spawn a bower process with formatted options', (done) => {
+    it('spawn a bower process with formatted options', function (done) {
       this.dummy.bowerInstall('jquery', {saveDev: true});
       this.dummy.run().then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
@@ -265,7 +266,7 @@ describe('Base (actions/install mixin)', () => {
           this.spawnCommandStub,
           'bower',
           ['install', 'jquery', '--save-dev'],
-          {}
+          {},
         );
         done();
       });
@@ -273,7 +274,7 @@ describe('Base (actions/install mixin)', () => {
   });
 
   describe('#npmInstall()', () => {
-    it('spawn an install process once per commands', (done) => {
+    it('spawn an install process once per commands', function (done) {
       this.dummy.npmInstall();
       this.dummy.npmInstall();
       this.dummy.run().then(() => {
@@ -281,27 +282,27 @@ describe('Base (actions/install mixin)', () => {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'npm',
-          ['install', '--cache-min', 86400],
-          {}
+          ['install', '--cache-min', 86_400],
+          {},
         );
         done();
       });
     });
 
-    it('run with options', (done) => {
+    it('run with options', function (done) {
       this.dummy.npmInstall('yo', {save: true});
       this.dummy.run().then(() => {
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'npm',
-          ['install', 'yo', '--save', '--cache-min', 86400],
-          {}
+          ['install', 'yo', '--save', '--cache-min', 86_400],
+          {},
         );
         done();
       });
     });
 
-    it('spawn separate install processes if spawnOptions differs', (done) => {
+    it('spawn separate install processes if spawnOptions differs', function (done) {
       this.dummy.npmInstall(null, null, {cwd: 'path1'});
       this.dummy.npmInstall(null, null, {cwd: 'path2'});
       this.dummy.run().then(() => {
@@ -312,7 +313,7 @@ describe('Base (actions/install mixin)', () => {
   });
 
   describe('#yarnInstall()', () => {
-    it('spawn an install process once per commands', (done) => {
+    it('spawn an install process once per commands', function (done) {
       this.dummy.yarnInstall();
       this.dummy.yarnInstall();
       this.dummy.run().then(() => {
@@ -321,13 +322,13 @@ describe('Base (actions/install mixin)', () => {
           this.spawnCommandStub,
           'yarn',
           ['install'],
-          {}
+          {},
         );
         done();
       });
     });
 
-    it('run with options', (done) => {
+    it('run with options', function (done) {
       this.dummy.yarnInstall('yo', {dev: true});
       this.dummy.run().then(() => {
         sinon.assert.calledOnce(this.spawnCommandStub);
@@ -335,13 +336,13 @@ describe('Base (actions/install mixin)', () => {
           this.spawnCommandStub,
           'yarn',
           ['add', 'yo', '--dev'],
-          {}
+          {},
         );
         done();
       });
     });
 
-    it('spawn separate install processes if spawnOptions differs', (done) => {
+    it('spawn separate install processes if spawnOptions differs', function (done) {
       this.dummy.yarnInstall(null, null, {cwd: 'path1'});
       this.dummy.yarnInstall(null, null, {cwd: 'path2'});
       this.dummy.run().then(() => {
@@ -352,7 +353,7 @@ describe('Base (actions/install mixin)', () => {
   });
 
   describe('#installDependencies()', () => {
-    it('spawn npm and bower', (done) => {
+    it('spawn npm and bower', function (done) {
       this.dummy.installDependencies({bower: true});
       this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
@@ -360,19 +361,19 @@ describe('Base (actions/install mixin)', () => {
           this.spawnCommandStub,
           'bower',
           ['install'],
-          {}
+          {},
         );
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'npm',
-          ['install', '--cache-min', 86400],
-          {}
+          ['install', '--cache-min', 86_400],
+          {},
         );
         done();
       });
     });
 
-    it('spawn yarn', (done) => {
+    it('spawn yarn', function (done) {
       this.dummy.installDependencies({yarn: true, npm: false, bower: true});
       this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
@@ -380,23 +381,23 @@ describe('Base (actions/install mixin)', () => {
           this.spawnCommandStub,
           'bower',
           ['install'],
-          {}
+          {},
         );
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'yarn',
           ['install'],
-          {}
+          {},
         );
         done();
       });
     });
 
-    it('spawn yarn and bower with options', (done) => {
+    it('spawn yarn and bower with options', function (done) {
       this.dummy.installDependencies({
         yarn: {force: true},
         bower: {depth: 0},
-        npm: false
+        npm: false,
       });
       this.dummy.run().then(() => {
         sinon.assert.calledTwice(this.spawnCommandStub);
@@ -404,13 +405,13 @@ describe('Base (actions/install mixin)', () => {
           this.spawnCommandStub,
           'bower',
           ['install', '--depth=0'],
-          {}
+          {},
         );
         sinon.assert.calledWithExactly(
           this.spawnCommandStub,
           'yarn',
           ['install', '--force'],
-          {}
+          {},
         );
         done();
       });

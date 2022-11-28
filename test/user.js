@@ -1,44 +1,43 @@
-'use strict';
-const assert = require('assert');
-const os = require('os');
-const path = require('path');
-const makeDir = require('make-dir');
-const nock = require('nock');
-const proxyquire = require('proxyquire');
-const rimraf = require('rimraf');
-const shell = require('shelljs');
-const sinon = require('sinon');
-const Base = require('..');
+import assert from 'node:assert';
+import os from 'node:os';
+import path from 'node:path';
+import {mkdirSync, rmSync} from 'node:fs';
+import process from 'node:process';
+import nock from 'nock';
+import shell from 'shelljs';
+import sinon from 'sinon';
+import esmock from 'esmock';
+import Base from '../lib/index.js';
 
 /* eslint max-nested-callbacks: ["warn", 5] */
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-user');
 
 describe('Base#user', function () {
-  this.timeout(10000);
+  this.timeout(10_000);
 
   beforeEach(function () {
     this.prevCwd = process.cwd();
     this.tmp = tmpdir;
-    makeDir.sync(path.join(tmpdir, 'subdir'));
+    mkdirSync(path.join(tmpdir, 'subdir'), {recursive: true});
     process.chdir(tmpdir);
     shell.exec('git init --quiet');
     shell.exec('git config --local user.name Yeoman');
     shell.exec('git config --local user.email yo@yeoman.io');
   });
 
-  afterEach(function (done) {
+  afterEach(function () {
     process.chdir(this.prevCwd);
-    rimraf(tmpdir, done);
+    rmSync(tmpdir, {force: true, recursive: true});
   });
 
-  beforeEach(function () {
+  beforeEach(async function () {
     process.chdir(this.tmp);
     this.shell = shell;
     sinon.spy(this.shell, 'exec');
 
-    this.user = proxyquire('../lib/actions/user', {
-      shelljs: this.shell
+    this.user = await esmock('../lib/actions/user', {
+      shelljs: this.shell,
     });
   });
 
@@ -46,8 +45,9 @@ describe('Base#user', function () {
     this.shell.exec.restore();
   });
 
-  it('is exposed on the Base generator', () => {
-    assert.equal(require('../lib/actions/user'), Base.prototype.user);
+  it('is exposed on the Base generator', async () => {
+    const userModule = await import('../lib/actions/user.js');
+    assert.equal(userModule.default, Base.prototype.user);
   });
 
   describe('.git', () => {
@@ -98,7 +98,7 @@ describe('Base#user', function () {
           .get('/search/users?q=XXX')
           .times(1)
           .reply(200, {
-            items: [{login: 'mockname'}]
+            items: [{login: 'mockname'}],
           });
       });
 

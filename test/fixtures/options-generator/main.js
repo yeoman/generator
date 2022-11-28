@@ -7,9 +7,9 @@
 // object, which means that you can use the API as if you were extending
 // `Base`.
 
-var Base = require('../../../');
+import Base from '../../../lib/index.js';
 
-module.exports = class extends Base {
+export default class Generator extends Base {
   constructor(args, opts) {
     super(args, opts);
 
@@ -25,4 +25,4 @@ module.exports = class extends Base {
   }
 };
 
-module.exports.namespace = 'options:generator';
+Generator.namespace = 'options:generator';

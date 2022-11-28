@@ -1,11 +1,11 @@
-'use strict';
-const EventEmitter = require('events');
-const Environment = require('yeoman-environment');
-const assert = require('yeoman-assert');
-const path = require('path');
-const os = require('os');
+import EventEmitter from 'node:events';
+import path from 'node:path';
+import os from 'node:os';
+import Environment from 'yeoman-environment';
+import assert from 'yeoman-assert';
+import semver from 'semver';
 
-const Base = require('..');
+import Base from '../lib/index.js';
 
 const NAMESPACE = 'somenamespace';
 
@@ -21,8 +21,15 @@ describe('Generators module', () => {
       this.generator = new Generator({
         env: this.env,
         namespace: NAMESPACE,
-        resolved: 'test'
+        resolved: 'test',
       });
+    });
+
+    it('should expose yoGeneratorVersion', function () {
+      assert(
+        semver.valid(this.generator.yoGeneratorVersion),
+        `Not valid version ${this.generator.yoGeneratorVersion}`,
+      );
     });
 
     it('is an EventEmitter', function (done) {
@@ -49,11 +56,11 @@ describe('Generators module', () => {
   it('without localConfigOnly option', function () {
     this.generator = new Base({
       env: this.env,
-      resolved: 'test'
+      resolved: 'test',
     });
     assert.equal(
       path.join(os.homedir(), '.yo-rc-global.json'),
-      this.generator._globalConfig.path
+      this.generator._globalConfig.path,
     );
   });
 
@@ -61,11 +68,11 @@ describe('Generators module', () => {
     this.generator = new Base({
       env: this.env,
       resolved: 'test',
-      localConfigOnly: true
+      localConfigOnly: true,
     });
     assert.equal(
       path.join(this.env.cwd, '.yo-rc-global.json'),
-      this.generator._globalConfig.path
+      this.generator._globalConfig.path,
     );
   });
 
@@ -78,7 +85,7 @@ describe('Generators module', () => {
 
       this.generator = new Generator({
         env: this.env,
-        resolved: 'test'
+        resolved: 'test',
       });
     });
 
@@ -95,7 +102,7 @@ describe('Generators module', () => {
       this.generator = new Base({
         env: this.env,
         resolved: 'test',
-        localConfigOnly: true
+        localConfigOnly: true,
       });
     });
 
@@ -133,7 +140,7 @@ describe('Generators module', () => {
     } catch (error) {
       assert.equal(
         error.message,
-        "Current environment doesn't provides some necessary feature this generator needs."
+        "Current environment doesn't provides some necessary feature this generator needs.",
       );
       done();
     }

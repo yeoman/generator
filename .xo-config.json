@@ -15,8 +15,9 @@
     "unicorn/explicit-length-check": "off",
     "unicorn/no-this-assignment": "off",
     "unicorn/no-array-for-each": "off",
+    "unicorn/import-style": "off",
+    "no-await-in-loop": "off",
     "unicorn/no-array-callback-reference": "off"
-    
   }
 }
 

@@ -7,16 +7,18 @@
 // object, which means that you can use the API as if you were extending
 // `Base`.
 
-var Base = require('../../../../');
+import Base from '../../../../lib/index.js';
+import options from './options.js';
+import prompts from './prompts.js';
 
-module.exports = class extends Base {
+export default class App extends Base {
   constructor(args, opts) {
     super(args, opts);
 
-    this.option(require('./options'));
+    this.option(options);
 
-    this.registerConfigPrompts(require('./prompts'));
+    this.registerConfigPrompts(prompts);
   }
 };
 
-module.exports.namespace = 'options:generator';
+App.namespace = 'options:generator';
