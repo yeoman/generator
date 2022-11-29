@@ -23,7 +23,7 @@ jobs:
           rm package-lock.json
           npm install
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4.1.1
+        uses: peter-evans/create-pull-request@v4.2.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Bump transitional dependencies'
