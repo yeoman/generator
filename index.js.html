@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">Generator</a></h1>
 
-        <span class="version">v5.7.1</span>
+        <span class="version">v5.8.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -459,6 +459,7 @@ const chalk = require('chalk');
 const minimist = require('minimist');
 const runAsync = require('run-async');
 const createDebug = require('debug');
+const memFsEditor = require('mem-fs-editor');
 
 const packageJson = require('../package.json');
 const Storage = require('./util/storage');
@@ -652,7 +653,7 @@ class Generator extends Base {
       // Ensure source/destination path, can be configured from subclasses
       this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
 
-      this.fs = this.env.fs;
+      this.fs = memFsEditor.create(this.env.sharedFs);
     }
 
     // Add convenience debug object
