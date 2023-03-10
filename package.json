@@ -47,7 +47,7 @@
     "doc_path": "../yeoman-generator-doc/"
   },
   "dependencies": {
-    "@types/node": "^16.18.3",
+    "@types/node": "^18.15.0",
     "chalk": "^5.1.2",
     "dargs": "^8.1.0",
     "debug": "^4.1.1",
