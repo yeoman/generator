@@ -51,7 +51,7 @@
     "chalk": "^5.1.2",
     "dargs": "^8.1.0",
     "debug": "^4.1.1",
-    "execa": "^6.1.0",
+    "execa": "^7.1.1",
     "github-username": "^7.0.0",
     "lodash": "^4.17.11",
     "minimist": "^1.2.7",
