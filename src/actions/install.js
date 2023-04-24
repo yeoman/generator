@@ -166,6 +166,12 @@ install.installDependencies = function (options) {
     this.bowerInstall(null, getOptions(options.bower));
   }
 
+  // add pnpm
+  if (options.pnpm) {
+    message.commands.push('pnpm install');
+    this.pnpmInstall(null, getOptions(options.bower));
+  }
+
   assert(
     message.commands.length,
     'installDependencies needs at least one of `npm`, `bower` or `yarn` to run.',
@@ -225,4 +231,18 @@ install.npmInstall = function (pkgs, options, spawnOptions) {
  */
 install.yarnInstall = function (pkgs, options, spawnOptions) {
   this.scheduleInstallTask('yarn', pkgs, options, spawnOptions);
+};
+
+/**
+ * @deprecated
+ * Receives a list of `packages` and an `options` object to install through pnpm.
+ *
+ * The installation will automatically run during the run loop `install` phase.
+ *
+ * @param {String|Array} [pkgs] Packages to install
+ * @param {Object} [options] Options to pass to `dargs` as arguments
+ * @param {Object} [spawnOptions] Options to pass `child_process.spawn`.
+ */
+install.pnpmInstall = function (pkgs, options, spawnOptions) {
+  this.scheduleInstallTask('pnpm', pkgs, options, spawnOptions);
 };
