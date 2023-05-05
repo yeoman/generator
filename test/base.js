@@ -6,13 +6,11 @@ import { createRequire } from 'node:module';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
 import _ from 'lodash';
-import sinon from 'sinon';
+import { spy as sinonSpy, fake as sinonFake, assert as sinonAssert } from 'sinon';
 import through from 'through2';
-import yeoman from 'yeoman-environment';
-
 import assert from 'yeoman-assert';
 import helpers, { TestAdapter } from 'yeoman-test';
-import Base from '../src/generator.js';
+import Base, { createEnv } from './utils.js';
 
 const require = createRequire(import.meta.url);
 
@@ -23,28 +21,28 @@ const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 
 describe('Base', () => {
+  let env;
+  let Dummy;
+  let dummy;
+
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    this.env = yeoman.createEnv(
-      [],
-      { 'skip-install': true },
-      new TestAdapter(),
-    );
+    env = createEnv([], { 'skip-install': true }, new TestAdapter());
     // Ignore error forwarded to environment
-    this.env.on('error', _ => {});
+    env.on('error', _ => {});
 
     mkdirSync(resolveddir, { recursive: true });
-    this.Dummy = class extends Base {};
-    this.Dummy.prototype.exec = sinon.spy();
+    Dummy = class extends Base {};
+    Dummy.prototype.exec = sinonSpy();
 
-    this.dummy = new this.Dummy(['bar', 'baz', 'bom'], {
+    dummy = new Dummy(['bar', 'baz', 'bom'], {
       foo: false,
       something: 'else',
       // Mandatory options, created by the `env#create()` helper
       resolved: resolveddir,
       namespace: 'dummy',
-      env: this.env,
+      env,
       'skip-install': true,
     });
   });
@@ -54,11 +52,11 @@ describe('Base', () => {
       const projectDir = path.join(__dirname, 'fixtures/dummy-project');
       const subdir = path.join(projectDir, 'subdir');
       process.chdir(subdir);
-      this.env.cwd = process.cwd();
+      env.cwd = process.cwd();
 
-      const dummy = new this.Dummy(['foo'], {
+      const dummy = new Dummy(['foo'], {
         resolved: 'ember/all',
-        env: this.env,
+        env,
         destinationRoot: subdir,
       });
 
@@ -67,10 +65,10 @@ describe('Base', () => {
       assert.equal(dummy.contextRoot, subdir);
     });
 
-    it('use the environment options', function () {
-      this.env.registerStub(class extends Base {}, 'ember:model');
+    it('use the environment options', async function () {
+      env.registerStub(class extends Base {}, 'ember:model');
 
-      const generator = this.env.create('ember:model', {
+      const generator = await env.create('ember:model', {
         options: {
           'test-framework': 'jasmine',
         },
@@ -81,7 +79,7 @@ describe('Base', () => {
 
     it('set generator.options from constructor options', function () {
       const generator = new Base({
-        env: this.env,
+        env,
         resolved: 'test',
         'test-framework': 'mocha',
       });
@@ -91,7 +89,7 @@ describe('Base', () => {
 
     it('set options based on nopt arguments', function () {
       const generator = new Base(['--foo', 'bar'], {
-        env: this.env,
+        env,
         resolved: 'test',
       });
 
@@ -102,7 +100,7 @@ describe('Base', () => {
 
     it('set arguments based on nopt arguments', function () {
       const generator = new Base(['--foo', 'bar'], {
-        env: this.env,
+        env,
         resolved: 'test',
       });
 
@@ -113,11 +111,7 @@ describe('Base', () => {
 
     it('set options with false values', async () => {
       const runResult = await helpers
-        .create(
-          path.join(__dirname, './fixtures/options-generator'),
-          { namespace: 'options-generator' },
-          { createEnv: yeoman.createEnv },
-        )
+        .create(path.join(__dirname, './fixtures/options-generator'), { namespace: 'options-generator' }, { createEnv })
         .withOptions({ testOption: false })
         .run();
 
@@ -126,7 +120,7 @@ describe('Base', () => {
 
     it('setup fs editor', function () {
       const generator = new Base([], {
-        env: this.env,
+        env,
         resolved: 'test',
       });
 
@@ -135,7 +129,7 @@ describe('Base', () => {
 
     it('setup required fields for a working generator for help', function () {
       const generator = new Base([], {
-        env: this.env,
+        env,
         help: true,
         resolved: 'test',
       });
@@ -165,13 +159,13 @@ describe('Base', () => {
 
   describe('prototype', () => {
     it("methods doesn't conflict with Env#runQueue", function () {
-      assert.notImplement(Base.prototype, this.env.runLoop.queueNames);
+      assert.notImplement(Base.prototype, env.runLoop.queueNames);
     });
   });
 
   describe('#appname', () => {
     it('is set to the `determineAppname()` return value', function () {
-      assert.equal(this.dummy.appname, this.dummy.determineAppname());
+      assert.equal(dummy.appname, dummy.determineAppname());
     });
   });
 
@@ -185,127 +179,118 @@ describe('Base', () => {
       rmSync('package.json', { force: true });
     });
 
-    it('returns appname from bower.json', function () {
-      this.dummy.fs.write(
-        this.dummy.destinationPath('bower.json'),
-        '{ "name": "app-name" }',
-      );
-
-      assert.equal(this.dummy.determineAppname(), 'app name');
-    });
-
     it('returns appname from package.json', function () {
-      this.dummy.fs.write(
-        this.dummy.destinationPath('package.json'),
-        '{ "name": "package_app-name" }',
-      );
+      dummy.fs.write(dummy.destinationPath('package.json'), '{ "name": "package_app-name" }');
 
-      assert.equal(this.dummy.determineAppname(), 'package_app name');
+      assert.equal(dummy.determineAppname(), 'package_app name');
     });
 
     it('returns appname from the current directory', function () {
-      assert.equal(this.dummy.determineAppname(), 'yeoman base');
+      assert.equal(dummy.determineAppname(), 'yeoman base');
     });
   });
 
   describe('#run()', () => {
+    let TestGenerator;
+    let testGen;
+    let execSpy;
     beforeEach(function () {
-      this.TestGenerator = class extends Base {};
-      _.extend(this.TestGenerator.prototype, {
-        _beforeQueue: sinon.spy(),
-        exec: sinon.spy(),
-        exec2: sinon.spy(),
-        exec3: sinon.spy(),
-        _private: sinon.spy(),
-        '#composed': sinon.spy(),
+      TestGenerator = class extends Base {};
+      _.extend(TestGenerator.prototype, {
+        _beforeQueue: sinonSpy(),
+        exec: sinonSpy(),
+        exec2: sinonSpy(),
+        exec3: sinonSpy(),
+        _private: sinonSpy(),
+        '#composed': sinonSpy(),
         prompting: {
-          m1: sinon.spy(),
-          m2: sinon.spy(),
-          _private: sinon.spy(),
+          m1: sinonSpy(),
+          m2: sinonSpy(),
+          _private: sinonSpy(),
           prop: 'foo',
         },
-        initializing: sinon.spy(),
+        initializing: sinonSpy(),
       });
-      this.execSpy = this.TestGenerator.prototype.exec;
+      execSpy = TestGenerator.prototype.exec;
 
-      this.testGen = new this.TestGenerator([], {
+      testGen = new TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
-        env: this.env,
+        env,
         'skip-install': true,
       });
     });
 
     it('run all methods in the given generator', function () {
-      return this.testGen.run();
+      return testGen.run();
     });
 
     it('turn on _running flag', async function () {
-      await this.testGen.queueTasks();
-      assert.ok(this.testGen._running);
+      await testGen.queueTasks();
+      assert.ok(testGen._running);
     });
 
     it('should call _beforeQueue', async function () {
-      await this.testGen.queueTasks();
-      assert.ok(this.testGen._beforeQueue.calledOnce);
+      await testGen.queueTasks();
+      assert.ok(testGen._beforeQueue.calledOnce);
     });
 
     it('run prototype methods (not instances one)', function () {
-      this.testGen.exec = sinon.spy();
-      return this.testGen.run().then(() => {
-        assert.ok(this.execSpy.calledOnce);
-        assert.equal(this.testGen.exec.callCount, 0);
+      testGen.exec = sinonSpy();
+      return testGen.run().then(() => {
+        assert.ok(execSpy.calledOnce);
+        assert.equal(testGen.exec.callCount, 0);
       });
     });
 
     it("don't try running prototype attributes", function () {
-      this.TestGenerator.prototype.prop = 'something';
-      return this.testGen.run();
+      TestGenerator.prototype.prop = 'something';
+      return testGen.run();
     });
 
     it('pass instance .args property to the called methods', function () {
-      this.testGen.args = ['2', 'args'];
-      return this.testGen.run().then(() => {
-        assert(this.execSpy.withArgs('2', 'args').calledOnce);
+      testGen.args = ['2', 'args'];
+      return testGen.run().then(() => {
+        assert(execSpy.withArgs('2', 'args').calledOnce);
       });
     });
 
     it('can emit error from sync methods', function (done) {
       const error = new Error('Some error');
 
-      this.TestGenerator.prototype.throwing = () => {
+      TestGenerator.prototype.throwing = () => {
         throw error;
       };
 
-      this.testGen.env.on('error', error_ => {
+      testGen.env.on('error', error_ => {
         assert.equal(error_, error);
         done();
       });
 
-      this.testGen.run().catch(() => {});
+      testGen.run().catch(() => {});
     });
 
     it('stop queue processing once an error is thrown', function () {
       const error = new Error('Some error');
-      const spy = sinon.spy();
+      const spy = sinonSpy();
 
-      this.TestGenerator.prototype.throwing = () => {
+      TestGenerator.prototype.throwing = () => {
         throw error;
       };
 
-      this.TestGenerator.prototype.afterError = spy;
+      TestGenerator.prototype.afterError = spy;
 
-      this.testGen.on('error', sinon.spy());
-      return this.testGen.run().catch(error_ => {
+      testGen.on('error', sinonSpy());
+      return testGen.run().catch(error_ => {
         assert.equal(error_, error);
       });
     });
 
     it('handle function returning promises as asynchronous', function () {
-      const spy1 = sinon.spy();
-      const spy2 = sinon.spy();
+      const spy1 = sinonSpy();
+      const spy2 = sinonSpy();
 
-      this.TestGenerator.prototype.first = () => {
+      TestGenerator.prototype.first = () => {
         return new Promise(resolve => {
           setTimeout(() => {
             spy1();
@@ -314,35 +299,35 @@ describe('Base', () => {
         });
       };
 
-      this.TestGenerator.prototype.second = () => {
+      TestGenerator.prototype.second = () => {
         spy2();
       };
 
-      return this.testGen.run().then(() => {
+      return testGen.run().then(() => {
         spy1.calledBefore(spy2);
       });
     });
 
     it('handle failing promises as errors', function (done) {
-      this.TestGenerator.prototype.failing = () => {
+      TestGenerator.prototype.failing = () => {
         return new Promise((resolve, reject) => {
           reject(new Error('some error'));
         });
       };
 
-      this.testGen.env.on('error', error => {
+      testGen.env.on('error', error => {
         assert.equal(error.message, 'some error');
         done();
       });
 
-      this.testGen.run().catch(() => {});
+      testGen.run().catch(() => {});
     });
 
     it('throws if no method is available', function () {
       const gen = new (class extends Base {})([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
-        env: this.env,
+        env,
       });
 
       return gen.run().catch(error => {
@@ -354,7 +339,7 @@ describe('Base', () => {
       class Generator extends Base {}
 
       Object.defineProperty(Generator.prototype, 'nonenumerable', {
-        value: sinon.spy(),
+        value: sinonSpy(),
         configurable: true,
         writable: true,
       });
@@ -362,7 +347,7 @@ describe('Base', () => {
       const gen = new Generator([], {
         resolved: 'dummy',
         namespace: 'dummy',
-        env: this.env,
+        env,
       });
 
       return gen.run().then(() => {
@@ -371,44 +356,44 @@ describe('Base', () => {
     });
 
     it('ignore underscore prefixed method', function () {
-      return this.testGen.run().then(() => {
-        assert(this.TestGenerator.prototype._private.notCalled);
+      return testGen.run().then(() => {
+        assert(TestGenerator.prototype._private.notCalled);
       });
     });
 
     it('ignore hashtag prefixed method', function () {
-      return this.testGen.run().then(() => {
-        assert(this.TestGenerator.prototype['#composed'].notCalled);
+      return testGen.run().then(() => {
+        assert(TestGenerator.prototype['#composed'].notCalled);
       });
     });
 
     it('run methods in a queue hash', function () {
-      return this.testGen.run().then(() => {
-        assert(this.TestGenerator.prototype.prompting.m1.calledOnce);
-        assert(this.TestGenerator.prototype.prompting.m2.calledOnce);
+      return testGen.run().then(() => {
+        assert(TestGenerator.prototype.prompting.m1.calledOnce);
+        assert(TestGenerator.prototype.prompting.m2.calledOnce);
       });
     });
 
     it('ignore underscore prefixed method in a queue hash', function () {
-      return this.testGen.run().then(() => {
-        assert(this.TestGenerator.prototype.prompting._private.notCalled);
+      return testGen.run().then(() => {
+        assert(TestGenerator.prototype.prompting._private.notCalled);
       });
     });
 
     it('run named queued methods in order', function () {
-      const initSpy = this.TestGenerator.prototype.initializing;
-      const promptSpy = this.TestGenerator.prototype.prompting.m1;
+      const initSpy = TestGenerator.prototype.initializing;
+      const promptSpy = TestGenerator.prototype.prompting.m1;
 
-      return this.testGen.run().then(() => {
+      return testGen.run().then(() => {
         assert(initSpy.calledBefore(promptSpy));
       });
     });
 
     it('run queued methods in order even if not in order in prototype', function () {
-      const initSpy = this.TestGenerator.prototype.initializing;
-      const execSpy = this.TestGenerator.prototype.exec;
+      const initSpy = TestGenerator.prototype.initializing;
+      const execSpy = TestGenerator.prototype.exec;
 
-      return this.testGen.run().then(() => {
+      return testGen.run().then(() => {
         assert(initSpy.calledBefore(execSpy));
       });
     });
@@ -416,14 +401,11 @@ describe('Base', () => {
     it('commit mem-fs to disk', function () {
       let filepath;
 
-      this.TestGenerator.prototype.writing = function () {
-        this.fs.write(
-          (filepath = path.join(this.destinationRoot(), 'fromfs.txt')),
-          'generated',
-        );
+      TestGenerator.prototype.writing = function () {
+        this.fs.write((filepath = path.join(this.destinationRoot(), 'fromfs.txt')), 'generated');
       };
 
-      return this.testGen.run().then(() => {
+      return testGen.run().then(() => {
         assert(fs.existsSync(filepath));
       });
     });
@@ -433,16 +415,12 @@ describe('Base', () => {
       const filepath = path.join(__dirname, '/fixtures/conflict.js');
       assert(fs.existsSync(filepath));
 
-      this.TestGenerator.prototype.writing = function () {
+      TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'some new content');
       };
 
-      const env = yeoman.createEnv(
-        [],
-        { 'skip-install': true },
-        new TestAdapter(action),
-      );
-      const testGen = new this.TestGenerator([], {
+      const env = createEnv([], { 'skip-install': true }, new TestAdapter(action));
+      const testGen = new TestGenerator([], {
         resolved: 'generator/app/index.js',
         namespace: 'dummy',
         env,
@@ -454,32 +432,32 @@ describe('Base', () => {
     });
 
     it('allows file writes in any priorities', function () {
-      this.TestGenerator.prototype.end = function () {
+      TestGenerator.prototype.end = function () {
         this.fs.write(this.destinationPath('foo.txt'), 'test');
       };
 
-      return this.testGen.run().then(() => {
-        assert(fs.existsSync(this.testGen.destinationPath('foo.txt')));
+      return testGen.run().then(() => {
+        assert(fs.existsSync(testGen.destinationPath('foo.txt')));
       });
     });
 
     it('can cancel cancellable tasks', function (done) {
-      this.TestGenerator.prototype.cancel = function () {
+      TestGenerator.prototype.cancel = function () {
         this.cancelCancellableTasks();
       };
 
-      this.TestGenerator.prototype.throwing = () => {
+      TestGenerator.prototype.throwing = () => {
         throw new Error('not thrown');
       };
 
-      this.testGen.run().then(done);
+      testGen.run().then(done);
     });
 
     it('can start over the generator', function (done) {
-      const spy1 = sinon.spy();
-      const spy2 = sinon.spy();
+      const spy1 = sinonSpy();
+      const spy2 = sinonSpy();
 
-      this.TestGenerator.prototype.cancel = function () {
+      TestGenerator.prototype.cancel = function () {
         spy1();
         if (!this.startedOver) {
           this.startOver({ startedOver: true });
@@ -487,13 +465,13 @@ describe('Base', () => {
         }
       };
 
-      this.TestGenerator.prototype.after = function () {
+      TestGenerator.prototype.after = function () {
         assert(this.options.startedOver);
         assert(this.startedOver);
         spy2();
       };
 
-      this.testGen.run().then(() => {
+      testGen.run().then(() => {
         assert(spy1.calledTwice);
         assert(spy2.calledOnce);
         done();
@@ -501,9 +479,9 @@ describe('Base', () => {
     });
 
     it('can queue a method again', function (done) {
-      const spy1 = sinon.spy();
+      const spy1 = sinonSpy();
 
-      this.TestGenerator.prototype.cancel = function () {
+      TestGenerator.prototype.cancel = function () {
         spy1();
         if (!this.startedOver) {
           this.queueOwnTask('cancel');
@@ -512,7 +490,7 @@ describe('Base', () => {
         }
       };
 
-      this.testGen.run().then(() => {
+      testGen.run().then(() => {
         assert(spy1.calledTwice);
         done();
       });
@@ -520,23 +498,26 @@ describe('Base', () => {
   });
 
   describe('#run() with task prefix', () => {
+    let TestGenerator;
+    let testGen;
+
     beforeEach(function () {
-      this.TestGenerator = class extends Base {};
-      _.extend(this.TestGenerator.prototype, {
-        beforeQueue: sinon.spy(),
-        _private: sinon.spy(),
-        '#composed': sinon.spy(),
-        composed: sinon.spy(),
-        '#initializing': sinon.spy(),
-        initializing: sinon.spy(),
+      TestGenerator = class extends Base {};
+      _.extend(TestGenerator.prototype, {
+        beforeQueue: sinonSpy(),
+        _private: sinonSpy(),
+        '#composed': sinonSpy(),
+        composed: sinonSpy(),
+        '#initializing': sinonSpy(),
+        initializing: sinonSpy(),
       });
 
-      this.testGen = new this.TestGenerator(
+      testGen = new TestGenerator(
         [],
         {
           resolved: 'generator-ember/all/index.js',
           namespace: 'dummy',
-          env: this.env,
+          env,
           'skip-install': true,
         },
         { taskPrefix: '#' },
@@ -544,30 +525,30 @@ describe('Base', () => {
     });
 
     it('should run hashtag prefixed method', async function () {
-      await this.testGen.run();
-      assert(this.TestGenerator.prototype['#composed'].calledOnce);
-      assert(this.TestGenerator.prototype.composed.notCalled);
-      assert(this.TestGenerator.prototype['#initializing'].calledOnce);
-      assert(this.TestGenerator.prototype.initializing.notCalled);
-      assert(this.TestGenerator.prototype._private.notCalled);
+      await testGen.run();
+      assert(TestGenerator.prototype['#composed'].calledOnce);
+      assert(TestGenerator.prototype.composed.notCalled);
+      assert(TestGenerator.prototype['#initializing'].calledOnce);
+      assert(TestGenerator.prototype.initializing.notCalled);
+      assert(TestGenerator.prototype._private.notCalled);
     });
 
     it('should call beforeQueue', async function () {
-      await this.testGen.queueTasks();
-      assert.ok(this.testGen.beforeQueue.calledOnce);
+      await testGen.queueTasks();
+      assert.ok(testGen.beforeQueue.calledOnce);
     });
   });
 
   describe('#argument()', () => {
     it('add a new argument to the generator instance', function () {
-      assert.equal(this.dummy._arguments.length, 0);
-      this.dummy.argument('foo');
-      assert.equal(this.dummy._arguments.length, 1);
+      assert.equal(dummy._arguments.length, 0);
+      dummy.argument('foo');
+      assert.equal(dummy._arguments.length, 1);
     });
 
     it('create the property specified with value from positional args', function () {
-      this.dummy.argument('foo');
-      assert.equal(this.dummy.options.foo, 'bar');
+      dummy.argument('foo');
+      assert.equal(dummy.options.foo, 'bar');
     });
 
     it('allows specifying default argument values', function () {
@@ -580,7 +561,7 @@ describe('Base', () => {
       };
 
       const gen = new Generator({
-        env: this.env,
+        env,
         resolved: 'test',
       });
 
@@ -597,7 +578,7 @@ describe('Base', () => {
       };
 
       const gen = new Generator({
-        env: this.env,
+        env,
         resolved: 'test',
       });
 
@@ -614,7 +595,7 @@ describe('Base', () => {
       };
 
       const gen = new Generator({
-        env: this.env,
+        env,
         resolved: 'test',
         bar: 'foo',
       });
@@ -623,13 +604,13 @@ describe('Base', () => {
     });
 
     it('slice positional arguments when config.type is Array', function () {
-      this.dummy.argument('bar', { type: Array });
-      assert.deepEqual(this.dummy.options.bar, ['bar', 'baz', 'bom']);
+      dummy.argument('bar', { type: Array });
+      assert.deepEqual(dummy.options.bar, ['bar', 'baz', 'bom']);
     });
 
     it('raise an error if required arguments are not provided', function (done) {
       const dummy = new Base([], {
-        env: this.env,
+        env,
         resolved: 'dummy/all',
       });
 
@@ -643,21 +624,19 @@ describe('Base', () => {
 
     it("doesn't raise an error if required arguments are not provided, but the help option has been specified", function () {
       const dummy = new Base([], {
-        env: this.env,
+        env,
         resolved: 'dummy:all',
         help: true,
       });
 
       assert.equal(dummy._arguments.length, 0);
-      assert.doesNotThrow(
-        dummy.argument.bind(dummy, 'foo', { required: true }),
-      );
+      assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', { required: true }));
       assert.equal(dummy._arguments.length, 1);
     });
 
     it('can be called before #option()', function () {
       const dummy = new Base(['--foo', 'bar', 'baz'], {
-        env: this.env,
+        env,
         resolved: 'dummy/all',
       });
 
@@ -671,8 +650,8 @@ describe('Base', () => {
   describe('#option()', () => {
     it('add a new option to the set of generator expected options', function () {
       // Every generator have the --help options
-      const generator = new this.Dummy([], {
-        env: this.env,
+      const generator = new Dummy([], {
+        env,
         resolved: 'test',
       });
 
@@ -698,7 +677,7 @@ describe('Base', () => {
       };
 
       const gen = new Generator({
-        env: this.env,
+        env,
         resolved: 'test',
         'short-name': 'that value',
       });
@@ -716,7 +695,7 @@ describe('Base', () => {
       };
 
       const gen = new Generator({
-        env: this.env,
+        env,
         resolved: 'test',
       });
 
@@ -724,8 +703,8 @@ describe('Base', () => {
     });
 
     it('disallows Boolean options starting with no-', function () {
-      const generator = new this.Dummy([], {
-        env: this.env,
+      const generator = new Dummy([], {
+        env,
         resolved: 'test',
       });
       const addWrongOp = () => {
@@ -738,34 +717,34 @@ describe('Base', () => {
 
   describe('#registerConfigPrompts()', () => {
     it('adds an prompt with common definitions', function () {
-      this.dummy.registerConfigPrompts({
+      dummy.registerConfigPrompts({
         name: 'foo',
         message: 'bar',
         type: 'number',
         prompt: true,
       });
-      assert.equal(this.dummy._prompts[0].name, 'foo');
-      assert.equal(this.dummy._prompts[0].message, 'bar');
-      assert.equal(this.dummy._prompts[0].type, 'number');
+      assert.equal(dummy._prompts[0].name, 'foo');
+      assert.equal(dummy._prompts[0].message, 'bar');
+      assert.equal(dummy._prompts[0].type, 'number');
     });
 
     it('should export option', function () {
-      this.dummy.registerConfigPrompts({
+      dummy.registerConfigPrompts({
         name: 'foo',
         message: 'bar2',
         type: 'string',
         exportOption: true,
       });
-      assert.equal(this.dummy._prompts[0].name, 'foo');
-      assert.equal(this.dummy._prompts[0].message, 'bar2');
-      assert.equal(this.dummy._prompts[0].type, 'string');
-      assert.equal(this.dummy._options.foo.name, 'foo');
-      assert.equal(this.dummy._options.foo.description, 'bar2');
-      assert.equal(this.dummy._options.foo.type, String);
+      assert.equal(dummy._prompts[0].name, 'foo');
+      assert.equal(dummy._prompts[0].message, 'bar2');
+      assert.equal(dummy._prompts[0].type, 'string');
+      assert.equal(dummy._options.foo.name, 'foo');
+      assert.equal(dummy._options.foo.description, 'bar2');
+      assert.equal(dummy._options.foo.type, String);
     });
 
     it('allows to customize option config', function () {
-      this.dummy.registerConfigPrompts({
+      dummy.registerConfigPrompts({
         name: 'foo',
         message: 'bar2',
         type: 'string',
@@ -775,12 +754,12 @@ describe('Base', () => {
           type: Number,
         },
       });
-      assert.equal(this.dummy._prompts[0].name, 'foo');
-      assert.equal(this.dummy._prompts[0].message, 'bar2');
-      assert.equal(this.dummy._prompts[0].type, 'string');
-      assert.equal(this.dummy._options.foo2.name, 'foo2');
-      assert.equal(this.dummy._options.foo2.description, 'bar3');
-      assert.equal(this.dummy._options.foo2.type, Number);
+      assert.equal(dummy._prompts[0].name, 'foo');
+      assert.equal(dummy._prompts[0].message, 'bar2');
+      assert.equal(dummy._prompts[0].type, 'string');
+      assert.equal(dummy._options.foo2.name, 'foo2');
+      assert.equal(dummy._options.foo2.description, 'bar3');
+      assert.equal(dummy._options.foo2.type, Number);
     });
   });
 
@@ -790,58 +769,55 @@ describe('Base', () => {
         priorityName: 'foo',
         before: 'initializing',
       };
-      this.dummy.registerPriorities([priority]);
-      assert.ok(this.dummy._queues.foo);
+      dummy.registerPriorities([priority]);
+      assert.ok(dummy._queues.foo);
     });
     it('edits a existing priority', function () {
       const priority = {
         priorityName: 'initializing',
         args: 'an arg array',
       };
-      this.dummy.registerPriorities([priority]);
-      assert.equal(this.dummy._queues.initializing.args, 'an arg array');
-      assert.equal(this.dummy._queues.initializing.edit, undefined);
+      dummy.registerPriorities([priority]);
+      assert.equal(dummy._queues.initializing.args, 'an arg array');
+      assert.equal(dummy._queues.initializing.edit, undefined);
     });
   });
 
   describe('#parseOptions()', () => {
     beforeEach(function () {
-      this.dummy = new this.Dummy(
-        ['start', '--foo', 'bar', '-s', 'baz', 'remain'],
-        {
-          env: this.env,
-          resolved: 'test',
-        },
-      );
+      dummy = new Dummy(['start', '--foo', 'bar', '-s', 'baz', 'remain'], {
+        env,
+        resolved: 'test',
+      });
 
-      this.dummy.option('foo', {
+      dummy.option('foo', {
         type: String,
       });
 
-      this.dummy.option('shortOpt', {
+      dummy.option('shortOpt', {
         type: String,
         alias: 's',
       });
     });
 
     it('set generator options', function () {
-      this.dummy.parseOptions();
-      assert.equal(this.dummy.options.foo, 'bar');
+      dummy.parseOptions();
+      assert.equal(dummy.options.foo, 'bar');
     });
 
     it('set generator alias options', function () {
-      this.dummy.parseOptions();
-      assert.equal(this.dummy.options.shortOpt, 'baz');
+      dummy.parseOptions();
+      assert.equal(dummy.options.shortOpt, 'baz');
     });
 
     it('set args to what remains', function () {
-      this.dummy.parseOptions();
-      assert.deepEqual(this.dummy.args, ['start', 'remain']);
+      dummy.parseOptions();
+      assert.deepEqual(dummy.args, ['start', 'remain']);
     });
 
     it('gracefully handle no args', function () {
-      const dummy = new this.Dummy({
-        env: this.env,
+      const dummy = new Dummy({
+        env,
         resolved: 'test',
       });
 
@@ -855,68 +831,66 @@ describe('Base', () => {
   });
 
   describe('#composeWith()', () => {
+    let spy;
+    let GenCompose;
     beforeEach(function () {
-      this.dummy = new this.Dummy([], {
+      dummy = new Dummy([], {
         resolved: 'unknown',
         namespace: 'dummy',
-        env: this.env,
+        env,
         'skip-install': true,
         'force-install': true,
         'skip-cache': true,
       });
 
-      this.spy = sinon.spy();
-      this.GenCompose = class extends Base {};
-      this.GenCompose.prototype.exec = this.spy;
-      this.env.registerStub(this.GenCompose, 'composed:gen');
+      spy = sinonSpy();
+      GenCompose = class extends Base {};
+      GenCompose.prototype.exec = spy;
+      env.registerStub(GenCompose, 'composed:gen');
     });
 
     it('returns the composed generator', async function () {
-      assert(
-        (await this.dummy.composeWith('composed:gen')) instanceof
-          this.GenCompose,
-      );
+      assert((await dummy.composeWith('composed:gen')) instanceof GenCompose);
     });
 
     it('should add to _composedWith', async function () {
-      const generator = await this.dummy.composeWith('composed:gen');
-      assert(generator instanceof this.GenCompose);
-      assert(generator === this.dummy._composedWith[0]);
+      const generator = await dummy.composeWith('composed:gen');
+      assert(generator instanceof GenCompose);
+      assert(generator === dummy._composedWith[0]);
     });
 
     it('should not add to _composedWith when immediately is true', async function () {
-      await this.dummy.composeWith('composed:gen', undefined, undefined, true);
-      assert.strictEqual(this.dummy._composedWith.length, 0);
+      await dummy.composeWith('composed:gen', undefined, undefined, true);
+      assert.strictEqual(dummy._composedWith.length, 0);
     });
 
     it('runs the composed generators', async function () {
-      await this.dummy.composeWith('composed:gen');
+      await dummy.composeWith('composed:gen');
 
-      const runSpy = sinon.spy(this.dummy, 'run');
-      await this.dummy.run();
-      sinon.assert.callOrder(runSpy, this.spy);
-      assert(this.spy.calledAfter(runSpy));
+      const runSpy = sinonSpy(dummy, 'run');
+      await dummy.run();
+      sinonAssert.callOrder(runSpy, spy);
+      assert(spy.calledAfter(runSpy));
     });
 
     it('runs the composed Generator class in the passed path', async function () {
-      this.stubPath = path.join(__dirname, 'fixtures/generator-mocha');
+      const stubPath = path.join(__dirname, 'fixtures/generator-mocha');
 
-      await this.dummy.composeWith({
-        Generator: this.GenCompose,
-        path: this.stubPath,
+      await dummy.composeWith({
+        Generator: GenCompose,
+        path: stubPath,
       });
-      await this.dummy.run();
-      assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
+      await dummy.run();
+      assert.equal(spy.firstCall.thisValue.options.namespace, 'mocha');
       assert.equal(
-        this.spy.firstCall.thisValue.options.resolved,
-        pathToFileURL(createRequire(import.meta.url).resolve(this.stubPath))
-          .href,
+        spy.firstCall.thisValue.options.resolved,
+        pathToFileURL(createRequire(import.meta.url).resolve(stubPath)).href,
       );
     });
 
     describe('object as first argument', () => {
       it('fails for missing Generator property', function () {
-        const gen = this.dummy;
+        const gen = dummy;
         assert.rejects(
           () =>
             gen.composeWith({
@@ -927,11 +901,11 @@ describe('Base', () => {
       });
 
       it('fails for missing path property', function () {
-        const gen = this.dummy;
+        const gen = dummy;
         assert.rejects(
           () =>
             gen.composeWith({
-              Generator: this.GenCompose,
+              Generator: GenCompose,
             }),
           error => error.message.includes('path property is not a string'),
         );
@@ -939,86 +913,86 @@ describe('Base', () => {
     });
 
     it('run the composed generator even if main generator is already running.', function () {
-      this.Dummy.prototype.writing = async function () {
+      Dummy.prototype.writing = async function () {
         await this.composeWith('composed:gen');
       };
 
-      return this.dummy.run().then(() => {
-        assert(this.spy.called);
+      return dummy.run().then(() => {
+        assert(spy.called);
       });
     });
 
     it('pass options and arguments to the composed generators', async function () {
-      await this.dummy.composeWith('composed:gen', {
+      await dummy.composeWith('composed:gen', {
         foo: 'bar',
         'skip-install': true,
       });
 
-      return this.dummy.run().then(() => {
-        assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
+      return dummy.run().then(() => {
+        assert.equal(spy.firstCall.thisValue.options.foo, 'bar');
       });
     });
 
     describe('when passing a local path to a generator', () => {
+      let stubPath;
+      let resolvedStub;
+      let LocalDummy;
       beforeEach(async function () {
-        this.spy = sinon.spy();
-        this.dummy.resolved = __filename;
-        this.stubPath = './fixtures/generator-mocha';
-        this.resolvedStub = pathToFileURL(require.resolve(this.stubPath)).href;
-        const module = await import(this.resolvedStub);
-        this.LocalDummy = module.default;
-        this.LocalDummy.prototype.exec = this.spy;
+        spy = sinonSpy();
+        dummy.resolved = __filename;
+        stubPath = './fixtures/generator-mocha';
+        resolvedStub = pathToFileURL(require.resolve(stubPath)).href;
+        const module = await import(resolvedStub);
+        LocalDummy = module.default;
+        LocalDummy.prototype.exec = spy;
       });
 
       afterEach(function () {
-        delete this.LocalDummy.prototype.exec;
+        delete LocalDummy.prototype.exec;
       });
 
       it('runs the composed generator', async function () {
-        await this.dummy.composeWith(this.stubPath, {});
-        await this.dummy.run();
-        assert(this.LocalDummy.prototype.exec.called);
+        await dummy.composeWith(stubPath, {});
+        await dummy.run();
+        assert(LocalDummy.prototype.exec.called);
       });
 
       it('pass options and arguments to the composed generators', async function () {
-        await this.dummy.composeWith(this.stubPath, {
+        await dummy.composeWith(stubPath, {
           foo: 'bar',
           'skip-install': true,
         });
-        await this.dummy.run();
-        assert.equal(this.spy.firstCall.thisValue.options.foo, 'bar');
+        await dummy.run();
+        assert.equal(spy.firstCall.thisValue.options.foo, 'bar');
       });
 
       it('sets correct metadata on the Generator constructor', async function () {
-        await this.dummy.composeWith(this.stubPath, {});
-        await this.dummy.run();
-        assert.equal(this.spy.firstCall.thisValue.options.namespace, 'mocha');
-        assert.equal(
-          this.spy.firstCall.thisValue.options.resolved,
-          this.resolvedStub,
-        );
+        await dummy.composeWith(stubPath, {});
+        await dummy.run();
+        assert.equal(spy.firstCall.thisValue.options.namespace, 'mocha');
+        assert.equal(spy.firstCall.thisValue.options.resolved, resolvedStub);
       });
     });
   });
 
   describe('#desc()', () => {
     it('update the internal description', function () {
-      this.dummy.desc('A new desc for this generator');
-      assert.equal(this.dummy.description, 'A new desc for this generator');
+      dummy.desc('A new desc for this generator');
+      assert.equal(dummy.description, 'A new desc for this generator');
     });
   });
 
   describe('#help()', () => {
     it('return the expected help output', function () {
-      this.dummy.option('ooOoo');
-      this.dummy.argument('baz', {
+      dummy.option('ooOoo');
+      dummy.argument('baz', {
         type: Number,
         required: false,
-        desc: 'definition; explanation; summary',
+        description: 'definition; explanation; summary',
       });
-      this.dummy.desc('A new desc for this generator');
+      dummy.desc('A new desc for this generator');
 
-      const help = this.dummy.help();
+      const help = dummy.help();
       const expected = [
         'Usage:',
         'yo dummy [<baz>] [options]',
@@ -1048,25 +1022,25 @@ describe('Base', () => {
 
   describe('#usage()', () => {
     it('returns the expected usage output with arguments', function () {
-      this.dummy.argument('baz', {
+      dummy.argument('baz', {
         type: Number,
         required: false,
       });
 
-      const usage = this.dummy.usage();
+      const usage = dummy.usage();
       assert.equal(usage.trim(), 'yo dummy [<baz>] [options]');
     });
 
     it('returns the expected usage output without arguments', function () {
-      this.dummy._arguments.length = 0;
-      const usage = this.dummy.usage();
+      dummy._arguments.length = 0;
+      const usage = dummy.usage();
       assert.equal(usage.trim(), 'yo dummy [options]');
     });
 
     it('returns the expected usage output without options', function () {
-      this.dummy._arguments.length = 0;
-      this.dummy._options = {};
-      const usage = this.dummy.usage();
+      dummy._arguments.length = 0;
+      dummy._options = {};
+      const usage = dummy.usage();
       assert.equal(usage.trim(), 'yo dummy');
     });
   });
@@ -1074,76 +1048,64 @@ describe('Base', () => {
   describe('#config', () => {
     it('provide a storage instance', async function () {
       const module = await import('../src/util/storage.js');
-      assert.ok(this.dummy.config instanceof module.default);
+      assert.ok(dummy.config instanceof module.default);
     });
 
     it('is updated when destinationRoot change', function () {
-      sinon.spy(this.Dummy.prototype, '_getStorage');
-      this.dummy.destinationRoot('foo');
+      sinonSpy(Dummy.prototype, '_getStorage');
+      dummy.destinationRoot('foo');
       // eslint-disable-next-line no-unused-expressions
-      this.dummy.config;
-      assert.equal(this.Dummy.prototype._getStorage.callCount, 1);
-      this.dummy.destinationRoot();
+      dummy.config;
+      assert.equal(Dummy.prototype._getStorage.callCount, 1);
+      dummy.destinationRoot();
       // eslint-disable-next-line no-unused-expressions
-      this.dummy.config;
-      assert.equal(this.Dummy.prototype._getStorage.callCount, 1);
-      this.dummy.destinationRoot('foo');
+      dummy.config;
+      assert.equal(Dummy.prototype._getStorage.callCount, 1);
+      dummy.destinationRoot('foo');
       // eslint-disable-next-line no-unused-expressions
-      this.dummy.config;
-      assert.equal(this.Dummy.prototype._getStorage.callCount, 2);
-      this.Dummy.prototype._getStorage.restore();
+      dummy.config;
+      assert.equal(Dummy.prototype._getStorage.callCount, 2);
+      Dummy.prototype._getStorage.restore();
     });
   });
 
   describe('#templatePath()', () => {
     it('joins path to the source root', function () {
-      assert.equal(
-        this.dummy.templatePath('bar.js'),
-        path.join(this.dummy.sourceRoot(), 'bar.js'),
-      );
-      assert.equal(
-        this.dummy.templatePath('dir/', 'bar.js'),
-        path.join(this.dummy.sourceRoot(), '/dir/bar.js'),
-      );
+      assert.equal(dummy.templatePath('bar.js'), path.join(dummy.sourceRoot(), 'bar.js'));
+      assert.equal(dummy.templatePath('dir/', 'bar.js'), path.join(dummy.sourceRoot(), '/dir/bar.js'));
     });
   });
 
   describe('#destinationPath()', () => {
     it('joins path to the source root', function () {
-      assert.equal(
-        this.dummy.destinationPath('bar.js'),
-        path.join(this.dummy.destinationRoot(), 'bar.js'),
-      );
-      assert.equal(
-        this.dummy.destinationPath('dir/', 'bar.js'),
-        path.join(this.dummy.destinationRoot(), '/dir/bar.js'),
-      );
+      assert.equal(dummy.destinationPath('bar.js'), path.join(dummy.destinationRoot(), 'bar.js'));
+      assert.equal(dummy.destinationPath('dir/', 'bar.js'), path.join(dummy.destinationRoot(), '/dir/bar.js'));
     });
   });
 
   describe('#registerTransformStream()', () => {
+    let TestGenerator;
+    let testGen;
+    let filepath;
+
     beforeEach(function () {
-      this.filepath = path.join(
-        os.tmpdir(),
-        '/yeoman-transform-stream/filea.txt',
-      );
-      this.TestGenerator = class extends Base {};
-      this.TestGenerator.prototype.exec = sinon.spy();
-      this.testGen = new this.TestGenerator([], {
+      filepath = path.join(os.tmpdir(), '/yeoman-transform-stream/filea.txt');
+      TestGenerator = class extends Base {};
+      TestGenerator.prototype.exec = sinonSpy();
+      testGen = new TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
-        env: this.env,
+        env,
       });
     });
 
     afterEach(function () {
-      rmSync(this.filepath, { force: true });
+      rmSync(filepath, { force: true });
     });
 
     it('add the transform stream to the commit stream', function () {
-      const self = this;
-      this.TestGenerator.prototype.writing = function () {
-        this.fs.write(self.filepath, 'not correct');
+      TestGenerator.prototype.writing = function () {
+        this.fs.write(filepath, 'not correct');
 
         this.queueTransformStream(
           through.obj((file, enc, cb) => {
@@ -1158,15 +1120,14 @@ describe('Base', () => {
         );
       };
 
-      return this.testGen.run().then(() => {
-        assert.equal(fs.readFileSync(this.filepath, 'utf8'), 'ab');
+      return testGen.run().then(() => {
+        assert.equal(fs.readFileSync(filepath, 'utf8'), 'ab');
       });
     });
 
     it('add multiple transform streams to the commit stream', function () {
-      const self = this;
-      this.TestGenerator.prototype.writing = function () {
-        this.fs.write(self.filepath, 'not correct');
+      TestGenerator.prototype.writing = function () {
+        this.fs.write(filepath, 'not correct');
 
         this.queueTransformStream([
           through.obj((file, enc, cb) => {
@@ -1180,34 +1141,29 @@ describe('Base', () => {
         ]);
       };
 
-      return this.testGen.run().then(() => {
-        assert.equal(fs.readFileSync(this.filepath, 'utf8'), 'ab');
+      return testGen.run().then(() => {
+        assert.equal(fs.readFileSync(filepath, 'utf8'), 'ab');
       });
     });
   });
 
   describe('Events', () => {
+    let Generator;
     beforeEach(function () {
-      class Generator extends Base {}
-      this.Generator = Generator;
+      Generator = class Generator extends Base {};
       Generator.namespace = 'angular:app';
       Generator.prototype.createSomething = () => {};
       Generator.prototype.createSomethingElse = () => {};
     });
 
     it('emits the series of event on a specific generator', function (done) {
-      const angular = new this.Generator([], {
-        env: yeoman.createEnv([], {}, new TestAdapter()),
+      const angular = new Generator([], {
+        env: createEnv([], {}, new TestAdapter()),
         resolved: __filename,
         'skip-install': true,
       });
 
-      const lifecycle = [
-        'run',
-        'method:createSomething',
-        'method:createSomethingElse',
-        'end',
-      ];
+      const lifecycle = ['run', 'method:createSomething', 'method:createSomethingElse', 'end'];
 
       function assertEvent(error) {
         return function () {
@@ -1226,10 +1182,7 @@ describe('Base', () => {
         // methods are executed
         .on('end', assertEvent('end'))
         .on('method:createSomething', assertEvent('method:createSomething'))
-        .on(
-          'method:createSomethingElse',
-          assertEvent('method:createSomethingElse'),
-        );
+        .on('method:createSomethingElse', assertEvent('method:createSomethingElse'));
 
       angular.run();
     });
@@ -1243,20 +1196,14 @@ describe('Base', () => {
         }
 
         createDuplicate() {
-          this.fs.copy(
-            this.templatePath('foo-copy.js'),
-            this.destinationPath('foo-copy.js'),
-          );
-          this.fs.copy(
-            this.templatePath('foo-copy.js'),
-            this.destinationPath('foo-copy.js'),
-          );
+          this.fs.copy(this.templatePath('foo-copy.js'), this.destinationPath('foo-copy.js'));
+          this.fs.copy(this.templatePath('foo-copy.js'), this.destinationPath('foo-copy.js'));
         }
       }
 
       let isFirstEndEvent = true;
       const generatorOnce = new GeneratorOnce([], {
-        env: yeoman.createEnv([], {}, new TestAdapter()),
+        env: createEnv([], {}, new TestAdapter()),
         resolved: __filename,
         'skip-install': true,
       });
@@ -1275,12 +1222,12 @@ describe('Base', () => {
     });
 
     it('triggers end event after all generators methods are ran (#709)', done => {
-      const endSpy = sinon.spy();
+      const endSpy = sinonSpy();
       const GeneratorEnd = class extends Base {
         constructor(args, options) {
           super(args, options);
           this.on('end', () => {
-            sinon.assert.calledOnce(endSpy);
+            sinonAssert.calledOnce(endSpy);
             done();
           });
         }
@@ -1291,7 +1238,7 @@ describe('Base', () => {
       };
 
       const generatorEnd = new GeneratorEnd([], {
-        env: yeoman.createEnv([], {}, new TestAdapter()),
+        env: createEnv([], {}, new TestAdapter()),
         resolved: __filename,
         'skip-install': true,
       });
@@ -1306,15 +1253,12 @@ describe('Base', () => {
     });
 
     it('returns the default name', function () {
-      assert.equal(this.dummy.rootGeneratorName(), '*');
+      assert.equal(dummy.rootGeneratorName(), '*');
     });
 
     it('returns generator name', function () {
-      fs.writeFileSync(
-        path.join(resolveddir, 'package.json'),
-        '{ "name": "generator-name" }',
-      );
-      assert.equal(this.dummy.rootGeneratorName(), 'generator-name');
+      fs.writeFileSync(path.join(resolveddir, 'package.json'), '{ "name": "generator-name" }');
+      assert.equal(dummy.rootGeneratorName(), 'generator-name');
     });
   });
 
@@ -1324,21 +1268,19 @@ describe('Base', () => {
     });
 
     it('returns the default version', function () {
-      assert.equal(this.dummy.rootGeneratorVersion(), '0.0.0');
+      assert.equal(dummy.rootGeneratorVersion(), '0.0.0');
     });
 
     it('returns generator version', function () {
-      fs.writeFileSync(
-        path.join(resolveddir, 'package.json'),
-        '{ "version": "1.0.0" }',
-      );
-      assert.equal(this.dummy.rootGeneratorVersion(), '1.0.0');
+      fs.writeFileSync(path.join(resolveddir, 'package.json'), '{ "version": "1.0.0" }');
+      assert.equal(dummy.rootGeneratorVersion(), '1.0.0');
     });
   });
 
   describe('#queueMethod()', () => {
+    let Generator;
     beforeEach(function () {
-      this.Generator = class extends Base {
+      Generator = class extends Base {
         constructor(args, options) {
           super(args, options);
 
@@ -1357,10 +1299,10 @@ describe('Base', () => {
     });
 
     it('queued method is executed', function (done) {
-      const gen = new this.Generator({
+      const gen = new Generator({
         resolved: resolveddir,
         namespace: 'dummy',
-        env: this.env,
+        env,
         testQueue: 'This value',
       });
 
@@ -1371,7 +1313,7 @@ describe('Base', () => {
     });
 
     it('queued method is executed by derived generator', function (done) {
-      const Derived = class extends this.Generator {
+      const Derived = class extends Generator {
         constructor(args, options) {
           super(args, options);
 
@@ -1389,10 +1331,10 @@ describe('Base', () => {
         }
       };
 
-      const derivedGen = new Derived({
+      const derivedGen = new Derived([], {
         resolved: resolveddir,
         namespace: 'dummy',
-        env: this.env,
+        env,
         testQueue: 'That value',
       });
 
@@ -1403,19 +1345,15 @@ describe('Base', () => {
     });
 
     it('queued method with function, methodName and reject', function () {
-      const env = yeoman.createEnv(
-        [],
-        { 'skip-install': true },
-        new TestAdapter(),
-      );
-      const gen = new this.Generator({
+      const env = createEnv([], { 'skip-install': true }, new TestAdapter());
+      const gen = new Generator({
         resolved: resolveddir,
         namespace: 'dummy',
         env,
         testQueue: 'This value',
       });
 
-      sinon.spy(env.runLoop, 'add');
+      sinonSpy(env.runLoop, 'add');
       const noop = () => {};
       gen.queueMethod(noop, 'configuring', noop);
 
@@ -1424,19 +1362,15 @@ describe('Base', () => {
     });
 
     it('queued method with object, queueName and reject', function () {
-      const env = yeoman.createEnv(
-        [],
-        { 'skip-install': true },
-        new TestAdapter(),
-      );
-      const gen = new this.Generator({
+      const env = createEnv([], { 'skip-install': true }, new TestAdapter());
+      const gen = new Generator({
         resolved: resolveddir,
         namespace: 'dummy',
         env,
         testQueue: 'This value',
       });
 
-      sinon.spy(env.runLoop, 'add');
+      sinonSpy(env.runLoop, 'add');
       const noop = () => {};
       const queueName = 'configuring';
       const tasks = {
@@ -1450,8 +1384,9 @@ describe('Base', () => {
   });
 
   describe('#queueTask()', () => {
+    let Generator;
     beforeEach(function () {
-      this.Generator = class extends Base {
+      Generator = class extends Base {
         constructor(args, options) {
           super(args, options);
 
@@ -1470,20 +1405,16 @@ describe('Base', () => {
     });
 
     it('queued method with function and options', function (done) {
-      const env = yeoman.createEnv(
-        [],
-        { 'skip-install': true },
-        new TestAdapter(),
-      );
-      const gen = new this.Generator({
+      const env = createEnv([], { 'skip-install': true }, new TestAdapter());
+      const gen = new Generator({
         resolved: resolveddir,
         namespace: 'dummy',
         env,
         testQueue: 'This value',
       });
 
-      sinon.spy(env.runLoop, 'add');
-      const method = sinon.fake();
+      sinonSpy(env.runLoop, 'add');
+      const method = sinonFake();
       const taskName = 'foo';
       const queueName = 'configuring';
       const arg = {};
@@ -1515,10 +1446,10 @@ describe('Base', () => {
     });
 
     it('queued method with function and options with reject', function () {
-      const gen = new this.Generator({
+      const gen = new Generator({
         resolved: resolveddir,
         namespace: 'dummy',
-        env: this.env,
+        env,
         testQueue: 'This value',
       });
 
@@ -1545,8 +1476,11 @@ describe('Base', () => {
   });
 
   describe('Custom priorities', () => {
+    let TestGenerator;
+    let testGen;
+
     beforeEach(function () {
-      this.TestGenerator = class extends Base {
+      TestGenerator = class extends Base {
         constructor(args, options) {
           super(args, {
             ...options,
@@ -1555,15 +1489,15 @@ describe('Base', () => {
               {
                 // Change priority prompting to be queue before writing for this generator.
                 // If we change defaults priorities in the future, the order of custom priorities will keep the same.
-                name: 'prompting',
+                priorityName: 'prompting',
                 before: 'writing',
               },
               {
-                name: 'prePrompting1',
+                priorityName: 'prePrompting1',
                 before: 'prompting',
               },
               {
-                name: 'preConfiguring1',
+                priorityName: 'preConfiguring1',
                 before: 'preConfiguring2',
                 queueName: 'common#preConfiguring1',
                 once: true,
@@ -1582,7 +1516,7 @@ describe('Base', () => {
     });
 
     it('generates correct _queues and runLoop queueNames', function () {
-      _.extend(this.TestGenerator.prototype, {
+      _.extend(TestGenerator.prototype, {
         assert() {
           assert.deepStrictEqual(this._queues, {
             initializing: {
@@ -1622,7 +1556,7 @@ describe('Base', () => {
             end: { priorityName: 'end', queueName: 'end' },
             afterEnd: { priorityName: 'afterEnd', queueName: 'dummy#afterEnd' },
           });
-          assert.deepStrictEqual(this.env.runLoop.queueNames, [
+          assert.deepStrictEqual(env.runLoop.queueNames, [
             'environment:run',
             'initializing',
             'prompting',
@@ -1643,28 +1577,28 @@ describe('Base', () => {
         },
       });
 
-      this.testGen = new this.TestGenerator([], {
+      testGen = new TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
-        env: this.env,
+        env,
         'skip-install': true,
       });
 
-      return this.testGen.run();
+      return testGen.run();
     });
 
     it('run custom priorities in correct order', function () {
-      const prePrompting1 = sinon.spy();
-      const preConfiguring1 = sinon.spy();
-      const preConfiguring2 = sinon.spy();
-      const afterEnd = sinon.spy();
+      const prePrompting1 = sinonSpy();
+      const preConfiguring1 = sinonSpy();
+      const preConfiguring2 = sinonSpy();
+      const afterEnd = sinonSpy();
 
-      const initializing = sinon.spy();
-      const prompting = sinon.spy();
-      const configuring = sinon.spy();
-      const end = sinon.spy();
+      const initializing = sinonSpy();
+      const prompting = sinonSpy();
+      const configuring = sinonSpy();
+      const end = sinonSpy();
 
-      _.extend(this.TestGenerator.prototype, {
+      _.extend(TestGenerator.prototype, {
         prePrompting1,
         preConfiguring1,
         preConfiguring2,
@@ -1675,14 +1609,14 @@ describe('Base', () => {
         end,
       });
 
-      this.testGen = new this.TestGenerator([], {
+      testGen = new TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
-        env: this.env,
+        env,
         'skip-install': true,
       });
 
-      return this.testGen.run().then(() => {
+      return testGen.run().then(() => {
         assert(initializing.calledBefore(preConfiguring1));
         assert(preConfiguring1.calledBefore(preConfiguring2));
         assert(preConfiguring2.calledBefore(configuring));
@@ -1694,44 +1628,44 @@ describe('Base', () => {
     });
 
     it('correctly run custom priority with once option', async function () {
-      const commonPreConfiguring = sinon.spy();
-      const customPreConfiguring1 = sinon.spy();
-      const customPreConfiguring2 = sinon.spy();
+      const commonPreConfiguring = sinonSpy();
+      const customPreConfiguring1 = sinonSpy();
+      const customPreConfiguring2 = sinonSpy();
 
-      _.extend(this.TestGenerator.prototype, {
+      _.extend(TestGenerator.prototype, {
         get preConfiguring1() {
           return { commonPreConfiguring };
         },
       });
 
-      this.TestGenerator2 = class extends this.TestGenerator {
+      class TestGenerator2 extends TestGenerator {
         get preConfiguring1() {
           return { ...super.preConfiguring1, customPreConfiguring1 };
         }
-      };
+      }
 
-      this.TestGenerator3 = class extends this.TestGenerator {
+      class TestGenerator3 extends TestGenerator {
         get preConfiguring1() {
           return { ...super.preConfiguring1, customPreConfiguring2 };
         }
-      };
+      }
 
-      this.testGen = new this.TestGenerator2([], {
+      testGen = new TestGenerator2([], {
         resolved: 'unknown',
         namespace: 'dummy',
-        env: this.env,
+        env,
         'skip-install': true,
       });
 
-      await this.testGen.composeWith({
-        Generator: this.TestGenerator3,
+      await testGen.composeWith({
+        Generator: TestGenerator3,
         path: 'unknown',
       });
 
-      return this.testGen.run().then(() => {
-        sinon.assert.calledOnce(commonPreConfiguring);
-        sinon.assert.calledOnce(customPreConfiguring1);
-        sinon.assert.calledOnce(customPreConfiguring2);
+      return testGen.run().then(() => {
+        sinonAssert.calledOnce(commonPreConfiguring);
+        sinonAssert.calledOnce(customPreConfiguring1);
+        sinonAssert.calledOnce(customPreConfiguring2);
       });
     });
   });
@@ -1744,11 +1678,11 @@ describe('Base', () => {
             ...options,
             customPriorities: [
               {
-                name: 'beforePrompting',
+                priorityName: 'beforePrompting',
                 before: 'prompting',
               },
               {
-                name: 'beforePrompting',
+                priorityName: 'beforePrompting',
                 before: 'prompting',
               },
             ],
@@ -1761,7 +1695,7 @@ describe('Base', () => {
           new TestGenerator([], {
             resolved: 'generator-ember/all/index.js',
             namespace: 'dummy',
-            env: this.env,
+            env,
             'skip-install': true,
           }),
       );
@@ -1773,15 +1707,15 @@ describe('Base', () => {
     const input1Prompt = { type: 'input', name: 'prompt1' };
     const input2Prompt = { type: 'input', name: 'prompt2' };
     beforeEach(function () {
-      this.dummy.env.adapter = new TestAdapter({
+      dummy.env.adapter = new TestAdapter({
         prompt1: 'prompt1NewValue',
         prompt2: 'prompt2NewValue',
       });
-      promptSpy = sinon.spy(this.dummy.env.adapter, 'prompt');
-      this.dummy.options.askAnswered = true;
-      this.dummy.config.set('prompt1', 'prompt1Value');
-      this.dummy.config.set('prompt2', 'prompt2Value');
-      this.dummy.config.set('notUsed', 'notUsedValue');
+      promptSpy = sinonSpy(dummy.env.adapter, 'prompt');
+      dummy.options.askAnswered = true;
+      dummy.config.set('prompt1', 'prompt1Value');
+      dummy.config.set('prompt2', 'prompt2Value');
+      dummy.config.set('notUsed', 'notUsedValue');
     });
     afterEach(() => {
       promptSpy.restore();
@@ -1789,7 +1723,7 @@ describe('Base', () => {
 
     it('passes config value as answer to adapter', function () {
       const expectedAnswers = { prompt1: 'prompt1Value' };
-      return this.dummy.prompt(input1Prompt, this.dummy.config).then(_ => {
+      return dummy.prompt(input1Prompt, dummy.config).then(_ => {
         assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
       });
     });
@@ -1799,58 +1733,48 @@ describe('Base', () => {
         prompt1: 'prompt1Value',
         prompt2: 'prompt2Value',
       };
-      return this.dummy
-        .prompt([input1Prompt, input2Prompt], this.dummy.config)
-        .then(_ => {
-          assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
-        });
+      return dummy.prompt([input1Prompt, input2Prompt], dummy.config).then(_ => {
+        assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
+      });
     });
 
     it('passes config values as the question default', function () {
-      return this.dummy
-        .prompt([input1Prompt, input2Prompt], this.dummy.config)
-        .then(_ => {
-          const [prompts, answers] = promptSpy.getCall(0).args;
-          assert.deepEqual(prompts[0].default(answers), 'prompt1Value');
-          assert.deepEqual(prompts[1].default(answers), 'prompt2Value');
-        });
+      return dummy.prompt([input1Prompt, input2Prompt], dummy.config).then(_ => {
+        const [prompts, answers] = promptSpy.getCall(0).args;
+        assert.deepEqual(prompts[0].default(answers), 'prompt1Value');
+        assert.deepEqual(prompts[1].default(answers), 'prompt2Value');
+      });
     });
 
     it('saves answers to config', function () {
-      return this.dummy
-        .prompt([input1Prompt, input2Prompt], this.dummy.config)
-        .then(answers => {
-          assert.equal(answers.prompt1, 'prompt1NewValue');
-          assert.equal(answers.prompt2, 'prompt2NewValue');
-          assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
-          assert.equal(this.dummy.config.get('prompt2'), 'prompt2NewValue');
-        });
+      return dummy.prompt([input1Prompt, input2Prompt], dummy.config).then(answers => {
+        assert.equal(answers.prompt1, 'prompt1NewValue');
+        assert.equal(answers.prompt2, 'prompt2NewValue');
+        assert.equal(dummy.config.get('prompt1'), 'prompt1NewValue');
+        assert.equal(dummy.config.get('prompt2'), 'prompt2NewValue');
+      });
     });
 
     it('saves answers to config when specified as a property name', function () {
-      return this.dummy
-        .prompt([{ ...input1Prompt, storage: 'config' }, input2Prompt])
-        .then(answers => {
-          assert.equal(answers.prompt1, 'prompt1NewValue');
-          assert.equal(answers.prompt2, 'prompt2NewValue');
-          assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
-          assert.equal(this.dummy.config.get('prompt2'), 'prompt2Value');
-        });
+      return dummy.prompt([{ ...input1Prompt, storage: 'config' }, input2Prompt]).then(answers => {
+        assert.equal(answers.prompt1, 'prompt1NewValue');
+        assert.equal(answers.prompt2, 'prompt2NewValue');
+        assert.equal(dummy.config.get('prompt1'), 'prompt1NewValue');
+        assert.equal(dummy.config.get('prompt2'), 'prompt2Value');
+      });
     });
 
     it('saves answers to specific storage', function () {
-      return this.dummy
-        .prompt([{ ...input1Prompt, storage: this.dummy.config }, input2Prompt])
-        .then(answers => {
-          assert.equal(answers.prompt1, 'prompt1NewValue');
-          assert.equal(answers.prompt2, 'prompt2NewValue');
-          assert.equal(this.dummy.config.get('prompt1'), 'prompt1NewValue');
-          assert.equal(this.dummy.config.get('prompt2'), 'prompt2Value');
-        });
+      return dummy.prompt([{ ...input1Prompt, storage: dummy.config }, input2Prompt]).then(answers => {
+        assert.equal(answers.prompt1, 'prompt1NewValue');
+        assert.equal(answers.prompt2, 'prompt2NewValue');
+        assert.equal(dummy.config.get('prompt1'), 'prompt1NewValue');
+        assert.equal(dummy.config.get('prompt2'), 'prompt2Value');
+      });
     });
 
     it('passes correct askAnswered option to adapter', function () {
-      return this.dummy.prompt([input1Prompt], this.dummy.config).then(_ => {
+      return dummy.prompt([input1Prompt], dummy.config).then(_ => {
         assert.deepEqual(promptSpy.getCall(0).args[0][0].askAnswered, true);
       });
     });
@@ -1858,11 +1782,7 @@ describe('Base', () => {
 
   describe('#getFeatures', () => {
     it('should return namespace as uniqueBy when unique is true', function () {
-      const gen = new Base(
-        [],
-        { namespace: 'foo', env: this.env },
-        { unique: true },
-      );
+      const gen = new Base([], { namespace: 'foo', env }, { unique: true });
       assert.equal(gen.getFeatures().uniqueBy, 'foo');
     });
 
@@ -1871,7 +1791,7 @@ describe('Base', () => {
         [],
         {
           namespace: 'foo',
-          env: this.env,
+          env,
         },
         {
           unique: 'namespace',
@@ -1885,7 +1805,7 @@ describe('Base', () => {
         ['bar'],
         {
           namespace: 'foo',
-          env: this.env,
+          env,
         },
         {
           unique: 'argument',
@@ -1904,7 +1824,7 @@ describe('Base', () => {
             ...options,
             customPriorities: [
               {
-                name: 'customPriority',
+                priorityName: 'customPriority',
                 before: 'prompting',
               },
             ],
@@ -1922,15 +1842,11 @@ describe('Base', () => {
         [],
         {
           namespace: 'foo',
-          env: this.env,
+          env,
         },
         {},
       );
-      assert.deepStrictEqual(gen.getTaskNames(), [
-        'anyMethod',
-        'default',
-        'customPriority',
-      ]);
+      assert.deepStrictEqual(gen.getTaskNames(), ['anyMethod', 'default', 'customPriority']);
     });
 
     it('should return any public member when tasksMatchingPriority is true', function () {
@@ -1938,7 +1854,7 @@ describe('Base', () => {
         [],
         {
           namespace: 'foo',
-          env: this.env,
+          env,
         },
         { tasksMatchingPriority: true },
       );

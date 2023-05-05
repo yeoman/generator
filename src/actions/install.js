@@ -30,12 +30,7 @@ export default install;
  *                                https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
  */
 
-install.scheduleInstallTask = function (
-  installer,
-  paths,
-  options,
-  spawnOptions,
-) {
+install.scheduleInstallTask = function (installer, paths, options, spawnOptions) {
   options = options || {};
   spawnOptions = spawnOptions || {};
   paths = Array.isArray(paths) ? paths : (paths && paths.split(' ')) || [];
@@ -54,10 +49,7 @@ install.scheduleInstallTask = function (
 
   // Return early if we're skipping installation
   if (this.options.skipInstall || this.options['skip-install']) {
-    this.log(
-      'Skipping install command: ' +
-        chalk.yellow(installer + ' ' + args.join(' ')),
-    );
+    this.log('Skipping install command: ' + chalk.yellow(installer + ' ' + args.join(' ')));
     return;
   }
 
@@ -87,26 +79,15 @@ install.scheduleInstallTask = function (
         })
         .on('exit', (code, signal) => {
           this.emit(`${installer}Install:end`, paths);
-          if (
-            (code || signal) &&
-            (this.options.forceInstall || this.options['force-install'])
-          ) {
-            return this.emit(
-              'error',
-              new Error(
-                `Installation of ${installer} failed with code ${
-                  code || signal
-                }`,
-              ),
-            );
+          if ((code || signal) && (this.options.forceInstall || this.options['force-install'])) {
+            return this.emit('error', new Error(`Installation of ${installer} failed with code ${code || signal}`));
           }
 
           done();
         });
     },
     {
-      once:
-        installer + ' ' + args.join(' ') + ' ' + JSON.stringify(spawnOptions),
+      once: installer + ' ' + args.join(' ') + ' ' + JSON.stringify(spawnOptions),
       run: false,
     },
   );
@@ -166,10 +147,7 @@ install.installDependencies = function (options) {
     this.bowerInstall(null, getOptions(options.bower));
   }
 
-  assert(
-    message.commands.length,
-    'installDependencies needs at least one of `npm`, `bower` or `yarn` to run.',
-  );
+  assert(message.commands.length, 'installDependencies needs at least one of `npm`, `bower` or `yarn` to run.');
 
   if (!options.skipMessage) {
     const tplValues = _.extend(

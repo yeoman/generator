@@ -35,10 +35,7 @@ describe('deprecate()', () => {
       // Wrap methods
       wrapped.func(2);
       sinon.assert.calledWith(dummy.func, 2);
-      sinon.assert.calledWith(
-        console.log,
-        chalk.yellow('(!) ') + 'func is deprecated',
-      );
+      sinon.assert.calledWith(console.log, chalk.yellow('(!) ') + 'func is deprecated');
     });
   });
 
@@ -53,10 +50,7 @@ describe('deprecate()', () => {
       assert.equal(dummy.foo, 1);
 
       // Wrap methods
-      sinon.assert.calledWith(
-        console.log,
-        chalk.yellow('(!) ') + 'foo is deprecated',
-      );
+      sinon.assert.calledWith(console.log, chalk.yellow('(!) ') + 'foo is deprecated');
     });
   });
 });

@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import path from 'node:path';
 import fs from 'node:fs';
 import _ from 'lodash';
 import table from 'text-table';
+import { type BaseGenerator } from '../generator.js';
 
 function formatArg(config) {
   let arg = `<${config.name}>`;
@@ -13,15 +15,17 @@ function formatArg(config) {
   return arg;
 }
 
-const helpMixin = Parent =>
-  class HelpMixin extends Parent {
+type Constructor<T extends BaseGenerator> = new (...args: any[]) => T;
+
+export default function helpMixin<Parent extends Constructor<BaseGenerator>>(parent: Parent) {
+  return class HelpMixin extends parent {
     /**
      * Tries to get the description from a USAGE file one folder above the
      * source root otherwise uses a default description
      *
-     * @return {String} Help message of the generator
+     * @return Help message of the generator
      */
-    help() {
+    help(): string {
       const filepath = path.resolve(this.sourceRoot(), '../USAGE');
       const exists = fs.existsSync(filepath);
 
@@ -49,11 +53,11 @@ const helpMixin = Parent =>
      * Output usage information for this given generator, depending on its arguments
      * or options
      *
-     * @return {String} Usage information of the generator
+     * @return Usage information of the generator
      */
-    usage() {
+    usage(): string {
       const options = Object.keys(this._options).length > 0 ? '[options]' : '';
-      let name = this.options.namespace;
+      let name = this._namespace;
       let args = '';
 
       if (this._arguments.length > 0) {
@@ -73,19 +77,19 @@ const helpMixin = Parent =>
     /**
      * Simple setter for custom `description` to append on help output.
      *
-     * @param {String} description
+     * @param description
      */
 
-    desc(description) {
+    desc(description: string): this {
       this.description = description || '';
       return this;
     }
 
     /**
      * Get help text for arguments
-     * @returns {String} Text of options in formatted table
+     * @returns Text of options in formatted table
      */
-    argumentsHelp() {
+    argumentsHelp(): string {
       const rows = this._arguments.map(config => {
         return [
           '',
@@ -101,25 +105,22 @@ const helpMixin = Parent =>
 
     /**
      * Get help text for options
-     * @returns {String} Text of options in formatted table
+     * @returns Text of options in formatted table
      */
-    optionsHelp() {
-      const options = _.reject(this._options, x => x.hide);
-
-      const rows = options.map(opt => {
-        return [
-          '',
-          opt.alias ? `-${opt.alias}, ` : '',
-          `--${opt.name}`,
-          opt.description ? `# ${opt.description}` : '',
-          opt.default !== undefined && opt.default !== ''
-            ? 'Default: ' + opt.default
-            : '',
-        ];
-      });
+    optionsHelp(): string {
+      const rows = Object.values(this._options)
+        .filter((opt: any) => !opt.hide)
+        .map((opt: any) => {
+          return [
+            '',
+            opt.alias ? `-${opt.alias}, ` : '',
+            `--${opt.name}`,
+            opt.description ? `# ${opt.description}` : '',
+            opt.default !== undefined && opt.default !== '' ? `Default: ${opt.default}` : '',
+          ];
+        });
 
       return table(rows);
     }
   };
-
-export default helpMixin;
+}

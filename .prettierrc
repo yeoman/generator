@@ -1,6 +1,6 @@
 # Prettier configuration
 
-printWidth: 80
+printWidth: 120
 singleQuote: true
 tabWidth: 2
 useTabs: false

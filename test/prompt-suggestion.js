@@ -4,16 +4,16 @@ import os from 'node:os';
 import { rmSync } from 'node:fs';
 import inquirer from 'inquirer';
 import env from 'yeoman-environment';
-import FileEditor from 'mem-fs-editor';
+import { create as createMemFsEditor } from 'mem-fs-editor';
 import Storage from '../src/util/storage.js';
-import promptSuggestion from '../src/util/prompt-suggestion.js';
+import { prefillQuestions, storeAnswers } from '../src/util/prompt-suggestion.js';
 
 /* eslint max-nested-callbacks: ["warn", 6] */
 
 describe('PromptSuggestion', () => {
   beforeEach(function () {
     this.memFs = env.createEnv().sharedFs;
-    this.fs = FileEditor.create(this.memFs);
+    this.fs = createMemFsEditor(this.memFs);
     this.storePath = path.join(os.tmpdir(), 'suggestion-config.json');
     this.store = new Storage('suggestion', this.fs, this.storePath);
     this.store.set('promptValues', { respuesta: 'foo' });
@@ -25,15 +25,15 @@ describe('PromptSuggestion', () => {
 
   describe('.prefillQuestions()', () => {
     it('require a store parameter', () => {
-      assert.throws(promptSuggestion.prefillQuestions.bind(null));
+      assert.throws(prefillQuestions.bind(null));
     });
 
     it('require a questions parameter', function () {
-      assert.throws(promptSuggestion.prefillQuestions.bind(this.store));
+      assert.throws(prefillQuestions.bind(this.store));
     });
 
     it('take a questions parameter', function () {
-      promptSuggestion.prefillQuestions(this.store, []);
+      prefillQuestions(this.store, []);
     });
 
     it('take a question object', function () {
@@ -42,7 +42,7 @@ describe('PromptSuggestion', () => {
         default: 'bar',
         store: true,
       };
-      const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+      const result = prefillQuestions(this.store, question)[0];
       assert.equal(result.default, 'foo');
     });
 
@@ -54,7 +54,7 @@ describe('PromptSuggestion', () => {
           store: true,
         },
       ];
-      const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+      const result = prefillQuestions(this.store, question)[0];
       assert.equal(result.default, 'foo');
     });
 
@@ -64,7 +64,7 @@ describe('PromptSuggestion', () => {
         default: 'bar',
         store: false,
       };
-      const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+      const result = prefillQuestions(this.store, question)[0];
       assert.equal(result.default, 'bar');
     });
 
@@ -74,7 +74,7 @@ describe('PromptSuggestion', () => {
         default: 'bar',
         store: true,
       };
-      const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+      const result = prefillQuestions(this.store, question)[0];
       assert.equal(result.default, 'foo');
     });
 
@@ -86,7 +86,7 @@ describe('PromptSuggestion', () => {
         store: true,
         choices: [new inquirer.Separator('spacer')],
       };
-      const result = promptSuggestion.prefillQuestions(this.store, question)[0];
+      const result = prefillQuestions(this.store, question)[0];
       assert.ok(result.choices[0] instanceof inquirer.Separator);
     });
 
@@ -119,10 +119,7 @@ describe('PromptSuggestion', () => {
             },
           ],
         };
-        const result = promptSuggestion.prefillQuestions(
-          this.store,
-          question,
-        )[0];
+        const result = prefillQuestions(this.store, question)[0];
 
         for (const choice of result.choices) {
           assert.equal(choice.checked, false);
@@ -139,10 +136,7 @@ describe('PromptSuggestion', () => {
           store: true,
           choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
-        const result = promptSuggestion.prefillQuestions(
-          this.store,
-          question,
-        )[0];
+        const result = prefillQuestions(this.store, question)[0];
         assert.deepEqual(result.default, ['foo']);
       });
 
@@ -175,10 +169,7 @@ describe('PromptSuggestion', () => {
               },
             ],
           };
-          const result = promptSuggestion.prefillQuestions(
-            this.store,
-            question,
-          )[0];
+          const result = prefillQuestions(this.store, question)[0];
 
           for (const choice of result.choices) {
             assert.equal(choice.checked, false);
@@ -195,10 +186,7 @@ describe('PromptSuggestion', () => {
             store: true,
             choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
           };
-          const result = promptSuggestion.prefillQuestions(
-            this.store,
-            question,
-          )[0];
+          const result = prefillQuestions(this.store, question)[0];
           assert.deepEqual(result.default, ['foo', 'bar']);
         });
       });
@@ -233,10 +221,7 @@ describe('PromptSuggestion', () => {
             },
           ],
         };
-        const result = promptSuggestion.prefillQuestions(
-          this.store,
-          question,
-        )[0];
+        const result = prefillQuestions(this.store, question)[0];
 
         assert.deepEqual(result.default, ['bar']);
       });
@@ -247,17 +232,9 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: ['bar'],
           store: true,
-          choices: () => [
-            'foo',
-            new inquirer.Separator('spacer'),
-            'bar',
-            'baz',
-          ],
+          choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
-        const result = promptSuggestion.prefillQuestions(
-          this.store,
-          question,
-        )[0];
+        const result = prefillQuestions(this.store, question)[0];
         assert.deepEqual(result.default, ['bar']);
       });
 
@@ -290,10 +267,7 @@ describe('PromptSuggestion', () => {
               },
             ],
           };
-          const result = promptSuggestion.prefillQuestions(
-            this.store,
-            question,
-          )[0];
+          const result = prefillQuestions(this.store, question)[0];
 
           assert.deepEqual(result.default, ['bar']);
         });
@@ -304,17 +278,9 @@ describe('PromptSuggestion', () => {
             name: 'respuesta',
             default: ['bar'],
             store: true,
-            choices: () => [
-              'foo',
-              new inquirer.Separator('spacer'),
-              'bar',
-              'baz',
-            ],
+            choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
           };
-          const result = promptSuggestion.prefillQuestions(
-            this.store,
-            question,
-          )[0];
+          const result = prefillQuestions(this.store, question)[0];
           assert.deepEqual(result.default, ['bar']);
         });
       });
@@ -349,10 +315,7 @@ describe('PromptSuggestion', () => {
             },
           ],
         };
-        const result = promptSuggestion.prefillQuestions(
-          this.store,
-          question,
-        )[0];
+        const result = prefillQuestions(this.store, question)[0];
         assert.equal(result.default, 2);
       });
 
@@ -364,10 +327,7 @@ describe('PromptSuggestion', () => {
           store: true,
           choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
-        const result = promptSuggestion.prefillQuestions(
-          this.store,
-          question,
-        )[0];
+        const result = prefillQuestions(this.store, question)[0];
         assert.equal(result.default, 2);
       });
     });
@@ -379,23 +339,23 @@ describe('PromptSuggestion', () => {
     });
 
     it('require a store parameter', () => {
-      assert.throws(promptSuggestion.storeAnswers.bind(null));
+      assert.throws(storeAnswers.bind(null));
     });
 
     it('require a question parameter', function () {
-      assert.throws(promptSuggestion.storeAnswers.bind(this.store));
+      assert.throws(storeAnswers.bind(this.store));
     });
 
     it('require a answer parameter', function () {
-      assert.throws(promptSuggestion.storeAnswers.bind(this.store, []));
+      assert.throws(storeAnswers.bind(this.store, []));
     });
 
     it('take a answer parameter', function () {
-      promptSuggestion.storeAnswers(this.store, [], {});
+      storeAnswers(this.store, [], {});
     });
 
     it('take a storeAll parameter', function () {
-      promptSuggestion.storeAnswers(this.store, [], {}, true);
+      storeAnswers(this.store, [], {}, true);
     });
 
     it('store answer in global store', function () {
@@ -409,8 +369,8 @@ describe('PromptSuggestion', () => {
         respuesta: 'baz',
       };
 
-      promptSuggestion.prefillQuestions(this.store, question);
-      promptSuggestion.storeAnswers(this.store, question, mockAnswers);
+      prefillQuestions(this.store, question);
+      storeAnswers(this.store, question, mockAnswers);
       assert.equal(this.store.get('promptValues').respuesta, 'baz');
     });
 
@@ -426,8 +386,8 @@ describe('PromptSuggestion', () => {
       };
 
       this.store.delete('promptValues');
-      promptSuggestion.prefillQuestions(this.store, question);
-      promptSuggestion.storeAnswers(this.store, question, mockAnswers, false);
+      prefillQuestions(this.store, question);
+      storeAnswers(this.store, question, mockAnswers, false);
       assert.equal(this.store.get('promptValues'), undefined);
     });
 
@@ -443,8 +403,8 @@ describe('PromptSuggestion', () => {
       };
 
       this.store.delete('promptValues');
-      promptSuggestion.prefillQuestions(this.store, question);
-      promptSuggestion.storeAnswers(this.store, question, mockAnswers, true);
+      prefillQuestions(this.store, question);
+      storeAnswers(this.store, question, mockAnswers, true);
       assert.equal(this.store.get('promptValues').respuesta, 'bar');
     });
 
@@ -459,8 +419,8 @@ describe('PromptSuggestion', () => {
         respuesta: 'baz',
       };
 
-      promptSuggestion.prefillQuestions(this.store, question);
-      promptSuggestion.storeAnswers(this.store, question, mockAnswers);
+      prefillQuestions(this.store, question);
+      storeAnswers(this.store, question, mockAnswers);
       assert.equal(this.store.get('promptValues').respuesta, 'foo');
     });
 
@@ -477,8 +437,8 @@ describe('PromptSuggestion', () => {
         respuesta: 'baz',
       };
 
-      promptSuggestion.prefillQuestions(this.store, question);
-      promptSuggestion.storeAnswers(this.store, question, mockAnswers);
+      prefillQuestions(this.store, question);
+      storeAnswers(this.store, question, mockAnswers);
       assert.equal(this.store.get('promptValues').respuesta, 'baz');
     });
 
@@ -499,8 +459,8 @@ describe('PromptSuggestion', () => {
           respuesta: 'foo',
         };
 
-        promptSuggestion.prefillQuestions(this.store, question);
-        promptSuggestion.storeAnswers(this.store, question, mockAnswers, false);
+        prefillQuestions(this.store, question);
+        storeAnswers(this.store, question, mockAnswers, false);
         assert.equal(this.store.get('promptValues'), undefined);
       });
 
@@ -517,8 +477,8 @@ describe('PromptSuggestion', () => {
           respuesta: 'foo',
         };
 
-        promptSuggestion.prefillQuestions(this.store, question);
-        promptSuggestion.storeAnswers(this.store, question, mockAnswers, true);
+        prefillQuestions(this.store, question);
+        storeAnswers(this.store, question, mockAnswers, true);
         assert.equal(this.store.get('promptValues').respuesta, 'foo');
       });
     });
@@ -534,8 +494,8 @@ describe('PromptSuggestion', () => {
         respuesta: false,
       };
 
-      promptSuggestion.prefillQuestions(this.store, question);
-      promptSuggestion.storeAnswers(this.store, question, mockAnswers);
+      prefillQuestions(this.store, question);
+      storeAnswers(this.store, question, mockAnswers);
       assert.equal(this.store.get('promptValues').respuesta, false);
     });
   });

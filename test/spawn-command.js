@@ -1,58 +1,54 @@
-import { createRequire } from 'node:module';
-import sinon from 'sinon';
-import esmock from 'esmock';
+import { expect } from 'expect';
+import { mock, restoreAllMocks, fn } from '@node-loaders/jest-mock';
 
-const require = createRequire(import.meta.url);
+const execa = await mock('execa');
+const { default: spawnCommandAction } = await import('../src/actions/spawn-command.js');
+
+class SpawnType extends spawnCommandAction(class Foo {}) {}
 
 describe('generators.Base (actions/spawn-command)', () => {
   let cwd;
+  let spawn;
 
   beforeEach(async function () {
-    this.crossSpawn = sinon.spy();
-    this.crossSpawnSync = sinon.spy();
-    const module = await esmock(
-      require.resolve('../src/actions/spawn-command'),
-      {
-        execa: {
-          execa: this.crossSpawn,
-          execaSync: this.crossSpawnSync,
-        },
-      },
-    );
-    this.spawn = new (module.default(class Foo {}))();
+    spawn = new SpawnType();
     cwd = Math.random().toString(36).slice(7);
-    this.spawn.destinationRoot = sinon.stub().returns(cwd);
+    spawn.destinationRoot = fn().mockReturnValue(cwd);
+  });
+
+  afterEach(() => {
+    restoreAllMocks();
   });
 
   describe('#spawnCommand()', () => {
-    it('provide default options', function () {
-      this.spawn.spawnCommand('foo');
-      sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
+    it('provide default options', async function () {
+      await spawn.spawnCommand('foo');
+      expect(execa.execa).toHaveBeenCalledWith('foo', undefined, {
         cwd,
         stdio: 'inherit',
       });
     });
 
-    it('pass arguments', function () {
-      this.spawn.spawnCommand('foo', 'bar');
-      sinon.assert.calledWith(this.crossSpawn, 'foo', 'bar', {
+    it('pass arguments', async function () {
+      await spawn.spawnCommand('foo', ['bar']);
+      expect(execa.execa).toHaveBeenCalledWith('foo', ['bar'], {
         cwd,
         stdio: 'inherit',
       });
     });
 
-    it('pass options', function () {
-      this.spawn.spawnCommand('foo', undefined, { foo: 1 });
-      sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
+    it('pass options', async function () {
+      await spawn.spawnCommand('foo', undefined, { foo: 1 });
+      expect(execa.execa).toHaveBeenCalledWith('foo', undefined, {
         cwd,
         foo: 1,
         stdio: 'inherit',
       });
     });
 
-    it('allow overriding default options', function () {
-      this.spawn.spawnCommand('foo', undefined, { stdio: 'ignore' });
-      sinon.assert.calledWith(this.crossSpawn, 'foo', undefined, {
+    it('allow overriding default options', async function () {
+      await spawn.spawnCommand('foo', undefined, { stdio: 'ignore' });
+      expect(execa.execa).toHaveBeenCalledWith('foo', undefined, {
         cwd,
         stdio: 'ignore',
       });
@@ -61,24 +57,24 @@ describe('generators.Base (actions/spawn-command)', () => {
 
   describe('#spawnCommandSync()', () => {
     it('provide default options', function () {
-      this.spawn.spawnCommandSync('foo');
-      sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
+      spawn.spawnCommandSync('foo');
+      expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
         cwd,
         stdio: 'inherit',
       });
     });
 
     it('pass arguments', function () {
-      this.spawn.spawnCommandSync('foo', 'bar');
-      sinon.assert.calledWith(this.crossSpawnSync, 'foo', 'bar', {
+      spawn.spawnCommandSync('foo', ['bar']);
+      expect(execa.execaSync).toHaveBeenCalledWith('foo', ['bar'], {
         cwd,
         stdio: 'inherit',
       });
     });
 
     it('pass options', function () {
-      this.spawn.spawnCommandSync('foo', undefined, { foo: 1 });
-      sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
+      spawn.spawnCommandSync('foo', undefined, { foo: 1 });
+      expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
         cwd,
         foo: 1,
         stdio: 'inherit',
@@ -86,10 +82,10 @@ describe('generators.Base (actions/spawn-command)', () => {
     });
 
     it('allow overriding default options', function () {
-      this.spawn.spawnCommandSync('foo', undefined, { stdio: 'wut' });
-      sinon.assert.calledWith(this.crossSpawnSync, 'foo', undefined, {
+      spawn.spawnCommandSync('foo', undefined, { stdio: 'pipe' });
+      expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
         cwd,
-        stdio: 'wut',
+        stdio: 'pipe',
       });
     });
   });

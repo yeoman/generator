@@ -1,6 +1,6 @@
 {
   "name": "yeoman-generator",
-  "version": "5.7.0",
+  "version": "5.9.0",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
   "keywords": [
     "development",
@@ -22,18 +22,22 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.js",
+      "default": "./dist/index.js"
     },
     "./typed": {
       "types": "./dist/index.d.js",
       "import": "./dist/index.js"
     }
   },
+  "types": "./dist/index.d.js",
+  "main": "./dist/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-types",
+    "copy-types": "cpy \"src/**/*.d.(|c|m)ts\" dist/",
     "coverage": "c8 report --reporter=text-lcov | coveralls",
     "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
     "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path$DOC_FOLDER/global.html || true",
@@ -41,49 +45,53 @@
     "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
     "prepare": "npm run build",
     "pretest": "xo",
-    "test": "c8 mocha --forbid-only"
+    "test": "c8 esmocha --forbid-only"
   },
   "config": {
     "doc_path": "../yeoman-generator-doc/"
   },
   "dependencies": {
     "@types/node": "^16.18.3",
+    "@yeoman/api": "^0.0.2",
     "chalk": "^5.1.2",
     "dargs": "^8.1.0",
     "debug": "^4.1.1",
-    "execa": "^6.1.0",
+    "execa": "^7.1.1",
     "github-username": "^7.0.0",
     "lodash": "^4.17.11",
-    "minimist": "^1.2.7",
-    "prettier-plugin-packagejson": "^2.3.0",
+    "mem-fs-editor": "^10.0.1",
+    "minimist": "^1.2.8",
+    "prettier-plugin-packagejson": "^2.4.3",
     "read-pkg-up": "^9.1.0",
-    "semver": "^7.2.1",
-    "simple-git": "^3.15.0",
+    "semver": "^7.5.0",
+    "simple-git": "^3.18.0",
     "sort-keys": "^5.0.0",
     "text-table": "^0.2.0"
   },
   "devDependencies": {
-    "c8": "^7.12.0",
-    "coveralls": "^3.1.1",
-    "esmock": "^2.0.9",
-    "inquirer": "^8.2.5",
-    "jsdoc": "^3.6.7",
-    "mem-fs": "^2.2.1",
-    "mem-fs-editor": "^9.5.0",
-    "mocha": "^10.1.0",
-    "nock": "^13.2.9",
-    "prettier": "^2.8.0",
-    "sinon": "^15.0.0",
+    "@types/inquirer": "^9.0.3",
+    "@types/lodash": "^4.14.194",
+    "@types/semver": "^7.3.13",
+    "@types/sinon": "^10.0.14",
+    "c8": "^7.13.0",
+    "cpy-cli": "^4.2.0",
+    "esmocha": "^0.1.4",
+    "inquirer": "^9.2.1",
+    "jsdoc": "^4.0.2",
+    "mem-fs": "^3.0.0",
+    "nock": "^13.3.1",
+    "prettier": "^2.8.8",
+    "sinon": "^15.0.4",
     "through2": "^4.0.2",
     "tui-jsdoc-template": "^1.2.2",
-    "typescript": "^4.9.3",
-    "xo": "^0.53.1",
+    "typescript": "^5.0.4",
+    "xo": "^0.54.2",
     "yeoman-assert": "^3.1.1",
-    "yeoman-environment": "^3.12.1",
-    "yeoman-test": "^7.0.0"
+    "yeoman-environment": "^4.0.0-alpha.1",
+    "yeoman-test": "^8.0.0-alpha.1"
   },
   "peerDependencies": {
-    "yeoman-environment": "^3.2.0"
+    "yeoman-environment": "^4.0.0-alpha.0"
   },
   "peerDependenciesMeta": {
     "yeoman-environment": {
@@ -91,6 +99,6 @@
     }
   },
   "engines": {
-    "node": "^14.15.0 || ^16.13.0 || >=18.12.0"
+    "node": "^16.13.0 || >=18.12.0"
   }
 }

@@ -1,10 +1,9 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import sinon from 'sinon';
+import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
-
 import fsAction from '../src/actions/fs.js';
-import Base from '../src/generator.js';
+import Base from './utils.js';
 
 const randomString = () => Math.random().toString(36).slice(7);
 
@@ -26,8 +25,8 @@ describe('generators.Base (actions/fs)', () => {
     this.base = new (fsAction(class Foo {}))();
 
     Object.assign(this.base, {
-      templatePath: sinon.stub().returns(baseReturns.templatePath),
-      destinationPath: sinon.stub().returns(baseReturns.destinationPath),
+      templatePath: sinonStub().returns(baseReturns.templatePath),
+      destinationPath: sinonStub().returns(baseReturns.destinationPath),
       renderTemplate: Base.prototype.renderTemplate,
       renderTemplateAsync: Base.prototype.renderTemplateAsync,
       renderTemplates: Base.prototype.renderTemplates,
@@ -53,7 +52,7 @@ describe('generators.Base (actions/fs)', () => {
       'copyTplAsync',
     ]) {
       const returnValue = randomString();
-      this.base.fs[op] = sinon.stub().returns(returnValue);
+      this.base.fs[op] = sinonStub().returns(returnValue);
       returns[op] = returnValue;
     }
   });
@@ -118,17 +117,10 @@ describe('generators.Base (actions/fs)', () => {
       let firstArgumentHandler;
       let secondArgumentHandler;
 
-      beforeEach(function () {
-        returnValue = this.base[operation.name](
-          passedArg1,
-          passedArg2,
-          passedArg3,
-          passedArg4,
-        );
+      beforeEach(async function () {
+        returnValue = await this.base[operation.name](passedArg1, passedArg2, passedArg3, passedArg4);
 
-        expectedReturn = operation.returnsUndefined
-          ? undefined
-          : returns[operation.dest];
+        expectedReturn = operation.returnsUndefined ? undefined : returns[operation.dest];
         firstArgumentHandler = this.base[operation.first];
         secondArgumentHandler = this.base[operation.second];
       });
@@ -181,14 +173,14 @@ describe('generators.Base (actions/fs)', () => {
     const getPathReturn = { foo: 'bar' };
 
     beforeEach(function () {
-      sinon.stub(this.gen, 'sourceRoot').returns('');
-      sinon.stub(this.gen, 'destinationRoot').returns('');
-      sinon.stub(this.gen.config, 'getAll').returns(getAllReturn);
-      sinon.stub(this.gen.config, 'getPath').returns(getPathReturn);
+      sinonStub(this.gen, 'sourceRoot').returns('');
+      sinonStub(this.gen, 'destinationRoot').returns('');
+      sinonStub(this.gen.config, 'getAll').returns(getAllReturn);
+      sinonStub(this.gen.config, 'getPath').returns(getPathReturn);
 
       for (const op of ['copyTpl']) {
         const returnValue = randomString();
-        sinon.stub(this.gen.fs, op).returns(returnValue);
+        sinonStub(this.gen.fs, op).returns(returnValue);
         returns[op] = returnValue;
       }
     });
@@ -240,14 +232,14 @@ describe('generators.Base (actions/fs)', () => {
     const getPathReturn = { foo: 'bar' };
 
     beforeEach(function () {
-      sinon.stub(this.gen, 'sourceRoot').returns('');
-      sinon.stub(this.gen, 'destinationRoot').returns('');
-      sinon.stub(this.gen.config, 'getAll').returns(getAllReturn);
-      sinon.stub(this.gen.config, 'getPath').returns(getPathReturn);
+      sinonStub(this.gen, 'sourceRoot').returns('');
+      sinonStub(this.gen, 'destinationRoot').returns('');
+      sinonStub(this.gen.config, 'getAll').returns(getAllReturn);
+      sinonStub(this.gen.config, 'getPath').returns(getPathReturn);
 
       for (const op of ['copyTplAsync']) {
         const returnValue = randomString();
-        sinon.stub(this.gen.fs, op).returns(returnValue);
+        sinonStub(this.gen.fs, op).returns(returnValue);
         returns[op] = returnValue;
       }
     });
@@ -269,8 +261,8 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(firsCall.args[2], getAllReturn);
     });
 
-    it('gets data with path from config', function () {
-      this.gen.renderTemplateAsync('a', 'b', 'test');
+    it('gets data with path from config', async function () {
+      await this.gen.renderTemplateAsync('a', 'b', 'test');
       const { copyTplAsync } = this.gen.fs;
 
       assert(copyTplAsync.calledOnce);
@@ -296,12 +288,12 @@ describe('generators.Base (actions/fs)', () => {
 
   describe('#renderTemplates', () => {
     beforeEach(function () {
-      sinon.stub(this.gen, 'sourceRoot').returns('');
-      sinon.stub(this.gen, 'destinationRoot').returns('');
+      sinonStub(this.gen, 'sourceRoot').returns('');
+      sinonStub(this.gen, 'destinationRoot').returns('');
 
       for (const op of ['copyTpl']) {
         const returnValue = randomString();
-        sinon.stub(this.gen.fs, op).returns(returnValue);
+        sinonStub(this.gen.fs, op).returns(returnValue);
         returns[op] = returnValue;
       }
     });
@@ -420,12 +412,12 @@ describe('generators.Base (actions/fs)', () => {
 
   describe('#renderTemplatesAsync', () => {
     beforeEach(function () {
-      sinon.stub(this.gen, 'sourceRoot').returns('');
-      sinon.stub(this.gen, 'destinationRoot').returns('');
+      sinonStub(this.gen, 'sourceRoot').returns('');
+      sinonStub(this.gen, 'destinationRoot').returns('');
 
       for (const op of ['copyTplAsync']) {
         const returnValue = randomString();
-        sinon.stub(this.gen.fs, op).returns(returnValue);
+        sinonStub(this.gen.fs, op).returns(returnValue);
         returns[op] = returnValue;
       }
     });
@@ -487,7 +479,7 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(secondCall.args[4], copyOptions);
     });
 
-    it('skips templates based on when callback', function () {
+    it('skips templates based on when callback', async function () {
       const passedArg1 = 'foo';
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
@@ -495,7 +487,7 @@ describe('generators.Base (actions/fs)', () => {
       const templateOptions = {};
       const copyOptions = {};
 
-      this.gen.renderTemplatesAsync(
+      await this.gen.renderTemplatesAsync(
         [
           { source: passedArg1 },
           {

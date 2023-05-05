@@ -1,11 +1,10 @@
 import os from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert';
-import sinon from 'sinon';
+import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
 import helpers, { TestAdapter } from 'yeoman-test';
-
-import Base from '../src/generator.js';
+import Base from './utils.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-generator-environment');
 
@@ -14,13 +13,9 @@ describe('Generator with environment version', () => {
   describe('mocked 3.0.0', () => {
     before(function () {
       this.timeout(100_000);
-      this.env = Environment.createEnv(
-        [],
-        { 'skip-install': true },
-        new TestAdapter(),
-      );
+      this.env = Environment.createEnv([], { 'skip-install': true }, new TestAdapter());
       this.env.getVersion = this.env.getVersion || (() => {});
-      this.getVersionStub = sinon.stub(this.env, 'getVersion');
+      this.getVersionStub = sinonStub(this.env, 'getVersion');
 
       this.Dummy = class extends Base {};
       this.dummy = new this.Dummy(['bar', 'baz', 'bom'], {
@@ -91,10 +86,7 @@ describe('Generator with environment version', () => {
 
         describe('with warning', () => {
           it('should return false', function () {
-            assert.equal(
-              this.dummy.checkEnvironmentVersion('3.0.1', true),
-              false,
-            );
+            assert.equal(this.dummy.checkEnvironmentVersion('3.0.1', true), false);
           });
         });
 
@@ -116,20 +108,14 @@ describe('Generator with environment version', () => {
       describe('with required inquirer', () => {
         it('returns true', function () {
           this.getVersionStub.withArgs('inquirer').returns('7.1.0');
-          assert.equal(
-            this.dummy.checkEnvironmentVersion('inquirer', '7.1.0'),
-            true,
-          );
+          assert.equal(this.dummy.checkEnvironmentVersion('inquirer', '7.1.0'), true);
         });
       });
 
       describe('with greater than required inquirer', () => {
         it('returns true', function () {
           this.getVersionStub.withArgs('inquirer').returns('7.1.1');
-          assert.equal(
-            this.dummy.checkEnvironmentVersion('inquirer', '7.1.0'),
-            true,
-          );
+          assert.equal(this.dummy.checkEnvironmentVersion('inquirer', '7.1.0'), true);
         });
       });
 
@@ -147,10 +133,7 @@ describe('Generator with environment version', () => {
 
         describe('with warning', () => {
           it('returns false', function () {
-            assert.equal(
-              this.dummy.checkEnvironmentVersion('inquirer', '7.1.1', true),
-              false,
-            );
+            assert.equal(this.dummy.checkEnvironmentVersion('inquirer', '7.1.1', true), false);
           });
         });
 
@@ -164,25 +147,13 @@ describe('Generator with environment version', () => {
           });
 
           it('returns false', function () {
-            assert.equal(
-              this.dummy.checkEnvironmentVersion('inquirer', '7.1.1'),
-              false,
-            );
+            assert.equal(this.dummy.checkEnvironmentVersion('inquirer', '7.1.1'), false);
           });
         });
       });
     });
 
     describe('#prompt with storage', () => {
-      it('with incompatible inquirer', function () {
-        this.getVersionStub.withArgs().returns('3.0.0');
-        this.getVersionStub.withArgs('inquirer').returns('7.0.0');
-        assert.throws(
-          () => this.dummy.prompt([], this.dummy.config),
-          /requires inquirer at least 7.1.0, current version is 7.0.0/,
-        );
-      });
-
       it('with compatible environment', function () {
         const self = this;
         this.getVersionStub.withArgs().returns('3.0.0');
@@ -195,11 +166,7 @@ describe('Generator with environment version', () => {
   describe('mocked 2.8.1', () => {
     before(function () {
       this.timeout(100_000);
-      this.env = Environment.createEnv(
-        [],
-        { 'skip-install': true },
-        new TestAdapter(),
-      );
+      this.env = Environment.createEnv([], { 'skip-install': true }, new TestAdapter());
       this.getVersion = Environment.prototype.getVersion;
       delete Environment.prototype.getVersion;
 

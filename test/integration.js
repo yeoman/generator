@@ -15,11 +15,7 @@ describe('Integration', () => {
     this.timeout(5000);
     let temporaryDir;
     await helpers
-      .create(
-        path.join(__dirname, 'fixtures/generator-defaults/app'),
-        {},
-        { createEnv: Environment.createEnv },
-      )
+      .create(path.join(__dirname, 'fixtures/generator-defaults/app'), {}, { createEnv: Environment.createEnv })
       .inTmpDir(() => {
         temporaryDir = process.cwd();
       })

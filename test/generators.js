@@ -4,8 +4,7 @@ import os from 'node:os';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
 import semver from 'semver';
-
-import Base from '../src/generator.js';
+import Base from './utils.js';
 
 const NAMESPACE = 'somenamespace';
 
@@ -26,10 +25,7 @@ describe('Generators module', () => {
     });
 
     it('should expose yoGeneratorVersion', function () {
-      assert(
-        semver.valid(this.generator.yoGeneratorVersion),
-        `Not valid version ${this.generator.yoGeneratorVersion}`,
-      );
+      assert(semver.valid(this.generator.yoGeneratorVersion), `Not valid version ${this.generator.yoGeneratorVersion}`);
     });
 
     it('is an EventEmitter', function (done) {
@@ -58,10 +54,7 @@ describe('Generators module', () => {
       env: this.env,
       resolved: 'test',
     });
-    assert.equal(
-      path.join(os.homedir(), '.yo-rc-global.json'),
-      this.generator._globalConfig.path,
-    );
+    assert.equal(path.join(os.homedir(), '.yo-rc-global.json'), this.generator._globalConfig.path);
   });
 
   it('with localConfigOnly option', function () {
@@ -70,10 +63,7 @@ describe('Generators module', () => {
       resolved: 'test',
       localConfigOnly: true,
     });
-    assert.equal(
-      path.join(this.env.cwd, '.yo-rc-global.json'),
-      this.generator._globalConfig.path,
-    );
+    assert.equal(path.join(this.env.cwd, '.yo-rc-global.json'), this.generator._globalConfig.path);
   });
 
   describe('#run', () => {
@@ -138,10 +128,7 @@ describe('Generators module', () => {
       // eslint-disable-next-line no-new
       new Generator({ env: {} });
     } catch (error) {
-      assert.equal(
-        error.message,
-        "Current environment doesn't provides some necessary feature this generator needs.",
-      );
+      assert.equal(error.message, "Current environment doesn't provides some necessary feature this generator needs.");
       done();
     }
   });

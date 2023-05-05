@@ -1,3 +1,3 @@
 module.exports = {
-  'node-option': ['loader=esmock'],
+  'extension': ['js', 'ts'],
 };

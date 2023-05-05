@@ -5,7 +5,6 @@ import { mkdirSync, rmSync } from 'node:fs';
 import process from 'node:process';
 import nock from 'nock';
 import { simpleGit } from 'simple-git';
-
 import userMixin from '../src/actions/user.js';
 
 /* eslint max-nested-callbacks: ["warn", 5] */
@@ -21,10 +20,7 @@ describe('Base#user', function () {
     mkdirSync(path.join(tmpdir, 'subdir'), { recursive: true });
     process.chdir(tmpdir);
     const git = simpleGit();
-    await git
-      .init()
-      .addConfig('user.name', 'Yeoman')
-      .addConfig('user.email', 'yo@yeoman.io');
+    await git.init().addConfig('user.name', 'Yeoman').addConfig('user.email', 'yo@yeoman.io');
   });
 
   afterEach(function () {

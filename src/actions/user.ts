@@ -1,11 +1,14 @@
 import process from 'node:process';
 import githubUsername from 'github-username';
-import { simpleGit } from 'simple-git';
+import { type SimpleGit, simpleGit } from 'simple-git';
+import { type BaseGenerator } from '../generator.js';
+
+type Constructor<T extends BaseGenerator> = new (...args: any[]) => T;
 
 class GitUtil {
-  #parent;
+  #parent: { get simpleGit(): SimpleGit };
 
-  constructor(parent) {
+  constructor(parent: { get simpleGit(): SimpleGit }) {
     this.#parent = parent;
   }
 
@@ -14,9 +17,9 @@ class GitUtil {
    * (it'll take what Git will use in the current context)
    * @return {Promise<string>} configured git name or undefined
    */
-  async name() {
+  async name(): Promise<string | undefined> {
     const { value } = await this.#parent.simpleGit.getConfig('user.name');
-    return value;
+    return value ?? undefined;
   }
 
   /**
@@ -24,24 +27,22 @@ class GitUtil {
    * (it'll take what Git will use in the current context)
    * @return {Promise<string>} configured git email or undefined
    */
-  async email() {
+  async email(): Promise<string | undefined> {
     const { value } = await this.#parent.simpleGit.getConfig('user.email');
-    return value;
+    return value ?? undefined;
   }
 }
 
-const userMixin = Parent =>
-  class GitMixin extends Parent {
-    #git;
-    #simpleGit;
+export default function userMixin<Parent extends Constructor<BaseGenerator>>(parent: Parent) {
+  return class GitMixin extends parent {
+    #git?: GitUtil;
+    #simpleGit?: SimpleGit;
 
-    /**
-     * @return {import('simple-git').SimpleGit}
-     */
-    get simpleGit() {
+    get simpleGit(): SimpleGit {
       if (!this.#simpleGit) {
         this.#simpleGit = simpleGit({ baseDir: this.destinationPath() }).env({
           ...process.env,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           LANG: 'en',
         });
         this.on('destinationRootChange', () => {
@@ -52,7 +53,7 @@ const userMixin = Parent =>
       return this.#simpleGit;
     }
 
-    get git() {
+    get git(): GitUtil {
       if (!this.#git) {
         this.#git = new GitUtil(this);
       }
@@ -64,12 +65,14 @@ const userMixin = Parent =>
       return {
         /**
          * Retrieves GitHub's username from the GitHub API
-         * @return {Promise} Resolved with the GitHub username or rejected if unable to
+         * @return Resolved with the GitHub username or rejected if unable to
          *                   get the information
          */
-        username: async () => githubUsername(await this.git.email()),
+        username: async () => {
+          const email = await this.git.email();
+          return email ? githubUsername(email) : email;
+        },
       };
     }
   };
-
-export default userMixin;
+}

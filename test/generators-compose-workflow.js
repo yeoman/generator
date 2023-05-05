@@ -1,13 +1,11 @@
 import os from 'node:os';
 import path from 'node:path';
 import { mkdirSync } from 'node:fs';
-import sinon from 'sinon';
+import { spy as sinonSpy, assert as sinonAssert } from 'sinon';
 import yeoman from 'yeoman-environment';
-
 import assert from 'yeoman-assert';
 import helpers, { TestAdapter } from 'yeoman-test';
-
-import Base from '../src/generator.js';
+import Base from './utils.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
@@ -16,14 +14,10 @@ describe('Multiples generators', () => {
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    this.env = yeoman.createEnv(
-      [],
-      { 'skip-install': true },
-      new TestAdapter(),
-    );
+    this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
     mkdirSync(resolveddir, { recursive: true });
     this.Dummy = class extends Base {};
-    this.spyExec = sinon.spy();
+    this.spyExec = sinonSpy();
     this.Dummy.prototype.exec = this.spyExec;
   });
 
@@ -38,10 +32,10 @@ describe('Multiples generators', () => {
         'skip-cache': true,
       });
 
-      this.spyExec1 = sinon.spy();
-      this.spyInit1 = sinon.spy();
-      this.spyWrite1 = sinon.spy();
-      this.spyEnd1 = sinon.spy();
+      this.spyExec1 = sinonSpy();
+      this.spyInit1 = sinonSpy();
+      this.spyWrite1 = sinonSpy();
+      this.spyEnd1 = sinonSpy();
 
       this.GenCompose1 = class extends Base {};
       this.GenCompose1.prototype.exec = this.spyExec1;
@@ -49,10 +43,10 @@ describe('Multiples generators', () => {
       this.GenCompose1.prototype.writing = this.spyWrite1;
       this.GenCompose1.prototype.end = this.spyEnd1;
 
-      this.spyExec2 = sinon.spy();
-      this.spyInit2 = sinon.spy();
-      this.spyWrite2 = sinon.spy();
-      this.spyEnd2 = sinon.spy();
+      this.spyExec2 = sinonSpy();
+      this.spyInit2 = sinonSpy();
+      this.spyWrite2 = sinonSpy();
+      this.spyEnd2 = sinonSpy();
 
       this.GenCompose2 = class extends Base {};
       this.GenCompose2.prototype.exec = this.spyExec2;
@@ -67,12 +61,12 @@ describe('Multiples generators', () => {
     it('runs multiple composed generators', async function () {
       await this.dummy.composeWith(['composed:gen', 'composed:gen2']);
 
-      const runSpy = sinon.spy(this.dummy, 'run');
+      const runSpy = sinonSpy(this.dummy, 'run');
 
       // I use a setTimeout here just to make sure composeWith() doesn't start the
       // generator before the base one is ran.
       await this.dummy.run();
-      sinon.assert.callOrder(
+      sinonAssert.callOrder(
         runSpy,
         this.spyInit1,
         this.spyInit2,
@@ -93,10 +87,10 @@ describe('Multiples generators', () => {
     it('runs multiple composed generators (reverse)', async function () {
       await this.dummy.composeWith(['composed:gen2', 'composed:gen']);
 
-      const runSpy = sinon.spy(this.dummy, 'run');
+      const runSpy = sinonSpy(this.dummy, 'run');
       await this.dummy.run();
 
-      sinon.assert.callOrder(
+      sinonAssert.callOrder(
         runSpy,
         this.spyInit2,
         this.spyInit1,
@@ -115,24 +109,20 @@ describe('Multiples generators', () => {
     });
 
     it('runs 3 composed generators', async function () {
-      this.spyExec3 = sinon.spy();
-      this.spyInit3 = sinon.spy();
+      this.spyExec3 = sinonSpy();
+      this.spyInit3 = sinonSpy();
       const GenCompose3 = class extends Base {};
       GenCompose3.prototype.exec = this.spyExec3;
       GenCompose3.prototype.initializing = this.spyInit3;
 
       this.env.registerStub(GenCompose3, 'composed:gen3');
 
-      await this.dummy.composeWith([
-        'composed:gen',
-        'composed:gen2',
-        'composed:gen3',
-      ]);
+      await this.dummy.composeWith(['composed:gen', 'composed:gen2', 'composed:gen3']);
 
-      const runSpy = sinon.spy(this.dummy, 'run');
+      const runSpy = sinonSpy(this.dummy, 'run');
       await this.dummy.run();
 
-      sinon.assert.callOrder(
+      sinonAssert.callOrder(
         runSpy,
         this.spyInit1,
         this.spyInit2,
@@ -157,9 +147,9 @@ describe('Multiples generators', () => {
     it('runs multiple composed generators inside a running generator', function (done) {
       const Dummy2 = class extends this.Dummy {};
 
-      const writingSpy1 = sinon.spy();
-      const writingSpy2 = sinon.spy();
-      const endSpy = sinon.spy();
+      const writingSpy1 = sinonSpy();
+      const writingSpy2 = sinonSpy();
+      const endSpy = sinonSpy();
       Dummy2.prototype.end = endSpy;
 
       Dummy2.prototype.writing = {
@@ -183,13 +173,13 @@ describe('Multiples generators', () => {
         'skip-cache': true,
       });
 
-      const runSpy = sinon.spy(this.dummy2, 'run');
+      const runSpy = sinonSpy(this.dummy2, 'run');
 
       // I use a setTimeout here just to make sure composeWith() doesn't start the
       // generator before the base one is ran.
       setTimeout(() => {
         this.dummy2.run().then(() => {
-          sinon.assert.callOrder(
+          sinonAssert.callOrder(
             runSpy,
             writingSpy1,
             this.spyInit1,
@@ -222,10 +212,10 @@ describe('Multiples generators', () => {
     it('runs multiple composed generators inside a running generator', function (done) {
       const Dummy2 = class extends this.Dummy {};
 
-      const writingSpy1 = sinon.spy();
-      const writingSpy2 = sinon.spy();
-      const writingSpy3 = sinon.spy();
-      const endSpy = sinon.spy();
+      const writingSpy1 = sinonSpy();
+      const writingSpy2 = sinonSpy();
+      const writingSpy3 = sinonSpy();
+      const endSpy = sinonSpy();
 
       Dummy2.prototype.end = endSpy;
       Dummy2.prototype.writing = {
@@ -255,13 +245,13 @@ describe('Multiples generators', () => {
         'skip-cache': true,
       });
 
-      const runSpy = sinon.spy(this.dummy2, 'run');
+      const runSpy = sinonSpy(this.dummy2, 'run');
 
       // I use a setTimeout here just to make sure composeWith() doesn't start the
       // generator before the base one is ran.
       setTimeout(() => {
         this.dummy2.run().then(() => {
-          sinon.assert.callOrder(
+          sinonAssert.callOrder(
             runSpy,
             writingSpy1,
             this.spyInit1,
@@ -300,7 +290,7 @@ describe('Multiples generators', () => {
         await this.composeWith('composed:gen2');
       }
     };
-    const writingSpy1 = sinon.spy();
+    const writingSpy1 = sinonSpy();
     Generator.prototype.writing = {
       compose1() {
         writingSpy1();
@@ -312,7 +302,7 @@ describe('Multiples generators', () => {
         await this.composeWith('composed:gen3');
       }
     };
-    const writingSpy2 = sinon.spy();
+    const writingSpy2 = sinonSpy();
     Generator2.prototype.writing = {
       compose2() {
         writingSpy2();
@@ -320,7 +310,7 @@ describe('Multiples generators', () => {
     };
 
     const Generator3 = class extends Base {};
-    const writingSpy3 = sinon.spy();
+    const writingSpy3 = sinonSpy();
     Generator3.prototype.writing = {
       compose3() {
         writingSpy3();
