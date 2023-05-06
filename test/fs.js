@@ -2,7 +2,8 @@ import assert from 'node:assert';
 import path from 'node:path';
 import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
-import fsAction from '../src/actions/fs.js';
+import { spyOn } from 'jest-mock';
+import BaseGenerator from '../src/generator.js';
 import Base from './utils.js';
 
 const randomString = () => Math.random().toString(36).slice(7);
@@ -22,7 +23,12 @@ describe('generators.Base (actions/fs)', () => {
 
   beforeEach(function () {
     returns = {};
-    this.base = new (fsAction(class Foo {}))();
+    this.base = new BaseGenerator({ namespace: 'foo', help: true });
+    spyOn(this.base, 'config', 'get').mockReturnValue({
+      getAll() {
+        return configGetAll;
+      },
+    });
 
     Object.assign(this.base, {
       templatePath: sinonStub().returns(baseReturns.templatePath),
@@ -32,11 +38,6 @@ describe('generators.Base (actions/fs)', () => {
       renderTemplates: Base.prototype.renderTemplates,
       renderTemplatesAsync: Base.prototype.renderTemplatesAsync,
       checkEnvironmentVersion() {},
-      config: {
-        getAll() {
-          return configGetAll;
-        },
-      },
       fs: {},
     });
     for (const op of [

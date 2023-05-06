@@ -12,23 +12,28 @@ import chalk from 'chalk';
 import minimist from 'minimist';
 import createDebug from 'debug';
 import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
-import { requireNamespace } from '@yeoman/api';
-import {
-  type BaseOptions,
-  type ConstructorOptions,
-  type ArgumentSpec,
-  type BaseFeatures,
-  type OptionSpec,
-  type Priority,
-  type GeneratorDefinition,
-  type YeomanNamespace,
-  type Logger,
-  type Environment,
+import { requireNamespace } from '@yeoman/namespace';
+import type { BaseGenerator as GeneratorApi } from '@yeoman/types';
+import type {
+  ArgumentSpec,
+  BaseOptions,
+  BaseFeatures,
+  Logger,
+  CliOptionSpec,
+  Priority,
+  YeomanNamespace,
+  Environment,
 } from './types.js';
-import { type Answers, type Question, type QuestionRegistrationOptions, type Questions } from './questions.js';
+import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
 import Storage, { type StorageOptions } from './util/storage.js';
 import { prefillQuestions, storeAnswers } from './util/prompt-suggestion.js';
 import { DESTINATION_ROOT_CHANGE_EVENT } from './constants.js';
+import { FsMixin } from './actions/fs.js';
+import { HelpMixin } from './actions/help.js';
+import { PackageJsonMixin } from './actions/package-json.js';
+import { SpawnCommandMixin } from './actions/spawn-command.js';
+import { GitMixin } from './actions/user.js';
+import { TasksMixin } from './actions/lifecycle.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,11 +45,15 @@ const ENV_VER_WITH_VER_API = '2.9.0';
 
 const packageJson = JSON.parse(readFileSync(pathJoin(__dirname, '../package.json'), 'utf8'));
 
-export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = GeneratorDefinition> extends EventEmitter {
-  readonly options: BaseOptions & GeneratorTypes['options'];
-  readonly _initOptions: BaseOptions & GeneratorTypes['options'];
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFeatures = BaseFeatures>
+  extends EventEmitter
+  implements Omit<GeneratorApi<O, F>, 'features'>
+{
+  readonly options: O;
+  readonly _initOptions: O;
   readonly _args: string[];
-  readonly _options: Record<string, OptionSpec>;
+  readonly _options: Record<string, CliOptionSpec>;
   readonly _arguments: ArgumentSpec[];
   readonly _prompts: QuestionRegistrationOptions[];
 
@@ -91,7 +100,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
   }
 
   _running = false;
-  readonly features!: BaseFeatures & GeneratorTypes['features'];
+  readonly features!: F;
   readonly yoGeneratorVersion: string = packageJson.version as string;
 
   /**
@@ -114,28 +123,15 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
    *   }
    * };
    */
-  constructor(
-    options: ConstructorOptions & GeneratorTypes['options'],
-    features?: BaseFeatures & GeneratorTypes['features'],
-  );
-  constructor(
-    args: string[],
-    options: ConstructorOptions & GeneratorTypes['options'],
-    features?: BaseFeatures & GeneratorTypes['features'],
-  );
+  constructor(options: O, features?: F);
+  constructor(args: string[], options: O, features?: F);
   // eslint-disable-next-line complexity
-  constructor(
-    args: string[] | (ConstructorOptions & GeneratorTypes['options']),
-    options?: (ConstructorOptions & GeneratorTypes['options']) | (BaseFeatures & GeneratorTypes['features']),
-    features?: BaseFeatures & GeneratorTypes['features'],
-  ) {
+  constructor(args: string[] | O, options: O | F, features?: F) {
     super();
 
-    const actualOptions: ConstructorOptions = Array.isArray(args) ? (options as ConstructorOptions) : args;
-    const actualFeatures: BaseFeatures & GeneratorTypes['features'] = Array.isArray(args)
-      ? features ?? {}
-      : (options as BaseFeatures & GeneratorTypes['features']) ?? {};
     const actualArgs: string[] = Array.isArray(args) ? args : [];
+    const actualOptions = Array.isArray(args) ? (options as O) : args;
+    const actualFeatures = Array.isArray(args) ? features : (options as F);
 
     this.options = actualOptions;
     this._initOptions = { ...actualOptions };
@@ -144,9 +140,10 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
     this._arguments = [];
     this._prompts = [];
     this._namespace = actualOptions.namespace;
-    this._namespaceId = actualOptions.namespaceId;
+    this._namespaceId = requireNamespace(actualOptions.namespace);
     this._customPriorities = actualOptions.customPriorities;
-    this.features = actualFeatures;
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    this.features = actualFeatures ?? ({} as F);
 
     this.option('help', {
       type: Boolean,
@@ -178,7 +175,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
       default: false,
     });
 
-    this.env = actualOptions.env!;
+    this.env = actualOptions.env! as any;
 
     this.resolved = actualOptions.resolved!;
     this.description = actualOptions.description ?? '';
@@ -250,7 +247,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
 
     this._globalConfig = this._getGlobalStorage();
 
-    this.checkEnvironmentVersion('3.12.1', this.options.skipCheckEnv ?? false);
+    this.checkEnvironmentVersion('4.0.0-alpha.1', this.options.skipCheckEnv ?? false);
   }
 
   /**
@@ -262,19 +259,19 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
    *                                    Accepts 'argument' for one instance by namespace and 1 argument
    *
    */
-  setFeatures(features: BaseFeatures & GeneratorTypes['features']) {
+  setFeatures(features: F) {
     Object.assign(this.features, features);
   }
 
   /**
    * Specifications for Environment features.
    */
-  getFeatures(): BaseFeatures & GeneratorTypes['features'] {
+  getFeatures(): F {
     return this.features;
   }
 
-  checkEnvironmentVersion(version: string, warning?: boolean);
-  checkEnvironmentVersion(packageDependency: string, version: string, warning?: boolean);
+  checkEnvironmentVersion(version: string, warning?: boolean): boolean | undefined;
+  checkEnvironmentVersion(packageDependency: string, version: string, warning?: boolean): boolean | undefined;
   checkEnvironmentVersion(packageDependency: string, version?: string | boolean, warning = false): boolean | undefined {
     let versionToCheck: string;
     if (typeof version === 'boolean' || version === undefined) {
@@ -339,7 +336,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
    */
   registerConfigPrompts(questions: QuestionRegistrationOptions[]) {
     questions = Array.isArray(questions) ? questions : [questions];
-    const getOptionTypeFromInquirerType = type => {
+    const getOptionTypeFromInquirerType = (type?: string) => {
       if (type === 'number') {
         return Number;
       }
@@ -384,17 +381,19 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
    * @param storage Storage object or name (generator property) to be used by default to store/fetch responses.
    * @return prompt promise
    */
-  async prompt<PromptAnswers extends Answers = Answers>(
-    questions: Questions<PromptAnswers>,
+  async prompt<A extends PromptAnswers = PromptAnswers>(
+    questions: PromptQuestions<A>,
     storage?: string | Storage,
-  ): Promise<PromptAnswers> {
+  ): Promise<A> {
     const storageForQuestion: Record<string, Storage> = {};
 
-    const arrayQuestions: Array<Question<PromptAnswers>> = Array.isArray(questions) ? questions : [questions];
+    const arrayQuestions: Array<PromptQuestion<A>> = Array.isArray(questions) ? questions : [questions];
 
-    const getAnswerFromStorage = (question: Question<PromptAnswers>): undefined | [string, any] => {
+    const getAnswerFromStorage = (question: PromptQuestion<A>): undefined | [string, any] => {
       const questionRef = question.storage ?? storage;
       const questionStorage: Storage | undefined =
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         typeof questionRef === 'string' ? (this[questionRef] as Storage) : questionRef;
 
       if (questionStorage) {
@@ -402,7 +401,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
         storageForQuestion[name] = questionStorage;
         const value = questionStorage.getPath(name);
         if (value !== undefined) {
-          question.default = answers => answers[name];
+          question.default = (answers: Record<string, any>) => answers[name];
           return [name, value as any];
         }
       }
@@ -420,10 +419,10 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
     questions = prefillQuestions(this._globalConfig, arrayQuestions);
     questions = prefillQuestions(this.config, arrayQuestions);
 
-    const initialAnswers: PromptAnswers = Object.fromEntries(
+    const initialAnswers: A = Object.fromEntries(
       questions.map(question => getAnswerFromStorage(question)).filter(Boolean) as Array<[string, any]>,
-    ) as PromptAnswers;
-    const answers: PromptAnswers = await this.env.adapter.prompt(questions, initialAnswers);
+    ) as A;
+    const answers = await this.env.adapter.prompt(questions, initialAnswers);
 
     for (const [name, questionStorage] of Object.entries(storageForQuestion)) {
       const answer: any = answers[name] === undefined ? null : answers[name];
@@ -455,7 +454,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
    * @param config.storage - Storage to persist the option
    * @return This generator
    */
-  option(name: string | OptionSpec | OptionSpec[], config?: Partial<Omit<OptionSpec, 'name'>>) {
+  option(name: string | CliOptionSpec | CliOptionSpec[], config?: Partial<Omit<CliOptionSpec, 'name'>>) {
     if (Array.isArray(name)) {
       for (const option of name) {
         this.option(option);
@@ -464,7 +463,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
       return;
     }
 
-    const spec: OptionSpec =
+    const spec: CliOptionSpec =
       typeof name === 'object'
         ? name
         : { hide: false, type: Boolean, description: 'Description for ' + name, ...config, name };
@@ -493,9 +492,9 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
     }
 
     const { storage } = spec;
-    if (storage && this.options[specName] !== undefined) {
-      const storageObject: Storage = typeof storage === 'string' ? this[storage] : storage;
-      storageObject.set(specName, this.options[specName]);
+    if (storage && (this.options as Record<string, any>)[specName] !== undefined) {
+      const storageObject: Storage = typeof storage === 'string' ? (this as Record<string, any>)[storage] : storage;
+      storageObject.set(specName, (this.options as Record<string, any>)[specName]);
     }
 
     return this;
@@ -559,9 +558,9 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
       // Only apply default values if we don't already have a value injected from
       // the runner
       if (option.name in this._initOptions) {
-        defaults[option.name] = this._initOptions[option.name];
+        defaults[option.name] = (this._initOptions as any)[option.name];
       } else if (option.alias && option.alias in this._initOptions) {
-        defaults[option.name] = this._initOptions[option.alias];
+        defaults[option.name] = (this._initOptions as any)[option.alias];
       } else if ('default' in option) {
         defaults[option.name] = option.default;
       }
@@ -585,7 +584,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
       let value: any;
       if (index >= parsedOptions._.length) {
         if (config.name in this._initOptions) {
-          value = this._initOptions[config.name];
+          value = (this._initOptions as any)[config.name];
         } else if ('default' in config) {
           value = config.default;
         } else {
@@ -781,7 +780,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
    * @param dest - path parts
    * @return joined path
    */
-  templatePath(...dest: string[]) {
+  templatePath(...dest: string[]): string {
     let filepath = path.join.apply(path, dest);
 
     if (!path.isAbsolute(filepath)) {
@@ -796,7 +795,7 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
    * @param dest - path parts
    * @return joined path
    */
-  destinationPath(...dest: string[]) {
+  destinationPath(...dest: string[]): string {
     let filepath = path.join.apply(path, dest);
 
     if (!path.isAbsolute(filepath)) {
@@ -815,8 +814,25 @@ export class BaseGenerator<GeneratorTypes extends GeneratorDefinition = Generato
    * @return The name of the application
    */
   determineAppname(): string {
-    const appName = (this.packageJson.get('name') as string) ?? path.basename(this.destinationRoot());
+    const appName: string = this.packageJson.get('name') ?? path.basename(this.destinationRoot());
     return appName.replace(/[^\w\s]+?/g, ' ');
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions, @typescript-eslint/no-unsafe-declaration-merging
+export interface BaseGenerator extends FsMixin, HelpMixin, PackageJsonMixin, SpawnCommandMixin, GitMixin, TasksMixin {}
+
+applyMixins(BaseGenerator, [FsMixin, HelpMixin, PackageJsonMixin, SpawnCommandMixin, GitMixin, TasksMixin]);
+
+function applyMixins(derivedCtor: any, constructors: any[]) {
+  for (const baseCtor of constructors) {
+    for (const name of Object.getOwnPropertyNames(baseCtor.prototype)) {
+      Object.defineProperty(
+        derivedCtor.prototype,
+        name,
+        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ?? Object.create(null),
+      );
+    }
   }
 }
 

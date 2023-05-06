@@ -1,16 +1,28 @@
-import lifecycleMixin from './actions/lifecycle.js';
-import fsMixin from './actions/fs.js';
-import spawnCommandMixin from './actions/spawn-command.js';
 import { BaseGenerator } from './generator.js';
-import helpMixin from './actions/help.js';
-import userMixin from './actions/user.js';
-import packageJsonMixin from './actions/package-json.js';
-import { type GeneratorDefinition } from './types.js';
-
-const mixedGenerator = spawnCommandMixin(
-  fsMixin(userMixin(packageJsonMixin(helpMixin(lifecycleMixin(BaseGenerator))))),
-);
+import type { BaseFeatures, BaseOptions } from './types.js';
 
 export default class Generator<
-  GeneratorTypes extends GeneratorDefinition = GeneratorDefinition,
-> extends mixedGenerator<GeneratorTypes> {}
+  O extends BaseOptions = BaseOptions,
+  F extends BaseFeatures = BaseFeatures,
+> extends BaseGenerator {
+  constructor(...args: any[]) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    super(...args);
+
+    this._composedWith = [];
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    this._queues = {};
+
+    // Add original queues.
+    for (const queue of BaseGenerator.queues) {
+      this._queues[queue] = { priorityName: queue, queueName: queue };
+    }
+
+    // Add custom queues
+    if (Array.isArray(this._customPriorities)) {
+      this.registerPriorities(this._customPriorities);
+    }
+  }
+}

@@ -1,37 +1,25 @@
 import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
-import { rmSync, mkdirSync } from 'node:fs';
-import process from 'node:process';
+import { fn } from 'esmocha';
 import semver from 'semver';
-import { fn } from '@node-loaders/jest-mock';
+import helpers from 'yeoman-test';
 import type Environment from '../src/environment.js';
-import Base, { createEnv } from './utils.js';
+import Generator from '../src/index.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-package-json');
 
 describe('Base#package-json', function () {
   this.timeout(10_000);
-  let generator: Base;
+  let generator: Generator;
   let env: Environment;
 
-  beforeEach(function () {
-    this.prevCwd = process.cwd();
-    this.tmp = tmpdir;
-    mkdirSync(path.join(tmpdir, 'subdir'), { recursive: true });
-    process.chdir(tmpdir);
-
-    env = createEnv();
-    const Generator = class extends Base {};
-    Generator.prototype.exec = fn();
-    generator = new Generator({
-      env,
-    });
-  });
-
-  afterEach(function () {
-    process.chdir(this.prevCwd);
-    rmSync(tmpdir, { force: true, recursive: true });
+  beforeEach(async function () {
+    const context = helpers.create(Generator);
+    await context.build();
+    generator = context.generator;
+    env = context.env;
+    generator.exec = fn();
   });
 
   describe('_resolvePackageJsonDependencies()', () => {

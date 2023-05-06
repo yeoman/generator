@@ -9,8 +9,9 @@ import _ from 'lodash';
 import { spy as sinonSpy, fake as sinonFake, assert as sinonAssert } from 'sinon';
 import through from 'through2';
 import assert from 'yeoman-assert';
+import YeomanEnvironment from 'yeoman-environment';
 import helpers, { TestAdapter } from 'yeoman-test';
-import Base, { createEnv } from './utils.js';
+import Base from './utils.js';
 
 const require = createRequire(import.meta.url);
 
@@ -19,6 +20,8 @@ const __dirname = dirname(__filename);
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
+
+const { createEnv } = YeomanEnvironment;
 
 describe('Base', () => {
   let env;

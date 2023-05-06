@@ -1,7 +1,8 @@
+import type { GeneratorFeatures as FeaturesApi, GeneratorOptions as OptionsApi, BaseEnvironment } from '@yeoman/types';
 import type Storage from './util/storage.js';
 import type Generator from './index.js';
 
-export type Environment = any;
+export type Environment = BaseEnvironment & { runLoop: any; resolvePackage: any };
 export type YeomanNamespace = any;
 export type Logger = any;
 
@@ -60,13 +61,13 @@ export type Priority = QueueOptions & {
 export type Task = TaskOptions & {
   /** Function to be queued. */
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-  method: (...args) => unknown | Promise<unknown>;
+  method: (...args: any[]) => unknown | Promise<unknown>;
 
   /** Name of the task. */
   taskName: string;
 };
 
-export type BaseFeatures = {
+export type BaseFeatures = FeaturesApi & {
   /** The Generator instance unique identifier. The Environment will ignore duplicated identifiers. */
   uniqueBy?: string;
 
@@ -80,40 +81,13 @@ export type BaseFeatures = {
   taskPrefix?: string;
 
   /** Provides a custom install task. Environment built-in task will not be executed */
-  customInstallTask?: boolean | ((...args) => void | Promise<void>);
+  customInstallTask?: boolean | ((...args: any[]) => void | Promise<void>);
 
   /** Provides a custom commit task. */
-  customCommitTask?: boolean | ((...args) => void | Promise<void>);
+  customCommitTask?: boolean | ((...args: any[]) => void | Promise<void>);
 };
 
-type EnvironmentGeneratorOptions = {
-  /** Environment being to run */
-  env: Environment;
-
-  /** The path to the current generator */
-  resolved: string;
-
-  help?: boolean;
-
-  customPriorities?: Priority[];
-
-  namespaceId?: YeomanNamespace;
-
-  description?: string;
-
-  appname?: string;
-};
-
-type EnvironmentNoHelpGeneratorOptions = { help?: false } & EnvironmentGeneratorOptions;
-
-type EnvironmentHelpGeneratorOptions = { help: true } & Partial<EnvironmentGeneratorOptions>;
-
-export type ConstructorOptions = {
-  namespace: string;
-} & BaseOptions &
-  (EnvironmentNoHelpGeneratorOptions | EnvironmentHelpGeneratorOptions);
-
-export type BaseOptions = {
+export type BaseOptions = OptionsApi & {
   destinationRoot?: string;
 
   skipInstall?: boolean;
@@ -131,11 +105,11 @@ export type BaseOptions = {
   skipCache?: boolean;
 
   skipLocalCache?: boolean;
+
+  customPriorities?: Priority[];
+
+  description?: string;
 };
-
-export type CustomGeneratorOptions = Record<string, any>;
-
-export type CustomGeneratorFeatures = Record<string, any>;
 
 export type ArgumentSpec = {
   name: string;
@@ -156,7 +130,7 @@ export type ArgumentSpec = {
   default?: any;
 };
 
-export type OptionSpec = {
+export type CliOptionSpec = {
   name: string;
 
   /** The type of the option. */
@@ -178,9 +152,4 @@ export type OptionSpec = {
 
   /** The storage to persist the option */
   storage?: string | Storage;
-};
-
-export type GeneratorDefinition = {
-  options: CustomGeneratorOptions;
-  features: CustomGeneratorFeatures;
 };

@@ -10,10 +10,10 @@ type StorageValue = Record<string, JSONSchema7Type>;
  * Proxy handler for Storage
  */
 const proxyHandler: ProxyHandler<Storage> = {
-  get(storage: Storage, property: string | symbol, receiver: any): JSONSchema7Type {
+  get(storage: Storage, property: string, receiver: any): JSONSchema7Type {
     return storage.get(property);
   },
-  set(storage: Storage, property: string | symbol, value: any, receiver: any): boolean {
+  set(storage: Storage, property: string, value: any, receiver: any): boolean {
     if (typeof property === 'string') {
       storage.set(property, value);
       return true;
@@ -24,10 +24,10 @@ const proxyHandler: ProxyHandler<Storage> = {
   ownKeys(storage: Storage) {
     return Reflect.ownKeys(storage._store);
   },
-  has(storage: Storage, prop: string | symbol) {
+  has(storage: Storage, prop: string) {
     return storage.get(prop) !== undefined;
   },
-  getOwnPropertyDescriptor(storage: Storage, key: string | symbol): PropertyDescriptor {
+  getOwnPropertyDescriptor(storage: Storage, key: string): PropertyDescriptor {
     return {
       get: () => this.get!(storage, key, null),
       enumerable: true,
@@ -219,8 +219,8 @@ class Storage {
    * @param key  The key under which the value is stored.
    * @return The stored value. Any JSON valid type could be returned
    */
-  get(key): JSONSchema7Type {
-    return this._store[key];
+  get<T extends JSONSchema7Type = JSONSchema7Type>(key: string): T {
+    return this._store[key] as T;
   }
 
   /**
@@ -228,8 +228,8 @@ class Storage {
    * @param path  The path under which the value is stored.
    * @return The stored value. Any JSON valid type could be returned
    */
-  getPath(path): JSONSchema7Type {
-    return _.get(this._store, path);
+  getPath<T extends JSONSchema7Type = JSONSchema7Type>(path: string): T {
+    return _.get(this._store, path) as T;
   }
 
   /**
@@ -246,15 +246,23 @@ class Storage {
    * @param val  Any valid JSON type value (String, Number, Array, Object).
    * @return val  Whatever was passed in as val.
    */
-  set(value: JSONSchema7Type);
-  set(key: string, value: JSONSchema7Type);
-  set(key: string | JSONSchema7Type, value?: JSONSchema7Type) {
+  set<V = JSONSchema7Type>(value: V): V;
+  set<V = JSONSchema7Type>(key: string, value: V): V;
+  set<V = JSONSchema7Type>(key: string | V, value?: V): V {
     const store = this._store;
 
     if (value === undefined) {
+      if (typeof key !== 'object') {
+        throw new TypeError(`key should be an object but got ${typeof value}`);
+      }
+
       value = Object.assign(store, key);
     } else {
-      store[key as string] = value;
+      if (typeof key !== 'string') {
+        throw new TypeError(`key should be a string but got ${typeof key}`);
+      }
+
+      store[key] = value as StorageValue;
     }
 
     this._persist(store);

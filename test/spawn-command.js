@@ -1,17 +1,15 @@
 import { expect } from 'expect';
-import { mock, restoreAllMocks, fn } from '@node-loaders/jest-mock';
+import { mock, restoreAllMocks, fn, importMock } from 'esmocha';
 
 const execa = await mock('execa');
-const { default: spawnCommandAction } = await import('../src/actions/spawn-command.js');
-
-class SpawnType extends spawnCommandAction(class Foo {}) {}
+const { default: Generator } = await importMock('../src/index.js', { execa });
 
 describe('generators.Base (actions/spawn-command)', () => {
   let cwd;
   let spawn;
 
   beforeEach(async function () {
-    spawn = new SpawnType();
+    spawn = new Generator({ help: true, namespace: 'foo' });
     cwd = Math.random().toString(36).slice(7);
     spawn.destinationRoot = fn().mockReturnValue(cwd);
   });

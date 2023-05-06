@@ -52,12 +52,14 @@
   },
   "dependencies": {
     "@types/node": "^16.18.3",
-    "@yeoman/api": "^0.0.2",
+    "@yeoman/namespace": "^0.0.1",
+    "@yeoman/types": "^0.0.1",
     "chalk": "^5.1.2",
     "dargs": "^8.1.0",
     "debug": "^4.1.1",
     "execa": "^7.1.1",
     "github-username": "^7.0.0",
+    "json-schema": "^0.4.0",
     "lodash": "^4.17.11",
     "mem-fs-editor": "^10.0.1",
     "minimist": "^1.2.8",
@@ -65,7 +67,8 @@
     "semver": "^7.5.0",
     "simple-git": "^3.18.0",
     "sort-keys": "^5.0.0",
-    "text-table": "^0.2.0"
+    "text-table": "^0.2.0",
+    "type-fest": "^3.10.0"
   },
   "devDependencies": {
     "@types/inquirer": "^9.0.3",
