@@ -1,16 +1,14 @@
 import assert from 'node:assert';
 import _ from 'lodash';
 import sortKeys from 'sort-keys';
-import { type MemFsEditor } from 'mem-fs-editor';
-import { type JSONSchema7Type } from 'json-schema';
-
-type StorageValue = Record<string, JSONSchema7Type>;
+import type { MemFsEditor } from 'mem-fs-editor';
+import type { StorageRecord, StorageValue } from '../types.js';
 
 /**
  * Proxy handler for Storage
  */
 const proxyHandler: ProxyHandler<Storage> = {
-  get(storage: Storage, property: string, receiver: any): JSONSchema7Type {
+  get(storage: Storage, property: string, receiver: any): StorageValue {
     return storage.get(property);
   },
   set(storage: Storage, property: string, value: any, receiver: any): boolean {
@@ -83,7 +81,7 @@ class Storage {
   disableCacheByFile: boolean;
   sorted: boolean;
   existed: boolean;
-  _cachedStore?: StorageValue;
+  _cachedStore?: StorageRecord;
 
   constructor(name: string | undefined, fs: MemFsEditor, configPath: string, options?: StorageOptions);
   constructor(fs: MemFsEditor, configPath: string, options?: StorageOptions);
@@ -147,7 +145,7 @@ class Storage {
    * @protected
    * @return the store content
    */
-  readContent(): StorageValue {
+  readContent(): StorageRecord {
     const content = this.fs.readJSON(this.path, {});
     if (!content || typeof content !== 'object' || Array.isArray(content)) {
       throw new Error(`${this.path} is not a valid Storage`);
@@ -160,7 +158,7 @@ class Storage {
    * @protected
    * @return the store content
    */
-  writeContent(fullStore: JSONSchema7Type): string {
+  writeContent(fullStore: StorageValue): string {
     return this.fs.writeJSON(this.path, fullStore, undefined, this.indent);
   }
 
@@ -169,7 +167,7 @@ class Storage {
    * @return the store content
    * @private
    */
-  get _store(): StorageValue {
+  get _store(): StorageRecord {
     const store = this._cachedStore ?? this.readContent();
     if (!this.disableCache) {
       this._cachedStore = store;
@@ -179,7 +177,7 @@ class Storage {
       return store;
     }
 
-    return ((this.lodashPath ? _.get(store, this.name) : store[this.name]) ?? {}) as StorageValue;
+    return ((this.lodashPath ? _.get(store, this.name) : store[this.name]) ?? {}) as StorageRecord;
   }
 
   /**
@@ -187,12 +185,12 @@ class Storage {
    * @param val - current configuration values
    * @private
    */
-  _persist(value: StorageValue) {
+  _persist(value: StorageRecord) {
     if (this.sorted) {
       value = sortKeys(value, { deep: true });
     }
 
-    let fullStore: StorageValue;
+    let fullStore: StorageRecord;
     if (this.name) {
       fullStore = this.readContent();
       if (this.lodashPath) {
@@ -219,7 +217,7 @@ class Storage {
    * @param key  The key under which the value is stored.
    * @return The stored value. Any JSON valid type could be returned
    */
-  get<T extends JSONSchema7Type = JSONSchema7Type>(key: string): T {
+  get<T extends StorageValue = StorageValue>(key: string): T {
     return this._store[key] as T;
   }
 
@@ -228,7 +226,7 @@ class Storage {
    * @param path  The path under which the value is stored.
    * @return The stored value. Any JSON valid type could be returned
    */
-  getPath<T extends JSONSchema7Type = JSONSchema7Type>(path: string): T {
+  getPath<T extends StorageValue = StorageValue>(path: string): T {
     return _.get(this._store, path) as T;
   }
 
@@ -236,7 +234,7 @@ class Storage {
    * Get all the stored values
    * @return key-value object
    */
-  getAll(): StorageValue {
+  getAll(): StorageRecord {
     return _.cloneDeep(this._store);
   }
 
@@ -246,9 +244,9 @@ class Storage {
    * @param val  Any valid JSON type value (String, Number, Array, Object).
    * @return val  Whatever was passed in as val.
    */
-  set<V = JSONSchema7Type>(value: V): V;
-  set<V = JSONSchema7Type>(key: string, value: V): V;
-  set<V = JSONSchema7Type>(key: string | V, value?: V): V {
+  set<V = StorageValue>(value: V): V;
+  set<V = StorageValue>(key: string, value: V): V;
+  set<V = StorageValue>(key: string | V, value?: V): V {
     const store = this._store;
 
     if (value === undefined) {
@@ -262,7 +260,7 @@ class Storage {
         throw new TypeError(`key should be a string but got ${typeof key}`);
       }
 
-      store[key] = value as StorageValue;
+      store[key] = value as StorageRecord;
     }
 
     this._persist(store);
@@ -275,7 +273,7 @@ class Storage {
    * @param val  Any valid JSON type value (String, Number, Array, Object).
    * @return val  Whatever was passed in as val.
    */
-  setPath(path: string, value: JSONSchema7Type) {
+  setPath(path: string, value: StorageValue) {
     assert(!_.isFunction(value), "Storage value can't be a function");
 
     const store = this._store;
@@ -301,7 +299,7 @@ class Storage {
    * @param defaults  Key-value object to store.
    * @return val  Returns the merged options.
    */
-  defaults(defaults: StorageValue): StorageValue {
+  defaults(defaults: StorageRecord): StorageRecord {
     assert(_.isObject(defaults), 'Storage `defaults` method only accept objects');
     const store = _.defaults({}, this._store, defaults);
     this._persist(store);
@@ -312,7 +310,7 @@ class Storage {
    * @param defaults  Key-value object to store.
    * @return val  Returns the merged object.
    */
-  merge(source: StorageValue) {
+  merge(source: StorageRecord) {
     assert(_.isObject(source), 'Storage `merge` method only accept objects');
     const value = _.merge({}, this._store, source);
     this._persist(value);
@@ -334,8 +332,8 @@ class Storage {
    * Creates a proxy object.
    * @return proxy.
    */
-  createProxy(): StorageValue {
-    return new Proxy(this, proxyHandler) as unknown as StorageValue;
+  createProxy(): StorageRecord {
+    return new Proxy(this, proxyHandler) as unknown as StorageRecord;
   }
 }
 

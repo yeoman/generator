@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-
 import fs, { readFileSync } from 'node:fs';
 import path, { dirname, resolve as pathResolve, join as pathJoin } from 'node:path';
 import os from 'node:os';
@@ -12,18 +10,9 @@ import chalk from 'chalk';
 import minimist from 'minimist';
 import createDebug from 'debug';
 import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
-import { requireNamespace } from '@yeoman/namespace';
-import type { BaseGenerator as GeneratorApi } from '@yeoman/types';
-import type {
-  ArgumentSpec,
-  BaseOptions,
-  BaseFeatures,
-  Logger,
-  CliOptionSpec,
-  Priority,
-  YeomanNamespace,
-  Environment,
-} from './types.js';
+import { type YeomanNamespace, requireNamespace } from '@yeoman/namespace';
+import type { BaseEnvironment, BaseGenerator as GeneratorApi, Logger } from '@yeoman/types';
+import type { ArgumentSpec, BaseOptions, BaseFeatures, CliOptionSpec, Priority } from './types.js';
 import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
 import Storage, { type StorageOptions } from './util/storage.js';
 import { prefillQuestions, storeAnswers } from './util/prompt-suggestion.js';
@@ -34,6 +23,8 @@ import { PackageJsonMixin } from './actions/package-json.js';
 import { SpawnCommandMixin } from './actions/spawn-command.js';
 import { GitMixin } from './actions/user.js';
 import { TasksMixin } from './actions/lifecycle.js';
+
+type Environment = BaseEnvironment & { runLoop: any; resolvePackage: any };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

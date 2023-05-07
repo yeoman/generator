@@ -1,6 +1,8 @@
 import { BaseGenerator } from './generator.js';
 import type { BaseFeatures, BaseOptions } from './types.js';
 
+export type * from './types.js';
+
 export default class Generator<
   O extends BaseOptions = BaseOptions,
   F extends BaseFeatures = BaseFeatures,
