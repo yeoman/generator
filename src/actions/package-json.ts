@@ -1,4 +1,5 @@
-import type BaseGenerator from '../generator.js';
+import latestVersion from 'latest-version';
+import type { BaseGenerator } from '../generator.js';
 
 export class PackageJsonMixin {
   /**
@@ -12,19 +13,30 @@ export class PackageJsonMixin {
       dependencies = [dependencies];
     } else if (typeof dependencies !== 'object') {
       throw new TypeError('resolvePackageJsonDependencies requires an object');
-    } else if (!Array.isArray(dependencies)) {
-      const deps = await Promise.all(
-        Object.entries(dependencies).map(async ([pkg, version]) =>
-          version ? Promise.resolve([pkg, version]) : (this.env as any).resolvePackage(pkg, version),
-        ),
-      );
-      return Object.fromEntries(deps.filter(args => args.length > 0 && args[0]));
     }
 
-    const entries = await Promise.all(
-      dependencies.map(async dependency => (this.env as any).resolvePackage(dependency)),
+    const depMap = Array.isArray(dependencies)
+      ? Object.fromEntries(
+          dependencies.map(dependency => {
+            const lastIndex = dependency.lastIndexOf('@');
+            if (lastIndex > 0) {
+              const depName = dependency.slice(0, lastIndex);
+              const version = dependency.slice(lastIndex + 1);
+              return [depName, version];
+            }
+
+            return [dependency, undefined];
+          }),
+        )
+      : dependencies;
+
+    return Object.fromEntries(
+      await Promise.all(
+        // Make sure to convert empty string too
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        Object.entries(depMap).map(async ([pkg, version]) => [pkg, version || (await latestVersion(pkg))]),
+      ),
     );
-    return Object.fromEntries(entries);
   }
 
   /**
