@@ -1,10 +1,11 @@
 import assert from 'node:assert';
 import _ from 'lodash';
-import { type Answers, type Question } from '../questions.js';
+import type { JSONSchema7Object } from 'json-schema';
+import type { PromptAnswers, PromptQuestion } from '../questions.js';
 import type Storage from './storage.js';
 
 // eslint-disable-next-line @typescript-eslint/promise-function-async
-const getChoices = <A extends Answers = Answers>(question: Question<A>) => {
+const getChoices = <A extends PromptAnswers = PromptAnswers>(question: PromptQuestion<A>) => {
   if (question.type === 'list') {
     return question.choices;
   }
@@ -32,7 +33,7 @@ const getChoices = <A extends Answers = Answers>(question: Question<A>) => {
  * @return Default value to set
  * @private
  */
-const getCheckboxDefault = (question: any, defaultValue) => {
+const getCheckboxDefault = (question: any, defaultValue: any) => {
   // For simplicity we uncheck all boxes and use .default to set the active ones
   for (const choice of question.choices) {
     if (typeof choice === 'object') {
@@ -51,8 +52,8 @@ const getCheckboxDefault = (question: any, defaultValue) => {
  * @return Default value to set
  * @private
  */
-const getListDefault = (question: any, defaultValue) => {
-  const choiceValues = question.choices.map(choice => (typeof choice === 'object' ? choice.value : choice));
+const getListDefault = (question: any, defaultValue: any) => {
+  const choiceValues = question.choices.map((choice: any) => (typeof choice === 'object' ? choice.value : choice));
   return choiceValues.indexOf(defaultValue);
 };
 
@@ -66,8 +67,8 @@ const getListDefault = (question: any, defaultValue) => {
  * @return Answer to be stored
  * @private
  */
-const storeListAnswer = (question: any, answer: Answers, storeAll: boolean) => {
-  const choiceValues = question.choices.map(choice => {
+const storeListAnswer = (question: any, answer: PromptAnswers, storeAll: boolean) => {
+  const choiceValues = question.choices.map((choice: any) => {
     if (Object.prototype.hasOwnProperty.call(choice, 'value')) {
       return choice.value;
     }
@@ -95,7 +96,7 @@ const storeListAnswer = (question: any, answer: Answers, storeAll: boolean) => {
  * @return Answer to be stored
  * @private
  */
-const storeAnswer = (question: any, answer: Answers, storeAll: boolean) => {
+const storeAnswer = (question: any, answer: PromptAnswers, storeAll: boolean) => {
   // Check if answer is not equal to default value or is undefined
   if (answer !== undefined && (storeAll || question.default !== answer)) {
     return true;
@@ -111,11 +112,14 @@ const storeAnswer = (question: any, answer: Answers, storeAll: boolean) => {
  * @param questions Original prompt questions
  * @return Prompt questions array with prefilled values.
  */
-export const prefillQuestions = <A extends Answers = Answers>(store: Storage, questions: Array<Question<A>>) => {
+export const prefillQuestions = <A extends PromptAnswers = PromptAnswers>(
+  store: Storage,
+  questions: Array<PromptQuestion<A>>,
+) => {
   assert(store, 'A store parameter is required');
   assert(questions, 'A questions parameter is required');
 
-  const promptValues = store.get('promptValues') ?? {};
+  const promptValues = store.get<any>('promptValues') ?? {};
 
   questions = [questions].flat();
 
@@ -125,7 +129,7 @@ export const prefillQuestions = <A extends Answers = Answers>(store: Storage, qu
       return question;
     }
 
-    const storedValue = promptValues[question.name as any] as any;
+    const storedValue = promptValues[question.name as string];
 
     if (storedValue === undefined || typeof getChoices(question) === 'function') {
       // Do not override prompt default when question.choices is a function,
@@ -164,14 +168,14 @@ export const prefillQuestions = <A extends Answers = Answers>(store: Storage, qu
  * @param answers   The inquirer answers
  * @param storeAll  Should store default values
  */
-export const storeAnswers = (store: Storage, questions: any, answers: Answers, storeAll: boolean) => {
+export const storeAnswers = (store: Storage, questions: any, answers: PromptAnswers, storeAll: boolean) => {
   assert(store, 'A store parameter is required');
   assert(answers, 'A answers parameter is required');
   assert(questions, 'A questions parameter is required');
   assert.ok(typeof answers === 'object', 'answers must be a object');
 
   storeAll = storeAll || false;
-  const promptValues = store.get('promptValues') ?? {};
+  const promptValues = store.get<JSONSchema7Object>('promptValues') ?? {};
 
   questions = [questions].flat();
 

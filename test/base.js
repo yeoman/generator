@@ -9,8 +9,9 @@ import _ from 'lodash';
 import { spy as sinonSpy, fake as sinonFake, assert as sinonAssert } from 'sinon';
 import through from 'through2';
 import assert from 'yeoman-assert';
+import YeomanEnvironment from 'yeoman-environment';
 import helpers, { TestAdapter } from 'yeoman-test';
-import Base, { createEnv } from './utils.js';
+import Base from './utils.js';
 
 const require = createRequire(import.meta.url);
 
@@ -19,6 +20,8 @@ const __dirname = dirname(__filename);
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
+
+const { createEnv } = YeomanEnvironment;
 
 describe('Base', () => {
   let env;
@@ -1353,12 +1356,12 @@ describe('Base', () => {
         testQueue: 'This value',
       });
 
-      sinonSpy(env.runLoop, 'add');
+      sinonSpy(env, 'queueTask');
       const noop = () => {};
       gen.queueMethod(noop, 'configuring', noop);
 
-      assert(env.runLoop.add.calledOnce);
-      assert.equal('default', env.runLoop.add.getCall(0).args[0]);
+      assert(env.queueTask.calledOnce);
+      assert.equal('default', env.queueTask.getCall(0).args[0]);
     });
 
     it('queued method with object, queueName and reject', function () {
@@ -1370,7 +1373,7 @@ describe('Base', () => {
         testQueue: 'This value',
       });
 
-      sinonSpy(env.runLoop, 'add');
+      sinonSpy(env, 'queueTask');
       const noop = () => {};
       const queueName = 'configuring';
       const tasks = {
@@ -1378,8 +1381,8 @@ describe('Base', () => {
       };
       gen.queueMethod(tasks, queueName, noop);
 
-      assert(env.runLoop.add.calledOnce);
-      assert.equal(queueName, env.runLoop.add.getCall(0).args[0]);
+      assert(env.queueTask.calledOnce);
+      assert.equal(queueName, env.queueTask.getCall(0).args[0]);
     });
   });
 
@@ -1404,7 +1407,7 @@ describe('Base', () => {
       };
     });
 
-    it('queued method with function and options', function (done) {
+    it('queued method with function and options', async function () {
       const env = createEnv([], { 'skip-install': true }, new TestAdapter());
       const gen = new Generator({
         resolved: resolveddir,
@@ -1413,7 +1416,7 @@ describe('Base', () => {
         testQueue: 'This value',
       });
 
-      sinonSpy(env.runLoop, 'add');
+      sinonSpy(env, 'queueTask');
       const method = sinonFake();
       const taskName = 'foo';
       const queueName = 'configuring';
@@ -1428,24 +1431,22 @@ describe('Base', () => {
         args: [arg],
       });
 
-      assert(env.runLoop.add.calledOnce);
-      assert.equal(queueName, env.runLoop.add.getCall(0).args[0]);
+      assert(env.queueTask.calledOnce);
+      assert.equal(queueName, env.queueTask.getCall(0).args[0]);
       assert.deepStrictEqual(
         {
           once: taskName,
-          run: false,
+          startQueue: false,
         },
-        env.runLoop.add.getCall(0).args[2],
+        env.queueTask.getCall(0).args[2],
       );
 
-      env.runLoop.add.getCall(0).args[1](() => {
-        assert(method.calledOnce);
-        assert.equal(arg, method.getCall(0).args[0]);
-        done();
-      });
+      await gen.run();
+      assert(method.calledOnce);
+      assert.equal(arg, method.getCall(0).args[0]);
     });
 
-    it('queued method with function and options with reject', function () {
+    it('queued method with function and options with reject', async function () {
       const gen = new Generator({
         resolved: resolveddir,
         namespace: 'dummy',
@@ -1469,9 +1470,8 @@ describe('Base', () => {
         reject() {},
       });
 
-      return gen.run().then(() => {
-        assert.equal(thrown, true);
-      });
+      await gen.run();
+      assert.equal(thrown, true);
     });
   });
 

@@ -1,10 +1,12 @@
-import { type DistinctQuestion, type Answers as InquirerAnswers } from 'inquirer';
+import type { PromptAnswers, PromptQuestion as PromptQuestionApi } from '@yeoman/types';
 import type Storage from './util/storage.js';
+
+export type { PromptAnswers } from '@yeoman/types';
 
 /**
  * Represents a question.
  */
-export type Question<T extends Answers = Answers> = DistinctQuestion<T> & {
+export type PromptQuestion<T extends PromptAnswers = PromptAnswers> = PromptQuestionApi<T> & {
   name: string;
 
   /**
@@ -21,7 +23,7 @@ export type Question<T extends Answers = Answers> = DistinctQuestion<T> & {
 /**
  * Provides options for registering a prompt.
  */
-export type QuestionRegistrationOptions<T extends Answers = Answers> = Question<T> & {
+export type QuestionRegistrationOptions<T extends PromptAnswers = PromptAnswers> = PromptQuestion<T> & {
   /**
    * A value indicating whether an option should be exported for this question.
    */
@@ -29,11 +31,6 @@ export type QuestionRegistrationOptions<T extends Answers = Answers> = Question<
 };
 
 /**
- * Represents an answer-hash.
- */
-export type Answers = InquirerAnswers;
-
-/**
  * Provides a set of questions.
  */
-export type Questions<A extends Answers = Answers> = Question<A> | Array<Question<A>>; // | Observable<Question<A>>;
+export type PromptQuestions<A extends PromptAnswers = PromptAnswers> = PromptQuestion<A> | Array<PromptQuestion<A>>; // | Observable<Question<A>>;

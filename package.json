@@ -52,12 +52,14 @@
   },
   "dependencies": {
     "@types/node": "^16.18.3",
-    "@yeoman/api": "^0.0.2",
+    "@yeoman/namespace": "^0.0.1",
+    "@yeoman/types": "^0.1.1",
     "chalk": "^5.1.2",
     "dargs": "^8.1.0",
     "debug": "^4.1.1",
     "execa": "^7.1.1",
     "github-username": "^7.0.0",
+    "json-schema": "^0.4.0",
     "lodash": "^4.17.11",
     "mem-fs-editor": "^10.0.1",
     "minimist": "^1.2.8",
@@ -87,7 +89,7 @@
     "typescript": "^5.0.4",
     "xo": "^0.54.2",
     "yeoman-assert": "^3.1.1",
-    "yeoman-environment": "^4.0.0-alpha.1",
+    "yeoman-environment": "^4.0.0-alpha.4",
     "yeoman-test": "^8.0.0-alpha.1"
   },
   "peerDependencies": {

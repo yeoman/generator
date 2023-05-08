@@ -33,46 +33,48 @@ class GitUtil {
   }
 }
 
-export default function userMixin<Parent extends Constructor<BaseGenerator>>(parent: Parent) {
-  return class GitMixin extends parent {
-    #git?: GitUtil;
-    #simpleGit?: SimpleGit;
+export abstract class GitMixin {
+  _git?: GitUtil;
+  _simpleGit?: SimpleGit;
 
-    get simpleGit(): SimpleGit {
-      if (!this.#simpleGit) {
-        this.#simpleGit = simpleGit({ baseDir: this.destinationPath() }).env({
-          ...process.env,
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          LANG: 'en',
-        });
-        this.on('destinationRootChange', () => {
-          this.#simpleGit = undefined;
-        });
-      }
-
-      return this.#simpleGit;
+  get simpleGit(): SimpleGit {
+    if (!this._simpleGit) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      this._simpleGit = simpleGit({ baseDir: this.destinationPath() }).env({
+        ...process.env,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        LANG: 'en',
+      });
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      this.on('destinationRootChange', () => {
+        this._simpleGit = undefined;
+      });
     }
 
-    get git(): GitUtil {
-      if (!this.#git) {
-        this.#git = new GitUtil(this);
-      }
+    return this._simpleGit;
+  }
 
-      return this.#git;
+  get git(): GitUtil {
+    if (!this._git) {
+      this._git = new GitUtil(this);
     }
 
-    get github() {
-      return {
-        /**
-         * Retrieves GitHub's username from the GitHub API
-         * @return Resolved with the GitHub username or rejected if unable to
-         *                   get the information
-         */
-        username: async () => {
-          const email = await this.git.email();
-          return email ? githubUsername(email) : email;
-        },
-      };
-    }
-  };
+    return this._git;
+  }
+
+  get github() {
+    return {
+      /**
+       * Retrieves GitHub's username from the GitHub API
+       * @return Resolved with the GitHub username or rejected if unable to
+       *                   get the information
+       */
+      username: async () => {
+        const email = await this.git.email();
+        return email ? githubUsername(email) : email;
+      },
+    };
+  }
 }
