@@ -1,11 +1,10 @@
-import type { BaseGenerator } from '../generator.js';
+import { GeneratorOrigin } from '../generator-parent.js';
 
-export class PackageJsonMixin {
+export class PackageJsonMixin extends GeneratorOrigin {
   /**
    * Resolve the dependencies to be added to the package.json.
    */
   async _resolvePackageJsonDependencies(
-    this: BaseGenerator,
     dependencies: string | string[] | Record<string, string>,
   ): Promise<Record<string, string>> {
     if (typeof dependencies === 'string') {
@@ -15,13 +14,15 @@ export class PackageJsonMixin {
     } else if (!Array.isArray(dependencies)) {
       const deps = await Promise.all(
         Object.entries(dependencies).map(async ([pkg, version]) =>
-          version ? Promise.resolve([pkg, version]) : this.env.resolvePackage(pkg, version),
+          version ? Promise.resolve([pkg, version]) : (this.env as any).resolvePackage(pkg, version),
         ),
       );
       return Object.fromEntries(deps.filter(args => args.length > 0 && args[0]));
     }
 
-    const entries = await Promise.all(dependencies.map(async dependency => this.env.resolvePackage(dependency)));
+    const entries = await Promise.all(
+      dependencies.map(async dependency => (this.env as any).resolvePackage(dependency)),
+    );
     return Object.fromEntries(entries);
   }
 
@@ -33,10 +34,7 @@ export class PackageJsonMixin {
    *
    * @param dependencies
    */
-  async addDependencies(
-    this: BaseGenerator,
-    dependencies: string | string[] | Record<string, string>,
-  ): Promise<Record<string, string>> {
+  async addDependencies(dependencies: string | string[] | Record<string, string>): Promise<Record<string, string>> {
     dependencies = await this._resolvePackageJsonDependencies(dependencies);
     this.packageJson.merge({ dependencies });
     return dependencies;
@@ -51,7 +49,6 @@ export class PackageJsonMixin {
    * @param dependencies
    */
   async addDevDependencies(
-    this: BaseGenerator,
     devDependencies: string | string[] | Record<string, string>,
   ): Promise<Record<string, string>> {
     devDependencies = await this._resolvePackageJsonDependencies(devDependencies);

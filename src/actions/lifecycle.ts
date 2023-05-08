@@ -6,9 +6,10 @@ import { createRequire } from 'node:module';
 import { stat } from 'node:fs/promises';
 import createDebug from 'debug';
 import chalk from 'chalk';
+import type { BaseGenerator, GetGeneratorOptions } from '@yeoman/types';
 import type { Task, TaskOptions, BaseOptions, Priority } from '../types.js';
 import type Generator from '../index.js';
-import type BaseGenerator from '../generator.js';
+import { GeneratorOrigin } from '../generator-parent.js';
 
 const debug = createDebug('yeoman:generator');
 
@@ -22,7 +23,7 @@ const methodIsValid = function (name: string) {
   return !name.startsWith('_') && name !== 'constructor';
 };
 
-export class TasksMixin {
+export abstract class TasksMixin extends GeneratorOrigin {
   _composedWith!: any[];
   // Queues map: generator's queue name => grouped-queue's queue name (custom name)
   readonly _queues!: Record<string, Priority>;
@@ -33,7 +34,7 @@ export class TasksMixin {
   /**
    * Register priorities for this generator
    */
-  registerPriorities(this: BaseGenerator, priorities: Priority[]) {
+  registerPriorities(priorities: Priority[]) {
     priorities = priorities.filter(priority => {
       if (priority.edit) {
         const queue = this._queues[priority.priorityName];
@@ -89,9 +90,7 @@ export class TasksMixin {
     methodName: string | Task['reject'],
     reject?: Task['reject'],
   ): void;
-  // eslint-disable-next-line max-params
   queueMethod(
-    this: BaseGenerator,
     method: Task['method'] | Record<string, Task['method']>,
     methodName: string | Task['reject'],
     queueName?: Task['queueName'] | Task['reject'],
@@ -131,7 +130,7 @@ export class TasksMixin {
    * @param taskGroup: Object containing tasks.
    * @param taskOptions options.
    */
-  queueTaskGroup(this: BaseGenerator, taskGroup: Record<string, Task['method']>, taskOptions: TaskOptions): void {
+  queueTaskGroup(taskGroup: Record<string, Task['method']>, taskOptions: TaskOptions): void {
     for (const task of this.extractTasksFromGroup(taskGroup, taskOptions)) {
       this.queueTask(task);
     }
@@ -142,7 +141,7 @@ export class TasksMixin {
    *
    * @param name: The method name to schedule.
    */
-  extractTasksFromPriority(this: BaseGenerator, name: string, taskOptions: TaskOptions = {}): Task[] {
+  extractTasksFromPriority(name: string, taskOptions: TaskOptions = {}): Task[] {
     const priority = this._queues[name];
     taskOptions = {
       ...priority,
@@ -202,14 +201,14 @@ export class TasksMixin {
    * @param name: The method name to schedule.
    * @param taskOptions options.
    */
-  queueOwnTask(this: BaseGenerator, name: string, taskOptions: TaskOptions): void {
+  queueOwnTask(name: string, taskOptions: TaskOptions): void {
     for (const task of this.extractTasksFromPriority(name, taskOptions)) this.queueTask(task);
   }
 
   /**
    * Get task names.
    */
-  getTaskNames(this: BaseGenerator): string[] {
+  getTaskNames(): string[] {
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
     let validMethods = methods.filter(methodIsValid);
     const { taskPrefix } = this.features;
@@ -233,7 +232,7 @@ export class TasksMixin {
   /**
    * Schedule every generator's methods on a run queue.
    */
-  queueOwnTasks(this: BaseGenerator, taskOptions: TaskOptions): void {
+  queueOwnTasks(taskOptions: TaskOptions): void {
     this._running = true;
     this._taskStatus = { cancelled: false, timestamp: new Date() };
 
@@ -244,7 +243,7 @@ export class TasksMixin {
 
     if (this._prompts.length > 0) {
       this.queueTask({
-        method: async () => this.prompt(this._prompts, this.config),
+        method: async () => (this as any).prompt(this._prompts, this.config),
         taskName: 'Prompt registered questions',
         queueName: 'prompting',
         cancellable: true,
@@ -272,7 +271,7 @@ export class TasksMixin {
    *
    * @param task: Task to be queued.
    */
-  queueTask(this: BaseGenerator, task: Task): void {
+  queueTask(task: Task): void {
     const { queueName = 'default', taskName: methodName, run, once } = task;
 
     const { _taskStatus: taskStatus, _namespace: namespace } = this;
@@ -292,7 +291,6 @@ export class TasksMixin {
    * @param taskStatus.
    */
   async executeTask(
-    this: BaseGenerator,
     task: Task,
     args = task.args ?? this.args,
     taskStatus: TaskStatus | undefined = this._taskStatus,
@@ -351,7 +349,7 @@ export class TasksMixin {
   /**
    * Ignore cancellable tasks.
    */
-  cancelCancellableTasks(this: BaseGenerator): void {
+  cancelCancellableTasks(): void {
     this._running = false;
     // Task status references is registered at each running task
     if (this._taskStatus) {
@@ -365,7 +363,7 @@ export class TasksMixin {
   /**
    * Queue generator tasks.
    */
-  async queueTasks(this: BaseGenerator): Promise<void> {
+  async queueTasks(): Promise<void> {
     const thisAny = this as any;
 
     const beforeQueueCallback: () => Promise<any> =
@@ -377,7 +375,7 @@ export class TasksMixin {
     await this._queueTasks();
   }
 
-  async _queueTasks(this: BaseGenerator): Promise<void> {
+  async _queueTasks(): Promise<void> {
     debug(`Queueing generator ${this._namespace} with generator version ${this.yoGeneratorVersion}`);
     this.queueOwnTasks({ auto: true });
 
@@ -391,7 +389,7 @@ export class TasksMixin {
   /**
    * Start the generator again.
    */
-  startOver(this: BaseGenerator, options?: BaseOptions): void {
+  startOver(options?: BaseOptions): void {
     this.cancelCancellableTasks();
     if (options) {
       Object.assign(this.options, options);
@@ -417,36 +415,46 @@ export class TasksMixin {
    * @example <caption>Passing a Generator class</caption>
    * await this.composeWith({ Generator: MyGenerator, path: '../generator-bootstrap/app/main.js' }, { sass: true });
    */
-  async composeWith(
-    generator: string | string[] | { Generator: any; path: string },
+  async composeWith<G extends BaseGenerator = BaseGenerator>(
+    generator: string | { Generator: any; path: string },
     immediately?: boolean,
-  ): Promise<Generator | Generator[]>;
-  async composeWith(
-    generator: string | string[] | { Generator: any; path: string },
-    options: Partial<BaseOptions>,
+  ): Promise<G>;
+  async composeWith<G extends BaseGenerator = BaseGenerator>(generator: string[], immediately?: boolean): Promise<G[]>;
+  async composeWith<G extends BaseGenerator = BaseGenerator>(
+    generator: string | { Generator: any; path: string },
+    options: Partial<GetGeneratorOptions<G>>,
     immediately?: boolean,
-  ): Promise<Generator | Generator[]>;
-  async composeWith(
-    generator: string | string[] | { Generator: any; path: string },
-    args?: string[],
-    options?: Partial<BaseOptions>,
+  ): Promise<G>;
+  async composeWith<G extends BaseGenerator = BaseGenerator>(
+    generator: string[],
+    options: Partial<GetGeneratorOptions<G>>,
     immediately?: boolean,
-  ): Promise<Generator | Generator[]>;
-  // eslint-disable-next-line max-params
-  async composeWith(
-    this: BaseGenerator,
+  ): Promise<G[]>;
+  async composeWith<G extends BaseGenerator = BaseGenerator>(
+    generator: string | { Generator: any; path: string },
+    args: string[],
+    options?: Partial<GetGeneratorOptions<G>>,
+    immediately?: boolean,
+  ): Promise<G>;
+  async composeWith<G extends BaseGenerator = BaseGenerator>(
+    generator: string[],
+    args: string[],
+    options?: Partial<GetGeneratorOptions<G>>,
+    immediately?: boolean,
+  ): Promise<G[]>;
+  async composeWith<G extends BaseGenerator = BaseGenerator>(
     generator: string | string[] | { Generator: any; path: string },
-    args?: string[] | (Partial<BaseOptions> & { arguments?: string[]; args?: string[] }) | boolean,
-    options?: Partial<BaseOptions> | boolean,
+    args?: string[] | (Partial<GetGeneratorOptions<G>> & { arguments?: string[]; args?: string[] }) | boolean,
+    options?: Partial<GetGeneratorOptions<G>> | boolean,
     immediately = false,
-  ): Promise<Generator | Generator[]> {
+  ): Promise<G | G[]> {
     if (Array.isArray(generator)) {
       const generators: Generator[] = [];
       for (const each of generator) {
-        generators.push((await this.composeWith(each, args as any, options as any)) as Generator);
+        generators.push(await this.composeWith(each, args as any, options as any));
       }
 
-      return generators;
+      return generators as any;
     }
 
     let parsedArgs: string[] = [];
@@ -461,7 +469,7 @@ export class TasksMixin {
         immediately = options;
       }
     } else if (typeof args === 'object') {
-      parsedOptions = args;
+      parsedOptions = args as any;
       parsedArgs = args.arguments ?? args.args ?? [];
       if (typeof options === 'boolean') {
         immediately = options;
@@ -564,7 +572,7 @@ await this.composeWith({
       this._composedWith.push(instantiatedGenerator);
     }
 
-    return instantiatedGenerator;
+    return instantiatedGenerator as any;
   }
 
   /**
@@ -576,13 +584,12 @@ await this.composeWith({
    * or a single one.
    * @return This generator
    */
-  queueTransformStream(this: BaseGenerator, transformStreams: Transform | Transform[]) {
+  queueTransformStream(transformStreams: Transform | Transform[]) {
     assert(transformStreams, 'expected to receive a transform stream as parameter');
 
     this.queueTask({
-      async method(this: BaseGenerator) {
-        return this.env.applyTransforms(Array.isArray(transformStreams) ? transformStreams : [transformStreams]);
-      },
+      method: async () =>
+        this.env.applyTransforms(Array.isArray(transformStreams) ? transformStreams : [transformStreams]),
       taskName: 'transformStream',
       queueName: 'transform',
     });

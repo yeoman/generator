@@ -3,8 +3,8 @@ import path from 'node:path';
 import fs from 'node:fs';
 import _ from 'lodash';
 import table from 'text-table';
-import type { ArgumentSpec } from '../types.js';
-import type BaseGenerator from '../generator.js';
+import type { ArgumentSpec, CliOptionSpec } from '../types.js';
+import { GeneratorOrigin } from '../generator-parent.js';
 
 function formatArg(config: ArgumentSpec) {
   let arg = `<${config.name}>`;
@@ -16,14 +16,17 @@ function formatArg(config: ArgumentSpec) {
   return arg;
 }
 
-export class HelpMixin {
+export class HelpMixin extends GeneratorOrigin {
+  declare readonly _options: Record<string, CliOptionSpec>;
+  declare readonly _arguments: ArgumentSpec[];
+
   /**
    * Tries to get the description from a USAGE file one folder above the
    * source root otherwise uses a default description
    *
    * @return Help message of the generator
    */
-  help(this: BaseGenerator): string {
+  help(): string {
     const filepath = path.resolve(this.sourceRoot(), '../USAGE');
     const exists = fs.existsSync(filepath);
 
@@ -53,7 +56,7 @@ export class HelpMixin {
    *
    * @return Usage information of the generator
    */
-  usage(this: BaseGenerator): string {
+  usage(): string {
     const options = Object.keys(this._options).length > 0 ? '[options]' : '';
     let name = this._namespace;
     let args = '';
@@ -78,7 +81,7 @@ export class HelpMixin {
    * @param description
    */
 
-  desc(this: BaseGenerator, description: string) {
+  desc(description: string) {
     this.description = description || '';
     return this;
   }
@@ -87,7 +90,7 @@ export class HelpMixin {
    * Get help text for arguments
    * @returns Text of options in formatted table
    */
-  argumentsHelp(this: BaseGenerator): string {
+  argumentsHelp(): string {
     const rows = this._arguments.map(config => {
       return [
         '',
@@ -105,7 +108,7 @@ export class HelpMixin {
    * Get help text for options
    * @returns Text of options in formatted table
    */
-  optionsHelp(this: BaseGenerator): string {
+  optionsHelp(): string {
     const rows = Object.values(this._options)
       .filter((opt: any) => !opt.hide)
       .map((opt: any) => {

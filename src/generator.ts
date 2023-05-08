@@ -59,7 +59,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
 
   readonly env: Environment;
   readonly fs!: MemFsEditor;
-  readonly log?: Logger;
+  readonly log!: Logger;
   readonly _: _.LoDashStatic;
   appname!: string;
   args!: string[];
@@ -238,7 +238,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
 
     this._globalConfig = this._getGlobalStorage();
 
-    this.checkEnvironmentVersion('3.16.1', this.options.skipCheckEnv ?? false);
+    this.checkEnvironmentVersion('3.16.2', this.options.skipCheckEnv ?? false);
   }
 
   /**
@@ -383,9 +383,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     const getAnswerFromStorage = (question: PromptQuestion<A>): undefined | [string, any] => {
       const questionRef = question.storage ?? storage;
       const questionStorage: Storage | undefined =
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        typeof questionRef === 'string' ? (this[questionRef] as Storage) : questionRef;
+        typeof questionRef === 'string' ? ((this as any)[questionRef] as Storage) : questionRef;
 
       if (questionStorage) {
         const { name } = question;

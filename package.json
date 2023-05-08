@@ -53,7 +53,7 @@
   "dependencies": {
     "@types/node": "^16.18.3",
     "@yeoman/namespace": "^0.0.1",
-    "@yeoman/types": "^0.1.1",
+    "@yeoman/types": "^0.1.2",
     "chalk": "^5.1.2",
     "dargs": "^8.1.0",
     "debug": "^4.1.1",
@@ -89,11 +89,11 @@
     "typescript": "^5.0.4",
     "xo": "^0.54.2",
     "yeoman-assert": "^3.1.1",
-    "yeoman-environment": "^3.16.1",
+    "yeoman-environment": "^3.16.2",
     "yeoman-test": "^8.0.0-alpha.1"
   },
   "peerDependencies": {
-    "yeoman-environment": "^3.16.1 || ^4.0.0-alpha.4"
+    "yeoman-environment": "^3.16.2 || ^4.0.0-alpha.4"
   },
   "peerDependenciesMeta": {
     "yeoman-environment": {

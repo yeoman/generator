@@ -3,7 +3,8 @@ import assert from 'node:assert';
 import { type CopyOptions, type MemFsEditor } from 'mem-fs-editor';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { Data as TemplateData, Options as TemplateOptions } from 'ejs';
-import type { BaseGenerator } from '../generator.js';
+import type { OverloadParameters, OverloadReturnType } from '../types-utils.js';
+import { GeneratorOrigin } from '../generator-parent.js';
 
 export type Template<D extends TemplateData, G> = {
   /**
@@ -55,13 +56,17 @@ function applyToFirstAndSecondStringArg<Type extends [string | string[], string,
   return args;
 }
 
-export class FsMixin {
+export class FsMixin extends GeneratorOrigin {
+  fs!: MemFsEditor;
+
   /**
    * Read file from templates folder.
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.read(this.templatePath(filepath))
    */
-  readTemplate(this: BaseGenerator, ...args: Parameters<MemFsEditor['read']>): ReturnType<MemFsEditor['read']> {
+  readTemplate(...args: OverloadParameters<MemFsEditor['read']>): OverloadReturnType<MemFsEditor['read']> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     return this.fs.read(...applyToFirstStringArg(this.templatePath.bind(this), args));
   }
 
@@ -70,7 +75,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.copy(this.templatePath(from), this.destinationPath(to))
    */
-  copyTemplate(this: BaseGenerator, ...args: Parameters<MemFsEditor['copy']>): ReturnType<MemFsEditor['copy']> {
+  copyTemplate(...args: OverloadParameters<MemFsEditor['copy']>): OverloadReturnType<MemFsEditor['copy']> {
     // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
     return this.fs.copy(
       ...applyToFirstAndSecondStringArg(this.templatePath.bind(this), this.destinationPath.bind(this), args),
@@ -83,9 +88,8 @@ export class FsMixin {
    * Shortcut for this.fs!.copy(this.templatePath(from), this.destinationPath(to))
    */
   async copyTemplateAsync(
-    this: BaseGenerator,
-    ...args: Parameters<MemFsEditor['copyAsync']>
-  ): ReturnType<MemFsEditor['copyAsync']> {
+    ...args: OverloadParameters<MemFsEditor['copyAsync']>
+  ): OverloadReturnType<MemFsEditor['copyAsync']> {
     return this.fs.copyAsync(
       ...applyToFirstAndSecondStringArg(this.templatePath.bind(this), this.destinationPath.bind(this), args),
     );
@@ -96,7 +100,9 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.read(this.destinationPath(filepath)).
    */
-  readDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['read']>): ReturnType<MemFsEditor['read']> {
+  readDestination(...args: OverloadParameters<MemFsEditor['read']>): OverloadReturnType<MemFsEditor['read']> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     return this.fs.read(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -107,9 +113,8 @@ export class FsMixin {
    */
   // eslint-disable-next-line @typescript-eslint/naming-convention
   readDestinationJSON(
-    this: BaseGenerator,
-    ...args: Parameters<MemFsEditor['readJSON']>
-  ): ReturnType<MemFsEditor['readJSON']> {
+    ...args: OverloadParameters<MemFsEditor['readJSON']>
+  ): OverloadReturnType<MemFsEditor['readJSON']> {
     return this.fs.readJSON(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -118,7 +123,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.write(this.destinationPath(filepath)).
    */
-  writeDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['write']>): ReturnType<MemFsEditor['write']> {
+  writeDestination(...args: OverloadParameters<MemFsEditor['write']>): OverloadReturnType<MemFsEditor['write']> {
     return this.fs.write(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -129,9 +134,8 @@ export class FsMixin {
    */
   // eslint-disable-next-line @typescript-eslint/naming-convention
   writeDestinationJSON(
-    this: BaseGenerator,
-    ...args: Parameters<MemFsEditor['writeJSON']>
-  ): ReturnType<MemFsEditor['writeJSON']> {
+    ...args: OverloadParameters<MemFsEditor['writeJSON']>
+  ): OverloadReturnType<MemFsEditor['writeJSON']> {
     return this.fs.writeJSON(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -140,10 +144,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.delete(this.destinationPath(filepath)).
    */
-  deleteDestination(
-    this: BaseGenerator,
-    ...args: Parameters<MemFsEditor['delete']>
-  ): ReturnType<MemFsEditor['delete']> {
+  deleteDestination(...args: OverloadParameters<MemFsEditor['delete']>): OverloadReturnType<MemFsEditor['delete']> {
     // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
     return this.fs.delete(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
@@ -153,7 +154,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.copy(this.destinationPath(from), this.destinationPath(to)).
    */
-  copyDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['copy']>): ReturnType<MemFsEditor['copy']> {
+  copyDestination(...args: OverloadParameters<MemFsEditor['copy']>): OverloadReturnType<MemFsEditor['copy']> {
     // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
     return this.fs.copy(
       ...applyToFirstAndSecondStringArg(this.destinationPath.bind(this), this.destinationPath.bind(this), args),
@@ -165,7 +166,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.move(this.destinationPath(from), this.destinationPath(to)).
    */
-  moveDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['move']>): ReturnType<MemFsEditor['move']> {
+  moveDestination(...args: OverloadParameters<MemFsEditor['move']>): OverloadReturnType<MemFsEditor['move']> {
     // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
     return this.fs.move(
       ...applyToFirstAndSecondStringArg(this.destinationPath.bind(this), this.destinationPath.bind(this), args),
@@ -177,10 +178,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.exists(this.destinationPath(filepath)).
    */
-  existsDestination(
-    this: BaseGenerator,
-    ...args: Parameters<MemFsEditor['exists']>
-  ): ReturnType<MemFsEditor['exists']> {
+  existsDestination(...args: OverloadParameters<MemFsEditor['exists']>): OverloadReturnType<MemFsEditor['exists']> {
     return this.fs.exists(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -193,9 +191,8 @@ export class FsMixin {
    * @param templateOptions - ejs options
    * @param copyOptions - mem-fs-editor copy options
    */
-  // eslint-disable-next-line max-params
+
   renderTemplate<D extends TemplateData = TemplateData>(
-    this: BaseGenerator,
     source: string | string[] = '',
     destination: string | string[] = source,
     templateData?: string | D,
@@ -225,9 +222,8 @@ export class FsMixin {
    * @param templateOptions - ejs options
    * @param copyOptions - mem-fs-editor copy options
    */
-  // eslint-disable-next-line max-params
+
   async renderTemplateAsync<D extends TemplateData = TemplateData>(
-    this: BaseGenerator,
     source: string | string[] = '',
     destination: string | string[] = source,
     templateData?: string | D,
@@ -258,7 +254,6 @@ export class FsMixin {
    * Copy templates from templates folder to the destination.
    */
   renderTemplates<D extends TemplateData = TemplateData>(
-    this: BaseGenerator,
     templates: Templates<D, typeof this>,
     templateData?: string | D,
   ) {
@@ -282,7 +277,6 @@ export class FsMixin {
    * @param templateData - ejs data
    */
   async renderTemplatesAsync<D extends TemplateData = TemplateData>(
-    this: BaseGenerator,
     templates: Templates<D, typeof this>,
     templateData?: string | D,
   ) {
@@ -315,7 +309,7 @@ export class FsMixin {
    * @param path - path to the storage key.
    * @return data to be passed to the templates.
    */
-  _templateData<D extends TemplateData = TemplateData>(this: BaseGenerator, path?: string): D {
+  _templateData<D extends TemplateData = TemplateData>(path?: string): D {
     if (path) {
       return this.config.getPath(path);
     }

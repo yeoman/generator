@@ -2,11 +2,13 @@ import { BaseGenerator } from './generator.js';
 import type { BaseFeatures, BaseOptions } from './types.js';
 
 export type * from './types.js';
+export type * from './util/storage.js';
+export { default as Storage } from './util/storage.js';
 
 export default class Generator<
   O extends BaseOptions = BaseOptions,
   F extends BaseFeatures = BaseFeatures,
-> extends BaseGenerator {
+> extends BaseGenerator<O, F> {
   constructor(...args: any[]) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
