@@ -24,7 +24,7 @@ import { SpawnCommandMixin } from './actions/spawn-command.js';
 import { GitMixin } from './actions/user.js';
 import { TasksMixin } from './actions/lifecycle.js';
 
-type Environment = BaseEnvironment & { runLoop: any; resolvePackage: any };
+type Environment = BaseEnvironment & { resolvePackage: any };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -215,7 +215,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     }
 
     // Ensure the environment support features this yeoman-generator version require.
-    if (!this.env.adapter || !this.env.runLoop || !this.env.sharedFs) {
+    if (!this.env.adapter || !this.env.sharedFs) {
       throw new Error("Current environment doesn't provides some necessary feature this generator needs.");
     }
 
@@ -668,7 +668,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    * @return Resolved once the process finish
    */
   async run() {
-    return this.env.runGenerator(this as any);
+    return this.env.runGenerator(this);
   }
 
   /**
@@ -815,13 +815,13 @@ export interface BaseGenerator extends FsMixin, HelpMixin, PackageJsonMixin, Spa
 
 applyMixins(BaseGenerator, [FsMixin, HelpMixin, PackageJsonMixin, SpawnCommandMixin, GitMixin, TasksMixin]);
 
-function applyMixins(derivedCtor: any, constructors: any[]) {
-  for (const baseCtor of constructors) {
-    for (const name of Object.getOwnPropertyNames(baseCtor.prototype)) {
+function applyMixins(destCtor: any, constructors: any[]) {
+  for (const sourceCtor of constructors) {
+    for (const name of Object.getOwnPropertyNames(sourceCtor.prototype)) {
       Object.defineProperty(
-        derivedCtor.prototype,
+        destCtor.prototype,
         name,
-        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ?? Object.create(null),
+        Object.getOwnPropertyDescriptor(sourceCtor.prototype, name) ?? Object.create(null),
       );
     }
   }

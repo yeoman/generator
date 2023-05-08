@@ -65,18 +65,13 @@ export class TasksMixin {
       return 0;
     });
 
-    // Add queue to runLoop
     for (const customQueue of customPriorities) {
       customQueue.queueName = customQueue.queueName ?? `${this._namespace}#${customQueue.priorityName}`;
       debug(`Registering custom queue ${customQueue.queueName}`);
       this._queues[customQueue.priorityName] = customQueue;
 
-      if (this.env.runLoop.queueNames.includes(customQueue.queueName)) {
-        continue;
-      }
-
       const beforeQueue = customQueue.before ? this._queues[customQueue.before].queueName : undefined;
-      this.env.runLoop.addSubQueue(customQueue.queueName, beforeQueue);
+      this.env.addPriority(customQueue.queueName, beforeQueue);
     }
   }
 
@@ -280,19 +275,13 @@ export class TasksMixin {
   queueTask(this: BaseGenerator, task: Task): void {
     const { queueName = 'default', taskName: methodName, run, once } = task;
 
-    const { runLoop } = this.env;
     const { _taskStatus: taskStatus, _namespace: namespace } = this;
 
     debug(`Queueing ${namespace}#${methodName} with options %o`, { ...task, method: undefined });
-    runLoop.add(
-      queueName,
-      // Run-queue's done(continue), pause
-      async (continueQueue: () => void) => {
-        await this.executeTask(task, undefined, taskStatus);
-        continueQueue();
-      },
-      { once: once ? methodName : undefined, run },
-    );
+    this.env.queueTask(queueName, async () => this.executeTask(task, undefined, taskStatus), {
+      once: once ? methodName : undefined,
+      startQueue: run,
+    });
   }
 
   /**
