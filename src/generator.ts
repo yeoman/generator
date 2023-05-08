@@ -238,7 +238,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
 
     this._globalConfig = this._getGlobalStorage();
 
-    this.checkEnvironmentVersion('4.0.0-alpha.1', this.options.skipCheckEnv ?? false);
+    this.checkEnvironmentVersion('3.16.1', this.options.skipCheckEnv ?? false);
   }
 
   /**
