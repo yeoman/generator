@@ -67,8 +67,7 @@
     "semver": "^7.5.0",
     "simple-git": "^3.18.0",
     "sort-keys": "^5.0.0",
-    "text-table": "^0.2.0",
-    "type-fest": "^3.10.0"
+    "text-table": "^0.2.0"
   },
   "devDependencies": {
     "@types/inquirer": "^9.0.3",
