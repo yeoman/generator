@@ -55,7 +55,6 @@
     "@yeoman/namespace": "^0.0.1",
     "@yeoman/types": "^0.1.2",
     "chalk": "^5.1.2",
-    "dargs": "^8.1.0",
     "debug": "^4.1.1",
     "execa": "^7.1.1",
     "github-username": "^7.0.0",
