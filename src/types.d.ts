@@ -85,6 +85,12 @@ export type BaseFeatures = FeaturesApi & {
 
   /** Provides a custom commit task. */
   customCommitTask?: boolean | ((...args: any[]) => void | Promise<void>);
+
+  /** Disable args/options parsing. Whenever options/arguments are provided parsed like using commander based parsing. */
+  skipParseOptions?: boolean;
+
+  /** Custom priorities for more fine tuned workflows. */
+  customPriorities?: Priority[];
 };
 
 export type BaseOptions = OptionsApi & {
@@ -98,17 +104,19 @@ export type BaseOptions = OptionsApi & {
 
   askAnswered?: boolean;
 
-  skipParseOptions?: boolean;
-
   localConfigOnly?: boolean;
 
   skipCache?: boolean;
 
   skipLocalCache?: boolean;
 
-  customPriorities?: Priority[];
-
   description?: string;
+
+  /** @deprecated moved to features */
+  skipParseOptions?: boolean;
+
+  /** @deprecated moved to features */
+  customPriorities?: Priority[];
 };
 
 export type ArgumentSpec = {

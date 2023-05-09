@@ -14,17 +14,11 @@ export default class BaseTest extends Base {
       Partial<Pick<Base['options'], 'namespace' | 'resolved'>>,
     features?: Base['features'],
   );
-  constructor(args: any, options: any, features?: any) {
-    args = Array.isArray(args)
-      ? args
-      : { ...args, resolved: args?.resolved ?? __filename, namespace: args?.namespace ?? 'yeoman:testnamespace' };
-    options = Array.isArray(args)
-      ? {
-          ...options,
-          resolved: options?.resolved ?? __filename,
-          namespace: options?.namespace ?? 'yeoman:testnamespace',
-        }
-      : options;
-    super(args, options, features);
+  constructor(...args: any[]) {
+    const optIndex = Array.isArray(args[0]) ? 1 : 0;
+    args[optIndex] = args[optIndex] ?? {};
+    args[optIndex].resolved = args[optIndex].resolved ?? __filename;
+    args[optIndex].namespace = args[optIndex].namespace ?? 'yeoman:testnamespace';
+    super(...args);
   }
 }

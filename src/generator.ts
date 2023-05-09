@@ -124,17 +124,24 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     const actualOptions = Array.isArray(args) ? (options as O) : args;
     const actualFeatures = Array.isArray(args) ? features : (options as F);
 
-    this.options = actualOptions;
-    this._initOptions = { ...actualOptions };
+    // Load parameters
     this._args = actualArgs;
+    this.options = actualOptions;
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    this.features = actualFeatures ?? ({} as F);
+
+    // Initialize properties
     this._options = {};
     this._arguments = [];
     this._prompts = [];
+
+    // Parse parameters
+    this._initOptions = { ...actualOptions };
     this._namespace = actualOptions.namespace;
     this._namespaceId = requireNamespace(actualOptions.namespace);
-    this._customPriorities = actualOptions.customPriorities;
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    this.features = actualFeatures ?? ({} as F);
+    this._customPriorities = this.features?.customPriorities;
+    this.features.skipParseOptions = this.features.skipParseOptions ?? this.options.skipParseOptions;
+    this.features.customPriorities = this.features.customPriorities ?? this.options.customPriorities;
 
     this.option('help', {
       type: Boolean,
@@ -476,7 +483,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
       this._options[specName] = spec;
     }
 
-    if (!this.options.skipParseOptions) {
+    if (!this.features.skipParseOptions) {
       this.parseOptions();
     }
 
@@ -517,7 +524,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
       ...config,
     });
 
-    if (!this.options.skipParseOptions) {
+    if (!this.features.skipParseOptions) {
       this.parseOptions();
     }
 

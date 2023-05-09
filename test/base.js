@@ -1481,36 +1481,41 @@ describe('Base', () => {
 
     beforeEach(function () {
       TestGenerator = class extends Base {
-        constructor(args, options) {
-          super(args, {
-            ...options,
-            customPriorities: [
-              ...(options.customPriorities || []),
-              {
-                // Change priority prompting to be queue before writing for this generator.
-                // If we change defaults priorities in the future, the order of custom priorities will keep the same.
-                priorityName: 'prompting',
-                before: 'writing',
-              },
-              {
-                priorityName: 'prePrompting1',
-                before: 'prompting',
-              },
-              {
-                priorityName: 'preConfiguring1',
-                before: 'preConfiguring2',
-                queueName: 'common#preConfiguring1',
-                once: true,
-              },
-              {
-                priorityName: 'preConfiguring2',
-                before: 'configuring',
-              },
-              {
-                priorityName: 'afterEnd',
-              },
-            ],
-          });
+        constructor(args, options, features) {
+          super(
+            args,
+            {
+              ...options,
+            },
+            {
+              customPriorities: [
+                ...(features?.customPriorities || []),
+                {
+                  // Change priority prompting to be queue before writing for this generator.
+                  // If we change defaults priorities in the future, the order of custom priorities will keep the same.
+                  priorityName: 'prompting',
+                  before: 'writing',
+                },
+                {
+                  priorityName: 'prePrompting1',
+                  before: 'prompting',
+                },
+                {
+                  priorityName: 'preConfiguring1',
+                  before: 'preConfiguring2',
+                  queueName: 'common#preConfiguring1',
+                  once: true,
+                },
+                {
+                  priorityName: 'preConfiguring2',
+                  before: 'configuring',
+                },
+                {
+                  priorityName: 'afterEnd',
+                },
+              ],
+            },
+          );
         }
       };
     });
@@ -1674,19 +1679,24 @@ describe('Base', () => {
     it('error is thrown with duplicate custom queue', function () {
       const TestGenerator = class extends Base {
         constructor(args, options) {
-          super(args, {
-            ...options,
-            customPriorities: [
-              {
-                priorityName: 'beforePrompting',
-                before: 'prompting',
-              },
-              {
-                priorityName: 'beforePrompting',
-                before: 'prompting',
-              },
-            ],
-          });
+          super(
+            args,
+            {
+              ...options,
+            },
+            {
+              customPriorities: [
+                {
+                  priorityName: 'beforePrompting',
+                  before: 'prompting',
+                },
+                {
+                  priorityName: 'beforePrompting',
+                  before: 'prompting',
+                },
+              ],
+            },
+          );
         }
       };
 
@@ -1850,15 +1860,11 @@ describe('Base', () => {
     });
 
     it('should return any public member when tasksMatchingPriority is true', function () {
-      const gen = new TestGen(
-        [],
-        {
-          namespace: 'foo',
-          env,
-        },
-        { tasksMatchingPriority: true },
-      );
-      assert.deepStrictEqual(gen.getTaskNames(), ['default', 'customPriority']);
+      const Gen = helpers.createDummyGenerator(TestGen, {
+        default() {},
+        customPriority() {},
+      });
+      assert.deepStrictEqual(new Gen({ env }).getTaskNames(), ['default', 'customPriority']);
     });
   });
 });
