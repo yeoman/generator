@@ -746,6 +746,8 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
       this._config = undefined;
       // Reset packageJson
       this._packageJson = undefined;
+      // Sync environment cwd
+      this.env.cwd = rootPath;
     }
 
     return this._destinationRoot || this.env.cwd;

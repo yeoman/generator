@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events';
 import path from 'node:path';
-import os from 'node:os';
+import os, { tmpdir } from 'node:os';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
 import semver from 'semver';
@@ -108,6 +108,29 @@ describe('Generators module', () => {
       const customStorage = this.generator.createStorage(global);
       assert.equal(global, customStorage.path);
       assert.equal(undefined, customStorage.name);
+    });
+  });
+
+  describe('#destinationRoot', () => {
+    let currentCwd;
+    beforeEach(function () {
+      this.generator = new Base({
+        env: this.env,
+        resolved: 'test',
+        localConfigOnly: true,
+      });
+
+      currentCwd = this.env.cwd;
+    });
+
+    afterEach(function () {
+      this.env.cwd = currentCwd;
+    });
+
+    it('should change env cwd', function () {
+      const path = tmpdir();
+      this.generator.destinationRoot(path);
+      assert.strictEqual(this.env.cwd, path);
     });
   });
 
