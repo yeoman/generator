@@ -6,7 +6,7 @@ import { createRequire } from 'node:module';
 import { stat } from 'node:fs/promises';
 import createDebug from 'debug';
 import chalk from 'chalk';
-import type { BaseGenerator, GetGeneratorOptions } from '@yeoman/types';
+import type { ApplyTransformsOptions, BaseGenerator, GetGeneratorOptions } from '@yeoman/types';
 import type { Task, TaskOptions, BaseOptions, Priority } from '../types.js';
 import type Generator from '../index.js';
 import { GeneratorOrigin } from '../generator-parent.js';
@@ -584,12 +584,12 @@ await this.composeWith({
    * or a single one.
    * @return This generator
    */
-  queueTransformStream(transformStreams: Transform | Transform[]) {
+  queueTransformStream(transformStreams: Transform | Transform[], options?: ApplyTransformsOptions) {
     assert(transformStreams, 'expected to receive a transform stream as parameter');
 
     this.queueTask({
       method: async () =>
-        this.env.applyTransforms(Array.isArray(transformStreams) ? transformStreams : [transformStreams]),
+        this.env.applyTransforms(Array.isArray(transformStreams) ? transformStreams : [transformStreams], options),
       taskName: 'transformStream',
       queueName: 'transform',
     });
