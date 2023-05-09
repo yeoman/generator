@@ -10,7 +10,7 @@ import chalk from 'chalk';
 import minimist from 'minimist';
 import createDebug from 'debug';
 import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
-import { type YeomanNamespace, requireNamespace } from '@yeoman/namespace';
+import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import type { BaseEnvironment, BaseGenerator as GeneratorApi, Logger } from '@yeoman/types';
 import type { ArgumentSpec, BaseOptions, BaseFeatures, CliOptionSpec, Priority } from './types.js';
 import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
@@ -138,7 +138,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     // Parse parameters
     this._initOptions = { ...actualOptions };
     this._namespace = actualOptions.namespace;
-    this._namespaceId = requireNamespace(actualOptions.namespace);
+    this._namespaceId = toNamespace(actualOptions.namespace);
     this._customPriorities = this.features?.customPriorities;
     this.features.skipParseOptions = this.features.skipParseOptions ?? this.options.skipParseOptions;
     this.features.customPriorities = this.features.customPriorities ?? this.options.customPriorities;
