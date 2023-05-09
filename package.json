@@ -70,10 +70,12 @@
     "text-table": "^0.2.0"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.7",
     "@types/inquirer": "^9.0.3",
     "@types/lodash": "^4.14.194",
     "@types/semver": "^7.3.13",
     "@types/sinon": "^10.0.14",
+    "@types/text-table": "^0.2.2",
     "c8": "^7.13.0",
     "cpy-cli": "^4.2.0",
     "esmocha": "^0.1.4",
@@ -90,7 +92,7 @@
     "xo": "^0.54.2",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^3.16.2",
-    "yeoman-test": "^8.0.0-alpha.1"
+    "yeoman-test": "^8.0.0-alpha.3"
   },
   "peerDependencies": {
     "yeoman-environment": "^3.16.2 || ^4.0.0-alpha.4"

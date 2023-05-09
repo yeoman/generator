@@ -245,22 +245,16 @@ class Storage {
    * @return val  Whatever was passed in as val.
    */
   set<V = StorageValue>(value: V): V;
-  set<V = StorageValue>(key: string, value: V): V;
-  set<V = StorageValue>(key: string | V, value?: V): V {
+  set<V = StorageValue>(key: string | number, value?: V): V | undefined;
+  set<V = StorageValue>(key: string | number | V, value?: V): V | undefined {
     const store = this._store;
 
-    if (value === undefined) {
-      if (typeof key !== 'object') {
-        throw new TypeError(`key should be an object but got ${typeof value}`);
-      }
-
+    if (typeof key === 'object') {
       value = Object.assign(store, key);
+    } else if (typeof key === 'string' || typeof key === 'number') {
+      store[key] = value as any;
     } else {
-      if (typeof key !== 'string') {
-        throw new TypeError(`key should be a string but got ${typeof key}`);
-      }
-
-      store[key] = value as StorageRecord;
+      throw new TypeError(`key not supported ${typeof key}`);
     }
 
     this._persist(store);
@@ -273,7 +267,7 @@ class Storage {
    * @param val  Any valid JSON type value (String, Number, Array, Object).
    * @return val  Whatever was passed in as val.
    */
-  setPath(path: string, value: StorageValue) {
+  setPath(path: string | number, value: StorageValue) {
     assert(!_.isFunction(value), "Storage value can't be a function");
 
     const store = this._store;

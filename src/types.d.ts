@@ -4,7 +4,7 @@ import type Storage from './util/storage.js';
 import type Generator from './index.js';
 
 export type StorageValue = JSONSchema7Type;
-export type StorageRecord = Record<string, JSONSchema7Type>;
+export type StorageRecord = Record<string, StorageValue>;
 
 /**
  * Queue options.

@@ -178,9 +178,6 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
       // Clear destionationRoot, _destinationRoot will take priority when composing, but not override passed options.
       delete this.options.destinationRoot;
 
-      // Ensure source/destination path, can be configured from subclasses
-      this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
-
       this.fs = createMemFsEditor(this.env.sharedFs);
     }
 
@@ -193,6 +190,9 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     if (actualOptions.help) {
       return;
     }
+
+    // Ensure source/destination path, can be configured from subclasses
+    this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
 
     if (this.features.unique && !this.features.uniqueBy) {
       let uniqueBy: string;
