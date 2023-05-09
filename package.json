@@ -51,7 +51,7 @@
     "doc_path": "../yeoman-generator-doc/"
   },
   "dependencies": {
-    "@types/node": "^16.18.3",
+    "@types/node": "^20.1.1",
     "@yeoman/namespace": "^0.0.1",
     "@yeoman/types": "^0.1.2",
     "chalk": "^5.1.2",
