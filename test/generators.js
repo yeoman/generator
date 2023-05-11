@@ -129,7 +129,10 @@ describe('Generators module', () => {
 
     it('should change env cwd', function () {
       const path = tmpdir();
+      const oldPath = this.env.cwd;
       this.generator.destinationRoot(path);
+      assert.strictEqual(this.env.cwd, oldPath);
+      this.generator.destinationRoot(path, true);
       assert.strictEqual(this.env.cwd, path);
     });
   });
