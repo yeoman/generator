@@ -25,6 +25,9 @@
       "files": "test/*",
       "rules": {
         "max-nested-callbacks": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-unused-expressions": "off",
+        "@typescript-eslint/restrict-plus-operands": "off",
         "@typescript-eslint/naming-convention": "off"
       }
     }

@@ -155,10 +155,9 @@ describe('Generator with environment version', () => {
 
     describe('#prompt with storage', () => {
       it('with compatible environment', function () {
-        const self = this;
         this.getVersionStub.withArgs().returns('3.0.0');
         this.getVersionStub.withArgs('inquirer').returns('7.1.0');
-        return self.dummy.prompt([], self.dummy.config);
+        return this.dummy.prompt([], this.dummy.config);
       });
     });
   });

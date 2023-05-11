@@ -1,7 +1,11 @@
 {
+  "debug.javascript.terminalOptions": {
+    "skipFiles": ["node_modules/**", "dist/**"]
+  },
   "mochaExplorer.logpanel": true,
-  "mochaExplorer.files": ["test/*.{js,cjs,mjs,ts,cts,mts}"],
+  "mochaExplorer.files": ["test/*.test.ts"],
   "mochaExplorer.ui": "tdd",
   "mochaExplorer.configFile": ".mocharc.cjs",
-  "mochaExplorer.nodeArgv": ["--loader=@node-loaders/auto"]
+  "mochaExplorer.require": "esmocha/mocha",
+  "mochaExplorer.nodeArgv": ["--loader=esmocha/loader"]
 }

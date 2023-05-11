@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default-member */
 import assert from 'node:assert';
 import chalk from 'chalk';
 import sinon from 'sinon';

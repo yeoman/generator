@@ -1,5 +1,4 @@
-import { expect } from 'expect';
-import { mock, restoreAllMocks, fn, importMock } from 'esmocha';
+import { expect, mock, restoreAllMocks, fn, importMock } from 'esmocha';
 
 const execa = await mock('execa');
 const { default: Generator } = await importMock('../src/index.js', { execa });

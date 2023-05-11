@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import assert from 'node:assert';
 import fs from 'node:fs';
 import os from 'node:os';

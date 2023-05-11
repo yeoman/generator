@@ -7,7 +7,7 @@ import process from 'node:process';
 import { Buffer } from 'node:buffer';
 import _ from 'lodash';
 import { spy as sinonSpy, fake as sinonFake, assert as sinonAssert } from 'sinon';
-import through from 'through2';
+import { passthrough } from '@yeoman/transform';
 import assert from 'yeoman-assert';
 import YeomanEnvironment from 'yeoman-environment';
 import helpers, { TestAdapter } from 'yeoman-test';
@@ -293,7 +293,7 @@ describe('Base', () => {
       const spy1 = sinonSpy();
       const spy2 = sinonSpy();
 
-      TestGenerator.prototype.first = () => {
+      TestGenerator.prototype.first = async () => {
         return new Promise(resolve => {
           setTimeout(() => {
             spy1();
@@ -312,7 +312,7 @@ describe('Base', () => {
     });
 
     it('handle failing promises as errors', function (done) {
-      TestGenerator.prototype.failing = () => {
+      TestGenerator.prototype.failing = async () => {
         return new Promise((resolve, reject) => {
           reject(new Error('some error'));
         });
@@ -326,7 +326,7 @@ describe('Base', () => {
       testGen.run().catch(() => {});
     });
 
-    it('throws if no method is available', function () {
+    it('throws if no method is available', async function () {
       const gen = new (class extends Base {})([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
@@ -338,7 +338,7 @@ describe('Base', () => {
       });
     });
 
-    it('will run non-enumerable methods', function () {
+    it('will run non-enumerable methods', async function () {
       class Generator extends Base {}
 
       Object.defineProperty(Generator.prototype, 'nonenumerable', {
@@ -1057,15 +1057,15 @@ describe('Base', () => {
     it('is updated when destinationRoot change', function () {
       sinonSpy(Dummy.prototype, '_getStorage');
       dummy.destinationRoot('foo');
-      // eslint-disable-next-line no-unused-expressions
+
       dummy.config;
       assert.equal(Dummy.prototype._getStorage.callCount, 1);
       dummy.destinationRoot();
-      // eslint-disable-next-line no-unused-expressions
+
       dummy.config;
       assert.equal(Dummy.prototype._getStorage.callCount, 1);
       dummy.destinationRoot('foo');
-      // eslint-disable-next-line no-unused-expressions
+
       dummy.config;
       assert.equal(Dummy.prototype._getStorage.callCount, 2);
       Dummy.prototype._getStorage.restore();
@@ -1111,14 +1111,12 @@ describe('Base', () => {
         this.fs.write(filepath, 'not correct');
 
         this.queueTransformStream(
-          through.obj((file, enc, cb) => {
+          passthrough(file => {
             file.contents = Buffer.from('a');
-            cb(null, file);
           }),
         ).queueTransformStream(
-          through.obj((file, enc, cb) => {
+          passthrough(file => {
             file.contents = Buffer.from(file.contents.toString() + 'b');
-            cb(null, file);
           }),
         );
       };
@@ -1133,13 +1131,11 @@ describe('Base', () => {
         this.fs.write(filepath, 'not correct');
 
         this.queueTransformStream([
-          through.obj((file, enc, cb) => {
+          passthrough(file => {
             file.contents = Buffer.from('a');
-            cb(null, file);
           }),
-          through.obj((file, enc, cb) => {
+          passthrough(file => {
             file.contents = Buffer.from(file.contents.toString() + 'b');
-            cb(null, file);
           }),
         ]);
       };
@@ -1221,6 +1217,7 @@ describe('Base', () => {
         isFirstEndEvent = false;
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       generatorOnce.run();
     });
 
@@ -1246,6 +1243,7 @@ describe('Base', () => {
         'skip-install': true,
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       generatorEnd.run();
     });
   });

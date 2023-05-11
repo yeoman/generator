@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import path from 'node:path';
 import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
-import { spyOn } from 'jest-mock';
+import { esmocha } from 'esmocha';
 import BaseGenerator from '../src/generator.js';
 import Base from './utils.js';
 
@@ -24,7 +24,7 @@ describe('generators.Base (actions/fs)', () => {
   beforeEach(function () {
     returns = {};
     this.base = new BaseGenerator({ namespace: 'foo', help: true });
-    spyOn(this.base, 'config', 'get').mockReturnValue({
+    esmocha.spyOn(this.base, 'config', 'get').mockReturnValue({
       getAll() {
         return configGetAll;
       },
@@ -112,6 +112,7 @@ describe('generators.Base (actions/fs)', () => {
     const passedArg3 = {};
     const passedArg4 = { foo: 'bar' };
 
+    // eslint-disable-next-line @typescript-eslint/no-loop-func
     describe(`#${operation.name}`, () => {
       let returnValue;
       let expectedReturn;

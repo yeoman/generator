@@ -25,7 +25,10 @@ describe('Generators module', () => {
     });
 
     it('should expose yoGeneratorVersion', function () {
-      assert(semver.valid(this.generator.yoGeneratorVersion), `Not valid version ${this.generator.yoGeneratorVersion}`);
+      assert(
+        semver.valid(this.generator.yoGeneratorVersion),
+        `Not valid version ${this.generator.yoGeneratorVersion as string}`,
+      );
     });
 
     it('is an EventEmitter', function (done) {
