@@ -62,7 +62,7 @@ export class HelpMixin extends GeneratorOrigin {
     let args = '';
 
     if (this._arguments.length > 0) {
-      args = this._arguments.map(formatArg).join(' ') + ' ';
+      args = this._arguments.map(arg => formatArg(arg)).join(' ') + ' ';
     }
 
     name = name.replace(/^yeoman:/, '');

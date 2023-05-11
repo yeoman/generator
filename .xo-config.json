@@ -8,23 +8,23 @@
     "project": "./tsconfig.spec.json"
   },
   "rules": {
-    "no-await-in-loop": "off",
-    "prefer-rest-params": "off",
-    "prefer-spread": "off",
-    "unicorn/prefer-spread": "off",
-    "unicorn/no-array-callback-reference": "off",
-    "unicorn/no-object-as-default-parameter": "off",
-    "unicorn/no-this-assignment": "off",
     "@typescript-eslint/no-unsafe-argument": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/no-unsafe-call": "off",
-    "@typescript-eslint/no-unsafe-return": "off"
+    "@typescript-eslint/no-unsafe-return": "off",
+    "no-await-in-loop": "off",
+    "prefer-spread": "off"
   },
   "overrides": [
     {
       "files": "test/*",
       "rules": {
         "max-nested-callbacks": "off",
+        "prefer-rest-params": "off",
+        "unicorn/prefer-spread": "off",
+        "unicorn/no-array-callback-reference": "off",
+        "unicorn/no-object-as-default-parameter": "off",
+        "unicorn/no-this-assignment": "off",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-unused-expressions": "off",
         "@typescript-eslint/restrict-plus-operands": "off",

@@ -210,7 +210,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
    */
   getTaskNames(): string[] {
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
-    let validMethods = methods.filter(methodIsValid);
+    let validMethods = methods.filter(method => methodIsValid(method));
     const { taskPrefix } = this.features;
 
     if (taskPrefix) {

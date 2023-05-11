@@ -2,9 +2,9 @@ import _ from 'lodash';
 import chalk from 'chalk';
 
 const deprecate = (message, fn) => {
-  return function () {
+  return function (...args) {
     deprecate.log(message);
-    return Reflect.apply(fn, this, arguments);
+    return Reflect.apply(fn, this, args);
   };
 };
 

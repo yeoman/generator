@@ -2,7 +2,7 @@ import type { BaseEnvironment, BaseGenerator, PromptAnswers, PromptQuestions } f
 import type Storage from './util/storage.js';
 import type { BaseFeatures, BaseOptions } from './index.js';
 
-export class GeneratorOrigin implements BaseGenerator {
+export abstract class GeneratorOrigin implements BaseGenerator {
   declare env: BaseEnvironment;
   declare _destinationRoot: string | undefined;
   declare _namespace: string;
