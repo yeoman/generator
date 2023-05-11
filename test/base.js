@@ -1859,8 +1859,8 @@ describe('Base', () => {
       assert.deepStrictEqual(gen.getTaskNames(), ['anyMethod', 'default', 'customPriority']);
     });
 
-    it('should return any public member when tasksMatchingPriority is true', function () {
-      const Gen = helpers.createDummyGenerator(TestGen, {
+    it('should return any public member when tasksMatchingPriority is true', async function () {
+      const Gen = await helpers.createDummyGenerator(TestGen, {
         default() {},
         customPriority() {},
       });
