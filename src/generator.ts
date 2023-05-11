@@ -733,7 +733,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    * @param rootPath new destination root path
    * @return destination root path
    */
-  destinationRoot(rootPath?: string) {
+  destinationRoot(rootPath?: string, updateEnvironment = false) {
     if (typeof rootPath === 'string') {
       this._destinationRoot = pathResolve(rootPath);
 
@@ -746,8 +746,11 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
       this._config = undefined;
       // Reset packageJson
       this._packageJson = undefined;
-      // Sync environment cwd
-      this.env.cwd = rootPath;
+
+      if (updateEnvironment) {
+        // Sync environment cwd
+        this.env.cwd = rootPath;
+      }
     }
 
     return this._destinationRoot || this.env.cwd;
