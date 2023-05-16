@@ -1858,7 +1858,7 @@ describe('Base', () => {
     });
 
     it('should return any public member when tasksMatchingPriority is true', async function () {
-      const Gen = await helpers.createDummyGenerator(TestGen, {
+      const Gen = helpers.createDummyGenerator(TestGen, {
         default() {},
         customPriority() {},
       });
