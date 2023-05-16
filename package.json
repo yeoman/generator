@@ -93,7 +93,7 @@
     "yeoman-test": "^8.0.0-beta.1"
   },
   "peerDependencies": {
-    "@yeoman/types": "^0.3.0",
+    "@yeoman/types": "^0.3.0 || ^0.4.0",
     "yeoman-environment": "^3.16.2 || ^4.0.0-alpha.4"
   },
   "peerDependenciesMeta": {
