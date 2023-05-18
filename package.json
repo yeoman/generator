@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@types/node": "^16.18.3",
-    "@yeoman/namespace": "^0.0.1",
+    "@yeoman/namespace": "^1.0.0",
     "chalk": "^5.1.2",
     "debug": "^4.1.1",
     "execa": "^7.1.1",
@@ -74,7 +74,7 @@
     "@types/semver": "^7.3.13",
     "@types/sinon": "^10.0.14",
     "@types/text-table": "^0.2.2",
-    "@yeoman/transform": "^0.2.1",
+    "@yeoman/transform": "^1.0.0",
     "c8": "^7.13.0",
     "cpy-cli": "^4.2.0",
     "esmocha": "^1.0.1",
@@ -89,12 +89,12 @@
     "typescript": "^5.0.4",
     "xo": "^0.54.2",
     "yeoman-assert": "^3.1.1",
-    "yeoman-environment": "^3.17.0",
-    "yeoman-test": "^8.0.0-beta.4"
+    "yeoman-environment": "^3.18.0",
+    "yeoman-test": "^8.0.0-beta.5"
   },
   "peerDependencies": {
-    "@yeoman/types": "^0.3.0 || ^0.4.0",
-    "yeoman-environment": "^3.16.2 || ^4.0.0-alpha.4"
+    "@yeoman/types": "^0.5.0",
+    "yeoman-environment": "^3.18.0 || ^4.0.0-alpha.4"
   },
   "peerDependenciesMeta": {
     "yeoman-environment": {

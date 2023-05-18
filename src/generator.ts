@@ -305,6 +305,11 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
       return true;
     }
 
+    // Version cannot be checked
+    if (runningVersion === undefined) {
+      return true;
+    }
+
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     if (this.options.ignoreVersionCheck || warning) {
       console.warn(

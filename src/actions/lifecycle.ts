@@ -380,7 +380,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
     this.queueOwnTasks({ auto: true });
 
     for (const generator of this._composedWith) {
-      await this.env.queueGenerator(generator, false);
+      await this.env.queueGenerator(generator, { schedule: false });
     }
 
     this._composedWith = [];
@@ -511,7 +511,10 @@ export abstract class TasksMixin extends GeneratorOrigin {
       generatorFactory.resolved = path;
       generatorFactory.namespace = this.env.namespace(path);
 
-      return this.env.instantiate<Generator>(generatorFactory, parsedArgs, parsedOptions as any);
+      return this.env.instantiate<Generator>(generatorFactory, {
+        generatorArgs: parsedArgs,
+        generatorOptions: parsedOptions,
+      });
     };
 
     if (typeof generator === 'string') {
@@ -525,7 +528,10 @@ export abstract class TasksMixin extends GeneratorOrigin {
         instantiatedGenerator = await instantiate(generatorFactory, resolvedGenerator);
       } catch {
         // Forward to the environment
-        instantiatedGenerator = await this.env.create<Generator>(generator, parsedArgs, parsedOptions);
+        instantiatedGenerator = await this.env.create<Generator>(generator, {
+          generatorArgs: parsedArgs,
+          generatorOptions: parsedOptions,
+        });
       }
     } else {
       const { Generator: generatorFactory } = generator;
