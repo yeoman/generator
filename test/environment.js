@@ -3,6 +3,7 @@ const os = require('os');
 const path = require('path');
 const sinon = require('sinon');
 const Environment = require('yeoman-environment');
+const environmentPackageJson = require('yeoman-environment/package.json');
 const assert = require('assert');
 const helpers = require('yeoman-test');
 const {TestAdapter} = require('yeoman-test/lib/adapter');
@@ -23,7 +24,9 @@ describe('Generator with environment version', () => {
         new TestAdapter()
       );
       this.env.getVersion = this.env.getVersion || (() => {});
-      this.getVersionStub = sinon.stub(this.env, 'getVersion');
+      this.getVersionStub = sinon
+        .stub(this.env, 'getVersion')
+        .returns(environmentPackageJson.version);
 
       this.Dummy = class extends Base {};
       this.dummy = new this.Dummy(['bar', 'baz', 'bom'], {

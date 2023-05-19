@@ -25,6 +25,7 @@
     "doc_path": "../yeoman-generator-doc/"
   },
   "devDependencies": {
+    "@yeoman/types": "1.0.1",
     "coveralls": "^3.0.3",
     "inquirer": "^8.2.4",
     "jsdoc": "^3.6.7",
@@ -68,12 +69,19 @@
     "lodash": "^4.17.11",
     "mem-fs-editor": "^9.0.0",
     "minimist": "^1.2.5",
+    "pacote": "^15.2.0",
     "read-pkg-up": "^7.0.1",
     "run-async": "^2.0.0",
     "semver": "^7.2.1",
     "shelljs": "^0.8.5",
     "sort-keys": "^4.2.0",
     "text-table": "^0.2.0"
+  },
+  "overrides": {
+    "@yeoman/types": {
+      "mem-fs": "^2.0.0",
+      "mem-fs-editor": "^9.0.0"
+    }
   },
   "peerDependencies": {
     "yeoman-environment": "^3.2.0"
