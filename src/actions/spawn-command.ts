@@ -7,9 +7,9 @@ import {
   type SyncOptions,
   type ExecaSyncReturnValue,
 } from 'execa';
-import { GeneratorOrigin } from '../generator-parent.js';
+import type BaseGenerator from '../generator.js';
 
-export class SpawnCommandMixin extends GeneratorOrigin {
+export class SpawnCommandMixin {
   /**
    * Normalize a command across OS and spawn it (asynchronously).
    *
@@ -19,7 +19,12 @@ export class SpawnCommandMixin extends GeneratorOrigin {
    */
   spawnCommand(command: string, args?: readonly string[], opt?: ExecaOptions): ExecaChildProcess;
   spawnCommand(command: string, args?: readonly string[], opt?: ExecaOptions<undefined>): ExecaChildProcess<Buffer>;
-  spawnCommand(command: string, args?: readonly string[], opt?: ExecaOptions<any>): ExecaChildProcess<any> {
+  spawnCommand(
+    this: BaseGenerator,
+    command: string,
+    args?: readonly string[],
+    opt?: ExecaOptions<any>,
+  ): ExecaChildProcess<any> {
     return execa(command, args, {
       stdio: 'inherit',
       cwd: this.destinationRoot(),
@@ -40,7 +45,12 @@ export class SpawnCommandMixin extends GeneratorOrigin {
     args?: readonly string[],
     opt?: SyncOptions<undefined>,
   ): ExecaSyncReturnValue<Buffer>;
-  spawnCommandSync(command: string, args?: readonly string[], opt?: SyncOptions<any>): ExecaSyncReturnValue<any> {
+  spawnCommandSync(
+    this: BaseGenerator,
+    command: string,
+    args?: readonly string[],
+    opt?: SyncOptions<any>,
+  ): ExecaSyncReturnValue<any> {
     return execaSync(command, args, {
       stdio: 'inherit',
       cwd: this.destinationRoot(),

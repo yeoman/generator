@@ -1,8 +1,5 @@
-import process from 'node:process';
 import githubUsername from 'github-username';
-import { type SimpleGit, simpleGit } from 'simple-git';
-import { GeneratorOrigin } from '../generator-parent.js';
-import { DESTINATION_ROOT_CHANGE_EVENT } from '../constants.js';
+import { type SimpleGit } from 'simple-git';
 
 class GitUtil {
   #parent: { get simpleGit(): SimpleGit };
@@ -32,28 +29,12 @@ class GitUtil {
   }
 }
 
-export abstract class GitMixin extends GeneratorOrigin {
+export abstract class GitMixin {
   _git?: GitUtil;
-  _simpleGit?: SimpleGit;
-
-  get simpleGit(): SimpleGit {
-    if (!this._simpleGit) {
-      this._simpleGit = simpleGit({ baseDir: this.destinationPath() }).env({
-        ...process.env,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        LANG: 'en',
-      });
-      this.on(DESTINATION_ROOT_CHANGE_EVENT, () => {
-        this._simpleGit = undefined;
-      });
-    }
-
-    return this._simpleGit;
-  }
 
   get git(): GitUtil {
     if (!this._git) {
-      this._git = new GitUtil(this);
+      this._git = new GitUtil(this as any);
     }
 
     return this._git;

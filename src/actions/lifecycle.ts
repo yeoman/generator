@@ -9,7 +9,7 @@ import chalk from 'chalk';
 import type { ApplyTransformsOptions, BaseGenerator, GetGeneratorOptions } from '@yeoman/types';
 import type { Task, TaskOptions, BaseOptions, Priority } from '../types.js';
 import type Generator from '../index.js';
-import { GeneratorOrigin } from '../generator-parent.js';
+import type BaseGeneratorImpl from '../generator.js';
 
 const debug = createDebug('yeoman:generator');
 
@@ -23,7 +23,7 @@ const methodIsValid = function (name: string) {
   return !name.startsWith('_') && name !== 'constructor';
 };
 
-export abstract class TasksMixin extends GeneratorOrigin {
+export abstract class TasksMixin {
   _composedWith!: any[];
   // Queues map: generator's queue name => grouped-queue's queue name (custom name)
   readonly _queues!: Record<string, Priority>;
@@ -34,7 +34,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
   /**
    * Register priorities for this generator
    */
-  registerPriorities(priorities: Priority[]) {
+  registerPriorities(this: BaseGeneratorImpl, priorities: Priority[]) {
     priorities = priorities.filter(priority => {
       if (priority.edit) {
         const queue = this._queues[priority.priorityName];
@@ -91,6 +91,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
     reject?: Task['reject'],
   ): void;
   queueMethod(
+    this: BaseGeneratorImpl,
     method: Task['method'] | Record<string, Task['method']>,
     methodName: string | Task['reject'],
     queueName?: Task['queueName'] | Task['reject'],
@@ -130,7 +131,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
    * @param taskGroup: Object containing tasks.
    * @param taskOptions options.
    */
-  queueTaskGroup(taskGroup: Record<string, Task['method']>, taskOptions: TaskOptions): void {
+  queueTaskGroup(this: BaseGeneratorImpl, taskGroup: Record<string, Task['method']>, taskOptions: TaskOptions): void {
     for (const task of this.extractTasksFromGroup(taskGroup, taskOptions)) {
       this.queueTask(task);
     }
@@ -141,7 +142,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
    *
    * @param name: The method name to schedule.
    */
-  extractTasksFromPriority(name: string, taskOptions: TaskOptions = {}): Task[] {
+  extractTasksFromPriority(this: BaseGeneratorImpl, name: string, taskOptions: TaskOptions = {}): Task[] {
     const priority = this._queues[name];
     taskOptions = {
       ...priority,
@@ -182,7 +183,11 @@ export abstract class TasksMixin extends GeneratorOrigin {
    * @param group Task group.
    * @param taskOptions options.
    */
-  extractTasksFromGroup(group: Record<string, Task['method']>, taskOptions: TaskOptions): Task[] {
+  extractTasksFromGroup(
+    this: BaseGeneratorImpl,
+    group: Record<string, Task['method']>,
+    taskOptions: TaskOptions,
+  ): Task[] {
     return Object.entries(group)
       .map(([taskName, method]) => {
         if (typeof method !== 'function' || !methodIsValid(taskName)) return;
@@ -201,14 +206,14 @@ export abstract class TasksMixin extends GeneratorOrigin {
    * @param name: The method name to schedule.
    * @param taskOptions options.
    */
-  queueOwnTask(name: string, taskOptions: TaskOptions): void {
+  queueOwnTask(this: BaseGeneratorImpl, name: string, taskOptions: TaskOptions): void {
     for (const task of this.extractTasksFromPriority(name, taskOptions)) this.queueTask(task);
   }
 
   /**
    * Get task names.
    */
-  getTaskNames(): string[] {
+  getTaskNames(this: BaseGeneratorImpl): string[] {
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
     let validMethods = methods.filter(method => methodIsValid(method));
     const { taskPrefix } = this.features;
@@ -232,7 +237,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
   /**
    * Schedule every generator's methods on a run queue.
    */
-  queueOwnTasks(taskOptions: TaskOptions): void {
+  queueOwnTasks(this: BaseGeneratorImpl, taskOptions: TaskOptions): void {
     this._running = true;
     this._taskStatus = { cancelled: false, timestamp: new Date() };
 
@@ -271,7 +276,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
    *
    * @param task: Task to be queued.
    */
-  queueTask(task: Task): void {
+  queueTask(this: BaseGeneratorImpl, task: Task): void {
     const { queueName = 'default', taskName: methodName, run, once } = task;
 
     const { _taskStatus: taskStatus, _namespace: namespace } = this;
@@ -291,6 +296,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
    * @param taskStatus.
    */
   async executeTask(
+    this: BaseGeneratorImpl,
     task: Task,
     args = task.args ?? this.args,
     taskStatus: TaskStatus | undefined = this._taskStatus,
@@ -349,7 +355,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
   /**
    * Ignore cancellable tasks.
    */
-  cancelCancellableTasks(): void {
+  cancelCancellableTasks(this: BaseGeneratorImpl): void {
     this._running = false;
     // Task status references is registered at each running task
     if (this._taskStatus) {
@@ -363,7 +369,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
   /**
    * Queue generator tasks.
    */
-  async queueTasks(): Promise<void> {
+  async queueTasks(this: BaseGeneratorImpl): Promise<void> {
     const thisAny = this as any;
 
     const beforeQueueCallback: () => Promise<any> =
@@ -375,7 +381,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
     await this._queueTasks();
   }
 
-  async _queueTasks(): Promise<void> {
+  async _queueTasks(this: BaseGeneratorImpl): Promise<void> {
     debug(`Queueing generator ${this._namespace} with generator version ${this.yoGeneratorVersion}`);
     this.queueOwnTasks({ auto: true });
 
@@ -389,7 +395,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
   /**
    * Start the generator again.
    */
-  startOver(options?: BaseOptions): void {
+  startOver(this: BaseGeneratorImpl, options?: BaseOptions): void {
     this.cancelCancellableTasks();
     if (options) {
       Object.assign(this.options, options);
@@ -443,6 +449,7 @@ export abstract class TasksMixin extends GeneratorOrigin {
     immediately?: boolean,
   ): Promise<G[]>;
   async composeWith<G extends BaseGenerator = BaseGenerator>(
+    this: BaseGeneratorImpl,
     generator: string | string[] | { Generator: any; path: string },
     args?: string[] | (Partial<GetGeneratorOptions<G>> & { arguments?: string[]; args?: string[] }) | boolean,
     options?: Partial<GetGeneratorOptions<G>> | boolean,
@@ -572,13 +579,12 @@ await this.composeWith({
     }
 
     if (this._running || immediately) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.env.queueGenerator(instantiatedGenerator);
+      await this.env.queueGenerator(instantiatedGenerator);
     } else {
       this._composedWith.push(instantiatedGenerator);
     }
 
-    return instantiatedGenerator as any;
+    return instantiatedGenerator as unknown as G;
   }
 
   /**
@@ -590,7 +596,11 @@ await this.composeWith({
    * or a single one.
    * @return This generator
    */
-  queueTransformStream(transformStreams: Transform | Transform[], options?: ApplyTransformsOptions) {
+  queueTransformStream(
+    this: BaseGeneratorImpl,
+    transformStreams: Transform | Transform[],
+    options?: ApplyTransformsOptions,
+  ) {
     assert(transformStreams, 'expected to receive a transform stream as parameter');
 
     this.queueTask({

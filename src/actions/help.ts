@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import _ from 'lodash';
 import table from 'text-table';
 import type { ArgumentSpec, CliOptionSpec } from '../types.js';
-import { GeneratorOrigin } from '../generator-parent.js';
+import type BaseGenerator from '../generator.js';
 
 function formatArg(config: ArgumentSpec) {
   let arg = `<${config.name}>`;
@@ -16,7 +16,7 @@ function formatArg(config: ArgumentSpec) {
   return arg;
 }
 
-export class HelpMixin extends GeneratorOrigin {
+export class HelpMixin {
   declare readonly _options: Record<string, CliOptionSpec>;
   declare readonly _arguments: ArgumentSpec[];
 
@@ -26,7 +26,7 @@ export class HelpMixin extends GeneratorOrigin {
    *
    * @return Help message of the generator
    */
-  help(): string {
+  help(this: BaseGenerator): string {
     const filepath = path.resolve(this.sourceRoot(), '../USAGE');
     const exists = fs.existsSync(filepath);
 
@@ -56,7 +56,7 @@ export class HelpMixin extends GeneratorOrigin {
    *
    * @return Usage information of the generator
    */
-  usage(): string {
+  usage(this: BaseGenerator): string {
     const options = Object.keys(this._options).length > 0 ? '[options]' : '';
     let name = this._namespace;
     let args = '';
@@ -81,7 +81,7 @@ export class HelpMixin extends GeneratorOrigin {
    * @param description
    */
 
-  desc(description: string) {
+  desc(this: BaseGenerator, description: string) {
     this.description = description || '';
     return this;
   }
@@ -90,7 +90,7 @@ export class HelpMixin extends GeneratorOrigin {
    * Get help text for arguments
    * @returns Text of options in formatted table
    */
-  argumentsHelp(): string {
+  argumentsHelp(this: BaseGenerator): string {
     const rows = this._arguments.map(config => {
       return [
         '',
@@ -108,7 +108,7 @@ export class HelpMixin extends GeneratorOrigin {
    * Get help text for options
    * @returns Text of options in formatted table
    */
-  optionsHelp(): string {
+  optionsHelp(this: BaseGenerator): string {
     const rows = Object.values(this._options)
       .filter((opt: any) => !opt.hide)
       .map((opt: any) => {
