@@ -6,6 +6,8 @@ updates:
       interval: daily
     open-pull-requests-limit: 5
     ignore:
+      - dependency-name: '@types/node'
+        versions: ['>=17']
       - dependency-name: '*'
         update-types: ['version-update:semver-minor', 'version-update:semver-patch']
 
