@@ -94,7 +94,7 @@
   },
   "peerDependencies": {
     "@yeoman/types": "^1.0.1",
-    "yeoman-environment": "^3.18.3 || ^4.0.0-alpha.4"
+    "yeoman-environment": "^3.18.4 || ^4.0.0-alpha.4"
   },
   "peerDependenciesMeta": {
     "yeoman-environment": {
