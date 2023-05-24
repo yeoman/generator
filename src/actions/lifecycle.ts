@@ -6,7 +6,6 @@ import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { stat } from 'node:fs/promises';
 import createDebug from 'debug';
-import chalk from 'chalk';
 import type {
   ApplyTransformsOptions,
   BaseGenerator,
@@ -14,7 +13,7 @@ import type {
   ComposeOptions as EnvironmentComposeOptions,
 } from '@yeoman/types';
 import { toNamespace } from '@yeoman/namespace';
-import type { Task, TaskOptions, BaseOptions, Priority } from '../types.js';
+import type { Task, TaskOptions, BaseOptions, Priority, ComposeOptions } from '../types.js';
 import type Generator from '../index.js';
 import type BaseGeneratorImpl from '../generator.js';
 
@@ -28,12 +27,6 @@ type TaskStatus = {
 // Ensure a prototype method is a candidate run by default
 const methodIsValid = function (name: string) {
   return !name.startsWith('_') && name !== 'constructor';
-};
-
-export type ComposeOptions<G extends BaseGenerator = BaseGenerator> = EnvironmentComposeOptions<G> & {
-  skipEnvRegister?: boolean;
-  forceResolve?: boolean;
-  forwardOptions?: boolean;
 };
 
 export abstract class TasksMixin {

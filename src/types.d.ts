@@ -1,4 +1,9 @@
-import type { GeneratorFeatures as FeaturesApi, GeneratorOptions as OptionsApi } from '@yeoman/types';
+import type {
+  BaseGenerator,
+  ComposeOptions as EnvironmentComposeOptions,
+  GeneratorFeatures as FeaturesApi,
+  GeneratorOptions as OptionsApi,
+} from '@yeoman/types';
 import type { JSONSchema7Type } from 'json-schema';
 import type Storage from './util/storage.js';
 import type Generator from './index.js';
@@ -160,4 +165,11 @@ export type CliOptionSpec = {
 
   /** The storage to persist the option */
   storage?: string | Storage;
+};
+
+export type ComposeOptions<G extends BaseGenerator = BaseGenerator> = EnvironmentComposeOptions<G> & {
+  destinationRoot?: string;
+  skipEnvRegister?: boolean;
+  forceResolve?: boolean;
+  forwardOptions?: boolean;
 };
