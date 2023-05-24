@@ -16,7 +16,7 @@ import type { ArgumentSpec, BaseOptions, BaseFeatures, CliOptionSpec, Priority }
 import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
 import Storage, { type StorageOptions } from './util/storage.js';
 import { prefillQuestions, storeAnswers } from './util/prompt-suggestion.js';
-import { DESTINATION_ROOT_CHANGE_EVENT } from './constants.js';
+import { DESTINATION_ROOT_CHANGE_EVENT, requiredEnvironmentVersion } from './constants.js';
 import { FsMixin } from './actions/fs.js';
 import { HelpMixin } from './actions/help.js';
 import { PackageJsonMixin } from './actions/package-json.js';
@@ -245,7 +245,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
 
     this._globalConfig = this._getGlobalStorage();
 
-    this.checkEnvironmentVersion('3.16.2', this.options.skipCheckEnv ?? false);
+    this.checkEnvironmentVersion(requiredEnvironmentVersion, this.options.skipCheckEnv ?? false);
   }
 
   /**
