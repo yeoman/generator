@@ -123,10 +123,11 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     const actualArgs: string[] = Array.isArray(args) ? args : [];
     const actualOptions = Array.isArray(args) ? (options as O) : args;
     const actualFeatures = Array.isArray(args) ? features : (options as F);
+    const { env, ...generatorOptions } = actualOptions;
 
     // Load parameters
     this._args = actualArgs;
-    this.options = actualOptions;
+    this.options = generatorOptions as any;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     this.features = actualFeatures ?? ({} as F);
 
@@ -173,7 +174,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
       default: false,
     });
 
-    this.env = actualOptions.env! as any;
+    this.env = env as any;
 
     this.resolved = actualOptions.resolved!;
     this.description = actualOptions.description ?? '';
