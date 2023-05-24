@@ -455,7 +455,7 @@ export abstract class TasksMixin {
     immediately?: boolean,
   ): Promise<G[]>;
   async composeWith<G extends BaseGenerator = BaseGenerator>(
-    generator: string[],
+    generator: string,
     options?: ComposeOptions<G>,
   ): Promise<G[]>;
   // eslint-disable-next-line max-params
