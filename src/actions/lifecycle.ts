@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import assert from 'node:assert';
 import { type Transform } from 'node:stream';
 import { dirname, isAbsolute, resolve as pathResolve } from 'node:path';
@@ -6,7 +7,13 @@ import { createRequire } from 'node:module';
 import { stat } from 'node:fs/promises';
 import createDebug from 'debug';
 import chalk from 'chalk';
-import type { ApplyTransformsOptions, BaseGenerator, GetGeneratorOptions } from '@yeoman/types';
+import type {
+  ApplyTransformsOptions,
+  BaseGenerator,
+  GetGeneratorOptions,
+  ComposeOptions as EnvironmentComposeOptions,
+} from '@yeoman/types';
+import { toNamespace } from '@yeoman/namespace';
 import type { Task, TaskOptions, BaseOptions, Priority } from '../types.js';
 import type Generator from '../index.js';
 import type BaseGeneratorImpl from '../generator.js';
@@ -21,6 +28,12 @@ type TaskStatus = {
 // Ensure a prototype method is a candidate run by default
 const methodIsValid = function (name: string) {
   return !name.startsWith('_') && name !== 'constructor';
+};
+
+export type ComposeOptions<G extends BaseGenerator = BaseGenerator> = EnvironmentComposeOptions<G> & {
+  skipEnvRegister?: boolean;
+  forceResolve?: boolean;
+  forwardOptions?: boolean;
 };
 
 export abstract class TasksMixin {
@@ -449,9 +462,18 @@ export abstract class TasksMixin {
     immediately?: boolean,
   ): Promise<G[]>;
   async composeWith<G extends BaseGenerator = BaseGenerator>(
+    generator: string[],
+    options?: ComposeOptions<G>,
+  ): Promise<G[]>;
+  // eslint-disable-next-line complexity, max-params
+  async composeWith<G extends BaseGenerator = BaseGenerator>(
     this: BaseGeneratorImpl,
     generator: string | string[] | { Generator: any; path: string },
-    args?: string[] | (Partial<GetGeneratorOptions<G>> & { arguments?: string[]; args?: string[] }) | boolean,
+    args?:
+      | string[]
+      | (Partial<GetGeneratorOptions<G>> | { arguments?: string[]; args?: string[] })
+      | boolean
+      | ComposeOptions<G>,
     options?: Partial<GetGeneratorOptions<G>> | boolean,
     immediately = false,
   ): Promise<G | G[]> {
@@ -462,6 +484,13 @@ export abstract class TasksMixin {
       }
 
       return generators as any;
+    }
+
+    if (
+      typeof args === 'object' &&
+      ('generatorArgs' in args || 'generatorOptions' in args || 'skipEnvRegister' in args)
+    ) {
+      return this._composeWithOptions(generator, args);
     }
 
     let parsedArgs: string[] = [];
@@ -477,7 +506,7 @@ export abstract class TasksMixin {
       }
     } else if (typeof args === 'object') {
       parsedOptions = args as any;
-      parsedArgs = args.arguments ?? args.args ?? [];
+      parsedArgs = (args as any).arguments ?? (args as any).args ?? [];
       if (typeof options === 'boolean') {
         immediately = options;
       }
@@ -493,26 +522,6 @@ export abstract class TasksMixin {
       skipCache: this.options.skipCache,
       skipLocalCache: this.options.skipLocalCache,
     };
-    const resolveGeneratorPath = async (maybePath: string) => {
-      // Allows to run a local generator without namespace.
-      // Resolve the generator absolute path to current generator;
-      const generatorFile = isAbsolute(maybePath) ? maybePath : pathResolve(dirname(this.resolved), maybePath);
-      let generatorResolvedFile: string | undefined;
-      try {
-        const status = await stat(generatorFile);
-        if (status.isFile()) {
-          generatorResolvedFile = generatorFile;
-        }
-      } catch {}
-
-      if (!generatorResolvedFile) {
-        // Resolve the generator file.
-        // Use import.resolve when stable.
-        generatorResolvedFile = pathToFileURL(createRequire(import.meta.url).resolve(generatorFile)).href;
-      }
-
-      return generatorResolvedFile;
-    };
 
     const instantiate = async (generatorFactory: any, path: string) => {
       generatorFactory.resolved = path;
@@ -526,7 +535,7 @@ export abstract class TasksMixin {
 
     if (typeof generator === 'string') {
       try {
-        const resolvedGenerator = await resolveGeneratorPath(generator);
+        const resolvedGenerator = await this.resolveGeneratorPath(generator);
 
         const generatorImport = await import(resolvedGenerator);
 
@@ -568,7 +577,7 @@ await this.composeWith({
 });`,
       );
       try {
-        generatorFile = await resolveGeneratorPath(generatorFile);
+        generatorFile = await this.resolveGeneratorPath(generatorFile);
       } catch {}
 
       instantiatedGenerator = await instantiate(generatorFactory, generatorFile);
@@ -585,6 +594,85 @@ await this.composeWith({
     }
 
     return instantiatedGenerator as unknown as G;
+  }
+
+  private async _composeWithOptions<G extends BaseGenerator = BaseGenerator>(
+    this: BaseGeneratorImpl,
+    generator: string | { Generator: any; path: string },
+    options: ComposeOptions<G> = {},
+  ): Promise<G | G[]> {
+    const { forceResolve, skipEnvRegister, forwardOptions, ...composeOptions } = options;
+    const optionsToForward = forwardOptions
+      ? this.options
+      : {
+          skipInstall: this.options.skipInstall,
+          skipCache: this.options.skipCache,
+          skipLocalCache: this.options.skipLocalCache,
+        };
+
+    composeOptions.generatorOptions = {
+      destinationRoot: this._destinationRoot,
+      ...optionsToForward,
+      ...composeOptions.generatorOptions,
+    } as any;
+
+    if (typeof generator === 'object') {
+      const resolved = await this.resolveGeneratorPath(generator.path ?? generator.Generator.resolved);
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      return this.composeLocallyWithOptions<G>({ Generator: generator.Generator, resolved }, composeOptions);
+    }
+
+    if (skipEnvRegister) {
+      return this.composeLocallyWithOptions<G>({ resolved: await this.resolveGeneratorPath(generator) });
+    }
+
+    const namespace = typeof generator === 'string' ? toNamespace(generator) : undefined;
+    if (!namespace || forceResolve) {
+      try {
+        generator = await this.resolveGeneratorPath(generator);
+      } catch {}
+    }
+
+    return this.env.composeWith<G>(generator, composeOptions);
+  }
+
+  private async composeLocallyWithOptions<G extends BaseGenerator = BaseGenerator>(
+    this: BaseGeneratorImpl,
+    { Generator, resolved }: { Generator?: any; resolved: string },
+    options: EnvironmentComposeOptions<G> = {},
+  ) {
+    const generatorNamespace = this.env.namespace(resolved);
+    const findGenerator = async () => {
+      const generatorImport = await import(resolved);
+
+      return typeof generatorImport.default === 'function' ? generatorImport.default : generatorImport;
+    };
+
+    Generator = Generator ?? (await findGenerator());
+    Generator.namespace = Generator.namespace ?? generatorNamespace;
+    Generator.resolved = Generator.resolved ?? resolved;
+    return this.env.composeWith<G>(Generator, options);
+  }
+
+  private async resolveGeneratorPath(this: BaseGeneratorImpl, maybePath: string) {
+    // Allows to run a local generator without namespace.
+    // Resolve the generator absolute path to current generator;
+    const generatorFile = isAbsolute(maybePath) ? maybePath : pathResolve(dirname(this.resolved), maybePath);
+    let generatorResolvedFile: string | undefined;
+    try {
+      const status = await stat(generatorFile);
+      if (status.isFile()) {
+        generatorResolvedFile = generatorFile;
+      }
+    } catch {}
+
+    if (!generatorResolvedFile) {
+      // Resolve the generator file.
+      // Use import.resolve when stable.
+      generatorResolvedFile = pathToFileURL(createRequire(import.meta.url).resolve(generatorFile)).href;
+    }
+
+    return generatorResolvedFile;
   }
 
   /**
