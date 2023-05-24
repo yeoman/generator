@@ -37,7 +37,6 @@ export type ComposeOptions<G extends BaseGenerator = BaseGenerator> = Environmen
 };
 
 export abstract class TasksMixin {
-  _composedWith!: any[];
   // Queues map: generator's queue name => grouped-queue's queue name (custom name)
   readonly _queues!: Record<string, Priority>;
 
@@ -397,12 +396,6 @@ export abstract class TasksMixin {
   async _queueTasks(this: BaseGeneratorImpl): Promise<void> {
     debug(`Queueing generator ${this._namespace} with generator version ${this.yoGeneratorVersion}`);
     this.queueOwnTasks({ auto: true });
-
-    for (const generator of this._composedWith) {
-      await this.env.queueGenerator(generator, { schedule: false });
-    }
-
-    this._composedWith = [];
   }
 
   /**
@@ -465,7 +458,7 @@ export abstract class TasksMixin {
     generator: string[],
     options?: ComposeOptions<G>,
   ): Promise<G[]>;
-  // eslint-disable-next-line complexity, max-params
+  // eslint-disable-next-line max-params
   async composeWith<G extends BaseGenerator = BaseGenerator>(
     this: BaseGeneratorImpl,
     generator: string | string[] | { Generator: any; path: string },
@@ -488,120 +481,60 @@ export abstract class TasksMixin {
 
     if (
       typeof args === 'object' &&
-      ('generatorArgs' in args || 'generatorOptions' in args || 'skipEnvRegister' in args)
+      ('generatorArgs' in args ||
+        'generatorOptions' in args ||
+        'skipEnvRegister' in args ||
+        'forceResolve' in args ||
+        'forwardOptions' in args)
     ) {
-      return this._composeWithOptions(generator, args);
+      return this.composeWithOptions(generator, args);
     }
 
     let parsedArgs: string[] = [];
     let parsedOptions: Partial<BaseOptions> = {};
     if (typeof args === 'boolean') {
-      immediately = args;
-    } else if (Array.isArray(args)) {
-      parsedArgs = args;
+      return this.composeWithOptions<G>(generator, { schedule: !args });
+    }
+
+    if (Array.isArray(args)) {
       if (typeof options === 'object') {
-        parsedOptions = options;
-      } else if (typeof options === 'boolean') {
-        immediately = options;
+        return this.composeWithOptions<G>(generator, {
+          generatorArgs: args,
+          generatorOptions: options,
+          schedule: !immediately,
+        });
       }
-    } else if (typeof args === 'object') {
+
+      if (typeof options === 'boolean') {
+        return this.composeWithOptions<G>(generator, { generatorArgs: args, schedule: !options });
+      }
+
+      return this.composeWithOptions<G>(generator, { generatorArgs: args });
+    }
+
+    if (typeof args === 'object') {
       parsedOptions = args as any;
       parsedArgs = (args as any).arguments ?? (args as any).args ?? [];
       if (typeof options === 'boolean') {
         immediately = options;
       }
-    }
 
-    let instantiatedGenerator;
-
-    // Pass down the default options so they're correctly mirrored down the chain.
-    parsedOptions = {
-      destinationRoot: this._destinationRoot,
-      ...parsedOptions,
-      skipInstall: this.options.skipInstall,
-      skipCache: this.options.skipCache,
-      skipLocalCache: this.options.skipLocalCache,
-    };
-
-    const instantiate = async (generatorFactory: any, path: string) => {
-      generatorFactory.resolved = path;
-      generatorFactory.namespace = this.env.namespace(path);
-
-      return this.env.instantiate<Generator>(generatorFactory, {
+      return this.composeWithOptions<G>(generator, {
         generatorArgs: parsedArgs,
-        generatorOptions: parsedOptions,
+        generatorOptions: parsedOptions as any,
+        schedule: !immediately,
       });
-    };
-
-    if (typeof generator === 'string') {
-      try {
-        const resolvedGenerator = await this.resolveGeneratorPath(generator);
-
-        const generatorImport = await import(resolvedGenerator);
-
-        const generatorFactory =
-          typeof generatorImport.default === 'function' ? generatorImport.default : generatorImport;
-        instantiatedGenerator = await instantiate(generatorFactory, resolvedGenerator);
-      } catch {
-        // Forward to the environment
-        instantiatedGenerator = await this.env.create<Generator>(generator, {
-          generatorArgs: parsedArgs,
-          generatorOptions: parsedOptions,
-        });
-      }
-    } else {
-      const { Generator: generatorFactory } = generator;
-      let { path: generatorFile } = generator;
-      assert(
-        generatorFactory,
-        `${chalk.red('Missing Generator property')}
-When passing an object to Generator${chalk.cyan('#composeWith')} include the generator class to run in the ${chalk.cyan(
-          'Generator',
-        )} property
-
-await this.composeWith({
-  ${chalk.yellow('Generator')}: MyGenerator,
-  ...\n
-});`,
-      );
-      assert(
-        typeof generatorFile === 'string',
-        `${chalk.red('path property is not a string')}
-When passing an object to Generator${chalk.cyan(
-          '#composeWith',
-        )} include the path to the generators files in the ${chalk.cyan('path')} property
-
-await this.composeWith({
-  ${chalk.yellow('path')}: '../my-generator',
-  ...
-});`,
-      );
-      try {
-        generatorFile = await this.resolveGeneratorPath(generatorFile);
-      } catch {}
-
-      instantiatedGenerator = await instantiate(generatorFactory, generatorFile);
     }
 
-    if (!instantiatedGenerator) {
-      return instantiatedGenerator;
-    }
-
-    if (this._running || immediately) {
-      await this.env.queueGenerator(instantiatedGenerator);
-    } else {
-      this._composedWith.push(instantiatedGenerator);
-    }
-
-    return instantiatedGenerator as unknown as G;
+    return this.composeWithOptions<G>(generator);
   }
 
-  private async _composeWithOptions<G extends BaseGenerator = BaseGenerator>(
+  private async composeWithOptions<G extends BaseGenerator = BaseGenerator>(
     this: BaseGeneratorImpl,
     generator: string | { Generator: any; path: string },
     options: ComposeOptions<G> = {},
   ): Promise<G | G[]> {
-    const { forceResolve, skipEnvRegister, forwardOptions, ...composeOptions } = options;
+    const { forceResolve, skipEnvRegister = false, forwardOptions, ...composeOptions } = options;
     const optionsToForward = forwardOptions
       ? this.options
       : {
@@ -617,13 +550,19 @@ await this.composeWith({
     } as any;
 
     if (typeof generator === 'object') {
-      const resolved = await this.resolveGeneratorPath(generator.path ?? generator.Generator.resolved);
+      let generatorFile;
+      try {
+        generatorFile = await this.resolveGeneratorPath(generator.path ?? generator.Generator.resolved);
+      } catch {}
+
+      const resolved = generatorFile ?? generator.path ?? generator.Generator.resolved;
       // eslint-disable-next-line @typescript-eslint/naming-convention
       return this.composeLocallyWithOptions<G>({ Generator: generator.Generator, resolved }, composeOptions);
     }
 
-    if (skipEnvRegister) {
-      return this.composeLocallyWithOptions<G>({ resolved: await this.resolveGeneratorPath(generator) });
+    if (skipEnvRegister || isAbsolute(generator) || generator.startsWith('.')) {
+      const resolved = await this.resolveGeneratorPath(generator);
+      return this.composeLocallyWithOptions<G>({ resolved }, composeOptions);
     }
 
     const namespace = typeof generator === 'string' ? toNamespace(generator) : undefined;
@@ -638,7 +577,7 @@ await this.composeWith({
 
   private async composeLocallyWithOptions<G extends BaseGenerator = BaseGenerator>(
     this: BaseGeneratorImpl,
-    { Generator, resolved }: { Generator?: any; resolved: string },
+    { Generator, resolved = Generator.resolved }: { Generator?: any; resolved: string },
     options: EnvironmentComposeOptions<G> = {},
   ) {
     const generatorNamespace = this.env.namespace(resolved);
@@ -649,8 +588,8 @@ await this.composeWith({
     };
 
     Generator = Generator ?? (await findGenerator());
-    Generator.namespace = Generator.namespace ?? generatorNamespace;
-    Generator.resolved = Generator.resolved ?? resolved;
+    Generator.namespace = generatorNamespace;
+    Generator.resolved = resolved;
     return this.env.composeWith<G>(Generator, options);
   }
 

@@ -856,17 +856,6 @@ describe('Base', () => {
       assert((await dummy.composeWith('composed:gen')) instanceof GenCompose);
     });
 
-    it('should add to _composedWith', async function () {
-      const generator = await dummy.composeWith('composed:gen');
-      assert(generator instanceof GenCompose);
-      assert(generator === dummy._composedWith[0]);
-    });
-
-    it('should not add to _composedWith when immediately is true', async function () {
-      await dummy.composeWith('composed:gen', undefined, undefined, true);
-      assert.strictEqual(dummy._composedWith.length, 0);
-    });
-
     it('runs the composed generators', async function () {
       await dummy.composeWith('composed:gen');
 
