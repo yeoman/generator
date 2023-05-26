@@ -422,7 +422,7 @@ describe('Base', () => {
         this.fs.write(filepath, 'some new content');
       };
 
-      const env = createEnv([], { 'skip-install': true }, new TestAdapter(action));
+      const env = createEnv([], { 'skip-install': true }, new TestAdapter({ mockedAnswers: action }));
       const testGen = new TestGenerator([], {
         resolved: 'generator/app/index.js',
         namespace: 'dummy',
@@ -1705,8 +1705,10 @@ describe('Base', () => {
     const input2Prompt = { type: 'input', name: 'prompt2' };
     beforeEach(function () {
       dummy.env.adapter = new TestAdapter({
-        prompt1: 'prompt1NewValue',
-        prompt2: 'prompt2NewValue',
+        mockedAnswers: {
+          prompt1: 'prompt1NewValue',
+          prompt2: 'prompt2NewValue',
+        },
       });
       promptSpy = sinonSpy(dummy.env.adapter, 'prompt');
       dummy.options.askAnswered = true;

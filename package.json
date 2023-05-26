@@ -91,7 +91,7 @@
     "xo": "^0.54.2",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^3.18.4",
-    "yeoman-test": "^8.0.0-beta.6"
+    "yeoman-test": "^8.0.0-rc.0"
   },
   "peerDependencies": {
     "@yeoman/types": "^1.0.1",
