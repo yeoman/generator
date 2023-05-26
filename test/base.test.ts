@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { spy as sinonSpy, fake as sinonFake, assert as sinonAssert } from 'sinon';
 import { passthrough } from '@yeoman/transform';
 import assert from 'yeoman-assert';
-import YeomanEnvironment from 'yeoman-environment';
+import Environment from 'yeoman-environment';
 import helpers, { TestAdapter } from 'yeoman-test';
 import Base from './utils.js';
 
@@ -20,8 +20,7 @@ const __dirname = dirname(__filename);
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
-
-const { createEnv } = YeomanEnvironment;
+const createEnv = (options?) => new Environment({ skipInstall: true, adapter: new TestAdapter(), ...options });
 
 describe('Base', () => {
   let env;
@@ -31,7 +30,7 @@ describe('Base', () => {
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    env = createEnv([], { 'skip-install': true }, new TestAdapter());
+    env = createEnv();
     // Ignore error forwarded to environment
     env.on('error', _ => {});
 
@@ -422,7 +421,7 @@ describe('Base', () => {
         this.fs.write(filepath, 'some new content');
       };
 
-      const env = createEnv([], { 'skip-install': true }, new TestAdapter({ mockedAnswers: action }));
+      const env = createEnv({ adapter: new TestAdapter({ mockedAnswers: action }) });
       const testGen = new TestGenerator([], {
         resolved: 'generator/app/index.js',
         namespace: 'dummy',

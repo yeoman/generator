@@ -1,12 +1,14 @@
 import assert from 'node:assert';
 import path from 'node:path';
+import { esmocha } from 'esmocha';
 import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
-import { esmocha } from 'esmocha';
+import { TestAdapter } from 'yeoman-test';
 import BaseGenerator from '../src/generator.js';
 import Base from './utils.js';
 
 const randomString = () => Math.random().toString(36).slice(7);
+const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAdapter() });
 
 describe('generators.Base (actions/fs)', () => {
   const baseReturns = {
@@ -18,7 +20,7 @@ describe('generators.Base (actions/fs)', () => {
 
   before(function () {
     this.timeout(10_000);
-    this.gen = new Base({ env: Environment.createEnv() });
+    this.gen = new Base({ env: createEnv() });
   });
 
   beforeEach(function () {

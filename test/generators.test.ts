@@ -3,14 +3,16 @@ import path from 'node:path';
 import os from 'node:os';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
+import { TestAdapter } from 'yeoman-test';
 import semver from 'semver';
 import Base from './utils.js';
 
 const NAMESPACE = 'somenamespace';
+const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAdapter() });
 
 describe('Generators module', () => {
   beforeEach(function () {
-    this.env = Environment.createEnv();
+    this.env = createEnv();
   });
 
   describe('Base', () => {

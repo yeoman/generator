@@ -2,19 +2,20 @@ import os from 'node:os';
 import path from 'node:path';
 import { mkdirSync } from 'node:fs';
 import { spy as sinonSpy, assert as sinonAssert } from 'sinon';
-import yeoman from 'yeoman-environment';
+import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
 import helpers, { TestAdapter } from 'yeoman-test';
 import Base from './utils.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
+const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAdapter() });
 
 describe('Multiples generators', () => {
   beforeEach(helpers.setUpTestDirectory(tmpdir));
 
   beforeEach(function () {
-    this.env = yeoman.createEnv([], { 'skip-install': true }, new TestAdapter());
+    this.env = createEnv();
     mkdirSync(resolveddir, { recursive: true });
     this.Dummy = class extends Base {};
     this.spyExec = sinonSpy();

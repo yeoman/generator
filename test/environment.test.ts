@@ -13,7 +13,7 @@ describe('Generator with environment version', () => {
   describe('mocked 3.0.0', () => {
     before(function () {
       this.timeout(100_000);
-      this.env = Environment.createEnv([], { 'skip-install': true }, new TestAdapter());
+      this.env = new Environment({ skipInstall: true, adapter: new TestAdapter() });
       this.env.getVersion = this.env.getVersion || (() => {});
       this.getVersionStub = sinonStub(this.env, 'getVersion');
 
@@ -165,9 +165,8 @@ describe('Generator with environment version', () => {
   describe('mocked 2.8.1', () => {
     before(function () {
       this.timeout(100_000);
-      this.env = Environment.createEnv([], { 'skip-install': true }, new TestAdapter());
-      this.getVersion = Environment.prototype.getVersion;
-      delete Environment.prototype.getVersion;
+      this.env = new Environment({ skipInstall: true, adapter: new TestAdapter() });
+      this.env.getVersion = undefined;
 
       this.Dummy = class extends Base {};
       this.dummy = new this.Dummy(['bar', 'baz', 'bom'], {
@@ -178,10 +177,6 @@ describe('Generator with environment version', () => {
         skipCheckEnv: true,
         'skip-install': true,
       });
-    });
-
-    after(function () {
-      Environment.prototype.getVersion = this.getVersion;
     });
 
     describe('#checkEnvironmentVersion', () => {

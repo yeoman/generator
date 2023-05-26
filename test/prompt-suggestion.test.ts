@@ -3,16 +3,18 @@ import assert from 'node:assert';
 import os from 'node:os';
 import { rmSync } from 'node:fs';
 import inquirer from 'inquirer';
-import env from 'yeoman-environment';
+import Environment from 'yeoman-environment';
+import { TestAdapter } from 'yeoman-test';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import Storage from '../src/util/storage.js';
 import { prefillQuestions, storeAnswers } from '../src/util/prompt-suggestion.js';
 
+const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAdapter() });
 /* eslint max-nested-callbacks: ["warn", 6] */
 
 describe('PromptSuggestion', () => {
   beforeEach(function () {
-    this.memFs = env.createEnv().sharedFs;
+    this.memFs = createEnv().sharedFs;
     this.fs = createMemFsEditor(this.memFs);
     this.storePath = path.join(os.tmpdir(), 'suggestion-config.json');
     this.store = new Storage('suggestion', this.fs, this.storePath);
