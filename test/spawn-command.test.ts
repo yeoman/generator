@@ -20,7 +20,7 @@ describe('generators.Base (actions/spawn-command)', () => {
   describe('#spawnCommand()', () => {
     it('provide default options', async function () {
       await spawn.spawnCommand('foo');
-      expect(execa.execa).toHaveBeenCalledWith('foo', undefined, {
+      expect(execa.execaCommand).toHaveBeenCalledWith('foo', {
         cwd,
         stdio: 'inherit',
       });
@@ -55,7 +55,7 @@ describe('generators.Base (actions/spawn-command)', () => {
   describe('#spawnCommandSync()', () => {
     it('provide default options', function () {
       spawn.spawnCommandSync('foo');
-      expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
+      expect(execa.execaCommandSync).toHaveBeenCalledWith('foo', {
         cwd,
         stdio: 'inherit',
       });
