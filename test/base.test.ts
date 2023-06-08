@@ -10,7 +10,9 @@ import { spy as sinonSpy, fake as sinonFake, assert as sinonAssert } from 'sinon
 import { passthrough } from '@yeoman/transform';
 import assert from 'yeoman-assert';
 import Environment from 'yeoman-environment';
-import helpers, { TestAdapter } from 'yeoman-test';
+import helpers from 'yeoman-test';
+// eslint-disable-next-line n/file-extension-in-import
+import { TestAdapter } from '@yeoman/adapter/testing';
 import Base from './utils.js';
 
 const require = createRequire(import.meta.url);

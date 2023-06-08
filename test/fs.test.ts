@@ -1,9 +1,10 @@
 import assert from 'node:assert';
 import path from 'node:path';
 import { esmocha } from 'esmocha';
+// eslint-disable-next-line n/file-extension-in-import
+import { TestAdapter } from '@yeoman/adapter/testing';
 import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
-import { TestAdapter } from 'yeoman-test';
 import BaseGenerator from '../src/generator.js';
 import Base from './utils.js';
 

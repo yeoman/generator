@@ -1,9 +1,11 @@
 import os from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert';
+// eslint-disable-next-line n/file-extension-in-import
+import { TestAdapter } from '@yeoman/adapter/testing';
 import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
-import helpers, { TestAdapter } from 'yeoman-test';
+import helpers from 'yeoman-test';
 import Base from './utils.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-generator-environment');

@@ -1,9 +1,10 @@
 import EventEmitter from 'node:events';
 import path from 'node:path';
 import os from 'node:os';
+// eslint-disable-next-line n/file-extension-in-import
+import { TestAdapter } from '@yeoman/adapter/testing';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
-import { TestAdapter } from 'yeoman-test';
 import semver from 'semver';
 import Base from './utils.js';
 

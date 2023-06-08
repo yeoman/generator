@@ -1,10 +1,12 @@
 import os from 'node:os';
 import path from 'node:path';
 import { mkdirSync } from 'node:fs';
+// eslint-disable-next-line n/file-extension-in-import
+import { TestAdapter } from '@yeoman/adapter/testing';
 import { spy as sinonSpy, assert as sinonAssert } from 'sinon';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
-import helpers, { TestAdapter } from 'yeoman-test';
+import helpers from 'yeoman-test';
 import Base from './utils.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');

@@ -2,9 +2,10 @@ import path from 'node:path';
 import assert from 'node:assert';
 import os from 'node:os';
 import { rmSync } from 'node:fs';
+// eslint-disable-next-line n/file-extension-in-import
+import { TestAdapter } from '@yeoman/adapter/testing';
 import inquirer from 'inquirer';
 import Environment from 'yeoman-environment';
-import { TestAdapter } from 'yeoman-test';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import Storage from '../src/util/storage.js';
 import { prefillQuestions, storeAnswers } from '../src/util/prompt-suggestion.js';
