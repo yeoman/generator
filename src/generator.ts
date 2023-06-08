@@ -3,7 +3,7 @@ import path, { dirname, resolve as pathResolve, join as pathJoin } from 'node:pa
 import os from 'node:os';
 import EventEmitter from 'node:events';
 import { fileURLToPath } from 'node:url';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import semver from 'semver';
 import { readPackageUpSync } from 'read-pkg-up';
 import chalk from 'chalk';
@@ -60,7 +60,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
   readonly env: Environment;
   readonly fs!: MemFsEditor;
   readonly log!: Logger;
-  readonly _: _.LoDashStatic;
+  readonly _ = _;
   appname!: string;
   args!: string[];
   /** @deprecated */
@@ -191,9 +191,6 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
 
     // Add convenience debug object
     this._debug = createDebug(this._namespace);
-
-    // Expose utilities for dependency-less generators.
-    this._ = _;
 
     if (actualOptions.help) {
       return;

@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import _ from 'lodash';
+import { cloneDeep, defaults as setDefaults, merge, get, set } from 'lodash-es';
 import sortKeys from 'sort-keys';
 import type { MemFsEditor } from 'mem-fs-editor';
 import type { StorageRecord, StorageValue } from '../types.js';
@@ -177,7 +177,7 @@ class Storage {
       return store;
     }
 
-    return ((this.lodashPath ? _.get(store, this.name) : store[this.name]) ?? {}) as StorageRecord;
+    return ((this.lodashPath ? get(store, this.name) : store[this.name]) ?? {}) as StorageRecord;
   }
 
   /**
@@ -194,7 +194,7 @@ class Storage {
     if (this.name) {
       fullStore = this.readContent();
       if (this.lodashPath) {
-        _.set(fullStore, this.name, value);
+        set(fullStore, this.name, value);
       } else {
         fullStore[this.name] = value;
       }
@@ -227,7 +227,7 @@ class Storage {
    * @return The stored value. Any JSON valid type could be returned
    */
   getPath<T extends StorageValue = StorageValue>(path: string): T {
-    return _.get(this._store, path) as T;
+    return get(this._store, path) as T;
   }
 
   /**
@@ -235,7 +235,7 @@ class Storage {
    * @return key-value object
    */
   getAll(): StorageRecord {
-    return _.cloneDeep(this._store);
+    return cloneDeep(this._store);
   }
 
   /**
@@ -268,10 +268,10 @@ class Storage {
    * @return val  Whatever was passed in as val.
    */
   setPath(path: string | number, value: StorageValue) {
-    assert(!_.isFunction(value), "Storage value can't be a function");
+    assert(typeof value !== 'function', "Storage value can't be a function");
 
     const store = this._store;
-    _.set(store, path, value);
+    set(store, path, value);
     this._persist(store);
     return value;
   }
@@ -294,8 +294,8 @@ class Storage {
    * @return val  Returns the merged options.
    */
   defaults(defaults: StorageRecord): StorageRecord {
-    assert(_.isObject(defaults), 'Storage `defaults` method only accept objects');
-    const store = _.defaults({}, this._store, defaults);
+    assert(typeof defaults === 'object', 'Storage `defaults` method only accept objects');
+    const store = setDefaults({}, this._store, defaults);
     this._persist(store);
     return this.getAll();
   }
@@ -305,8 +305,8 @@ class Storage {
    * @return val  Returns the merged object.
    */
   merge(source: StorageRecord) {
-    assert(_.isObject(source), 'Storage `merge` method only accept objects');
-    const value = _.merge({}, this._store, source);
+    assert(typeof source === 'object', 'Storage `merge` method only accept objects');
+    const value = merge({}, this._store, source);
     this._persist(value);
     return this.getAll();
   }

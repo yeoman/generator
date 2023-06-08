@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import _ from 'lodash';
 import type { JSONSchema7Object } from 'json-schema';
 import type { PromptAnswers, PromptQuestion } from '../questions.js';
 import type Storage from './storage.js';

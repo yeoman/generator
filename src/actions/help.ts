@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import path from 'node:path';
 import fs from 'node:fs';
-import _ from 'lodash';
 import table from 'text-table';
 import type { ArgumentSpec, CliOptionSpec } from '../types.js';
 import type BaseGenerator from '../generator.js';

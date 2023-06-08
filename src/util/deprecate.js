@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { template } from 'lodash-es';
 import chalk from 'chalk';
 
 const deprecate = (message, fn) => {
@@ -13,7 +13,7 @@ deprecate.log = message => {
 };
 
 deprecate.object = (message, object) => {
-  const messageTpl = _.template(message);
+  const messageTpl = template(message);
   const mirror = [];
 
   for (const name of Object.keys(object)) {

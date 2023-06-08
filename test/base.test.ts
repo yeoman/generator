@@ -5,7 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
-import _ from 'lodash';
+import { extend } from 'lodash-es';
 import { spy as sinonSpy, fake as sinonFake, assert as sinonAssert } from 'sinon';
 import { passthrough } from '@yeoman/transform';
 import assert from 'yeoman-assert';
@@ -200,7 +200,7 @@ describe('Base', () => {
     let execSpy;
     beforeEach(function () {
       TestGenerator = class extends Base {};
-      _.extend(TestGenerator.prototype, {
+      extend(TestGenerator.prototype, {
         _beforeQueue: sinonSpy(),
         exec: sinonSpy(),
         exec2: sinonSpy(),
@@ -507,7 +507,7 @@ describe('Base', () => {
 
     beforeEach(function () {
       TestGenerator = class extends Base {};
-      _.extend(TestGenerator.prototype, {
+      extend(TestGenerator.prototype, {
         beforeQueue: sinonSpy(),
         _private: sinonSpy(),
         '#composed': sinonSpy(),
@@ -1509,7 +1509,7 @@ describe('Base', () => {
     });
 
     it('generates correct _queues and runLoop queueNames', function () {
-      _.extend(TestGenerator.prototype, {
+      extend(TestGenerator.prototype, {
         assert() {
           assert.deepStrictEqual(this._queues, {
             initializing: {
@@ -1591,7 +1591,7 @@ describe('Base', () => {
       const configuring = sinonSpy();
       const end = sinonSpy();
 
-      _.extend(TestGenerator.prototype, {
+      extend(TestGenerator.prototype, {
         prePrompting1,
         preConfiguring1,
         preConfiguring2,
@@ -1625,7 +1625,7 @@ describe('Base', () => {
       const customPreConfiguring1 = sinonSpy();
       const customPreConfiguring2 = sinonSpy();
 
-      _.extend(TestGenerator.prototype, {
+      extend(TestGenerator.prototype, {
         get preConfiguring1() {
           return { commonPreConfiguring };
         },
