@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
+import { esmocha, expect } from 'esmocha';
 import { extend } from 'lodash-es';
 import { spy as sinonSpy, fake as sinonFake, assert as sinonAssert } from 'sinon';
 import { passthrough } from '@yeoman/transform';
@@ -1460,6 +1461,40 @@ describe('Base', () => {
 
       await gen.run();
       assert.equal(thrown, true);
+    });
+
+    it('rejecting a task should stop the queue', async function () {
+      const gen = new Generator({
+        resolved: resolveddir,
+        namespace: 'dummy',
+        env,
+        testQueue: 'This value',
+      });
+
+      const queueName = 'configuring';
+      gen.queueTask({
+        method() {
+          throw new Error('Some error');
+        },
+        queueName,
+        taskName: 'foo',
+        run: false,
+      });
+
+      const secondTask = esmocha.fn();
+      gen.queueTask({
+        method: secondTask,
+        queueName,
+        taskName: 'secondTask',
+        run: false,
+      });
+
+      await expect(gen.run()).rejects.toThrow('Some error');
+      if (env.runLoop) {
+        expect(env.runLoop.running).toBe(false);
+      }
+
+      expect(secondTask).not.toHaveBeenCalled();
     });
   });
 

@@ -345,13 +345,7 @@ export abstract class TasksMixin {
         return;
       }
 
-      try {
-        this.env.emit('error', error);
-      } catch (error: unknown) {
-        setImmediate(() => {
-          throw error;
-        });
-      }
+      throw error;
     } finally {
       delete this.runningState;
     }
