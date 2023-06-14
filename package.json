@@ -77,7 +77,7 @@
     "@types/text-table": "^0.2.2",
     "@yeoman/adapter": "^1.1.0",
     "@yeoman/transform": "^1.1.0",
-    "c8": "^7.13.0",
+    "c8": "^8.0.0",
     "cpy-cli": "^4.2.0",
     "esmocha": "^1.0.1",
     "inquirer": "^9.2.1",
