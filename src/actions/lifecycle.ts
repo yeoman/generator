@@ -33,6 +33,7 @@ export abstract class TasksMixin {
   // Queues map: generator's queue name => grouped-queue's queue name (custom name)
   readonly _queues!: Record<string, Priority>;
 
+  customLifecycle?: boolean;
   runningState?: { namespace: string; queueName: string; methodName: string };
   _taskStatus?: TaskStatus;
 
@@ -247,7 +248,7 @@ export abstract class TasksMixin {
     this._taskStatus = { cancelled: false, timestamp: new Date() };
 
     const validMethods = this.getTaskNames();
-    if (validMethods.length === 0 && this._prompts.length === 0) {
+    if (validMethods.length === 0 && this._prompts.length === 0 && !this.customLifecycle) {
       throw new Error('This Generator is empty. Add at least one method for it to run.');
     }
 

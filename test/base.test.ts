@@ -340,6 +340,17 @@ describe('Base', () => {
       });
     });
 
+    it("doesn't throw if no method is available with customLifecycle", async function () {
+      const gen = new (class extends Base {})([], {
+        resolved: 'generator-ember/all/index.js',
+        namespace: 'dummy',
+        env,
+      });
+      gen.customLifecycle = true;
+
+      await gen.run();
+    });
+
     it('will run non-enumerable methods', async function () {
       class Generator extends Base {}
 
