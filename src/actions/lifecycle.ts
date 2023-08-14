@@ -571,6 +571,12 @@ export abstract class TasksMixin {
     const generatorNamespace = this.env.namespace(resolved);
     const findGenerator = async () => {
       const generatorImport = await import(resolved);
+      const getFactory = (module: any) =>
+        module.createGenerator ?? module.default?.createGenerator ?? module.default?.default?.createGenerator;
+      const factory = getFactory(generatorImport);
+      if (factory) {
+        return factory(this.env);
+      }
 
       return typeof generatorImport.default === 'function' ? generatorImport.default : generatorImport;
     };
