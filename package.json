@@ -63,7 +63,7 @@
     "lodash-es": "^4.17.21",
     "mem-fs-editor": "^10.0.1",
     "minimist": "^1.2.8",
-    "read-pkg-up": "^9.1.0",
+    "read-pkg-up": "^10.1.0",
     "semver": "^7.5.0",
     "simple-git": "^3.18.0",
     "sort-keys": "^5.0.0",
