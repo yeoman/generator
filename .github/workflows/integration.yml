@@ -23,18 +23,18 @@ jobs:
 
     steps:
       - name: Checkout yeoman-test
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: yeoman/yeoman-test
           path: yeoman-test
 
       - name: Checkout yeoman-generator
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: yeoman-generator
 
       - name: Checkout yeoman-environment
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: mshima/environment
           path: yeoman-environment
