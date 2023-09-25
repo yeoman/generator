@@ -371,9 +371,25 @@ export abstract class TasksMixin {
    */
   async queueTasks(this: BaseGeneratorImpl): Promise<void> {
     const thisAny = this as any;
+    const thisPrototype = Object.getPrototypeOf(thisAny);
 
-    const beforeQueueCallback: () => Promise<any> =
-      (this.features.taskPrefix && thisAny.beforeQueue) ?? thisAny._beforeQueue;
+    let beforeQueueCallback: (() => Promise<any>) | undefined;
+    if (this.features.taskPrefix) {
+      // We want beforeQueue if beforeQueue belongs to the object or to the imediatelly extended class.
+      beforeQueueCallback =
+        Object.hasOwn(thisAny, 'beforeQueue') || Object.hasOwn(thisPrototype, 'beforeQueue')
+          ? thisAny.beforeQueue
+          : undefined;
+    }
+
+    if (!beforeQueueCallback) {
+      // Fallback to _beforeQueue,
+      beforeQueueCallback =
+        Object.hasOwn(thisAny, '_beforeQueue') || Object.hasOwn(thisPrototype, '_beforeQueue')
+          ? thisAny._beforeQueue
+          : undefined;
+    }
+
     if (beforeQueueCallback) {
       await beforeQueueCallback.call(this);
     }
