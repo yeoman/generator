@@ -1130,14 +1130,14 @@ describe('Base', () => {
           )
           .queueTransformStream(
             passthrough(file => {
-              file.contents = Buffer.from('inializing');
+              file.contents = Buffer.from('initializing');
             }),
             { priorityToQueue: 'initializing' },
           );
       };
 
       return testGen.run().then(() => {
-        assert.equal(fs.readFileSync(filepath, 'utf8'), 'inializing prompting a b');
+        assert.equal(fs.readFileSync(filepath, 'utf8'), 'initializing prompting a b');
       });
     });
 
