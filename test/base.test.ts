@@ -1114,17 +1114,30 @@ describe('Base', () => {
 
         this.queueTransformStream(
           passthrough(file => {
-            file.contents = Buffer.from('a');
+            file.contents = Buffer.from(file.contents.toString() + ' a');
           }),
-        ).queueTransformStream(
-          passthrough(file => {
-            file.contents = Buffer.from(file.contents.toString() + 'b');
-          }),
-        );
+        )
+          .queueTransformStream(
+            passthrough(file => {
+              file.contents = Buffer.from(file.contents.toString() + ' b');
+            }),
+          )
+          .queueTransformStream(
+            passthrough(file => {
+              file.contents = Buffer.from(file.contents.toString() + ' prompting');
+            }),
+            { priorityToQueue: 'prompting' },
+          )
+          .queueTransformStream(
+            passthrough(file => {
+              file.contents = Buffer.from('inializing');
+            }),
+            { priorityToQueue: 'initializing' },
+          );
       };
 
       return testGen.run().then(() => {
-        assert.equal(fs.readFileSync(filepath, 'utf8'), 'ab');
+        assert.equal(fs.readFileSync(filepath, 'utf8'), 'inializing prompting a b');
       });
     });
 

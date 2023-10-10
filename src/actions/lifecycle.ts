@@ -636,16 +636,32 @@ export abstract class TasksMixin {
   queueTransformStream(
     this: BaseGeneratorImpl,
     transformStreams: Transform | Transform[],
-    options?: ApplyTransformsOptions,
+    options?: ApplyTransformsOptions & { priorityToQueue?: string },
   ) {
     assert(transformStreams, 'expected to receive a transform stream as parameter');
 
+    const getQueueForPriority = (priority: string): string => {
+      const found = this._queues[priority];
+      if (!found) {
+        throw new Error(`Could not find priority '${priority}'`);
+      }
+
+      return found.queueName ?? found.priorityName;
+    };
+
+    const { priorityToQueue, ...applyTransformOptions } = options ?? {};
+    const queueName = priorityToQueue ? getQueueForPriority(priorityToQueue) : 'transform';
+
     this.queueTask({
       method: async () =>
-        this.env.applyTransforms(Array.isArray(transformStreams) ? transformStreams : [transformStreams], options),
+        this.env.applyTransforms(
+          Array.isArray(transformStreams) ? transformStreams : [transformStreams],
+          applyTransformOptions,
+        ),
       taskName: 'transformStream',
-      queueName: 'transform',
+      queueName,
     });
+
     return this;
   }
 }
