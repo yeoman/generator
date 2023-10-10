@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import assert from 'node:assert';
-import { type Transform } from 'node:stream';
-import { dirname, isAbsolute, resolve as pathResolve } from 'node:path';
+import { dirname, isAbsolute, resolve as pathResolve, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { stat } from 'node:fs/promises';
 import createDebug from 'debug';
 import type {
-  ApplyTransformsOptions,
   BaseGenerator,
   GetGeneratorOptions,
   ComposeOptions as EnvironmentComposeOptions,
+  ProgressOptions,
 } from '@yeoman/types';
 import { toNamespace } from '@yeoman/namespace';
+import { type FileTransform, isFileTransform, type PipelineOptions } from 'mem-fs';
+import { type MemFsEditorFile } from 'mem-fs-editor';
+// eslint-disable-next-line n/file-extension-in-import
+import { isFilePending } from 'mem-fs-editor/state';
 import type { Task, TaskOptions, BaseOptions, Priority, ComposeOptions } from '../types.js';
 import type Generator from '../index.js';
 import type BaseGeneratorImpl from '../generator.js';
@@ -635,10 +637,28 @@ export abstract class TasksMixin {
    */
   queueTransformStream(
     this: BaseGeneratorImpl,
-    transformStreams: Transform | Transform[],
-    options?: ApplyTransformsOptions & { priorityToQueue?: string },
+    options?: PipelineOptions<MemFsEditorFile> & ProgressOptions & { pendingFiles?: boolean; priorityToQueue?: string },
+    ...transforms: Array<FileTransform<MemFsEditorFile>>
   ) {
-    assert(transformStreams, 'expected to receive a transform stream as parameter');
+    if (isFileTransform(options)) {
+      transforms = [options, ...transforms];
+      options = {};
+    }
+
+    let filter: ((file: MemFsEditorFile) => boolean) | undefined;
+    const {
+      disabled,
+      name,
+      priorityToQueue,
+      pendingFiles = true,
+      filter: passedFilter,
+      ...pipelineOptions
+    } = options ?? {};
+    if (passedFilter && pendingFiles) {
+      filter = (file: MemFsEditorFile) => isFilePending(file) && passedFilter(file);
+    } else {
+      filter = pendingFiles ? isFilePending : passedFilter;
+    }
 
     const getQueueForPriority = (priority: string): string => {
       const found = this._queues[priority];
@@ -649,14 +669,22 @@ export abstract class TasksMixin {
       return found.queueName ?? found.priorityName;
     };
 
-    const { priorityToQueue, ...applyTransformOptions } = options ?? {};
     const queueName = priorityToQueue ? getQueueForPriority(priorityToQueue) : 'transform';
 
+    const { env } = this;
     this.queueTask({
       method: async () =>
-        this.env.applyTransforms(
-          Array.isArray(transformStreams) ? transformStreams : [transformStreams],
-          applyTransformOptions,
+        this.env.adapter.progress(
+          async ({ step }) =>
+            env.sharedFs.pipeline({ filter, ...pipelineOptions }, ...transforms, async function* (
+              generator: AsyncGenerator<MemFsEditorFile>,
+            ) {
+              for await (const file of generator) {
+                step('Completed', relative(env.logCwd, file.path));
+                yield file;
+              }
+            } as any),
+          { disabled, name },
         ),
       taskName: 'transformStream',
       queueName,

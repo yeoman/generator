@@ -1088,7 +1088,7 @@ describe('Base', () => {
     });
   });
 
-  describe('#registerTransformStream()', () => {
+  describe('#queueTransformStream()', () => {
     let TestGenerator;
     let testGen;
     let filepath;
@@ -1114,25 +1114,33 @@ describe('Base', () => {
 
         this.queueTransformStream(
           passthrough(file => {
-            file.contents = Buffer.from(file.contents.toString() + ' a');
+            if (file.path === filepath) {
+              file.contents = Buffer.from(file.contents.toString() + ' a');
+            }
           }),
         )
           .queueTransformStream(
             passthrough(file => {
-              file.contents = Buffer.from(file.contents.toString() + ' b');
+              if (file.path === filepath) {
+                file.contents = Buffer.from(file.contents.toString() + ' b');
+              }
             }),
           )
           .queueTransformStream(
-            passthrough(file => {
-              file.contents = Buffer.from(file.contents.toString() + ' prompting');
-            }),
             { priorityToQueue: 'prompting' },
+            passthrough(file => {
+              if (file.path === filepath) {
+                file.contents = Buffer.from(file.contents.toString() + ' prompting');
+              }
+            }),
           )
           .queueTransformStream(
-            passthrough(file => {
-              file.contents = Buffer.from('initializing');
-            }),
             { priorityToQueue: 'initializing' },
+            passthrough(file => {
+              if (file.path === filepath) {
+                file.contents = Buffer.from('initializing');
+              }
+            }),
           );
       };
 
@@ -1145,14 +1153,18 @@ describe('Base', () => {
       TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'not correct');
 
-        this.queueTransformStream([
+        this.queueTransformStream(
           passthrough(file => {
-            file.contents = Buffer.from('a');
+            if (file.path === filepath) {
+              file.contents = Buffer.from('a');
+            }
           }),
           passthrough(file => {
-            file.contents = Buffer.from(file.contents.toString() + 'b');
+            if (file.path === filepath) {
+              file.contents = Buffer.from(file.contents.toString() + 'b');
+            }
           }),
-        ]);
+        );
       };
 
       return testGen.run().then(() => {

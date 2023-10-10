@@ -11,7 +11,7 @@ import minimist from 'minimist';
 import createDebug from 'debug';
 import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
-import type { BaseEnvironment, BaseGenerator as GeneratorApi, Logger } from '@yeoman/types';
+import type { BaseEnvironment, BaseGenerator as GeneratorApi, Logger, QueuedAdapter } from '@yeoman/types';
 import type { ArgumentSpec, BaseOptions, BaseFeatures, CliOptionSpec, Priority } from './types.js';
 import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
 import Storage, { type StorageOptions } from './util/storage.js';
@@ -24,7 +24,7 @@ import { SpawnCommandMixin } from './actions/spawn-command.js';
 import { GitMixin } from './actions/user.js';
 import { TasksMixin } from './actions/lifecycle.js';
 
-type Environment = BaseEnvironment & { resolvePackage: any };
+type Environment = BaseEnvironment<QueuedAdapter> & { resolvePackage: any };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
