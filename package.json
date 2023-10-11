@@ -61,7 +61,7 @@
     "json-schema": "^0.4.0",
     "latest-version": "^7.0.0",
     "lodash-es": "^4.17.21",
-    "mem-fs-editor": "^10.0.1",
+    "mem-fs-editor": "^11.0.0",
     "minimist": "^1.2.8",
     "read-pkg-up": "^10.1.0",
     "semver": "^7.5.0",
@@ -82,7 +82,6 @@
     "esmocha": "^1.0.1",
     "inquirer": "^9.2.1",
     "jsdoc": "^4.0.2",
-    "mem-fs": "^3.0.0",
     "nock": "^13.3.1",
     "prettier": "^2.8.8",
     "prettier-plugin-packagejson": "^2.4.3",
@@ -91,12 +90,12 @@
     "typescript": "^5.0.4",
     "xo": "^0.54.2",
     "yeoman-assert": "^3.1.1",
-    "yeoman-environment": "^3.18.4",
-    "yeoman-test": "^8.0.0-rc.0"
+    "yeoman-test": "^8.1.0"
   },
   "peerDependencies": {
-    "@yeoman/types": "^1.0.1",
-    "yeoman-environment": "^3.18.4 || ^4.0.0-alpha.4"
+    "@yeoman/types": "^1.1.1",
+    "mem-fs": "^4.0.0",
+    "yeoman-environment": "^4.0.0-rc.0"
   },
   "peerDependenciesMeta": {
     "yeoman-environment": {
