@@ -8,7 +8,7 @@ describe('generators.Base (actions/spawn-command)', () => {
   let spawn;
 
   beforeEach(async function () {
-    spawn = new Generator({ help: true, namespace: 'foo' });
+    spawn = new Generator({ help: true, namespace: 'foo', resolved: 'unknown' });
     cwd = Math.random().toString(36).slice(7);
     spawn.destinationRoot = fn().mockReturnValue(cwd);
   });

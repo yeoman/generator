@@ -21,12 +21,12 @@ describe('generators.Base (actions/fs)', () => {
 
   before(function () {
     this.timeout(10_000);
-    this.gen = new Base({ env: createEnv() });
+    this.gen = new Base({ env: createEnv(), resolved: 'unknown' });
   });
 
   beforeEach(function () {
     returns = {};
-    this.base = new BaseGenerator({ namespace: 'foo', help: true });
+    this.base = new BaseGenerator({ namespace: 'foo', help: true, resolved: 'unknown' });
     esmocha.spyOn(this.base, 'config', 'get').mockReturnValue({
       getAll() {
         return configGetAll;
