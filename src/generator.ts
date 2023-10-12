@@ -192,12 +192,13 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     // Add convenience debug object
     this._debug = createDebug(this._namespace);
 
+    // Ensure source/destination path, can be configured from subclasses
+    // Used by help()
+    this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
+
     if (actualOptions.help) {
       return;
     }
-
-    // Ensure source/destination path, can be configured from subclasses
-    this.sourceRoot(path.join(path.dirname(this.resolved), 'templates'));
 
     if (this.features.unique && !this.features.uniqueBy) {
       let uniqueBy: string;
