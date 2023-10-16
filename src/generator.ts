@@ -26,15 +26,15 @@ import { TasksMixin } from './actions/lifecycle.js';
 
 type Environment = BaseEnvironment<QueuedAdapter> & { resolvePackage: any };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _filename = fileURLToPath(import.meta.url);
+const _dirname = dirname(_filename);
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const ENV_VER_WITH_VER_API = '2.9.0';
 
-const packageJson = JSON.parse(readFileSync(pathJoin(__dirname, '../package.json'), 'utf8'));
+const packageJson = JSON.parse(readFileSync(pathJoin(_dirname, '../package.json'), 'utf8'));
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFeatures = BaseFeatures>

@@ -428,7 +428,7 @@ export abstract class TasksMixin {
    * await this.composeWith('bootstrap', { sass: true });
    *
    * @example <caption>Using a direct dependency generator</caption>
-   * await this.composeWith(path.resolve(__dirname, 'generator-bootstrap/app/main.js'), { sass: true });
+   * await this.composeWith(path.resolve(_dirname, 'generator-bootstrap/app/main.js'), { sass: true });
    *
    * @example <caption>Passing a Generator class</caption>
    * await this.composeWith({ Generator: MyGenerator, path: '../generator-bootstrap/app/main.js' }, { sass: true });

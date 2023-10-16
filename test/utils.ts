@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import Base from '../src/index.js';
 
-const __filename = fileURLToPath(import.meta.url);
+const _filename = fileURLToPath(import.meta.url);
 
 export default class BaseTest extends Base {
   constructor(
@@ -17,7 +17,7 @@ export default class BaseTest extends Base {
   constructor(...args: any[]) {
     const optIndex = Array.isArray(args[0]) ? 1 : 0;
     args[optIndex] = args[optIndex] ?? {};
-    args[optIndex].resolved = args[optIndex].resolved ?? __filename;
+    args[optIndex].resolved = args[optIndex].resolved ?? _filename;
     args[optIndex].namespace = args[optIndex].namespace ?? 'yeoman:testnamespace';
     super(...args);
   }
