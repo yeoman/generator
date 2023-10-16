@@ -1020,7 +1020,7 @@ describe('Base', () => {
       for (const [i, line] of help.split('\n').entries()) {
         // Do not test whitespace; we care about the content, not formatting.
         // formatting is best left up to the tests for module "text-table"
-        assert.textEqual(line.trim().replace(/\s+/g, ' '), expected[i]);
+        assert.textEqual(line.trim().replaceAll(/\s+/g, ' '), expected[i]);
       }
     });
   });

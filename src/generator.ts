@@ -38,6 +38,7 @@ const packageJson = JSON.parse(readFileSync(pathJoin(_dirname, '../package.json'
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFeatures = BaseFeatures>
+  // eslint-disable-next-line unicorn/prefer-event-target
   extends EventEmitter
   implements Omit<GeneratorApi<O, F>, 'features'>
 {
@@ -815,7 +816,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    */
   determineAppname(): string {
     const appName: string = this.packageJson.get('name') ?? path.basename(this.destinationRoot());
-    return appName.replace(/[^\w\s]+?/g, ' ');
+    return appName.replaceAll(/[^\w\s]+?/g, ' ');
   }
 }
 
