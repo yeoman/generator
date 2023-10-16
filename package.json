@@ -72,6 +72,7 @@
   "devDependencies": {
     "@types/debug": "^4.1.9",
     "@types/inquirer": "^9.0.4",
+    "@types/minimist": "^1.2.3",
     "@types/semver": "^7.5.3",
     "@types/sinon": "^10.0.19",
     "@types/text-table": "^0.2.3",
