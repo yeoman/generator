@@ -65,7 +65,7 @@ export type Priority = QueueOptions & {
  */
 export type Task = TaskOptions & {
   /** Function to be queued. */
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+
   method: (...args: any[]) => unknown | Promise<unknown>;
 
   /** Name of the task. */

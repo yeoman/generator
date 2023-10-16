@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import path from 'node:path';
 import fs from 'node:fs';
 import table from 'text-table';

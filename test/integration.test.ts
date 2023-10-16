@@ -2,14 +2,14 @@ import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import helpers, { result } from 'yeoman-test';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _filename = fileURLToPath(import.meta.url);
+const _dirname = dirname(_filename);
 
 describe('Integration', () => {
   before(async function () {
     this.timeout(5000);
     await helpers
-      .create(path.join(__dirname, 'fixtures/generator-defaults/app'))
+      .create(path.join(_dirname, 'fixtures/generator-defaults/app'))
       .withAnswers({ foo: 'fooValue' })
       .withOptions({ extra: 'extraValue' })
       .run();

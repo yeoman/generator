@@ -11,7 +11,7 @@ import minimist from 'minimist';
 import createDebug from 'debug';
 import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
-import type { BaseEnvironment, BaseGenerator as GeneratorApi, Logger } from '@yeoman/types';
+import type { BaseEnvironment, BaseGenerator as GeneratorApi, Logger, QueuedAdapter } from '@yeoman/types';
 import type { ArgumentSpec, BaseOptions, BaseFeatures, CliOptionSpec, Priority } from './types.js';
 import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
 import Storage, { type StorageOptions } from './util/storage.js';
@@ -24,20 +24,21 @@ import { SpawnCommandMixin } from './actions/spawn-command.js';
 import { GitMixin } from './actions/user.js';
 import { TasksMixin } from './actions/lifecycle.js';
 
-type Environment = BaseEnvironment & { resolvePackage: any };
+type Environment = BaseEnvironment<QueuedAdapter> & { resolvePackage: any };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _filename = fileURLToPath(import.meta.url);
+const _dirname = dirname(_filename);
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const ENV_VER_WITH_VER_API = '2.9.0';
 
-const packageJson = JSON.parse(readFileSync(pathJoin(__dirname, '../package.json'), 'utf8'));
+const packageJson = JSON.parse(readFileSync(pathJoin(_dirname, '../package.json'), 'utf8'));
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFeatures = BaseFeatures>
+  // eslint-disable-next-line unicorn/prefer-event-target
   extends EventEmitter
   implements Omit<GeneratorApi<O, F>, 'features'>
 {
@@ -815,7 +816,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    */
   determineAppname(): string {
     const appName: string = this.packageJson.get('name') ?? path.basename(this.destinationRoot());
-    return appName.replace(/[^\w\s]+?/g, ' ');
+    return appName.replaceAll(/[^\w\s]+?/g, ' ');
   }
 }
 

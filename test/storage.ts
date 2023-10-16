@@ -9,8 +9,8 @@ import helpers from 'yeoman-test';
 import { create as createMemFs, type Store } from 'mem-fs';
 import Storage from '../src/util/storage.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _filename = fileURLToPath(import.meta.url);
+const _dirname = dirname(_filename);
 
 const tmpdir: string = path.join(os.tmpdir(), 'yeoman-storage');
 
@@ -59,13 +59,13 @@ describe('Storage', () => {
     });
 
     it('take a path parameter', function () {
-      const store = new Storage('test', editor, path.join(__dirname, './fixtures/config.json'));
+      const store = new Storage('test', editor, path.join(_dirname, './fixtures/config.json'));
       assert.equal(store.get('testFramework'), 'mocha');
       assert.ok(store.existed);
     });
 
     it('take a fs and path parameter without name', function () {
-      const store = new Storage(editor, path.join(__dirname, './fixtures/config.json'));
+      const store = new Storage(editor, path.join(_dirname, './fixtures/config.json'));
       assert.equal(store.get('test')!.testFramework, 'mocha');
       assert.ok(store.existed);
     });

@@ -18,8 +18,8 @@ import Base from './utils.js';
 
 const require = createRequire(import.meta.url);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _filename = fileURLToPath(import.meta.url);
+const _dirname = dirname(_filename);
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
@@ -54,7 +54,7 @@ describe('Base', () => {
 
   describe('constructor', () => {
     it('uses the destinationRoot passed at options', function () {
-      const projectDir = path.join(__dirname, 'fixtures/dummy-project');
+      const projectDir = path.join(_dirname, 'fixtures/dummy-project');
       const subdir = path.join(projectDir, 'subdir');
       process.chdir(subdir);
       env.cwd = process.cwd();
@@ -116,7 +116,7 @@ describe('Base', () => {
 
     it('set options with false values', async () => {
       const runResult = await helpers
-        .create(path.join(__dirname, './fixtures/options-generator'), { namespace: 'options-generator' }, { createEnv })
+        .create(path.join(_dirname, './fixtures/options-generator'), { namespace: 'options-generator' }, { createEnv })
         .withOptions({ testOption: false })
         .run();
 
@@ -428,7 +428,7 @@ describe('Base', () => {
 
     it('allow skipping file writes to disk', function () {
       const action = { action: 'skip' };
-      const filepath = path.join(__dirname, '/fixtures/conflict.js');
+      const filepath = path.join(_dirname, '/fixtures/conflict.js');
       assert(fs.existsSync(filepath));
 
       TestGenerator.prototype.writing = function () {
@@ -879,7 +879,7 @@ describe('Base', () => {
     });
 
     it('runs the composed Generator class in the passed path', async function () {
-      const stubPath = path.join(__dirname, 'fixtures/generator-mocha');
+      const stubPath = path.join(_dirname, 'fixtures/generator-mocha');
 
       await dummy.composeWith({
         Generator: GenCompose,
@@ -944,7 +944,7 @@ describe('Base', () => {
       let LocalDummy;
       beforeEach(async function () {
         spy = sinonSpy();
-        dummy.resolved = __filename;
+        dummy.resolved = _filename;
         stubPath = './fixtures/generator-mocha';
         resolvedStub = pathToFileURL(require.resolve(stubPath)).href;
         const module = await import(resolvedStub);
@@ -1020,7 +1020,7 @@ describe('Base', () => {
       for (const [i, line] of help.split('\n').entries()) {
         // Do not test whitespace; we care about the content, not formatting.
         // formatting is best left up to the tests for module "text-table"
-        assert.textEqual(line.trim().replace(/\s+/g, ' '), expected[i]);
+        assert.textEqual(line.trim().replaceAll(/\s+/g, ' '), expected[i]);
       }
     });
   });
@@ -1088,7 +1088,7 @@ describe('Base', () => {
     });
   });
 
-  describe('#registerTransformStream()', () => {
+  describe('#queueTransformStream()', () => {
     let TestGenerator;
     let testGen;
     let filepath;
@@ -1114,25 +1114,33 @@ describe('Base', () => {
 
         this.queueTransformStream(
           passthrough(file => {
-            file.contents = Buffer.from(file.contents.toString() + ' a');
+            if (file.path === filepath) {
+              file.contents = Buffer.from(file.contents.toString() + ' a');
+            }
           }),
         )
           .queueTransformStream(
             passthrough(file => {
-              file.contents = Buffer.from(file.contents.toString() + ' b');
+              if (file.path === filepath) {
+                file.contents = Buffer.from(file.contents.toString() + ' b');
+              }
             }),
           )
           .queueTransformStream(
-            passthrough(file => {
-              file.contents = Buffer.from(file.contents.toString() + ' prompting');
-            }),
             { priorityToQueue: 'prompting' },
+            passthrough(file => {
+              if (file.path === filepath) {
+                file.contents = Buffer.from(file.contents.toString() + ' prompting');
+              }
+            }),
           )
           .queueTransformStream(
-            passthrough(file => {
-              file.contents = Buffer.from('initializing');
-            }),
             { priorityToQueue: 'initializing' },
+            passthrough(file => {
+              if (file.path === filepath) {
+                file.contents = Buffer.from('initializing');
+              }
+            }),
           );
       };
 
@@ -1145,14 +1153,18 @@ describe('Base', () => {
       TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'not correct');
 
-        this.queueTransformStream([
+        this.queueTransformStream(
           passthrough(file => {
-            file.contents = Buffer.from('a');
+            if (file.path === filepath) {
+              file.contents = Buffer.from('a');
+            }
           }),
           passthrough(file => {
-            file.contents = Buffer.from(file.contents.toString() + 'b');
+            if (file.path === filepath) {
+              file.contents = Buffer.from(file.contents.toString() + 'b');
+            }
           }),
-        ]);
+        );
       };
 
       return testGen.run().then(() => {
@@ -1173,7 +1185,7 @@ describe('Base', () => {
     it('emits the series of event on a specific generator', function (done) {
       const angular = new Generator([], {
         env: createEnv([], {}, new TestAdapter()),
-        resolved: __filename,
+        resolved: _filename,
         'skip-install': true,
       });
 
@@ -1205,7 +1217,7 @@ describe('Base', () => {
       class GeneratorOnce extends Base {
         constructor(args, options) {
           super(args, options);
-          this.sourceRoot(path.join(__dirname, 'fixtures'));
+          this.sourceRoot(path.join(_dirname, 'fixtures'));
           this.destinationRoot(path.join(os.tmpdir(), 'yeoman-base-once'));
         }
 
@@ -1218,7 +1230,7 @@ describe('Base', () => {
       let isFirstEndEvent = true;
       const generatorOnce = new GeneratorOnce([], {
         env: createEnv([], {}, new TestAdapter()),
-        resolved: __filename,
+        resolved: _filename,
         'skip-install': true,
       });
 
@@ -1254,7 +1266,7 @@ describe('Base', () => {
 
       const generatorEnd = new GeneratorEnd([], {
         env: createEnv([], {}, new TestAdapter()),
-        resolved: __filename,
+        resolved: _filename,
         'skip-install': true,
       });
 
