@@ -138,7 +138,7 @@ describe('generators.Base (actions/fs)', () => {
       });
 
       it('exists on the generator', () => {
-        assert(Base.prototype[operation.name]);
+        assert(operation.name in Base.prototype);
       });
 
       it('returns the correct value', () => {
