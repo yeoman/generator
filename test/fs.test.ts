@@ -11,6 +11,13 @@ import Base from './utils.js';
 const randomString = () => Math.random().toString(36).slice(7);
 const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAdapter() });
 
+// Make copyTpl() call argument indices more readable
+const ARG_FROM = 0;
+const ARG_TO = 1;
+const ARG_DATA = 2; // A.k.a. context
+const ARG_TPLSETTINGS = 3; // Template settings
+const ARG_COPYSETTINGS = 4;
+
 describe('generators.Base (actions/fs)', () => {
   const baseReturns = {
     templatePath: `templatePath${randomString()}`,
@@ -204,7 +211,7 @@ describe('generators.Base (actions/fs)', () => {
 
       assert(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[2], getAllReturn);
+      assert.equal(firsCall.args[ARG_DATA], getAllReturn);
     });
 
     it('gets data with path from config', function () {
@@ -213,7 +220,7 @@ describe('generators.Base (actions/fs)', () => {
 
       assert(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[2], getPathReturn);
+      assert.equal(firsCall.args[ARG_DATA], getPathReturn);
     });
 
     it('concatenates source and destination', function () {
@@ -226,9 +233,9 @@ describe('generators.Base (actions/fs)', () => {
 
       assert(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[0], path.join(...source));
-      assert.equal(firsCall.args[1], path.join(...destination));
-      assert.equal(firsCall.args[2], data);
+      assert.equal(firsCall.args[ARG_FROM], path.join(...source));
+      assert.equal(firsCall.args[ARG_TO], path.join(...destination));
+      assert.equal(firsCall.args[ARG_DATA], data);
     });
   });
 
@@ -263,7 +270,7 @@ describe('generators.Base (actions/fs)', () => {
 
       assert(copyTplAsync.calledOnce);
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[2], getAllReturn);
+      assert.equal(firsCall.args[ARG_DATA], getAllReturn);
     });
 
     it('gets data with path from config', async function () {
@@ -272,7 +279,7 @@ describe('generators.Base (actions/fs)', () => {
 
       assert(copyTplAsync.calledOnce);
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[2], getPathReturn);
+      assert.equal(firsCall.args[ARG_DATA], getPathReturn);
     });
 
     it('concatenates source and destination', function () {
@@ -285,9 +292,9 @@ describe('generators.Base (actions/fs)', () => {
 
       assert(copyTplAsync.calledOnce);
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[0], path.join(...source));
-      assert.equal(firsCall.args[1], path.join(...destination));
-      assert.equal(firsCall.args[2], data);
+      assert.equal(firsCall.args[ARG_FROM], path.join(...source));
+      assert.equal(firsCall.args[ARG_TO], path.join(...destination));
+      assert.equal(firsCall.args[ARG_DATA], data);
     });
   });
 
@@ -318,9 +325,9 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(copyTpl.callCount, 1);
 
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[0], passedArg1);
-      assert.equal(firsCall.args[1], passedArg1);
-      assert.equal(firsCall.args[2], data);
+      assert.equal(firsCall.args[ARG_FROM], passedArg1);
+      assert.equal(firsCall.args[ARG_TO], passedArg1);
+      assert.equal(firsCall.args[ARG_DATA], data);
     });
 
     it('handles more than 1 template', function () {
@@ -348,16 +355,16 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(copyTpl.callCount, 2);
 
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[0], passedArg1);
-      assert.equal(firsCall.args[1], passedArg1);
-      assert.equal(firsCall.args[2], data);
+      assert.equal(firsCall.args[ARG_FROM], passedArg1);
+      assert.equal(firsCall.args[ARG_TO], passedArg1);
+      assert.equal(firsCall.args[ARG_DATA], data);
 
       const secondCall = copyTpl.getCall(1);
-      assert.equal(secondCall.args[0], secondCallArg1);
-      assert.equal(secondCall.args[1], secondCallArg2);
-      assert.equal(secondCall.args[2], data);
-      assert.equal(secondCall.args[3].foo, templateOptions.foo);
-      assert.equal(secondCall.args[4], copyOptions);
+      assert.equal(secondCall.args[ARG_FROM], secondCallArg1);
+      assert.equal(secondCall.args[ARG_TO], secondCallArg2);
+      assert.equal(secondCall.args[ARG_DATA], data);
+      assert.equal(secondCall.args[ARG_TPLSETTINGS].foo, templateOptions.foo);
+      assert.equal(secondCall.args[ARG_COPYSETTINGS], copyOptions);
     });
 
     it('skips templates based on when callback', function () {
@@ -386,9 +393,9 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(copyTpl.callCount, 1);
 
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[0], passedArg1);
-      assert.equal(firsCall.args[1], passedArg1);
-      assert.equal(firsCall.args[2], data);
+      assert.equal(firsCall.args[ARG_FROM], passedArg1);
+      assert.equal(firsCall.args[ARG_TO], passedArg1);
+      assert.equal(firsCall.args[ARG_DATA], data);
     });
 
     it('passes the data to when callback', function () {
@@ -442,9 +449,9 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(copyTplAsync.callCount, 1);
 
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[0], passedArg1);
-      assert.equal(firsCall.args[1], passedArg1);
-      assert.equal(firsCall.args[2], data);
+      assert.equal(firsCall.args[ARG_FROM], passedArg1);
+      assert.equal(firsCall.args[ARG_TO], passedArg1);
+      assert.equal(firsCall.args[ARG_DATA], data);
     });
 
     it('handles more than 1 template', function () {
@@ -472,16 +479,16 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(copyTplAsync.callCount, 2);
 
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[0], passedArg1);
-      assert.equal(firsCall.args[1], passedArg1);
-      assert.equal(firsCall.args[2], data);
+      assert.equal(firsCall.args[ARG_FROM], passedArg1);
+      assert.equal(firsCall.args[ARG_TO], passedArg1);
+      assert.equal(firsCall.args[ARG_DATA], data);
 
       const secondCall = copyTplAsync.getCall(1);
-      assert.equal(secondCall.args[0], secondCallArg1);
-      assert.equal(secondCall.args[1], secondCallArg2);
-      assert.equal(secondCall.args[2], data);
-      assert.equal(secondCall.args[3].foo, templateOptions.foo);
-      assert.equal(secondCall.args[4], copyOptions);
+      assert.equal(secondCall.args[ARG_FROM], secondCallArg1);
+      assert.equal(secondCall.args[ARG_TO], secondCallArg2);
+      assert.equal(secondCall.args[ARG_DATA], data);
+      assert.equal(secondCall.args[ARG_TPLSETTINGS].foo, templateOptions.foo);
+      assert.equal(secondCall.args[ARG_COPYSETTINGS], copyOptions);
     });
 
     it('skips templates based on when callback', async function () {
@@ -510,9 +517,9 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(copyTplAsync.callCount, 1);
 
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[0], passedArg1);
-      assert.equal(firsCall.args[1], passedArg1);
-      assert.equal(firsCall.args[2], data);
+      assert.equal(firsCall.args[ARG_FROM], passedArg1);
+      assert.equal(firsCall.args[ARG_TO], passedArg1);
+      assert.equal(firsCall.args[ARG_DATA], data);
     });
 
     it('passes the data to when callback', function () {
