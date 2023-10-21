@@ -19,13 +19,74 @@ const ARG_DATA = 2; // A.k.a. context
 const ARG_TPLSETTINGS = 3; // Template settings
 const ARG_COPYSETTINGS = 4;
 
+type FSOpResult = {
+  name: string;
+  first: string;
+  second?: string;
+  dest: string;
+  returnsUndefined?: boolean;
+};
+
+let testResults: FSOpResult[] = [];
+testResults = testResults.concat([
+  { name: 'readTemplate', first: 'templatePath', dest: 'read' },
+  {
+    name: 'copyTemplate',
+    first: 'templatePath',
+    second: 'destinationPath',
+    dest: 'copy',
+  },
+  {
+    name: 'copyTemplateAsync',
+    first: 'templatePath',
+    second: 'destinationPath',
+    dest: 'copyAsync',
+  },
+  { name: 'readDestination', first: 'destinationPath', dest: 'read' },
+  { name: 'writeDestination', first: 'destinationPath', dest: 'write' },
+  {
+    name: 'writeDestinationJSON',
+    first: 'destinationPath',
+    dest: 'writeJSON',
+  },
+  { name: 'deleteDestination', first: 'destinationPath', dest: 'delete' },
+  {
+    name: 'copyDestination',
+    first: 'destinationPath',
+    second: 'destinationPath',
+    dest: 'copy',
+  },
+  {
+    name: 'moveDestination',
+    first: 'destinationPath',
+    second: 'destinationPath',
+    dest: 'move',
+  },
+  { name: 'existsDestination', first: 'destinationPath', dest: 'exists' },
+  {
+    name: 'renderTemplate',
+    first: 'templatePath',
+    second: 'destinationPath',
+    dest: 'copyTpl',
+    returnsUndefined: true,
+  },
+  {
+    name: 'renderTemplateAsync',
+    first: 'templatePath',
+    second: 'destinationPath',
+    dest: 'copyTplAsync',
+  },
+]);
+
+type BaseGenPaths = Record<string, string>;
+
 describe('generators.Base (actions/fs)', () => {
-  const baseReturns = {
+  const baseReturns: BaseGenPaths = {
     templatePath: `templatePath${randomString()}`,
     destinationPath: `destinationPath${randomString()}`,
   };
   const configGetAll = { foo: 'bar' };
-  let returns;
+  let returns: Record<string, any>;
 
   before(function () {
     this.timeout(10_000);
@@ -73,55 +134,7 @@ describe('generators.Base (actions/fs)', () => {
     }
   });
 
-  for (const operation of [
-    { name: 'readTemplate', first: 'templatePath', dest: 'read' },
-    {
-      name: 'copyTemplate',
-      first: 'templatePath',
-      second: 'destinationPath',
-      dest: 'copy',
-    },
-    {
-      name: 'copyTemplateAsync',
-      first: 'templatePath',
-      second: 'destinationPath',
-      dest: 'copyAsync',
-    },
-    { name: 'readDestination', first: 'destinationPath', dest: 'read' },
-    { name: 'writeDestination', first: 'destinationPath', dest: 'write' },
-    {
-      name: 'writeDestinationJSON',
-      first: 'destinationPath',
-      dest: 'writeJSON',
-    },
-    { name: 'deleteDestination', first: 'destinationPath', dest: 'delete' },
-    {
-      name: 'copyDestination',
-      first: 'destinationPath',
-      second: 'destinationPath',
-      dest: 'copy',
-    },
-    {
-      name: 'moveDestination',
-      first: 'destinationPath',
-      second: 'destinationPath',
-      dest: 'move',
-    },
-    { name: 'existsDestination', first: 'destinationPath', dest: 'exists' },
-    {
-      name: 'renderTemplate',
-      first: 'templatePath',
-      second: 'destinationPath',
-      dest: 'copyTpl',
-      returnsUndefined: true,
-    },
-    {
-      name: 'renderTemplateAsync',
-      first: 'templatePath',
-      second: 'destinationPath',
-      dest: 'copyTplAsync',
-    },
-  ]) {
+  for (const operation of testResults) {
     const passedArg1 = randomString();
     const passedArg2 = randomString();
     const passedArg3 = {};
@@ -139,7 +152,9 @@ describe('generators.Base (actions/fs)', () => {
 
         expectedReturn = operation.returnsUndefined ? undefined : returns[operation.dest];
         firstArgumentHandler = this.base[operation.first];
-        secondArgumentHandler = this.base[operation.second];
+        if (operation.second !== undefined && operation.second !== null) {
+          secondArgumentHandler = this.base[operation.second];
+        }
       });
 
       it('exists on the generator', () => {
