@@ -1,8 +1,13 @@
 /* eslint-disable import/no-named-as-default-member */
 import assert from 'node:assert';
 import chalk from 'chalk';
-import sinon from 'sinon';
+import sinon, { type SinonSpy } from 'sinon';
 import deprecate from '../src/util/deprecate.js';
+
+type SimpleObject = {
+  foo: number;
+  functionInObj: (someValue: number) => number;
+};
 
 describe('deprecate()', () => {
   beforeEach(() => {
