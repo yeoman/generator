@@ -19,16 +19,42 @@ describe('deprecate()', () => {
   afterEach(() => {
     sinon.restore();
   });
-    sinon.restore();
+
+  describe('deprecate a function', () => {
+    let deprecatedLogSpy: SinonSpy;
+    beforeEach(() => {
+      deprecatedLogSpy = sinon.fake();
+      sinon.replace(deprecate, 'log', deprecatedLogSpy);
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('the original function is still called', () => {
+      const originalFunction = sinon.spy();
+      const deprecatedFunction = deprecate('this is function deprecated', originalFunction);
+
+      deprecatedFunction('baz', 3);
+      assert.ok(
+        originalFunction.calledWith('baz', 3),
+        `original function called with (${originalFunction.lastCall.args[0]}, ${originalFunction.lastCall.args[1]})`,
+      );
+    });
+
+    it('a call to deprecate.log(msg) is added', () => {
+      const originalFunction = sinon.spy();
+      const deprecatedFunction = deprecate('this is function deprecated', originalFunction);
+
+      originalFunction('bar', 2);
+      assert.ok(originalFunction.calledWith('bar', 2), 'original function not called with ("bar", 2)');
+      assert.ok(deprecatedLogSpy.notCalled);
+
+      deprecatedFunction('baz', 3);
+      assert.ok(deprecatedLogSpy.calledWith('this is function deprecated'));
+    });
   });
 
-  it('log a message', () => {
-    const func = sinon.spy();
-    const wrapped = deprecate('foo', func);
-    sinon.assert.notCalled(console.log);
-    wrapped('bar', 2);
-    sinon.assert.calledWith(console.log, chalk.yellow('(!) ') + 'foo');
-    sinon.assert.calledWith(func, 'bar', 2);
   describe('.log', () => {
     it('logs the message in yellow, starting with "(!) "', () => {
       deprecate.log('this is the message');
