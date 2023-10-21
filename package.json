@@ -71,6 +71,7 @@
   },
   "devDependencies": {
     "@types/debug": "^4.1.9",
+    "@types/ejs": "^3.1.4",
     "@types/inquirer": "^9.0.4",
     "@types/minimist": "^1.2.3",
     "@types/semver": "^7.5.3",
@@ -80,6 +81,7 @@
     "@yeoman/transform": "^1.2.0",
     "c8": "^8.0.1",
     "cpy-cli": "^5.0.0",
+    "ejs": "^3.1.9",
     "esmocha": "^1.0.1",
     "inquirer": "^9.2.11",
     "jsdoc": "^4.0.2",
