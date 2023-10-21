@@ -169,17 +169,62 @@ describe('deprecate()', () => {
   });
 
   describe('.property()', () => {
-    it('wrap a property getter and log a message', () => {
-      const dummy = {
+    let deprecatedLogSpy: SinonSpy;
+    beforeEach(() => {
+      deprecatedLogSpy = sinon.fake();
+      sinon.replace(deprecate, 'log', deprecatedLogSpy);
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it('the deprecated message shows when a property is accessed', () => {
+      const originalObjectect = {
         foo: 1,
       };
-      deprecate.property('foo is deprecated', dummy, 'foo');
+      deprecate.property('foo property is deprecated', originalObjectect, 'foo');
 
-      // Keep values
-      assert.equal(dummy.foo, 1);
+      // Value is not affected; it remains the same
+      assert.equal(originalObjectect.foo, 1);
 
-      // Wrap methods
-      sinon.assert.calledWith(console.log, chalk.yellow('(!) ') + 'foo is deprecated');
+      assert.ok(
+        deprecatedLogSpy.calledWith('foo property is deprecated'),
+        `deprecatedLogSpy called with (${deprecatedLogSpy.lastCall.args[0]})`,
+      );
+    });
+
+    it('property getters and setters are deprecated', () => {
+      type ObjectWithGettersSetters = SimpleObject & {
+        get bar(): number;
+        set bar(someValue: number);
+      };
+
+      const originalObject: ObjectWithGettersSetters = {
+        foo: 10,
+        functionInObj(someValue: number): number {
+          return someValue - 1;
+        },
+        get bar(): number {
+          return this.foo * 2;
+        },
+        set bar(someValue: number) {
+          this.foo = someValue / 2;
+        },
+      };
+
+      deprecate.property('bar is deprecated', originalObject, 'bar');
+      originalObject.bar;
+      assert.ok(
+        deprecatedLogSpy.calledWith('bar is deprecated'),
+        `deprecatedLogSpy called with (${deprecatedLogSpy.lastCall.args[0]})`,
+      );
+
+      originalObject.bar = 7;
+      assert.ok(
+        deprecatedLogSpy.calledWith('bar is deprecated'),
+        `deprecatedLogSpy called with (${deprecatedLogSpy.lastCall.args[0]})`,
+      );
     });
   });
 });
