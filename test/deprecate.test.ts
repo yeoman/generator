@@ -10,12 +10,16 @@ type SimpleObject = {
 };
 
 describe('deprecate()', () => {
+  let fakeConsoleLog: SinonSpy;
   beforeEach(() => {
-    sinon.spy(console, 'log');
+    fakeConsoleLog = sinon.fake();
+    sinon.replace(console, 'log', fakeConsoleLog);
   });
 
   afterEach(() => {
-    console.log.restore();
+    sinon.restore();
+  });
+    sinon.restore();
   });
 
   it('log a message', () => {
