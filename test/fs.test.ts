@@ -35,6 +35,10 @@ describe('generators.Base (actions/fs)', () => {
   beforeEach(function () {
     returns = {};
     this.base = new BaseGenerator({ namespace: 'foo', help: true, resolved: 'unknown' });
+
+    // Why not use a sinonStub for this.base.config as is done in #renderTemplate and #renderTemplateAsync below?
+    //  this.base get config is not being tested in any way below.
+    // @ts-expect-error Config is a string (not a symbol) and we know it exists on this.base  https://github.com/DefinitelyTyped/DefinitelyTyped/issues/33173
     esmocha.spyOn(this.base, 'config', 'get').mockReturnValue({
       getAll() {
         return configGetAll;
