@@ -90,7 +90,7 @@ describe('generators.Base (actions/fs)', () => {
 
   before(function () {
     this.timeout(10_000);
-    this.gen = new Base({ env: createEnv(), resolved: 'unknown' });
+    this.gen = new Base({ env: createEnv(), resolved: 'unknown', help: true });
   });
 
   beforeEach(function () {
