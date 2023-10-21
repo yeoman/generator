@@ -4,6 +4,7 @@ import { esmocha } from 'esmocha';
 // eslint-disable-next-line n/file-extension-in-import
 import { TestAdapter } from '@yeoman/adapter/testing';
 import { stub as sinonStub } from 'sinon';
+import type { Data as TemplateData } from 'ejs';
 import Environment from 'yeoman-environment';
 import BaseGenerator from '../src/generator.js';
 import Base from './utils.js';
@@ -400,14 +401,14 @@ describe('generators.Base (actions/fs)', () => {
 
     it('passes the data to when callback', function () {
       const passedArg1 = 'foo';
-      const templateData = {};
-      let receivedData;
+      const templateData: TemplateData = {};
+      let receivedData: TemplateData = { name: 'original value' }; // Set this to something so TypeScript doesn't complain that it is used before set
 
       this.gen.renderTemplates(
         [
           {
             source: passedArg1,
-            when(data) {
+            when(data: TemplateData) {
               receivedData = data;
             },
           },
@@ -524,14 +525,14 @@ describe('generators.Base (actions/fs)', () => {
 
     it('passes the data to when callback', function () {
       const passedArg1 = 'foo';
-      const templateData = {};
-      let receivedData;
+      const templateData: TemplateData = {};
+      let receivedData: TemplateData = { name: 'original value' }; // Set this to something so TypeScript doesn't complain that it is used before set
 
       this.gen.renderTemplatesAsync(
         [
           {
             source: passedArg1,
-            when(data) {
+            when(data: TemplateData) {
               receivedData = data;
             },
           },
