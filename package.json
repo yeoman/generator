@@ -83,6 +83,9 @@
       "mem-fs-editor": "^9.0.0"
     }
   },
+  "acceptDependencies": {
+    "yeoman-environment": "^4.0.0"
+  },
   "peerDependencies": {
     "yeoman-environment": "^3.2.0"
   },
