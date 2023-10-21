@@ -29,6 +29,11 @@ describe('deprecate()', () => {
     wrapped('bar', 2);
     sinon.assert.calledWith(console.log, chalk.yellow('(!) ') + 'foo');
     sinon.assert.calledWith(func, 'bar', 2);
+  describe('.log', () => {
+    it('logs the message in yellow, starting with "(!) "', () => {
+      deprecate.log('this is the message');
+      assert.ok(fakeConsoleLog.calledWith(chalk.yellow('(!) ') + 'this is the message'));
+    });
   });
 
   describe('.object()', () => {
