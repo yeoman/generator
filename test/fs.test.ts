@@ -3,7 +3,7 @@ import path from 'node:path';
 import { esmocha } from 'esmocha';
 // eslint-disable-next-line n/file-extension-in-import
 import { TestAdapter } from '@yeoman/adapter/testing';
-import { stub as sinonStub } from 'sinon';
+import { stub as sinonStub, type SinonStub } from 'sinon';
 import type { Data as TemplateData } from 'ejs';
 import Environment from 'yeoman-environment';
 import BaseGenerator from '../src/generator.js';
@@ -125,10 +125,10 @@ describe('generators.Base (actions/fs)', () => {
 
     // eslint-disable-next-line @typescript-eslint/no-loop-func
     describe(`#${operation.name}`, () => {
-      let returnValue;
-      let expectedReturn;
-      let firstArgumentHandler;
-      let secondArgumentHandler;
+      let returnValue: any;
+      let expectedReturn: string | undefined;
+      let firstArgumentHandler: SinonStub;
+      let secondArgumentHandler: SinonStub;
 
       beforeEach(async function () {
         returnValue = await this.base[operation.name](passedArg1, passedArg2, passedArg3, passedArg4);
