@@ -2,20 +2,16 @@
 import { dirname, isAbsolute, resolve as pathResolve, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
+import { Duplex } from 'node:stream';
 import { stat } from 'node:fs/promises';
 import createDebug from 'debug';
-import type {
-  BaseGenerator,
-  GetGeneratorOptions,
-  ComposeOptions as EnvironmentComposeOptions,
-  ProgressOptions,
-} from '@yeoman/types';
+import type { BaseGenerator, GetGeneratorOptions, ComposeOptions as EnvironmentComposeOptions } from '@yeoman/types';
 import { toNamespace } from '@yeoman/namespace';
-import { type FileTransform, isFileTransform, type PipelineOptions } from 'mem-fs';
+import { type FileTransform, isFileTransform } from 'mem-fs';
 import { type MemFsEditorFile } from 'mem-fs-editor';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
-import type { Task, TaskOptions, BaseOptions, Priority, ComposeOptions } from '../types.js';
+import type { Task, TaskOptions, BaseOptions, Priority, ComposeOptions, GeneratorPipelineOptions } from '../types.js';
 import type Generator from '../index.js';
 import type BaseGeneratorImpl from '../generator.js';
 
@@ -284,7 +280,7 @@ export abstract class TasksMixin {
    *
    * @param task: Task to be queued.
    */
-  queueTask(this: BaseGeneratorImpl, task: Task): void {
+  queueTask(this: BaseGeneratorImpl, task: Task<this>): void {
     const { queueName = 'default', taskName: methodName, run, once } = task;
 
     const { _taskStatus: taskStatus, _namespace: namespace } = this;
@@ -626,6 +622,41 @@ export abstract class TasksMixin {
     return generatorResolvedFile;
   }
 
+  async pipeline(
+    this: BaseGeneratorImpl,
+    options?: GeneratorPipelineOptions,
+    ...transforms: Array<FileTransform<MemFsEditorFile>>
+  ) {
+    if (isFileTransform(options)) {
+      transforms = [options, ...transforms];
+      options = {};
+    }
+
+    let filter: ((file: MemFsEditorFile) => boolean) | undefined;
+    const { disabled, name, pendingFiles = true, filter: passedFilter, ...memFsPipelineOptions } = options ?? {};
+    if (passedFilter && pendingFiles) {
+      filter = (file: MemFsEditorFile) => isFilePending(file) && passedFilter(file);
+    } else {
+      filter = pendingFiles ? isFilePending : passedFilter;
+    }
+
+    const { env } = this;
+    await env.adapter.progress(
+      async ({ step }) =>
+        env.sharedFs.pipeline(
+          { filter, ...memFsPipelineOptions },
+          ...transforms,
+          Duplex.from(async function* (generator: AsyncGenerator<MemFsEditorFile>) {
+            for await (const file of generator) {
+              step('Completed', relative(env.logCwd, file.path));
+              yield file;
+            }
+          }),
+        ),
+      { disabled, name },
+    );
+  }
+
   /**
    * Add a transform stream to the commit stream.
    *
@@ -637,7 +668,7 @@ export abstract class TasksMixin {
    */
   queueTransformStream(
     this: BaseGeneratorImpl,
-    options?: PipelineOptions<MemFsEditorFile> & ProgressOptions & { pendingFiles?: boolean; priorityToQueue?: string },
+    options?: GeneratorPipelineOptions & { priorityToQueue?: string },
     ...transforms: Array<FileTransform<MemFsEditorFile>>
   ) {
     if (isFileTransform(options)) {
@@ -645,21 +676,7 @@ export abstract class TasksMixin {
       options = {};
     }
 
-    let filter: ((file: MemFsEditorFile) => boolean) | undefined;
-    const {
-      disabled,
-      name,
-      priorityToQueue,
-      pendingFiles = true,
-      filter: passedFilter,
-      ...pipelineOptions
-    } = options ?? {};
-    if (passedFilter && pendingFiles) {
-      filter = (file: MemFsEditorFile) => isFilePending(file) && passedFilter(file);
-    } else {
-      filter = pendingFiles ? isFilePending : passedFilter;
-    }
-
+    const { priorityToQueue, ...pipelineOptions } = options!;
     const getQueueForPriority = (priority: string): string => {
       const found = this._queues[priority];
       if (!found) {
@@ -671,21 +688,8 @@ export abstract class TasksMixin {
 
     const queueName = priorityToQueue ? getQueueForPriority(priorityToQueue) : 'transform';
 
-    const { env } = this;
     this.queueTask({
-      method: async () =>
-        this.env.adapter.progress(
-          async ({ step }) =>
-            env.sharedFs.pipeline({ filter, ...pipelineOptions }, ...transforms, async function* (
-              generator: AsyncGenerator<MemFsEditorFile>,
-            ) {
-              for await (const file of generator) {
-                step('Completed', relative(env.logCwd, file.path));
-                yield file;
-              }
-            } as any),
-          { disabled, name },
-        ),
+      method: async () => this.pipeline(pipelineOptions, ...transforms),
       taskName: 'transformStream',
       queueName,
     });

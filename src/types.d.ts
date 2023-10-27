@@ -3,13 +3,17 @@ import type {
   ComposeOptions as EnvironmentComposeOptions,
   GeneratorFeatures as FeaturesApi,
   GeneratorOptions as OptionsApi,
+  ProgressOptions,
 } from '@yeoman/types';
 import type { JSONSchema7Type } from 'json-schema';
+import type { PipelineOptions } from 'mem-fs';
+import type { MemFsEditorFile } from 'mem-fs-editor';
 import type Storage from './util/storage.js';
 import type Generator from './index.js';
 
 export type StorageValue = JSONSchema7Type;
 export type StorageRecord = Record<string, StorageValue>;
+export type GeneratorPipelineOptions = PipelineOptions<MemFsEditorFile> & ProgressOptions & { pendingFiles?: boolean };
 
 /**
  * Queue options.
@@ -63,10 +67,10 @@ export type Priority = QueueOptions & {
 /**
  * Complete Task object.
  */
-export type Task = TaskOptions & {
+export type Task<TaskContext = any> = TaskOptions & {
   /** Function to be queued. */
 
-  method: (...args: any[]) => unknown | Promise<unknown>;
+  method: (this: TaskContext, ...args: any[]) => unknown | Promise<unknown>;
 
   /** Name of the task. */
   taskName: string;
