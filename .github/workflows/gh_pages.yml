@@ -29,7 +29,7 @@ jobs:
         with:
           ref: gh-pages
           path: yeoman-generator-doc
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 16
       - run: npm ci
