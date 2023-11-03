@@ -73,8 +73,6 @@ describe('deprecate()', () => {
       sinon.restore();
     });
 
-    // When deprecate.js is changed to .ts, DeprecatedObject will be defined in deprecate.ts as something like type DeprecatedObject<O> = O;
-
     it('deprecates all functions/methods in the object', () => {
       type SomeOtherObject = SimpleObject & {
         anotherFunction: (someValue: string) => string;
@@ -89,15 +87,16 @@ describe('deprecate()', () => {
         },
       };
 
+      // TODO When deprecate.js is changed to .ts, DeprecatedObject will be defined in deprecate.ts as something like type DeprecatedObject<O> = O;
       const deprecatedObject = deprecate.object('<%= name %> is deprecated', originalObject);
-      // @ts-expect-error This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
+      // @ts-expect-error  The method functionInObj() does exist on deprecatedObject. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       deprecatedObject.functionInObj(42);
       assert.ok(
         deprecatedLogSpy.calledWith('functionInObj is deprecated'),
         `last call with args: ${deprecatedLogSpy.lastCall.args[0]}`,
       );
 
-      // @ts-expect-error This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
+      // @ts-expect-error  The method anotherFunction() does exist on deprecatedObject. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       deprecatedObject.anotherFunction('something');
       assert.ok(
         deprecatedLogSpy.calledWith('anotherFunction is deprecated'),
@@ -114,7 +113,7 @@ describe('deprecate()', () => {
       };
 
       const deprecatedObject = deprecate.object('The function "<%= name %>" is deprecated', originalObject);
-      // @ts-expect-error This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
+      // @ts-expect-error  The property foo does exist on deprecatedObject. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       const fooValue = deprecatedObject.foo;
       assert.equal(fooValue, 1);
       assert.ok(deprecatedLogSpy.notCalled);
@@ -140,15 +139,15 @@ describe('deprecate()', () => {
       };
 
       const deprecatedObject = deprecate.object('The function "<%= name %>" is deprecated', originalObject);
-      // @ts-expect-error This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
+      // @ts-expect-error The getter bar does exist on the object. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       deprecatedObject.bar;
-      // @ts-expect-error This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
+      // @ts-expect-error The setter bar does exist on the object. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       deprecatedObject.bar = 7;
 
       assert.ok(deprecatedLogSpy.notCalled);
     });
 
-    it('message can be a template', () => {
+    it('deprecation message can be a template', () => {
       const originalObject: SimpleObject = {
         foo: 1,
         functionInObj(someValue: number): number {
@@ -158,7 +157,7 @@ describe('deprecate()', () => {
 
       const deprecatedObject = deprecate.object('The function "<%= name %>" is deprecated', originalObject);
 
-      // @ts-expect-error This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
+      // @ts-expect-error The method functionInObj() does exist on deprecatedObject. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       deprecatedObject.functionInObj(42);
 
       assert.ok(
@@ -180,13 +179,13 @@ describe('deprecate()', () => {
     });
 
     it('the deprecated message shows when a property is accessed', () => {
-      const originalObjectect = {
+      const originalObject = {
         foo: 1,
       };
-      deprecate.property('foo property is deprecated', originalObjectect, 'foo');
+      deprecate.property('foo property is deprecated', originalObject, 'foo');
 
       // Value is not affected; it remains the same
-      assert.equal(originalObjectect.foo, 1);
+      assert.equal(originalObject.foo, 1);
 
       assert.ok(
         deprecatedLogSpy.calledWith('foo property is deprecated'),
