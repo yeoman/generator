@@ -66,22 +66,38 @@ describe('generators.Base (actions/spawn-command)', () => {
       expect(execa.execaSync).toHaveBeenCalledWith('foo', ['bar'], {
         cwd,
         stdio: 'inherit',
+  describe('#spawnSync() calls execaSync', () => {
+    describe('only the command is required', () => {
+      describe('no args and no options are given', () => {
+        it('calls execaSync with the command, args, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
+          // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
+          testGenerator.spawnSync('foo');
+          expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
+            // @ts-expect-error We know that destinationRoot() exists for the generator.
+            cwd: testGenerator.destinationRoot(),
+            stdio: 'inherit',
+          });
+        });
       });
     });
 
-    it('pass options', function () {
-      spawn.spawnCommandSync('foo', undefined, { foo: 1 });
-      expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
-        cwd,
-        foo: 1,
+    it('passes any args and opts along to execaSync()', () => {
+      // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
+      testGenerator.spawnSync('foo', ['arg1', 2, 'the third arg'], { verbose: true });
+      expect(execa.execaSync).toHaveBeenCalledWith('foo', ['arg1', 2, 'the third arg'], {
+        // @ts-expect-error We know that destinationRoot() exists for the generator.
+        cwd: testGenerator.destinationRoot(),
         stdio: 'inherit',
+        verbose: true,
       });
     });
 
-    it('allow overriding default options', function () {
-      spawn.spawnCommandSync('foo', undefined, { stdio: 'pipe' });
+    it('can override default stdio option', () => {
+      // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
+      testGenerator.spawnSync('foo', undefined, { stdio: 'pipe' });
       expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
-        cwd,
+        // @ts-expect-error We know that destinationRoot() exists for the generator.
+        cwd: testGenerator.destinationRoot(),
         stdio: 'pipe',
       });
     });
