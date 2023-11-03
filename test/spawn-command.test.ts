@@ -31,23 +31,39 @@ describe('generators.Base (actions/spawn-command)', () => {
       expect(execa.execa).toHaveBeenCalledWith('foo', ['bar'], {
         cwd,
         stdio: 'inherit',
+  describe('#spawn() calls execa()', () => {
+    describe('only the command is required', () => {
+      describe('no args and no options are given', () => {
+        it('calls execaSync with the command, args, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
+          // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
+          testGenerator.spawn('foo');
+          expect(execa.execa).toHaveBeenCalledWith('foo', undefined, {
+            // @ts-expect-error We know that destinationRoot() exists for the generator.
+            cwd: testGenerator.destinationRoot(),
+            stdio: 'inherit',
+          });
+        });
       });
     });
 
-    it('pass options', async function () {
-      await spawn.spawnCommand('foo', undefined, { foo: 1 });
-      expect(execa.execa).toHaveBeenCalledWith('foo', undefined, {
-        cwd,
-        foo: 1,
+    it('passes any args and opts along to execa()', () => {
+      // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
+      testGenerator.spawn('foo', ['arg1', 2, 'the third arg'], { verbose: true });
+      expect(execa.execa).toHaveBeenCalledWith('foo', ['arg1', 2, 'the third arg'], {
+        // @ts-expect-error We know that destinationRoot() exists for the generator.
+        cwd: testGenerator.destinationRoot(),
         stdio: 'inherit',
+        verbose: true,
       });
     });
 
-    it('allow overriding default options', async function () {
-      await spawn.spawnCommand('foo', undefined, { stdio: 'ignore' });
+    it('can override default stdio option', () => {
+      // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
+      testGenerator.spawn('foo', undefined, { stdio: 'pipe' });
       expect(execa.execa).toHaveBeenCalledWith('foo', undefined, {
-        cwd,
-        stdio: 'ignore',
+        // @ts-expect-error We know that destinationRoot() exists for the generator.
+        cwd: testGenerator.destinationRoot(),
+        stdio: 'pipe',
       });
     });
   });
