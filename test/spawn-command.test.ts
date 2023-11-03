@@ -18,19 +18,48 @@ describe('generators.Base (actions/spawn-command)', () => {
   });
 
   describe('#spawnCommand()', () => {
-    it('provide default options', async function () {
-      await spawn.spawnCommand('foo');
-      expect(execa.execaCommand).toHaveBeenCalledWith('foo', {
-        cwd,
-        stdio: 'inherit',
+    describe('only the command is required', () => {
+      describe('no args and no options are given', () => {
+        it('calls execaCommandSync with the command, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
+          // @ts-expect-error We know that spawnCommand exists on the generator. It is added with applyMixins().
+          testGenerator.spawnCommand('foo');
+          expect(execa.execaCommand).toHaveBeenCalledWith('foo', {
+            // @ts-expect-error We know that destinationRoot() exists for the generator.
+            cwd: testGenerator.destinationRoot(),
+            stdio: 'inherit',
+          });
+        });
       });
     });
 
-    it('pass arguments', async function () {
-      await spawn.spawnCommand('foo', ['bar']);
-      expect(execa.execa).toHaveBeenCalledWith('foo', ['bar'], {
-        cwd,
-        stdio: 'inherit',
+    describe('calls spawn if args and/or opts are given', () => {
+      it('args given are passed to spawnSync', () => {
+        // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
+        const spawnSpy = spy(testGenerator, 'spawn');
+        // @ts-expect-error We know that spawnCommand exists on the generator. It is added with applyMixins().
+        testGenerator.spawnCommand('foo', ['bar']);
+        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
+        assert.ok(spawnSpy.calledWith('foo', ['bar'], undefined));
+      });
+      it('opts given are passed to spawnSync', () => {
+        // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
+        const spawnSpy = spy(testGenerator, 'spawn');
+        // @ts-expect-error We know that spawnCommand exists on the generator. It is added with applyMixins().
+        testGenerator.spawnCommand('foo', undefined, { verbose: true });
+        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
+        assert.ok(spawnSpy.calledWith('foo', undefined, { verbose: true }));
+      });
+      it('both args and opts given are passed to spawnSync', () => {
+        // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
+        const spawnSpy = spy(testGenerator, 'spawn');
+        // @ts-expect-error We know that spawnCommand exists on the generator. It is added with applyMixins().
+        testGenerator.spawnCommand('foo', ['bar'], { verbose: true });
+        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
+        assert.ok(spawnSpy.calledWith('foo', ['bar'], { verbose: true }));
+      });
+    });
+  });
+
   describe('#spawn() calls execa()', () => {
     describe('only the command is required', () => {
       describe('no args and no options are given', () => {
