@@ -53,19 +53,48 @@ describe('generators.Base (actions/spawn-command)', () => {
   });
 
   describe('#spawnCommandSync()', () => {
-    it('provide default options', function () {
-      spawn.spawnCommandSync('foo');
-      expect(execa.execaCommandSync).toHaveBeenCalledWith('foo', {
-        cwd,
-        stdio: 'inherit',
+    describe('only the command is required', () => {
+      describe('no args and no options are given', () => {
+        it('calls execaCommandSync with the command, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
+          // @ts-expect-error We know that spawnCommandSync exists on the generator. It is added with applyMixins().
+          testGenerator.spawnCommandSync('foo');
+          expect(execa.execaCommandSync).toHaveBeenCalledWith('foo', {
+            // @ts-expect-error We know that destinationRoot() exists for the generator.
+            cwd: testGenerator.destinationRoot(),
+            stdio: 'inherit',
+          });
+        });
       });
     });
 
-    it('pass arguments', function () {
-      spawn.spawnCommandSync('foo', ['bar']);
-      expect(execa.execaSync).toHaveBeenCalledWith('foo', ['bar'], {
-        cwd,
-        stdio: 'inherit',
+    describe('calls spawnSync if args and/or opts are given', () => {
+      it('args given are passed to spawnSync', () => {
+        // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
+        const spawnSyncSpy = spy(testGenerator, 'spawnSync');
+        // @ts-expect-error We know that spawnCommandSync exists on the generator. It is added with applyMixins().
+        testGenerator.spawnCommandSync('foo', ['bar']);
+        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
+        assert.ok(spawnSyncSpy.calledWith('foo', ['bar'], undefined));
+      });
+      it('opts given are passed to spawnSync', () => {
+        // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
+        const spawnSyncSpy = spy(testGenerator, 'spawnSync');
+        // @ts-expect-error We know that spawnCommandSync exists on the generator. It is added with applyMixins().
+        testGenerator.spawnCommandSync('foo', undefined, { verbose: true });
+        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
+        assert.ok(spawnSyncSpy.calledWith('foo', undefined, { verbose: true }));
+      });
+      it('both args and opts given are passed to spawnSync', () => {
+        // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
+        const spawnSyncSpy = spy(testGenerator, 'spawnSync');
+        // @ts-expect-error We know that spawnCommandSync exists on the generator. It is added with applyMixins().
+        testGenerator.spawnCommandSync('foo', ['bar'], { verbose: true });
+        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
+        assert.ok(spawnSyncSpy.calledWith('foo', ['bar'], { verbose: true }));
+      });
+    });
+  });
+
   describe('#spawnSync() calls execaSync', () => {
     describe('only the command is required', () => {
       describe('no args and no options are given', () => {
