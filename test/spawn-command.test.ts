@@ -1,16 +1,17 @@
+import assert from 'node:assert';
 import { expect, mock, restoreAllMocks, fn, importMock } from 'esmocha';
+import { spy } from 'sinon';
 
 const execa = await mock('execa');
 const { default: Generator } = await importMock('../src/index.js', { execa });
 
 describe('generators.Base (actions/spawn-command)', () => {
-  let cwd;
-  let spawn;
+  let testGenerator: Generator;
 
   beforeEach(async function () {
-    spawn = new Generator({ help: true, namespace: 'foo', resolved: 'unknown' });
-    cwd = Math.random().toString(36).slice(7);
-    spawn.destinationRoot = fn().mockReturnValue(cwd);
+    testGenerator = new Generator({ help: true, namespace: 'foo', resolved: 'unknown' });
+    // @ts-expect-error We are explicitly setting the function to a mocked function. We know .destinationRoot exists on the generator.
+    testGenerator.destinationRoot = fn().mockReturnValue('some/destination/path');
   });
 
   afterEach(() => {
