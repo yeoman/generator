@@ -75,7 +75,7 @@
     "@types/inquirer": "^9.0.4",
     "@types/minimist": "^1.2.3",
     "@types/semver": "^7.5.3",
-    "@types/sinon": "^10.0.19",
+    "@types/sinon": "^17.0.1",
     "@types/text-table": "^0.2.3",
     "@yeoman/adapter": "^1.4.0",
     "@yeoman/transform": "^1.2.0",
