@@ -5,7 +5,7 @@ import EventEmitter from 'node:events';
 import { fileURLToPath } from 'node:url';
 import * as _ from 'lodash-es';
 import semver from 'semver';
-import { readPackageUpSync } from 'read-pkg-up';
+import { readPackageUpSync } from 'read-package-up';
 import chalk from 'chalk';
 import minimist from 'minimist';
 import createDebug from 'debug';
