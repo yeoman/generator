@@ -24,7 +24,7 @@ import { SpawnCommandMixin } from './actions/spawn-command.js';
 import { GitMixin } from './actions/user.js';
 import { TasksMixin } from './actions/lifecycle.js';
 
-type Environment = BaseEnvironment<QueuedAdapter> & { resolvePackage: any };
+type Environment = BaseEnvironment<QueuedAdapter>;
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
