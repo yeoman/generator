@@ -1,7 +1,7 @@
 import fs, { readFileSync } from 'node:fs';
 import path, { dirname, resolve as pathResolve, join as pathJoin } from 'node:path';
 import os from 'node:os';
-import EventEmitter from 'node:events';
+import { EventEmitter } from 'node:events';
 import { fileURLToPath } from 'node:url';
 import * as _ from 'lodash-es';
 import semver from 'semver';
@@ -821,7 +821,14 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions, @typescript-eslint/no-unsafe-declaration-merging
-export interface BaseGenerator extends FsMixin, HelpMixin, PackageJsonMixin, SpawnCommandMixin, GitMixin, TasksMixin {}
+export interface BaseGenerator
+  extends FsMixin,
+    HelpMixin,
+    PackageJsonMixin,
+    SpawnCommandMixin,
+    GitMixin,
+    TasksMixin,
+    EventEmitter {}
 
 applyMixins(BaseGenerator, [FsMixin, HelpMixin, PackageJsonMixin, SpawnCommandMixin, GitMixin, TasksMixin]);
 
