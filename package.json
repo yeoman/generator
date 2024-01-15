@@ -79,7 +79,7 @@
     "@types/text-table": "^0.2.3",
     "@yeoman/adapter": "^1.4.0",
     "@yeoman/transform": "^1.2.0",
-    "c8": "^8.0.1",
+    "c8": "^9.1.0",
     "cpy-cli": "^5.0.0",
     "ejs": "^3.1.9",
     "esmocha": "^1.0.1",
