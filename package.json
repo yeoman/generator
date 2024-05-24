@@ -61,7 +61,7 @@
     "json-schema": "^0.4.0",
     "latest-version": "^7.0.0",
     "lodash-es": "^4.17.21",
-    "mem-fs-editor": "^11.0.0",
+    "mem-fs-editor": "^11.0.1",
     "minimist": "^1.2.8",
     "read-package-up": "^11.0.0",
     "semver": "^7.5.4",
