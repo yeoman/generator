@@ -81,10 +81,10 @@ export class FsMixin {
     this: BaseGenerator,
     ...args: OverloadParameters<MemFsEditor['copy']>
   ): OverloadReturnType<MemFsEditor['copy']> {
+    const [from, to, options = {}, ...remaining] = args;
+    options.fromBasePath = options.fromBasePath ?? this.templatePath();
     // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
-    return this.fs.copy(
-      ...applyToFirstAndSecondStringArg(this.templatePath.bind(this), this.destinationPath.bind(this), args),
-    );
+    return this.fs.copy(from, this.destinationPath(to), options, ...remaining);
   }
 
   /**
@@ -175,10 +175,10 @@ export class FsMixin {
     this: BaseGenerator,
     ...args: OverloadParameters<MemFsEditor['copy']>
   ): OverloadReturnType<MemFsEditor['copy']> {
+    const [from, to, options = {}, ...remaining] = args;
+    options.fromBasePath = options.fromBasePath ?? this.destinationPath();
     // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
-    return this.fs.copy(
-      ...applyToFirstAndSecondStringArg(this.destinationPath.bind(this), this.destinationPath.bind(this), args),
-    );
+    return this.fs.copy(from, this.destinationPath(to), options, ...remaining);
   }
 
   /**
@@ -190,10 +190,10 @@ export class FsMixin {
     this: BaseGenerator,
     ...args: OverloadParameters<MemFsEditor['move']>
   ): OverloadReturnType<MemFsEditor['move']> {
+    const [from, to, options = {}, ...remaining] = args;
+    options.fromBasePath = options.fromBasePath ?? this.destinationPath();
     // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
-    return this.fs.move(
-      ...applyToFirstAndSecondStringArg(this.destinationPath.bind(this), this.destinationPath.bind(this), args),
-    );
+    return this.fs.move(from, this.destinationPath(to), options, ...remaining);
   }
 
   /**
