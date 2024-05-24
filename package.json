@@ -88,7 +88,7 @@
     "nock": "^13.3.4",
     "prettier": "^3.0.3",
     "prettier-plugin-packagejson": "^2.4.6",
-    "sinon": "^17.0.1",
+    "sinon": "^18.0.0",
     "tui-jsdoc-template": "^1.2.2",
     "typescript": "^5.2.2",
     "xo": "^0.56.0",
