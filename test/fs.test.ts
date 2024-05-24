@@ -21,8 +21,9 @@ const ARG_COPYSETTINGS = 4;
 
 type FSOpResult = {
   name: string;
-  first: string;
+  first?: string;
   second?: string;
+  fromBasePath?: string;
   dest: string;
   returnsUndefined?: boolean;
 };
@@ -32,8 +33,8 @@ testResults = testResults.concat([
   { name: 'readTemplate', first: 'templatePath', dest: 'read' },
   {
     name: 'copyTemplate',
-    first: 'templatePath',
     second: 'destinationPath',
+    fromBasePath: 'templatePath',
     dest: 'copy',
   },
   {
@@ -52,14 +53,14 @@ testResults = testResults.concat([
   { name: 'deleteDestination', first: 'destinationPath', dest: 'delete' },
   {
     name: 'copyDestination',
-    first: 'destinationPath',
     second: 'destinationPath',
+    fromBasePath: 'destinationPath',
     dest: 'copy',
   },
   {
     name: 'moveDestination',
-    first: 'destinationPath',
     second: 'destinationPath',
+    fromBasePath: 'destinationPath',
     dest: 'move',
   },
   { name: 'existsDestination', first: 'destinationPath', dest: 'exists' },
@@ -137,21 +138,21 @@ describe('generators.Base (actions/fs)', () => {
   for (const operation of testResults) {
     const passedArg1 = randomString();
     const passedArg2 = randomString();
-    const passedArg3 = {};
+    const passedArg3: any = {};
     const passedArg4 = { foo: 'bar' };
 
     // eslint-disable-next-line @typescript-eslint/no-loop-func
     describe(`#${operation.name}`, () => {
       let returnValue: any;
       let expectedReturn: string | undefined;
-      let firstArgumentHandler: SinonStub;
+      let firstArgumentHandler: SinonStub | undefined;
       let secondArgumentHandler: SinonStub;
 
       beforeEach(async function () {
         returnValue = await this.base[operation.name](passedArg1, passedArg2, passedArg3, passedArg4);
 
         expectedReturn = operation.returnsUndefined ? undefined : returns[operation.dest];
-        firstArgumentHandler = this.base[operation.first];
+        firstArgumentHandler = operation.first ? this.base[operation.first] : undefined;
         if (operation.second !== undefined && operation.second !== null) {
           secondArgumentHandler = this.base[operation.second];
         }
@@ -166,7 +167,9 @@ describe('generators.Base (actions/fs)', () => {
       });
 
       it('handles the first parameter', () => {
-        assert.equal(firstArgumentHandler.getCall(0).args[0], passedArg1);
+        if (firstArgumentHandler) {
+          assert.equal(firstArgumentHandler.getCall(0).args[0], passedArg1);
+        }
       });
 
       it('handles the second parameter', () => {
@@ -175,8 +178,10 @@ describe('generators.Base (actions/fs)', () => {
           assert.equal(secondArgumentHandler.getCall(1).args[0], passedArg2);
         } else if (operation.second) {
           assert(secondArgumentHandler.calledOnce);
-          assert(firstArgumentHandler.calledOnce);
           assert.equal(secondArgumentHandler.getCall(0).args[0], passedArg2);
+          if (firstArgumentHandler) {
+            assert(firstArgumentHandler.calledOnce);
+          }
         }
       });
 
@@ -185,7 +190,7 @@ describe('generators.Base (actions/fs)', () => {
         assert(destCall.calledOnce);
         const call = destCall.getCall(0);
         // First argument should be the trated first arguments
-        assert.equal(call.args[0], baseReturns[operation.first]);
+        assert.equal(call.args[0], operation.first ? baseReturns[operation.first] : passedArg1);
 
         // Second argument should be the trated first arguments
         if (operation.second) {
@@ -196,6 +201,9 @@ describe('generators.Base (actions/fs)', () => {
 
         assert.equal(call.args[2], passedArg3);
         assert.equal(call.args[3].foo, passedArg4.foo);
+        if (operation.fromBasePath) {
+          assert.equal(call.args[2].fromBasePath, baseReturns[operation.fromBasePath]);
+        }
       });
     });
   }
