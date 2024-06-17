@@ -142,6 +142,26 @@ export abstract class TasksMixin {
   }
 
   /**
+   * Get task sources property descriptors.
+   */
+  getTaskSourcesPropertyDescriptors(this: BaseGeneratorImpl): any {
+    if (this.features.inheritTasks) {
+      const queueNames = Object.keys(this._queues);
+      let currentPrototype = Object.getPrototypeOf(this);
+      let propertyDescriptors = [];
+      while (currentPrototype) {
+        propertyDescriptors.unshift(...Object.entries(Object.getOwnPropertyDescriptors(currentPrototype)));
+        currentPrototype = Object.getPrototypeOf(currentPrototype);
+      }
+
+      propertyDescriptors = propertyDescriptors.filter(([name]) => queueNames.includes(name));
+      return Object.fromEntries(propertyDescriptors);
+    }
+
+    return Object.getOwnPropertyDescriptors(Object.getPrototypeOf(this));
+  }
+
+  /**
    * Extract tasks from a priority.
    *
    * @param name: The method name to schedule.
@@ -161,10 +181,10 @@ export abstract class TasksMixin {
 
     const { taskPrefix = this.features.taskPrefix ?? '' } = taskOptions;
     const propertyName = `${taskPrefix}${name}`;
-    const property = Object.getOwnPropertyDescriptor(
-      taskOptions.taskOrigin || Object.getPrototypeOf(this),
-      propertyName,
-    );
+    const property = taskOptions.taskOrigin
+      ? Object.getOwnPropertyDescriptor(taskOptions.taskOrigin, propertyName)
+      : this.getTaskSourcesPropertyDescriptors()[propertyName];
+
     if (!property) return [];
 
     const item: Task['method'] = property.value ?? property.get?.call(this);
@@ -218,7 +238,7 @@ export abstract class TasksMixin {
    * Get task names.
    */
   getTaskNames(this: BaseGeneratorImpl): string[] {
-    const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
+    const methods = Object.keys(this.getTaskSourcesPropertyDescriptors());
     let validMethods = methods.filter(method => methodIsValid(method));
     const { taskPrefix } = this.features;
 

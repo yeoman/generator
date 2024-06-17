@@ -1889,18 +1889,21 @@ describe('Base', () => {
   describe('getTaskNames', () => {
     class TestGen extends Base {
       constructor(args, options, features) {
+        const customPriorities = [{ priorityName: 'customPriority', before: 'prompting' }];
         super(
           args,
-          {
-            ...options,
-            customPriorities: [
-              {
-                priorityName: 'customPriority',
-                before: 'prompting',
+          Array.isArray(args)
+            ? options
+            : {
+                ...options,
+                customPriorities,
               },
-            ],
-          },
-          features,
+          Array.isArray(args)
+            ? {
+                ...features,
+                customPriorities,
+              }
+            : features,
         );
       }
 
@@ -1920,12 +1923,48 @@ describe('Base', () => {
       assert.deepStrictEqual(gen.getTaskNames(), ['anyMethod', 'default', 'customPriority']);
     });
 
-    it('should return any public member when tasksMatchingPriority is true', async function () {
-      const Gen = helpers.createDummyGenerator(TestGen, {
+    it('should return any public member when tasksMatchingPriority is false', async function () {
+      const Gen = helpers.createDummyGenerator(class extends TestGen {}, {
         default() {},
         customPriority() {},
+        otherMethod() {},
       });
-      assert.deepStrictEqual(new Gen({ env }).getTaskNames(), ['default', 'customPriority']);
+      assert.deepStrictEqual(new Gen({ env }).getTaskNames(), ['default', 'customPriority', 'otherMethod']);
+    });
+
+    it('should return only priorities tasks when tasksMatchingPriority is true', async function () {
+      const Gen = class extends TestGen {
+        constructor(args, options, features) {
+          super(args, options, { ...features, tasksMatchingPriority: true });
+        }
+
+        default() {}
+
+        customPriority() {}
+
+        otherMethod() {}
+      };
+
+      assert.deepStrictEqual(new Gen([], { env }).getTaskNames(), ['default', 'customPriority']);
+    });
+
+    it('should return only inherited tasks when inheritTasks is true', async function () {
+      const Gen = class extends TestGen {
+        constructor(args, options, features) {
+          super(args, options, { ...features, inheritTasks: true });
+        }
+
+        default() {}
+
+        initializing() {}
+      };
+
+      const gen = new Gen([], { env });
+      assert.deepStrictEqual(gen.getTaskNames(), ['default', 'customPriority', 'initializing']);
+      assert.strictEqual(
+        gen.getTaskSourcesPropertyDescriptors().default.value,
+        Object.getOwnPropertyDescriptor(Object.getPrototypeOf(gen), 'default')!.value,
+      );
     });
   });
 });
