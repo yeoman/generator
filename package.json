@@ -1,6 +1,6 @@
 {
   "name": "yeoman-generator",
-  "version": "7.3.0",
+  "version": "7.3.1",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
   "keywords": [
     "development",
