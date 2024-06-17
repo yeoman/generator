@@ -100,6 +100,9 @@ export type BaseFeatures = FeaturesApi & {
 
   /** Custom priorities for more fine tuned workflows. */
   customPriorities?: Priority[];
+
+  /** Inherit tasks from parent prototypes, implies tasksMatchingPriority */
+  inheritTasks?: boolean;
 };
 
 export type BaseOptions = OptionsApi & {
