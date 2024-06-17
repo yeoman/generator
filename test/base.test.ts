@@ -1966,5 +1966,40 @@ describe('Base', () => {
         Object.getOwnPropertyDescriptor(Object.getPrototypeOf(gen), 'default')!.value,
       );
     });
+
+    it('passing taskPrefix should return tasks without taskPrefix', async function () {
+      const Gen = class extends TestGen {
+        constructor(args, options, features) {
+          super(args, options, { ...features, taskPrefix: 'foo' });
+        }
+
+        foodefault() {}
+
+        foobar() {}
+      };
+
+      const gen = new Gen([], { env });
+      assert.deepStrictEqual(gen.getTaskNames(), ['default', 'bar']);
+    });
+
+    it('passing taskPrefix and inheritTasks should return tasks without taskPrefix', async function () {
+      const Parent = class extends TestGen {
+        constructor(args, options, features) {
+          super(args, options, { ...features, taskPrefix: 'foo', inheritTasks: true });
+        }
+
+        foodefault() {}
+      };
+      const Gen = class extends Parent {
+        constructor(args, options, features) {
+          super(args, options, { ...features, taskPrefix: 'foo', inheritTasks: true });
+        }
+
+        fooinitializing() {}
+      };
+
+      const gen = new Gen([], { env });
+      assert.deepStrictEqual(gen.getTaskNames(), ['default', 'initializing']);
+    });
   });
 });

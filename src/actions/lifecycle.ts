@@ -154,7 +154,10 @@ export abstract class TasksMixin {
         currentPrototype = Object.getPrototypeOf(currentPrototype);
       }
 
-      propertyDescriptors = propertyDescriptors.filter(([name]) => queueNames.includes(name));
+      const { taskPrefix = '' } = this.features;
+      propertyDescriptors = propertyDescriptors.filter(
+        ([name]) => name.startsWith(taskPrefix) && queueNames.includes(name.slice(taskPrefix.length)),
+      );
       return Object.fromEntries(propertyDescriptors);
     }
 
