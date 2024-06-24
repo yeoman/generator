@@ -273,6 +273,8 @@ export abstract class TasksMixin {
       throw new Error('This Generator is empty. Add at least one method for it to run.');
     }
 
+    this.emit('before:queueOwnTasks');
+
     if (this._prompts.length > 0) {
       this.queueTask({
         method: async () => (this as any).prompt(this._prompts, this.config),
