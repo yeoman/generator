@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import { esmocha } from 'esmocha';
+import { afterEach, before, beforeEach, describe, esmocha, it } from 'esmocha';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import { type SinonStub, stub as sinonStub } from 'sinon';
 import type { Data as TemplateData } from 'ejs';

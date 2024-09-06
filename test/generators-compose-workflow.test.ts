@@ -1,5 +1,6 @@
 import os from 'node:os';
 import path from 'node:path';
+import { beforeEach, describe, it } from 'esmocha';
 import { mkdirSync } from 'node:fs';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import { assert as sinonAssert, spy as sinonSpy } from 'sinon';

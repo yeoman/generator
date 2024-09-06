@@ -2,6 +2,7 @@ import os from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert';
 import { TestAdapter } from '@yeoman/adapter/testing';
+import { after, before, describe, it } from 'esmocha';
 import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
 import helpers from 'yeoman-test';

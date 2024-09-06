@@ -1,6 +1,7 @@
 import EventEmitter from 'node:events';
 import path from 'node:path';
 import os from 'node:os';
+import { beforeEach, describe, it } from 'esmocha';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';

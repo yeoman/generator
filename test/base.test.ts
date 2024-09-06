@@ -6,7 +6,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
-import { esmocha, expect } from 'esmocha';
+import { afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import { extend } from 'lodash-es';
 import { assert as sinonAssert, fake as sinonFake, spy as sinonSpy } from 'sinon';
 import { passthrough } from '@yeoman/transform';

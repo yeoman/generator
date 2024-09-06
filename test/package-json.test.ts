@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { esmocha, expect } from 'esmocha';
+import { beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import semver from 'semver';
 import helpers from 'yeoman-test';
 import type { BaseEnvironment } from '@yeoman/types';
