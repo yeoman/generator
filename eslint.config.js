@@ -9,5 +9,6 @@ export default config(...configs, {
     'unicorn/prefer-event-target': 'off',
     'unicorn/no-object-as-default-parameter': 'off',
     '@typescript-eslint/consistent-type-imports': 'error',
+    'prefer-arrow-callback': 'error',
   },
 });

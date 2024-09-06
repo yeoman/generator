@@ -10,7 +10,7 @@ describe('Base#package-json', function () {
   let generator: Generator;
   let env: BaseEnvironment;
 
-  beforeEach(async function () {
+  beforeEach(async () => {
     const context = helpers.create(Generator);
     await context.build();
     // eslint-disable-next-line prefer-destructuring

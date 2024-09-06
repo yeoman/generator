@@ -8,7 +8,7 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
 
   let testGenerator: Generator;
 
-  beforeEach(async function () {
+  beforeEach(async () => {
     testGenerator = new Generator({ help: true, namespace: 'foo', resolved: 'unknown' });
     // @ts-expect-error We are explicitly setting the function to a mocked function. We know .destinationRoot exists on the generator.
     testGenerator.destinationRoot = fn().mockReturnValue('some/destination/path');
