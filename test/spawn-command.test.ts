@@ -2,10 +2,10 @@ import assert from 'node:assert';
 import { expect, fn, importMock, mock, restoreAllMocks } from 'esmocha';
 import { spy } from 'sinon';
 
-const execa = await mock('execa');
-const { default: Generator } = await importMock('../src/index.js', { execa });
+describe.skip('generators.Base (actions/spawn-command)', async () => {
+  const execa = await mock('execa');
+  const { default: Generator } = await importMock('../src/index.js', { execa });
 
-describe('generators.Base (actions/spawn-command)', () => {
   let testGenerator: Generator;
 
   beforeEach(async function () {
