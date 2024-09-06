@@ -12,106 +12,109 @@ const NAMESPACE = 'somenamespace';
 const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAdapter() });
 
 describe('Generators module', () => {
-  beforeEach(function () {
-    this.env = createEnv();
+  let generator: Generator;
+  let env: Environment;
+
+  beforeEach(() => {
+    env = createEnv();
   });
 
   describe('Base', () => {
-    beforeEach(function () {
+    beforeEach(() => {
       const Generator = class extends Base {};
       Generator.prototype.exec = function () {};
-      this.generator = new Generator({
-        env: this.env,
+      generator = new Generator({
+        env: env,
         namespace: NAMESPACE,
         resolved: 'test',
       });
     });
 
-    it('should expose yoGeneratorVersion', function () {
+    it('should expose yoGeneratorVersion', () => {
       assert(
-        semver.valid(this.generator.yoGeneratorVersion),
-        `Not valid version ${this.generator.yoGeneratorVersion as string}`,
+        semver.valid(generator.yoGeneratorVersion),
+        `Not valid version ${generator.yoGeneratorVersion as string}`,
       );
     });
 
-    it('is an EventEmitter', function (done) {
-      assert.ok(this.generator instanceof EventEmitter);
-      assert.strictEqual(typeof this.generator.on, 'function');
-      assert.strictEqual(typeof this.generator.emit, 'function');
-      this.generator.on('yay-o-man', done);
-      this.generator.emit('yay-o-man');
+    it('is an EventEmitter', (done) => {
+      assert.ok(generator instanceof EventEmitter);
+      assert.strictEqual(typeof generator.on, 'function');
+      assert.strictEqual(typeof generator.emit, 'function');
+      generator.on('yay-o-man', done);
+      generator.emit('yay-o-man');
     });
 
-    it('emits done event', function (done) {
-      this.env.on(`done$${NAMESPACE}#exec`, data => {
-        assert(data.generator === this.generator);
+    it('emits done event', (done) => {
+      env.on(`done$${NAMESPACE}#exec`, data => {
+        assert(data.generator === generator);
         assert(`done$${NAMESPACE}#exec`.includes(data.namespace));
         assert(data.namespace === NAMESPACE);
         assert(data.priorityName === 'default');
         assert(data.queueName === 'default');
         done();
       });
-      this.generator.run();
+      generator.run();
     });
   });
 
-  it('without localConfigOnly option', function () {
-    this.generator = new Base({
-      env: this.env,
+  it('without localConfigOnly option', () => {
+    generator = new Base({
+      env: env,
       resolved: 'test',
     });
-    assert.equal(path.join(os.homedir(), '.yo-rc-global.json'), this.generator._globalConfig.path);
+    assert.equal(path.join(os.homedir(), '.yo-rc-global.json'), generator._globalConfig.path);
   });
 
-  it('with localConfigOnly option', function () {
-    this.generator = new Base({
-      env: this.env,
+  it('with localConfigOnly option', () => {
+    generator = new Base({
+      env: env,
       resolved: 'test',
       localConfigOnly: true,
     });
-    assert.equal(path.join(this.env.cwd, '.yo-rc-global.json'), this.generator._globalConfig.path);
+    assert.equal(path.join(env.cwd, '.yo-rc-global.json'), generator._globalConfig.path);
   });
 
   describe('#run', () => {
-    beforeEach(function () {
+    beforeEach(() => {
       const Generator = class extends Base {};
       Generator.prototype.throwing = () => {
         throw new Error('not thrown');
       };
 
-      this.generator = new Generator({
-        env: this.env,
+      generator = new Generator({
+        env: env,
         resolved: 'test',
       });
     });
 
-    it('forwards error to environment', function (done) {
-      this.env.on('error', () => {
+    it('forwards error to environment', (done) => {
+      env.on('error', () => {
         done();
       });
-      this.generator.run();
+      generator.run();
     });
   });
 
   describe('#createStorage', () => {
-    beforeEach(function () {
-      this.generator = new Base({
-        env: this.env,
+    beforeEach(() => {
+      generator = new Base({
+        env: env,
         resolved: 'test',
         localConfigOnly: true,
       });
     });
 
-    it('with path and name', function () {
-      const global = path.join(this.env.cwd, '.yo-rc-global.json');
-      const customStorage = this.generator.createStorage(global, '*');
+    it('with path and name', () => {
+      const global = path.join(env.cwd, '.yo-rc-global.json');
+      const customStorage = generator.createStorage(global, '*');
       assert.equal(global, customStorage.path);
       assert.equal('*', customStorage.name);
     });
 
-    it('with path', function () {
-      const global = path.join(this.env.cwd, '.yo-rc-global.json');
-      const customStorage = this.generator.createStorage(global);
+    it('with path', () => {
+      const global = path.join(env.cwd, '.yo-rc-global.json');
+      const customStorage = generator.createStorage(global);
       assert.equal(global, customStorage.path);
       assert.equal(undefined, customStorage.name);
     });
