@@ -1,9 +1,8 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import { esmocha } from 'esmocha';
-// eslint-disable-next-line n/file-extension-in-import
+import { afterEach, before, beforeEach, describe, esmocha, it } from 'esmocha';
 import { TestAdapter } from '@yeoman/adapter/testing';
-import { stub as sinonStub, type SinonStub } from 'sinon';
+import { type SinonStub, stub as sinonStub } from 'sinon';
 import type { Data as TemplateData } from 'ejs';
 import Environment from 'yeoman-environment';
 import BaseGenerator from '../src/generator.js';
@@ -29,7 +28,8 @@ type FSOpResult = {
 };
 
 let testResults: FSOpResult[] = [];
-testResults = testResults.concat([
+testResults = [
+  ...testResults,
   { name: 'readTemplate', first: 'templatePath', dest: 'read' },
   {
     name: 'copyTemplate',
@@ -77,7 +77,7 @@ testResults = testResults.concat([
     second: 'destinationPath',
     dest: 'copyTplAsync',
   },
-]);
+];
 
 type BaseGenPaths = Record<string, string>;
 
@@ -141,7 +141,6 @@ describe('generators.Base (actions/fs)', () => {
     const passedArg3: any = {};
     const passedArg4 = { foo: 'bar' };
 
-    // eslint-disable-next-line @typescript-eslint/no-loop-func
     describe(`#${operation.name}`, () => {
       let returnValue: any;
       let expectedReturn: string | undefined;

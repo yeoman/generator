@@ -44,7 +44,7 @@
     "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path$DOC_FOLDER",
     "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
     "prepare": "npm run build",
-    "pretest": "xo",
+    "pretest": "eslint .",
     "test": "c8 esmocha --forbid-only"
   },
   "config": {
@@ -73,11 +73,13 @@
     "@types/debug": "^4.1.9",
     "@types/ejs": "^3.1.4",
     "@types/inquirer": "^9.0.4",
+    "@types/json-schema": "^7.0.15",
     "@types/minimist": "^1.2.3",
     "@types/semver": "^7.5.3",
     "@types/sinon": "^17.0.1",
     "@types/text-table": "^0.2.3",
     "@yeoman/adapter": "^1.4.0",
+    "@yeoman/eslint": "^0.2.0",
     "@yeoman/transform": "^1.2.0",
     "c8": "^8.0.1",
     "cpy-cli": "^5.0.0",
@@ -91,20 +93,13 @@
     "sinon": "^18.0.0",
     "tui-jsdoc-template": "^1.2.2",
     "typescript": "^5.2.2",
-    "xo": "^0.56.0",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^4.0.0",
     "yeoman-test": "^8.1.0"
   },
   "peerDependencies": {
     "@yeoman/types": "^1.1.1",
-    "mem-fs": "^4.0.0",
-    "yeoman-environment": "^4.0.0"
-  },
-  "peerDependenciesMeta": {
-    "yeoman-environment": {
-      "optional": true
-    }
+    "mem-fs": "^4.1.0"
   },
   "engines": {
     "node": "^18.17.0 || >=20.5.0"

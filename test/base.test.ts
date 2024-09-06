@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import fs, { mkdirSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path, { dirname } from 'node:path';
@@ -5,14 +6,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
-import { esmocha, expect } from 'esmocha';
+import { afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import { extend } from 'lodash-es';
-import { spy as sinonSpy, fake as sinonFake, assert as sinonAssert } from 'sinon';
+import { assert as sinonAssert, fake as sinonFake, spy as sinonSpy } from 'sinon';
 import { passthrough } from '@yeoman/transform';
 import assert from 'yeoman-assert';
 import Environment from 'yeoman-environment';
 import helpers from 'yeoman-test';
-// eslint-disable-next-line n/file-extension-in-import
 import { TestAdapter } from '@yeoman/adapter/testing';
 import Base from './utils.js';
 
@@ -1115,14 +1115,14 @@ describe('Base', () => {
         this.queueTransformStream(
           passthrough(file => {
             if (file.path === filepath) {
-              file.contents = Buffer.from(file.contents.toString() + ' a');
+              file.contents = Buffer.from(`${file.contents.toString()} a`);
             }
           }),
         )
           .queueTransformStream(
             passthrough(file => {
               if (file.path === filepath) {
-                file.contents = Buffer.from(file.contents.toString() + ' b');
+                file.contents = Buffer.from(`${file.contents.toString()} b`);
               }
             }),
           )
@@ -1130,7 +1130,7 @@ describe('Base', () => {
             { priorityToQueue: 'prompting' },
             passthrough(file => {
               if (file.path === filepath) {
-                file.contents = Buffer.from(file.contents.toString() + ' prompting');
+                file.contents = Buffer.from(`${file.contents.toString()} prompting`);
               }
             }),
           )
@@ -1161,7 +1161,7 @@ describe('Base', () => {
           }),
           passthrough(file => {
             if (file.path === filepath) {
-              file.contents = Buffer.from(file.contents.toString() + 'b');
+              file.contents = Buffer.from(`${file.contents.toString()}b`);
             }
           }),
         );
@@ -1244,7 +1244,6 @@ describe('Base', () => {
         isFirstEndEvent = false;
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       generatorOnce.run();
     });
 
@@ -1270,7 +1269,6 @@ describe('Base', () => {
         'skip-install': true,
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       generatorEnd.run();
     });
   });

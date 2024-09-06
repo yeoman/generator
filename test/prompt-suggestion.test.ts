@@ -2,7 +2,7 @@ import path from 'node:path';
 import assert from 'node:assert';
 import os from 'node:os';
 import { rmSync } from 'node:fs';
-// eslint-disable-next-line n/file-extension-in-import
+import { afterEach, beforeEach, describe, it } from 'esmocha';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import inquirer from 'inquirer';
 import Environment from 'yeoman-environment';
@@ -45,7 +45,7 @@ describe('PromptSuggestion', () => {
         default: 'bar',
         store: true,
       };
-      const result = prefillQuestions(this.store, question)[0];
+      const [result] = prefillQuestions(this.store, question);
       assert.equal(result.default, 'foo');
     });
 
@@ -57,7 +57,7 @@ describe('PromptSuggestion', () => {
           store: true,
         },
       ];
-      const result = prefillQuestions(this.store, question)[0];
+      const [result] = prefillQuestions(this.store, question);
       assert.equal(result.default, 'foo');
     });
 
@@ -67,7 +67,7 @@ describe('PromptSuggestion', () => {
         default: 'bar',
         store: false,
       };
-      const result = prefillQuestions(this.store, question)[0];
+      const [result] = prefillQuestions(this.store, question);
       assert.equal(result.default, 'bar');
     });
 
@@ -77,7 +77,7 @@ describe('PromptSuggestion', () => {
         default: 'bar',
         store: true,
       };
-      const result = prefillQuestions(this.store, question)[0];
+      const [result] = prefillQuestions(this.store, question);
       assert.equal(result.default, 'foo');
     });
 
@@ -89,7 +89,7 @@ describe('PromptSuggestion', () => {
         store: true,
         choices: [new inquirer.Separator('spacer')],
       };
-      const result = prefillQuestions(this.store, question)[0];
+      const [result] = prefillQuestions(this.store, question);
       assert.ok(result.choices[0] instanceof inquirer.Separator);
     });
 
@@ -122,7 +122,7 @@ describe('PromptSuggestion', () => {
             },
           ],
         };
-        const result = prefillQuestions(this.store, question)[0];
+        const [result] = prefillQuestions(this.store, question);
 
         for (const choice of result.choices) {
           assert.equal(choice.checked, false);
@@ -139,7 +139,7 @@ describe('PromptSuggestion', () => {
           store: true,
           choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
-        const result = prefillQuestions(this.store, question)[0];
+        const [result] = prefillQuestions(this.store, question);
         assert.deepEqual(result.default, ['foo']);
       });
 
@@ -172,7 +172,7 @@ describe('PromptSuggestion', () => {
               },
             ],
           };
-          const result = prefillQuestions(this.store, question)[0];
+          const [result] = prefillQuestions(this.store, question);
 
           for (const choice of result.choices) {
             assert.equal(choice.checked, false);
@@ -189,7 +189,7 @@ describe('PromptSuggestion', () => {
             store: true,
             choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
           };
-          const result = prefillQuestions(this.store, question)[0];
+          const [result] = prefillQuestions(this.store, question);
           assert.deepEqual(result.default, ['foo', 'bar']);
         });
       });
@@ -224,7 +224,7 @@ describe('PromptSuggestion', () => {
             },
           ],
         };
-        const result = prefillQuestions(this.store, question)[0];
+        const [result] = prefillQuestions(this.store, question);
 
         assert.deepEqual(result.default, ['bar']);
       });
@@ -237,7 +237,7 @@ describe('PromptSuggestion', () => {
           store: true,
           choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
-        const result = prefillQuestions(this.store, question)[0];
+        const [result] = prefillQuestions(this.store, question);
         assert.deepEqual(result.default, ['bar']);
       });
 
@@ -270,7 +270,7 @@ describe('PromptSuggestion', () => {
               },
             ],
           };
-          const result = prefillQuestions(this.store, question)[0];
+          const [result] = prefillQuestions(this.store, question);
 
           assert.deepEqual(result.default, ['bar']);
         });
@@ -283,7 +283,7 @@ describe('PromptSuggestion', () => {
             store: true,
             choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
           };
-          const result = prefillQuestions(this.store, question)[0];
+          const [result] = prefillQuestions(this.store, question);
           assert.deepEqual(result.default, ['bar']);
         });
       });
@@ -318,7 +318,7 @@ describe('PromptSuggestion', () => {
             },
           ],
         };
-        const result = prefillQuestions(this.store, question)[0];
+        const [result] = prefillQuestions(this.store, question);
         assert.equal(result.default, 2);
       });
 
@@ -330,7 +330,7 @@ describe('PromptSuggestion', () => {
           store: true,
           choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
         };
-        const result = prefillQuestions(this.store, question)[0];
+        const [result] = prefillQuestions(this.store, question);
         assert.equal(result.default, 2);
       });
     });

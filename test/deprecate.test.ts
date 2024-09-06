@@ -1,5 +1,6 @@
-/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import assert from 'node:assert';
+import { afterEach, beforeEach, describe, it } from 'esmocha';
 import chalk from 'chalk';
 import sinon, { type SinonSpy } from 'sinon';
 import deprecate from '../src/util/deprecate.js';
@@ -58,7 +59,7 @@ describe('deprecate()', () => {
   describe('.log', () => {
     it('logs the message in yellow, starting with "(!) "', () => {
       deprecate.log('this is the message');
-      assert.ok(fakeConsoleLog.calledWith(chalk.yellow('(!) ') + 'this is the message'));
+      assert.ok(fakeConsoleLog.calledWith(`${chalk.yellow('(!) ')}this is the message`));
     });
   });
 

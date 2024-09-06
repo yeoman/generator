@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { esmocha, expect } from 'esmocha';
+import { beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import semver from 'semver';
 import helpers from 'yeoman-test';
 import type { BaseEnvironment } from '@yeoman/types';
@@ -13,7 +13,9 @@ describe('Base#package-json', function () {
   beforeEach(async function () {
     const context = helpers.create(Generator);
     await context.build();
+    // eslint-disable-next-line prefer-destructuring
     generator = context.generator;
+    // eslint-disable-next-line prefer-destructuring
     env = context.env;
     generator.exec = esmocha.fn();
   });

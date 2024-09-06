@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /**
  * https://github.com/microsoft/TypeScript/issues/14107#issuecomment-1146738780
  */

@@ -1,9 +1,9 @@
 import os from 'node:os';
 import path from 'node:path';
+import { beforeEach, describe, it } from 'esmocha';
 import { mkdirSync } from 'node:fs';
-// eslint-disable-next-line n/file-extension-in-import
 import { TestAdapter } from '@yeoman/adapter/testing';
-import { spy as sinonSpy, assert as sinonAssert } from 'sinon';
+import { assert as sinonAssert, spy as sinonSpy } from 'sinon';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
 import helpers from 'yeoman-test';

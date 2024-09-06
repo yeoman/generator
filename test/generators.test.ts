@@ -1,7 +1,7 @@
 import EventEmitter from 'node:events';
 import path from 'node:path';
 import os from 'node:os';
-// eslint-disable-next-line n/file-extension-in-import
+import { beforeEach, describe, it } from 'esmocha';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
@@ -120,7 +120,6 @@ describe('Generators module', () => {
   it('running standalone', done => {
     const Generator = class extends Base {};
     try {
-      // eslint-disable-next-line no-new
       new Generator();
     } catch (error) {
       assert.equal(error.message, 'This generator requires an environment.');
@@ -131,7 +130,6 @@ describe('Generators module', () => {
   it('running with an empty env', done => {
     const Generator = class extends Base {};
     try {
-      // eslint-disable-next-line no-new
       new Generator({ env: {} });
     } catch (error) {
       assert.equal(error.message, "Current environment doesn't provides some necessary feature this generator needs.");
