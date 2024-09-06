@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { cloneDeep, defaults as setDefaults, merge, get, set } from 'lodash-es';
+import { cloneDeep, get, merge, set, defaults as setDefaults } from 'lodash-es';
 import sortKeys from 'sort-keys';
 import type { MemFsEditor } from 'mem-fs-editor';
 import type { StorageRecord, StorageValue } from '../types.js';
@@ -282,7 +282,7 @@ class Storage {
    */
   delete(key: string) {
     const store = this._store;
-    // eslint-disable-next-line  @typescript-eslint/no-dynamic-delete
+
     delete store[key];
     this._persist(store);
   }

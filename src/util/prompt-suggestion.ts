@@ -3,7 +3,6 @@ import type { JSONSchema7Object } from 'json-schema';
 import type { PromptAnswers, PromptQuestion } from '../questions.js';
 import type Storage from './storage.js';
 
-// eslint-disable-next-line @typescript-eslint/promise-function-async
 const getChoices = <A extends PromptAnswers = PromptAnswers>(question: PromptQuestion<A>) => {
   if (question.type === 'list') {
     return question.choices;
@@ -21,7 +20,7 @@ const getChoices = <A extends PromptAnswers = PromptAnswers>(question: PromptQue
     return question.choices;
   }
 
-  return undefined;
+  return;
 };
 
 /**

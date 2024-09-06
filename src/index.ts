@@ -38,7 +38,7 @@ export default class Generator<
     if (!this._simpleGit) {
       this._simpleGit = simpleGit({ baseDir: this.destinationPath() }).env({
         ...process.env,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+
         LANG: 'en',
       });
       this.on(DESTINATION_ROOT_CHANGE_EVENT, () => {

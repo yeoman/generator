@@ -33,7 +33,7 @@ export class PackageJsonMixin {
     return Object.fromEntries(
       await Promise.all(
         // Make sure to convert empty string too
-        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+
         Object.entries(depMap).map(async ([pkg, version]) => [pkg, version || (await latestVersion(pkg))]),
       ),
     );

@@ -1,13 +1,13 @@
 import type Buffer from 'node:buffer';
 import {
+  type ExecaChildProcess,
+  type Options as ExecaOptions,
+  type ExecaSyncReturnValue,
+  type SyncOptions,
   execa,
-  execaSync,
   execaCommand,
   execaCommandSync,
-  type Options as ExecaOptions,
-  type ExecaChildProcess,
-  type SyncOptions,
-  type ExecaSyncReturnValue,
+  execaSync,
 } from 'execa';
 import type BaseGenerator from '../generator.js';
 

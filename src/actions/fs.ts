@@ -83,7 +83,7 @@ export class FsMixin {
   ): OverloadReturnType<MemFsEditor['copy']> {
     const [from, to, options = {}, ...remaining] = args;
     options.fromBasePath = options.fromBasePath ?? this.templatePath();
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+
     return this.fs.copy(from, this.destinationPath(to), options, ...remaining);
   }
 
@@ -120,7 +120,6 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.readJSON(this.destinationPath(filepath)).
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   readDestinationJSON(
     this: BaseGenerator,
     ...args: OverloadParameters<MemFsEditor['readJSON']>
@@ -145,7 +144,6 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.writeJSON(this.destinationPath(filepath)).
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   writeDestinationJSON(
     this: BaseGenerator,
     ...args: OverloadParameters<MemFsEditor['writeJSON']>
@@ -162,7 +160,6 @@ export class FsMixin {
     this: BaseGenerator,
     ...args: OverloadParameters<MemFsEditor['delete']>
   ): OverloadReturnType<MemFsEditor['delete']> {
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
     return this.fs.delete(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -177,7 +174,7 @@ export class FsMixin {
   ): OverloadReturnType<MemFsEditor['copy']> {
     const [from, to, options = {}, ...remaining] = args;
     options.fromBasePath = options.fromBasePath ?? this.destinationPath();
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+
     return this.fs.copy(from, this.destinationPath(to), options, ...remaining);
   }
 
@@ -192,7 +189,7 @@ export class FsMixin {
   ): OverloadReturnType<MemFsEditor['move']> {
     const [from, to, options = {}, ...remaining] = args;
     options.fromBasePath = options.fromBasePath ?? this.destinationPath();
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+
     return this.fs.move(from, this.destinationPath(to), options, ...remaining);
   }
 
@@ -217,7 +214,6 @@ export class FsMixin {
    * @param templateOptions - ejs options
    * @param copyOptions - mem-fs-editor copy options
    */
-
   renderTemplate<D extends TemplateData = TemplateData>(
     this: BaseGenerator,
     source: string | string[] = '',
@@ -249,7 +245,6 @@ export class FsMixin {
    * @param templateOptions - ejs options
    * @param copyOptions - mem-fs-editor copy options
    */
-
   async renderTemplateAsync<D extends TemplateData = TemplateData>(
     this: BaseGenerator,
     source: string | string[] = '',
@@ -328,7 +323,7 @@ export class FsMixin {
           );
         }
 
-        return undefined;
+        return;
       }),
     );
   }

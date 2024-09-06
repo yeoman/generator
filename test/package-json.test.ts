@@ -13,7 +13,9 @@ describe('Base#package-json', function () {
   beforeEach(async function () {
     const context = helpers.create(Generator);
     await context.build();
+    // eslint-disable-next-line prefer-destructuring
     generator = context.generator;
+    // eslint-disable-next-line prefer-destructuring
     env = context.env;
     generator.exec = esmocha.fn();
   });

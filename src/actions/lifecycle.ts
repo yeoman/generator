@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/member-ordering */
 import { dirname, isAbsolute, resolve as pathResolve, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { Duplex } from 'node:stream';
 import { stat } from 'node:fs/promises';
 import createDebug from 'debug';
-import type { BaseGenerator, GetGeneratorOptions, ComposeOptions as EnvironmentComposeOptions } from '@yeoman/types';
+import type { BaseGenerator, ComposeOptions as EnvironmentComposeOptions, GetGeneratorOptions } from '@yeoman/types';
 import { toNamespace } from '@yeoman/namespace';
 import { type FileTransform, isFileTransform } from 'mem-fs';
 import { type MemFsEditorFile } from 'mem-fs-editor';
-// eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
-import type { Task, TaskOptions, BaseOptions, Priority, ComposeOptions, GeneratorPipelineOptions } from '../types.js';
+import type { BaseOptions, ComposeOptions, GeneratorPipelineOptions, Priority, Task, TaskOptions } from '../types.js';
 import type Generator from '../index.js';
 import type BaseGeneratorImpl from '../generator.js';
 
@@ -245,13 +243,9 @@ export abstract class TasksMixin {
     let validMethods = methods.filter(method => methodIsValid(method));
     const { taskPrefix } = this.features;
 
-    if (taskPrefix) {
-      validMethods = validMethods
-        .filter(method => method.startsWith(taskPrefix))
-        .map(method => method.slice(taskPrefix.length));
-    } else {
-      validMethods = validMethods.filter(method => !method.startsWith('#'));
-    }
+    validMethods = taskPrefix
+      ? validMethods.filter(method => method.startsWith(taskPrefix)).map(method => method.slice(taskPrefix.length))
+      : validMethods.filter(method => !method.startsWith('#'));
 
     if (this.features.tasksMatchingPriority) {
       const queueNames = Object.keys(this._queues);
@@ -485,7 +479,7 @@ export abstract class TasksMixin {
     generator: string,
     options?: ComposeOptions<G>,
   ): Promise<G[]>;
-  // eslint-disable-next-line max-params
+
   async composeWith<G extends BaseGenerator = BaseGenerator>(
     this: BaseGeneratorImpl,
     generator: string | string[] | { Generator: any; path: string },
@@ -580,10 +574,12 @@ export abstract class TasksMixin {
       let generatorFile;
       try {
         generatorFile = await this.resolveGeneratorPath(generator.path ?? generator.Generator.resolved);
-      } catch {}
+      } catch {
+        // Ignore error
+      }
 
       const resolved = generatorFile ?? generator.path ?? generator.Generator.resolved;
-      // eslint-disable-next-line @typescript-eslint/naming-convention
+
       return this.composeLocallyWithOptions<G>({ Generator: generator.Generator, resolved }, composeOptions);
     }
 
@@ -596,7 +592,9 @@ export abstract class TasksMixin {
     if (!namespace || forceResolve) {
       try {
         generator = await this.resolveGeneratorPath(generator);
-      } catch {}
+      } catch {
+        // Ignore error
+      }
     }
 
     return this.env.composeWith<G>(generator, composeOptions);
@@ -636,7 +634,9 @@ export abstract class TasksMixin {
       if (status.isFile()) {
         generatorResolvedFile = generatorFile;
       }
-    } catch {}
+    } catch {
+      // Ignore error
+    }
 
     if (!generatorResolvedFile) {
       // Resolve the generator file.

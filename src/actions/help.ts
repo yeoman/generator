@@ -28,7 +28,7 @@ export class HelpMixin {
     const filepath = path.resolve(this.sourceRoot(), '../USAGE');
     const exists = fs.existsSync(filepath);
 
-    let out = ['Usage:', '  ' + this.usage(), ''];
+    let out = ['Usage:', `  ${this.usage()}`, ''];
 
     // Build options
     if (Object.keys(this._options).length > 0) {
@@ -60,14 +60,14 @@ export class HelpMixin {
     let args = '';
 
     if (this._arguments.length > 0) {
-      args = this._arguments.map(arg => formatArg(arg)).join(' ') + ' ';
+      args = `${this._arguments.map(arg => formatArg(arg)).join(' ')} `;
     }
 
     name = name.replace(/^yeoman:/, '');
     let out = `yo ${name} ${args}${options}`;
 
     if (this.description) {
-      out += '\n\n' + this.description;
+      out += `\n\n${this.description}`;
     }
 
     return out;
@@ -78,7 +78,6 @@ export class HelpMixin {
    *
    * @param description
    */
-
   desc(this: BaseGenerator, description: string) {
     this.description = description || '';
     return this;

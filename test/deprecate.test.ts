@@ -1,4 +1,4 @@
-/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import assert from 'node:assert';
 import chalk from 'chalk';
 import sinon, { type SinonSpy } from 'sinon';
@@ -58,7 +58,7 @@ describe('deprecate()', () => {
   describe('.log', () => {
     it('logs the message in yellow, starting with "(!) "', () => {
       deprecate.log('this is the message');
-      assert.ok(fakeConsoleLog.calledWith(chalk.yellow('(!) ') + 'this is the message'));
+      assert.ok(fakeConsoleLog.calledWith(`${chalk.yellow('(!) ')}this is the message`));
     });
   });
 

@@ -1,5 +1,5 @@
 import fs, { readFileSync } from 'node:fs';
-import path, { dirname, resolve as pathResolve, join as pathJoin } from 'node:path';
+import path, { dirname, join as pathJoin, resolve as pathResolve } from 'node:path';
 import os from 'node:os';
 import { EventEmitter } from 'node:events';
 import { fileURLToPath } from 'node:url';
@@ -12,7 +12,7 @@ import createDebug from 'debug';
 import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import type { BaseEnvironment, BaseGenerator as GeneratorApi, Logger, QueuedAdapter } from '@yeoman/types';
-import type { ArgumentSpec, BaseOptions, BaseFeatures, CliOptionSpec, Priority } from './types.js';
+import type { ArgumentSpec, BaseFeatures, BaseOptions, CliOptionSpec, Priority } from './types.js';
 import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
 import Storage, { type StorageOptions } from './util/storage.js';
 import { prefillQuestions, storeAnswers } from './util/prompt-suggestion.js';
@@ -29,16 +29,14 @@ type Environment = BaseEnvironment<QueuedAdapter>;
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
-// eslint-disable-next-line @typescript-eslint/naming-convention
+
 const ENV_VER_WITH_VER_API = '2.9.0';
 
 const packageJson = JSON.parse(readFileSync(pathJoin(_dirname, '../package.json'), 'utf8'));
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFeatures = BaseFeatures>
-  // eslint-disable-next-line unicorn/prefer-event-target
   extends EventEmitter
   implements Omit<GeneratorApi<O, F>, 'features'>
 {
@@ -117,7 +115,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    */
   constructor(options: O, features?: F);
   constructor(args: string[], options: O, features?: F);
-  // eslint-disable-next-line complexity
+
   constructor(args: string[] | O, options: O | F, features?: F) {
     super();
 
@@ -129,7 +127,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     // Load parameters
     this._args = actualArgs;
     this.options = generatorOptions as any;
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+
     this.features = actualFeatures ?? ({} as F);
 
     // Initialize properties
@@ -310,7 +308,6 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
       return true;
     }
 
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     if (this.options.ignoreVersionCheck || warning) {
       console.warn(
         `Current ${packageDependency} is not compatible with current generator, min required: ${versionToCheck} current version: ${runningVersion}. Some features may be missing, try updating reinstalling 'yo'.`,
@@ -467,7 +464,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     const spec: CliOptionSpec =
       typeof name === 'object'
         ? name
-        : { hide: false, type: Boolean, description: 'Description for ' + name, ...config, name };
+        : { hide: false, type: Boolean, description: `Description for ${name}`, ...config, name };
     const specName = spec.name;
 
     // Check whether boolean option is invalid (starts with no-)
@@ -478,7 +475,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
         [
           `Option name ${chalk.yellow(specName)} cannot start with ${chalk.red('no-')}\n`,
           `Option name prefixed by ${chalk.yellow('--no')} are parsed as implicit`,
-          ` boolean. To use ${chalk.yellow('--' + specName)} as an option, use\n`,
+          ` boolean. To use ${chalk.yellow(`--${specName}`)} as an option, use\n`,
           chalk.cyan(`  this.option('${simpleName}', {type: Boolean})`),
         ].join(''),
       );
@@ -573,7 +570,6 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     for (const [name, option] of Object.entries(parsedOptions)) {
       // Manually set value as undefined if it should be.
       if (option === EMPTY) {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete parsedOptions[name];
       } else if (this._options[name] && option !== undefined) {
         parsedOptions[name] = this._options[name].type(option);
@@ -592,7 +588,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
           continue;
         }
       } else if (config.type === Array) {
-        value = parsedOptions._.slice(index, parsedOptions._.length);
+        value = parsedOptions._.slice(index);
       } else {
         value = config.type(parsedOptions._[index] as any);
       }
@@ -782,7 +778,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    * @return joined path
    */
   templatePath(...dest: string[]): string {
-    let filepath = path.join.apply(path, dest);
+    let filepath = path.join(...dest);
 
     if (!path.isAbsolute(filepath)) {
       filepath = path.join(this.sourceRoot(), filepath);
@@ -797,7 +793,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    * @return joined path
    */
   destinationPath(...dest: string[]): string {
-    let filepath = path.join.apply(path, dest);
+    let filepath = path.join(...dest);
 
     if (!path.isAbsolute(filepath)) {
       filepath = path.join(this.destinationRoot(), filepath);
@@ -816,11 +812,11 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    */
   determineAppname(): string {
     const appName: string = this.packageJson.get('name') ?? path.basename(this.destinationRoot());
-    return appName.replaceAll(/[^\w\s]+?/g, ' ');
+    return appName.replaceAll(/[^\s\w]+?/g, ' ');
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions, @typescript-eslint/no-unsafe-declaration-merging
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface BaseGenerator
   extends FsMixin,
     HelpMixin,

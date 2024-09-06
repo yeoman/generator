@@ -4,9 +4,9 @@ import os from 'node:os';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import process from 'node:process';
-import { create as createMemFsEditor, type MemFsEditor } from 'mem-fs-editor';
+import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
 import helpers from 'yeoman-test';
-import { create as createMemFs, type Store } from 'mem-fs';
+import { type Store, create as createMemFs } from 'mem-fs';
 import Storage from '../src/util/storage.js';
 
 const _filename = fileURLToPath(import.meta.url);
@@ -48,13 +48,13 @@ describe('Storage', () => {
   describe('.constructor()', () => {
     it('require a parameter', () => {
       assert.throws(() => {
-        new Storage(); // eslint-disable-line no-new
+        new Storage();
       });
     });
 
     it('require at least 2 parameter', () => {
       assert.throws(() => {
-        new Storage({}); // eslint-disable-line no-new
+        new Storage({});
       });
     });
 
@@ -73,7 +73,7 @@ describe('Storage', () => {
 
   it('a config path is required', () => {
     assert.throws(function () {
-      new Storage('yo', editor); // eslint-disable-line no-new
+      new Storage('yo', editor);
     });
   });
 
