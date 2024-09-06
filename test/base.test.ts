@@ -260,7 +260,7 @@ describe('Base', () => {
       });
     });
 
-    it('can emit error from sync methods', (done) => {
+    it('can emit error from sync methods', () => new Promise(done =>  {
       const error = new Error('Some error');
 
       TestGenerator.prototype.throwing = () => {
@@ -273,7 +273,7 @@ describe('Base', () => {
       });
 
       testGen.run().catch(() => {});
-    });
+    }));
 
     it('stop queue processing once an error is thrown', () => {
       const error = new Error('Some error');
@@ -313,7 +313,7 @@ describe('Base', () => {
       });
     });
 
-    it('handle failing promises as errors', (done) => {
+    it('handle failing promises as errors', () => new Promise(done =>  {
       TestGenerator.prototype.failing = async () => {
         return new Promise((resolve, reject) => {
           reject(new Error('some error'));
@@ -326,7 +326,7 @@ describe('Base', () => {
       });
 
       testGen.run().catch(() => {});
-    });
+    }));
 
     it('throws if no method is available', async () => {
       const gen = new (class extends Base {})([], {
@@ -457,7 +457,7 @@ describe('Base', () => {
       });
     });
 
-    it('can cancel cancellable tasks', (done) => {
+    it('can cancel cancellable tasks', () => new Promise(done =>  {
       TestGenerator.prototype.cancel = function () {
         this.cancelCancellableTasks();
       };
@@ -467,9 +467,9 @@ describe('Base', () => {
       };
 
       testGen.run().then(done);
-    });
+    }));
 
-    it('can start over the generator', (done) => {
+    it('can start over the generator', () => new Promise(done =>  {
       const spy1 = sinonSpy();
       const spy2 = sinonSpy();
 
@@ -492,9 +492,9 @@ describe('Base', () => {
         assert(spy2.calledOnce);
         done();
       });
-    });
+    }));
 
-    it('can queue a method again', (done) => {
+    it('can queue a method again', () => new Promise(done =>  {
       const spy1 = sinonSpy();
 
       TestGenerator.prototype.cancel = function () {
@@ -510,7 +510,7 @@ describe('Base', () => {
         assert(spy1.calledTwice);
         done();
       });
-    });
+    }));
   });
 
   describe('#run() with task prefix', () => {
@@ -624,7 +624,7 @@ describe('Base', () => {
       assert.deepEqual(dummy.options.bar, ['bar', 'baz', 'bom']);
     });
 
-    it('raise an error if required arguments are not provided', (done) => {
+    it('raise an error if required arguments are not provided', () => new Promise(done =>  {
       const dummy = new Base([], {
         env,
         resolved: 'dummy/all',
@@ -636,7 +636,7 @@ describe('Base', () => {
         assert(error.message.startsWith('Did not provide required argument '));
         done();
       }
-    });
+    }));
 
     it("doesn't raise an error if required arguments are not provided, but the help option has been specified", () => {
       const dummy = new Base([], {
@@ -1182,7 +1182,7 @@ describe('Base', () => {
       Generator.prototype.createSomethingElse = () => {};
     });
 
-    it('emits the series of event on a specific generator', (done) => {
+    it('emits the series of event on a specific generator', () => new Promise(done =>  {
       const angular = new Generator([], {
         env: createEnv([], {}, new TestAdapter()),
         resolved: _filename,
@@ -1211,9 +1211,9 @@ describe('Base', () => {
         .on('method:createSomethingElse', assertEvent('method:createSomethingElse'));
 
       angular.run();
-    });
+    }));
 
-    it('only call the end event once (bug #402)', done => {
+    it('only call the end event once (bug #402)', () => new Promise(done =>  {
       class GeneratorOnce extends Base {
         constructor(args, options) {
           super(args, options);
@@ -1245,9 +1245,9 @@ describe('Base', () => {
       });
 
       generatorOnce.run();
-    });
+    }));
 
-    it('triggers end event after all generators methods are ran (#709)', done => {
+    it('triggers end event after all generators methods are ran (#709)', () => new Promise(done =>  {
       const endSpy = sinonSpy();
       const GeneratorEnd = class extends Base {
         constructor(args, options) {
@@ -1270,7 +1270,7 @@ describe('Base', () => {
       });
 
       generatorEnd.run();
-    });
+    }));
   });
 
   describe('#rootGeneratorName', () => {
@@ -1324,7 +1324,7 @@ describe('Base', () => {
       };
     });
 
-    it('queued method is executed', (done) => {
+    it('queued method is executed', () => new Promise(done =>  {
       const gen = new Generator({
         resolved: resolveddir,
         namespace: 'dummy',
@@ -1336,9 +1336,9 @@ describe('Base', () => {
         assert.equal(gen.queue, 'This value');
         done();
       });
-    });
+    }));
 
-    it('queued method is executed by derived generator', (done) => {
+    it('queued method is executed by derived generator', () => new Promise(done =>  {
       const Derived = class extends Generator {
         constructor(args, options) {
           super(args, options);
@@ -1368,7 +1368,7 @@ describe('Base', () => {
         assert.equal(derivedGen.queue, 'That value');
         done();
       });
-    });
+    }));
 
     it('queued method with function, methodName and reject', () => {
       const env = createEnv([], { 'skip-install': true }, new TestAdapter());

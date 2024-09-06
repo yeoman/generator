@@ -129,12 +129,12 @@ describe('Multiples generators', () => {
       assert(spyExec1.calledAfter(spyExec2));
     });
 
-    it('runs 3 composed generators', async function () {
+    it('runs 3 composed generators', async () => {
       spyExec3 = sinonSpy();
-      this.spyInit3 = sinonSpy();
+      const spyInit3 = sinonSpy();
       const GenCompose3 = class extends Base {};
       GenCompose3.prototype.exec = spyExec3;
-      GenCompose3.prototype.initializing = this.spyInit3;
+      GenCompose3.prototype.initializing = spyInit3;
 
       env.registerStub(GenCompose3, 'composed:gen3');
 
@@ -147,7 +147,7 @@ describe('Multiples generators', () => {
         runSpy,
         spyInit1,
         spyInit2,
-        this.spyInit3,
+        spyInit3,
         spyExec,
         spyExec1,
         spyExec2,
@@ -159,13 +159,13 @@ describe('Multiples generators', () => {
       );
       assert(spyInit1.calledAfter(runSpy));
       assert(spyInit2.calledAfter(spyInit1));
-      assert(this.spyInit3.calledAfter(spyInit2));
-      assert(spyExec1.calledAfter(this.spyInit3));
+      assert(spyInit3.calledAfter(spyInit2));
+      assert(spyExec1.calledAfter(spyInit3));
       assert(spyExec2.calledAfter(spyExec1));
       assert(spyExec3.calledAfter(spyExec2));
     });
 
-    it('runs multiple composed generators inside a running generator', (done) => {
+    it('runs multiple composed generators inside a running generator', () => new Promise(done =>  {
       const Dummy2 = class extends Dummy {};
 
       const writingSpy1 = sinonSpy();
@@ -228,9 +228,9 @@ describe('Multiples generators', () => {
           done();
         });
       }, 100);
-    });
+    }));
 
-    it('runs multiple composed generators inside a running generator', (done) => {
+    it('runs multiple composed generators inside a running generator', () => new Promise(done =>  {
       const Dummy2 = class extends Dummy {};
 
       const writingSpy1 = sinonSpy();
@@ -302,7 +302,7 @@ describe('Multiples generators', () => {
           done();
         });
       }, 100);
-    });
+    }));
   });
 
   it('#composeWith() inside _beforeQueue', async () => {

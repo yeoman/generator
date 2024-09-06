@@ -37,15 +37,15 @@ describe('Generators module', () => {
       );
     });
 
-    it('is an EventEmitter', (done) => {
+    it('is an EventEmitter', () => new Promise(done =>  {
       assert.ok(generator instanceof EventEmitter);
       assert.strictEqual(typeof generator.on, 'function');
       assert.strictEqual(typeof generator.emit, 'function');
       generator.on('yay-o-man', done);
       generator.emit('yay-o-man');
-    });
+    }));
 
-    it('emits done event', (done) => {
+    it('emits done event', () => new Promise(done =>  {
       env.on(`done$${NAMESPACE}#exec`, data => {
         assert(data.generator === generator);
         assert(`done$${NAMESPACE}#exec`.includes(data.namespace));
@@ -55,7 +55,7 @@ describe('Generators module', () => {
         done();
       });
       generator.run();
-    });
+    }));
   });
 
   it('without localConfigOnly option', () => {
@@ -88,12 +88,12 @@ describe('Generators module', () => {
       });
     });
 
-    it('forwards error to environment', (done) => {
+    it('forwards error to environment', () => new Promise(done =>  {
       env.on('error', () => {
         done();
       });
       generator.run();
-    });
+    }));
   });
 
   describe('#createStorage', () => {
@@ -120,7 +120,7 @@ describe('Generators module', () => {
     });
   });
 
-  it('running standalone', done => {
+  it('running standalone', () => new Promise(done =>  {
     const Generator = class extends Base {};
     try {
       new Generator();
@@ -128,9 +128,9 @@ describe('Generators module', () => {
       assert.equal(error.message, 'This generator requires an environment.');
       done();
     }
-  });
+  }));
 
-  it('running with an empty env', done => {
+  it('running with an empty env', () => new Promise(done =>  {
     const Generator = class extends Base {};
     try {
       new Generator({ env: {} });
@@ -138,5 +138,5 @@ describe('Generators module', () => {
       assert.equal(error.message, "Current environment doesn't provides some necessary feature this generator needs.");
       done();
     }
-  });
+  }));
 });
