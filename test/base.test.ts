@@ -30,9 +30,9 @@ describe('Base', () => {
   let Dummy;
   let dummy;
 
-  beforeEach(helpers.setUpTestDirectory(tmpdir));
+  beforeEach(async () => {
+    await helpers.prepareTemporaryDir();
 
-  beforeEach(() => {
     env = createEnv();
     // Ignore error forwarded to environment
     env.on('error', _ => {});
@@ -260,20 +260,21 @@ describe('Base', () => {
       });
     });
 
-    it('can emit error from sync methods', () => new Promise(done =>  {
-      const error = new Error('Some error');
+    it('can emit error from sync methods', () =>
+      new Promise(done => {
+        const error = new Error('Some error');
 
-      TestGenerator.prototype.throwing = () => {
-        throw error;
-      };
+        TestGenerator.prototype.throwing = () => {
+          throw error;
+        };
 
-      testGen.env.on('error', error_ => {
-        assert.equal(error_, error);
-        done();
-      });
+        testGen.env.on('error', error_ => {
+          assert.equal(error_, error);
+          done();
+        });
 
-      testGen.run().catch(() => {});
-    }));
+        testGen.run().catch(() => {});
+      }));
 
     it('stop queue processing once an error is thrown', () => {
       const error = new Error('Some error');
@@ -313,20 +314,21 @@ describe('Base', () => {
       });
     });
 
-    it('handle failing promises as errors', () => new Promise(done =>  {
-      TestGenerator.prototype.failing = async () => {
-        return new Promise((resolve, reject) => {
-          reject(new Error('some error'));
+    it('handle failing promises as errors', () =>
+      new Promise(done => {
+        TestGenerator.prototype.failing = async () => {
+          return new Promise((resolve, reject) => {
+            reject(new Error('some error'));
+          });
+        };
+
+        testGen.env.on('error', error => {
+          assert.equal(error.message, 'some error');
+          done();
         });
-      };
 
-      testGen.env.on('error', error => {
-        assert.equal(error.message, 'some error');
-        done();
-      });
-
-      testGen.run().catch(() => {});
-    }));
+        testGen.run().catch(() => {});
+      }));
 
     it('throws if no method is available', async () => {
       const gen = new (class extends Base {})([], {
@@ -457,60 +459,63 @@ describe('Base', () => {
       });
     });
 
-    it('can cancel cancellable tasks', () => new Promise(done =>  {
-      TestGenerator.prototype.cancel = function () {
-        this.cancelCancellableTasks();
-      };
+    it('can cancel cancellable tasks', () =>
+      new Promise(done => {
+        TestGenerator.prototype.cancel = function () {
+          this.cancelCancellableTasks();
+        };
 
-      TestGenerator.prototype.throwing = () => {
-        throw new Error('not thrown');
-      };
+        TestGenerator.prototype.throwing = () => {
+          throw new Error('not thrown');
+        };
 
-      testGen.run().then(done);
-    }));
+        testGen.run().then(done);
+      }));
 
-    it('can start over the generator', () => new Promise(done =>  {
-      const spy1 = sinonSpy();
-      const spy2 = sinonSpy();
+    it('can start over the generator', () =>
+      new Promise(done => {
+        const spy1 = sinonSpy();
+        const spy2 = sinonSpy();
 
-      TestGenerator.prototype.cancel = function () {
-        spy1();
-        if (!this.startedOver) {
-          this.startOver({ startedOver: true });
-          this.startedOver = true;
-        }
-      };
+        TestGenerator.prototype.cancel = function () {
+          spy1();
+          if (!this.startedOver) {
+            this.startOver({ startedOver: true });
+            this.startedOver = true;
+          }
+        };
 
-      TestGenerator.prototype.after = function () {
-        assert(this.options.startedOver);
-        assert(this.startedOver);
-        spy2();
-      };
+        TestGenerator.prototype.after = function () {
+          assert(this.options.startedOver);
+          assert(this.startedOver);
+          spy2();
+        };
 
-      testGen.run().then(() => {
-        assert(spy1.calledTwice);
-        assert(spy2.calledOnce);
-        done();
-      });
-    }));
+        testGen.run().then(() => {
+          assert(spy1.calledTwice);
+          assert(spy2.calledOnce);
+          done();
+        });
+      }));
 
-    it('can queue a method again', () => new Promise(done =>  {
-      const spy1 = sinonSpy();
+    it('can queue a method again', () =>
+      new Promise(done => {
+        const spy1 = sinonSpy();
 
-      TestGenerator.prototype.cancel = function () {
-        spy1();
-        if (!this.startedOver) {
-          this.queueOwnTask('cancel');
-          this.startOver();
-          this.startedOver = true;
-        }
-      };
+        TestGenerator.prototype.cancel = function () {
+          spy1();
+          if (!this.startedOver) {
+            this.queueOwnTask('cancel');
+            this.startOver();
+            this.startedOver = true;
+          }
+        };
 
-      testGen.run().then(() => {
-        assert(spy1.calledTwice);
-        done();
-      });
-    }));
+        testGen.run().then(() => {
+          assert(spy1.calledTwice);
+          done();
+        });
+      }));
   });
 
   describe('#run() with task prefix', () => {
@@ -624,19 +629,20 @@ describe('Base', () => {
       assert.deepEqual(dummy.options.bar, ['bar', 'baz', 'bom']);
     });
 
-    it('raise an error if required arguments are not provided', () => new Promise(done =>  {
-      const dummy = new Base([], {
-        env,
-        resolved: 'dummy/all',
-      });
+    it('raise an error if required arguments are not provided', () =>
+      new Promise(done => {
+        const dummy = new Base([], {
+          env,
+          resolved: 'dummy/all',
+        });
 
-      try {
-        dummy.argument('foo', { required: true });
-      } catch (error) {
-        assert(error.message.startsWith('Did not provide required argument '));
-        done();
-      }
-    }));
+        try {
+          dummy.argument('foo', { required: true });
+        } catch (error) {
+          assert(error.message.startsWith('Did not provide required argument '));
+          done();
+        }
+      }));
 
     it("doesn't raise an error if required arguments are not provided, but the help option has been specified", () => {
       const dummy = new Base([], {
@@ -1182,95 +1188,98 @@ describe('Base', () => {
       Generator.prototype.createSomethingElse = () => {};
     });
 
-    it('emits the series of event on a specific generator', () => new Promise(done =>  {
-      const angular = new Generator([], {
-        env: createEnv([], {}, new TestAdapter()),
-        resolved: _filename,
-        'skip-install': true,
-      });
+    it('emits the series of event on a specific generator', () =>
+      new Promise(done => {
+        const angular = new Generator([], {
+          env: createEnv([], {}, new TestAdapter()),
+          resolved: _filename,
+          'skip-install': true,
+        });
 
-      const lifecycle = ['run', 'method:createSomething', 'method:createSomethingElse', 'end'];
+        const lifecycle = ['run', 'method:createSomething', 'method:createSomethingElse', 'end'];
 
-      function assertEvent(error) {
-        return function () {
-          assert.equal(error, lifecycle.shift());
+        function assertEvent(error) {
+          return function () {
+            assert.equal(error, lifecycle.shift());
 
-          if (error === 'end') {
+            if (error === 'end') {
+              done();
+            }
+          };
+        }
+
+        angular
+          // Run event, emitted right before running the generator.
+          .on('run', assertEvent('run'))
+          // End event, emitted after the generation process, when every generator
+          // methods are executed
+          .on('end', assertEvent('end'))
+          .on('method:createSomething', assertEvent('method:createSomething'))
+          .on('method:createSomethingElse', assertEvent('method:createSomethingElse'));
+
+        angular.run();
+      }));
+
+    it('only call the end event once (bug #402)', () =>
+      new Promise(done => {
+        class GeneratorOnce extends Base {
+          constructor(args, options) {
+            super(args, options);
+            this.sourceRoot(path.join(_dirname, 'fixtures'));
+            this.destinationRoot(path.join(os.tmpdir(), 'yeoman-base-once'));
+          }
+
+          createDuplicate() {
+            this.fs.copy(this.templatePath('foo-copy.js'), this.destinationPath('foo-copy.js'));
+            this.fs.copy(this.templatePath('foo-copy.js'), this.destinationPath('foo-copy.js'));
+          }
+        }
+
+        let isFirstEndEvent = true;
+        const generatorOnce = new GeneratorOnce([], {
+          env: createEnv([], {}, new TestAdapter()),
+          resolved: _filename,
+          'skip-install': true,
+        });
+
+        generatorOnce.on('end', () => {
+          assert.ok(isFirstEndEvent);
+
+          if (isFirstEndEvent) {
             done();
           }
+
+          isFirstEndEvent = false;
+        });
+
+        generatorOnce.run();
+      }));
+
+    it('triggers end event after all generators methods are ran (#709)', () =>
+      new Promise(done => {
+        const endSpy = sinonSpy();
+        const GeneratorEnd = class extends Base {
+          constructor(args, options) {
+            super(args, options);
+            this.on('end', () => {
+              sinonAssert.calledOnce(endSpy);
+              done();
+            });
+          }
+
+          end() {
+            endSpy();
+          }
         };
-      }
 
-      angular
-        // Run event, emitted right before running the generator.
-        .on('run', assertEvent('run'))
-        // End event, emitted after the generation process, when every generator
-        // methods are executed
-        .on('end', assertEvent('end'))
-        .on('method:createSomething', assertEvent('method:createSomething'))
-        .on('method:createSomethingElse', assertEvent('method:createSomethingElse'));
+        const generatorEnd = new GeneratorEnd([], {
+          env: createEnv([], {}, new TestAdapter()),
+          resolved: _filename,
+          'skip-install': true,
+        });
 
-      angular.run();
-    }));
-
-    it('only call the end event once (bug #402)', () => new Promise(done =>  {
-      class GeneratorOnce extends Base {
-        constructor(args, options) {
-          super(args, options);
-          this.sourceRoot(path.join(_dirname, 'fixtures'));
-          this.destinationRoot(path.join(os.tmpdir(), 'yeoman-base-once'));
-        }
-
-        createDuplicate() {
-          this.fs.copy(this.templatePath('foo-copy.js'), this.destinationPath('foo-copy.js'));
-          this.fs.copy(this.templatePath('foo-copy.js'), this.destinationPath('foo-copy.js'));
-        }
-      }
-
-      let isFirstEndEvent = true;
-      const generatorOnce = new GeneratorOnce([], {
-        env: createEnv([], {}, new TestAdapter()),
-        resolved: _filename,
-        'skip-install': true,
-      });
-
-      generatorOnce.on('end', () => {
-        assert.ok(isFirstEndEvent);
-
-        if (isFirstEndEvent) {
-          done();
-        }
-
-        isFirstEndEvent = false;
-      });
-
-      generatorOnce.run();
-    }));
-
-    it('triggers end event after all generators methods are ran (#709)', () => new Promise(done =>  {
-      const endSpy = sinonSpy();
-      const GeneratorEnd = class extends Base {
-        constructor(args, options) {
-          super(args, options);
-          this.on('end', () => {
-            sinonAssert.calledOnce(endSpy);
-            done();
-          });
-        }
-
-        end() {
-          endSpy();
-        }
-      };
-
-      const generatorEnd = new GeneratorEnd([], {
-        env: createEnv([], {}, new TestAdapter()),
-        resolved: _filename,
-        'skip-install': true,
-      });
-
-      generatorEnd.run();
-    }));
+        generatorEnd.run();
+      }));
   });
 
   describe('#rootGeneratorName', () => {
@@ -1324,51 +1333,53 @@ describe('Base', () => {
       };
     });
 
-    it('queued method is executed', () => new Promise(done =>  {
-      const gen = new Generator({
-        resolved: resolveddir,
-        namespace: 'dummy',
-        env,
-        testQueue: 'This value',
-      });
+    it('queued method is executed', () =>
+      new Promise(done => {
+        const gen = new Generator({
+          resolved: resolveddir,
+          namespace: 'dummy',
+          env,
+          testQueue: 'This value',
+        });
 
-      gen.run().then(() => {
-        assert.equal(gen.queue, 'This value');
-        done();
-      });
-    }));
+        gen.run().then(() => {
+          assert.equal(gen.queue, 'This value');
+          done();
+        });
+      }));
 
-    it('queued method is executed by derived generator', () => new Promise(done =>  {
-      const Derived = class extends Generator {
-        constructor(args, options) {
-          super(args, options);
+    it('queued method is executed by derived generator', () =>
+      new Promise(done => {
+        const Derived = class extends Generator {
+          constructor(args, options) {
+            super(args, options);
 
-          this.prop = 'a';
-        }
+            this.prop = 'a';
+          }
 
-        // At least a method is required otherwise will fail. Is this a problem?
-        exec() {
-          assert.equal(this.prop, 'a');
-        }
+          // At least a method is required otherwise will fail. Is this a problem?
+          exec() {
+            assert.equal(this.prop, 'a');
+          }
 
-        get initializing() {
-          assert.equal(this.prop, 'a');
-          return {};
-        }
-      };
+          get initializing() {
+            assert.equal(this.prop, 'a');
+            return {};
+          }
+        };
 
-      const derivedGen = new Derived([], {
-        resolved: resolveddir,
-        namespace: 'dummy',
-        env,
-        testQueue: 'That value',
-      });
+        const derivedGen = new Derived([], {
+          resolved: resolveddir,
+          namespace: 'dummy',
+          env,
+          testQueue: 'That value',
+        });
 
-      derivedGen.run().then(() => {
-        assert.equal(derivedGen.queue, 'That value');
-        done();
-      });
-    }));
+        derivedGen.run().then(() => {
+          assert.equal(derivedGen.queue, 'That value');
+          done();
+        });
+      }));
 
     it('queued method with function, methodName and reject', () => {
       const env = createEnv([], { 'skip-install': true }, new TestAdapter());

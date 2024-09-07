@@ -31,31 +31,30 @@ describe('Generators module', () => {
     });
 
     it('should expose yoGeneratorVersion', () => {
-      assert(
-        semver.valid(generator.yoGeneratorVersion),
-        `Not valid version ${generator.yoGeneratorVersion as string}`,
-      );
+      assert(semver.valid(generator.yoGeneratorVersion), `Not valid version ${generator.yoGeneratorVersion as string}`);
     });
 
-    it('is an EventEmitter', () => new Promise(done =>  {
-      assert.ok(generator instanceof EventEmitter);
-      assert.strictEqual(typeof generator.on, 'function');
-      assert.strictEqual(typeof generator.emit, 'function');
-      generator.on('yay-o-man', done);
-      generator.emit('yay-o-man');
-    }));
+    it('is an EventEmitter', () =>
+      new Promise(done => {
+        assert.ok(generator instanceof EventEmitter);
+        assert.strictEqual(typeof generator.on, 'function');
+        assert.strictEqual(typeof generator.emit, 'function');
+        generator.on('yay-o-man', done);
+        generator.emit('yay-o-man');
+      }));
 
-    it('emits done event', () => new Promise(done =>  {
-      env.on(`done$${NAMESPACE}#exec`, data => {
-        assert(data.generator === generator);
-        assert(`done$${NAMESPACE}#exec`.includes(data.namespace));
-        assert(data.namespace === NAMESPACE);
-        assert(data.priorityName === 'default');
-        assert(data.queueName === 'default');
-        done();
-      });
-      generator.run();
-    }));
+    it('emits done event', () =>
+      new Promise(done => {
+        env.on(`done$${NAMESPACE}#exec`, data => {
+          assert(data.generator === generator);
+          assert(`done$${NAMESPACE}#exec`.includes(data.namespace));
+          assert(data.namespace === NAMESPACE);
+          assert(data.priorityName === 'default');
+          assert(data.queueName === 'default');
+          done();
+        });
+        generator.run().catch(() => {});
+      }));
   });
 
   it('without localConfigOnly option', () => {
@@ -88,12 +87,13 @@ describe('Generators module', () => {
       });
     });
 
-    it('forwards error to environment', () => new Promise(done =>  {
-      env.on('error', () => {
-        done();
-      });
-      generator.run();
-    }));
+    it('forwards error to environment', () =>
+      new Promise(done => {
+        env.on('error', () => {
+          done();
+        });
+        generator.run().catch(() => {});
+      }));
   });
 
   describe('#createStorage', () => {
@@ -120,23 +120,28 @@ describe('Generators module', () => {
     });
   });
 
-  it('running standalone', () => new Promise(done =>  {
-    const Generator = class extends Base {};
-    try {
-      new Generator();
-    } catch (error) {
-      assert.equal(error.message, 'This generator requires an environment.');
-      done();
-    }
-  }));
+  it('running standalone', () =>
+    new Promise(done => {
+      const Generator = class extends Base {};
+      try {
+        new Generator();
+      } catch (error) {
+        assert.equal(error.message, 'This generator requires an environment.');
+        done();
+      }
+    }));
 
-  it('running with an empty env', () => new Promise(done =>  {
-    const Generator = class extends Base {};
-    try {
-      new Generator({ env: {} });
-    } catch (error) {
-      assert.equal(error.message, "Current environment doesn't provides some necessary feature this generator needs.");
-      done();
-    }
-  }));
+  it('running with an empty env', () =>
+    new Promise(done => {
+      const Generator = class extends Base {};
+      try {
+        new Generator({ env: {} });
+      } catch (error) {
+        assert.equal(
+          error.message,
+          "Current environment doesn't provides some necessary feature this generator needs.",
+        );
+        done();
+      }
+    }));
 });

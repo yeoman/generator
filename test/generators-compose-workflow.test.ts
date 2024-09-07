@@ -3,7 +3,7 @@ import path from 'node:path';
 import { beforeEach, describe, it } from 'esmocha';
 import { mkdirSync } from 'node:fs';
 import { TestAdapter } from '@yeoman/adapter/testing';
-import type { SinonSpy} from 'sinon';
+import type { SinonSpy } from 'sinon';
 import { assert as sinonAssert, spy as sinonSpy } from 'sinon';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
@@ -165,144 +165,146 @@ describe('Multiples generators', () => {
       assert(spyExec3.calledAfter(spyExec2));
     });
 
-    it('runs multiple composed generators inside a running generator', () => new Promise(done =>  {
-      const Dummy2 = class extends Dummy {};
+    it('runs multiple composed generators inside a running generator', () =>
+      new Promise(done => {
+        const Dummy2 = class extends Dummy {};
 
-      const writingSpy1 = sinonSpy();
-      const writingSpy2 = sinonSpy();
-      const endSpy = sinonSpy();
-      Dummy2.prototype.end = endSpy;
+        const writingSpy1 = sinonSpy();
+        const writingSpy2 = sinonSpy();
+        const endSpy = sinonSpy();
+        Dummy2.prototype.end = endSpy;
 
-      Dummy2.prototype.writing = {
-        async compose() {
-          // Initializing and default is queue and called next (before writingSpy2)
-          // Writing is queue after already queued functions (after writingSpy2)
-          await this.composeWith(['composed:gen', 'composed:gen2']);
-          writingSpy1();
-        },
-        writingSpy2() {
-          writingSpy2();
-        },
-      };
+        Dummy2.prototype.writing = {
+          async compose() {
+            // Initializing and default is queue and called next (before writingSpy2)
+            // Writing is queue after already queued functions (after writingSpy2)
+            await this.composeWith(['composed:gen', 'composed:gen2']);
+            writingSpy1();
+          },
+          writingSpy2() {
+            writingSpy2();
+          },
+        };
 
-      dummy2 = new Dummy2([], {
-        resolved: 'unknown',
-        namespace: 'dummy',
-        env: env,
-        'skip-install': true,
-        'force-install': true,
-        'skip-cache': true,
-      });
-
-      const runSpy = sinonSpy(dummy2, 'run');
-
-      // I use a setTimeout here just to make sure composeWith() doesn't start the
-      // generator before the base one is ran.
-      setTimeout(() => {
-        dummy2.run().then(() => {
-          sinonAssert.callOrder(
-            runSpy,
-            writingSpy1,
-            spyInit1,
-            spyInit2,
-            spyExec1,
-            spyExec2,
-            writingSpy2,
-            spyWrite1,
-            spyWrite2,
-            endSpy,
-            spyEnd1,
-            spyEnd2,
-          );
-          assert(writingSpy1.calledAfter(runSpy));
-          assert(spyInit1.calledAfter(writingSpy1));
-          assert(spyInit2.calledAfter(spyInit1));
-          assert(spyExec1.calledAfter(spyInit2));
-          assert(spyExec2.calledAfter(spyExec1));
-          assert(writingSpy2.calledAfter(spyExec2));
-          assert(spyWrite1.calledAfter(writingSpy2));
-          assert(spyWrite2.calledAfter(spyWrite1));
-          assert(endSpy.calledAfter(spyWrite2));
-          assert(spyEnd1.calledAfter(endSpy));
-          assert(spyEnd2.calledAfter(spyEnd1));
-          done();
+        dummy2 = new Dummy2([], {
+          resolved: 'unknown',
+          namespace: 'dummy',
+          env: env,
+          'skip-install': true,
+          'force-install': true,
+          'skip-cache': true,
         });
-      }, 100);
-    }));
 
-    it('runs multiple composed generators inside a running generator', () => new Promise(done =>  {
-      const Dummy2 = class extends Dummy {};
+        const runSpy = sinonSpy(dummy2, 'run');
 
-      const writingSpy1 = sinonSpy();
-      const writingSpy2 = sinonSpy();
-      const writingSpy3 = sinonSpy();
-      const endSpy = sinonSpy();
+        // I use a setTimeout here just to make sure composeWith() doesn't start the
+        // generator before the base one is ran.
+        setTimeout(() => {
+          dummy2.run().then(() => {
+            sinonAssert.callOrder(
+              runSpy,
+              writingSpy1,
+              spyInit1,
+              spyInit2,
+              spyExec1,
+              spyExec2,
+              writingSpy2,
+              spyWrite1,
+              spyWrite2,
+              endSpy,
+              spyEnd1,
+              spyEnd2,
+            );
+            assert(writingSpy1.calledAfter(runSpy));
+            assert(spyInit1.calledAfter(writingSpy1));
+            assert(spyInit2.calledAfter(spyInit1));
+            assert(spyExec1.calledAfter(spyInit2));
+            assert(spyExec2.calledAfter(spyExec1));
+            assert(writingSpy2.calledAfter(spyExec2));
+            assert(spyWrite1.calledAfter(writingSpy2));
+            assert(spyWrite2.calledAfter(spyWrite1));
+            assert(endSpy.calledAfter(spyWrite2));
+            assert(spyEnd1.calledAfter(endSpy));
+            assert(spyEnd2.calledAfter(spyEnd1));
+            done();
+          });
+        }, 100);
+      }));
 
-      Dummy2.prototype.end = endSpy;
-      Dummy2.prototype.writing = {
-        async compose1() {
-          // Initializing and default is queue and called next (before writingSpy2)
-          // Writing is queue after already queued functions (after writingSpy2, compose2, writingSpy3)
-          await this.composeWith('composed:gen');
-          writingSpy1();
-        },
-        writingSpy2() {
-          writingSpy2();
-        },
-        async compose2() {
-          await this.composeWith('composed:gen2');
-        },
-        writingSpy3() {
-          writingSpy3();
-        },
-      };
+    it('runs multiple composed generators inside a running generator', () =>
+      new Promise(done => {
+        const Dummy2 = class extends Dummy {};
 
-      dummy2 = new Dummy2([], {
-        resolved: 'unknown',
-        namespace: 'dummy',
-        env: env,
-        'skip-install': true,
-        'force-install': true,
-        'skip-cache': true,
-      });
+        const writingSpy1 = sinonSpy();
+        const writingSpy2 = sinonSpy();
+        const writingSpy3 = sinonSpy();
+        const endSpy = sinonSpy();
 
-      const runSpy = sinonSpy(dummy2, 'run');
+        Dummy2.prototype.end = endSpy;
+        Dummy2.prototype.writing = {
+          async compose1() {
+            // Initializing and default is queue and called next (before writingSpy2)
+            // Writing is queue after already queued functions (after writingSpy2, compose2, writingSpy3)
+            await this.composeWith('composed:gen');
+            writingSpy1();
+          },
+          writingSpy2() {
+            writingSpy2();
+          },
+          async compose2() {
+            await this.composeWith('composed:gen2');
+          },
+          writingSpy3() {
+            writingSpy3();
+          },
+        };
 
-      // I use a setTimeout here just to make sure composeWith() doesn't start the
-      // generator before the base one is ran.
-      setTimeout(() => {
-        dummy2.run().then(() => {
-          sinonAssert.callOrder(
-            runSpy,
-            writingSpy1,
-            spyInit1,
-            spyExec1,
-            writingSpy2,
-            spyInit2,
-            spyExec2,
-            writingSpy3,
-            spyWrite1,
-            spyWrite2,
-            endSpy,
-            spyEnd1,
-            spyEnd2,
-          );
-          assert(writingSpy1.calledAfter(runSpy));
-          assert(spyInit1.calledAfter(writingSpy1));
-          assert(spyExec1.calledAfter(spyInit1));
-          assert(writingSpy2.calledAfter(spyExec1));
-          assert(spyInit2.calledAfter(writingSpy2));
-          assert(spyExec2.calledAfter(spyExec1));
-          assert(writingSpy3.calledAfter(spyExec2));
-          assert(spyWrite1.calledAfter(writingSpy3));
-          assert(spyWrite2.calledAfter(spyWrite1));
-          assert(endSpy.calledAfter(spyWrite2));
-          assert(spyEnd1.calledAfter(endSpy));
-          assert(spyEnd2.calledAfter(spyEnd1));
-          done();
+        dummy2 = new Dummy2([], {
+          resolved: 'unknown',
+          namespace: 'dummy',
+          env: env,
+          'skip-install': true,
+          'force-install': true,
+          'skip-cache': true,
         });
-      }, 100);
-    }));
+
+        const runSpy = sinonSpy(dummy2, 'run');
+
+        // I use a setTimeout here just to make sure composeWith() doesn't start the
+        // generator before the base one is ran.
+        setTimeout(() => {
+          dummy2.run().then(() => {
+            sinonAssert.callOrder(
+              runSpy,
+              writingSpy1,
+              spyInit1,
+              spyExec1,
+              writingSpy2,
+              spyInit2,
+              spyExec2,
+              writingSpy3,
+              spyWrite1,
+              spyWrite2,
+              endSpy,
+              spyEnd1,
+              spyEnd2,
+            );
+            assert(writingSpy1.calledAfter(runSpy));
+            assert(spyInit1.calledAfter(writingSpy1));
+            assert(spyExec1.calledAfter(spyInit1));
+            assert(writingSpy2.calledAfter(spyExec1));
+            assert(spyInit2.calledAfter(writingSpy2));
+            assert(spyExec2.calledAfter(spyExec1));
+            assert(writingSpy3.calledAfter(spyExec2));
+            assert(spyWrite1.calledAfter(writingSpy3));
+            assert(spyWrite2.calledAfter(spyWrite1));
+            assert(endSpy.calledAfter(spyWrite2));
+            assert(spyEnd1.calledAfter(endSpy));
+            assert(spyEnd2.calledAfter(spyEnd1));
+            done();
+          });
+        }, 100);
+      }));
   });
 
   it('#composeWith() inside _beforeQueue', async () => {
