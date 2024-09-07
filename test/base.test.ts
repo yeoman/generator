@@ -21,7 +21,6 @@ const require = createRequire(import.meta.url);
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
-const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 const createEnv = (options?) => new Environment({ skipInstall: true, adapter: new TestAdapter(), ...options });
 
@@ -31,7 +30,10 @@ describe('Base', () => {
   let dummy;
 
   beforeEach(async () => {
-    await helpers.prepareTemporaryDir({ cwd: tmpdir, autoCleanup: true, tmpdir: true }).run();
+    await helpers.prepareTemporaryDir().run();
+
+    mkdirSync('yeoman-base');
+    process.chdir('yeoman-base');
 
     env = createEnv();
     // Ignore error forwarded to environment
