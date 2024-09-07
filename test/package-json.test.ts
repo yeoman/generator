@@ -1,12 +1,11 @@
 import assert from 'node:assert';
-import { beforeEach, describe, esmocha, expect, it } from 'esmocha';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import semver from 'semver';
 import helpers from 'yeoman-test';
 import type { BaseEnvironment } from '@yeoman/types';
 import Generator from '../src/index.js';
 
-describe('Base#package-json', function () {
-  this.timeout(10_000);
+describe('Base#package-json', () => {
   let generator: Generator;
   let env: BaseEnvironment;
 
@@ -17,15 +16,14 @@ describe('Base#package-json', function () {
     generator = context.generator;
     // eslint-disable-next-line prefer-destructuring
     env = context.env;
-    generator.exec = esmocha.fn();
+    generator.exec = vi.fn();
   });
 
   describe('_resolvePackageJsonDependencies()', () => {
-    it('should accept empty version and resolve', async function () {
+    it('should accept empty version and resolve', async ctx => {
       if (semver.lte(env.getVersion(), '3.1.0')) {
-        this.skip();
+        ctx.skip();
       }
-
       const dependencies = await generator._resolvePackageJsonDependencies('yeoman-generator');
       expect(dependencies['yeoman-generator']).toBeDefined();
     });
@@ -41,9 +39,9 @@ describe('Base#package-json', function () {
       assert.deepStrictEqual(await generator._resolvePackageJsonDependencies(a), a);
     });
 
-    it('should resolve object with empty version and resolve', async function () {
+    it('should resolve object with empty version and resolve', async ctx => {
       if (semver.lte(env.getVersion(), '3.1.0')) {
-        this.skip();
+        ctx.skip();
       }
 
       const a = { 'yeoman-generator': '' };
@@ -93,4 +91,4 @@ describe('Base#package-json', function () {
       });
     });
   });
-});
+}, 10_000);

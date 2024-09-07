@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import { afterEach, before, beforeEach, describe, esmocha, it } from 'esmocha';
+import { afterEach, beforeAll, beforeEach, describe, it, vi } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import { type SinonStub, stub as sinonStub } from 'sinon';
 import type { Data as TemplateData } from 'ejs';
@@ -91,10 +91,9 @@ describe('generators.Base (actions/fs)', () => {
   let gen: Base;
   let base: BaseGenerator;
 
-  before(function () {
-    this.timeout(10_000);
+  beforeAll(() => {
     gen = new Base({ env: createEnv(), resolved: 'unknown', help: true });
-  });
+  }, 10_000);
 
   beforeEach(() => {
     returns = {};
@@ -103,7 +102,7 @@ describe('generators.Base (actions/fs)', () => {
     // Why not use a sinonStub for base.config as is done in #renderTemplate and #renderTemplateAsync below?
     //  base get config is not being tested in any way below.
     // @ts-expect-error Config is a string (not a symbol) and we know it exists on base  https://github.com/DefinitelyTyped/DefinitelyTyped/issues/33173
-    esmocha.spyOn(base, 'config', 'get').mockReturnValue({
+    vi.spyOn(base, 'config', 'get').mockReturnValue({
       getAll() {
         return configGetAll;
       },

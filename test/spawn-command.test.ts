@@ -1,31 +1,34 @@
 import assert from 'node:assert';
-import { afterEach, beforeEach, describe , expect, fn, importMock, it, mock, restoreAllMocks } from 'esmocha';
+import Generator from '../src/index.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { spy } from 'sinon';
+import { execa, execaCommand, execaCommandSync, execaSync } from 'execa';
 
-describe.skip('generators.Base (actions/spawn-command)', async () => {
-  const execa = await mock('execa');
-  const { default: Generator } = await importMock('../src/index.js', { execa });
+vi.mock('execa', () => ({
+  execa: vi.fn(),
+  execaSync: vi.fn(),
+  execaCommand: vi.fn(),
+  execaCommandSync: vi.fn(),
+}));
 
+describe('generators.Base (actions/spawn-command)', () => {
   let testGenerator: Generator;
 
   beforeEach(async () => {
     testGenerator = new Generator({ help: true, namespace: 'foo', resolved: 'unknown' });
-    // @ts-expect-error We are explicitly setting the function to a mocked function. We know .destinationRoot exists on the generator.
-    testGenerator.destinationRoot = fn().mockReturnValue('some/destination/path');
+    testGenerator.destinationRoot = vi.fn().mockReturnValue('some/destination/path');
   });
 
   afterEach(() => {
-    restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('#spawnCommand()', () => {
     describe('only the command is required', () => {
       describe('no args and no options are given', () => {
         it('calls execaCommandSync with the command, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
-          // @ts-expect-error We know that spawnCommand exists on the generator. It is added with applyMixins().
           testGenerator.spawnCommand('foo');
-          expect(execa.execaCommand).toHaveBeenCalledWith('foo', {
-            // @ts-expect-error We know that destinationRoot() exists for the generator.
+          expect(execaCommand).toHaveBeenCalledWith('foo', {
             cwd: testGenerator.destinationRoot(),
             stdio: 'inherit',
           });
@@ -35,27 +38,18 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
 
     describe('calls spawn if args and/or opts are given', () => {
       it('args given are passed to spawnSync', () => {
-        // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
         const spawnSpy = spy(testGenerator, 'spawn');
-        // @ts-expect-error We know that spawnCommand exists on the generator. It is added with applyMixins().
         testGenerator.spawnCommand('foo', ['bar']);
-        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
         assert.ok(spawnSpy.calledWith('foo', ['bar']));
       });
       it('opts given are passed to spawnSync', () => {
-        // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
         const spawnSpy = spy(testGenerator, 'spawn');
-        // @ts-expect-error We know that spawnCommand exists on the generator. It is added with applyMixins().
         testGenerator.spawnCommand('foo', undefined, { verbose: true });
-        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
         assert.ok(spawnSpy.calledWith('foo', undefined, { verbose: true }));
       });
       it('both args and opts given are passed to spawnSync', () => {
-        // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
         const spawnSpy = spy(testGenerator, 'spawn');
-        // @ts-expect-error We know that spawnCommand exists on the generator. It is added with applyMixins().
         testGenerator.spawnCommand('foo', ['bar'], { verbose: true });
-        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
         assert.ok(spawnSpy.calledWith('foo', ['bar'], { verbose: true }));
       });
     });
@@ -65,10 +59,8 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
     describe('only the command is required', () => {
       describe('no args and no options are given', () => {
         it('calls execaSync with the command, args, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
-          // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
           testGenerator.spawn('foo');
-          expect(execa.execa).toHaveBeenCalledWith('foo', undefined, {
-            // @ts-expect-error We know that destinationRoot() exists for the generator.
+          expect(execa).toHaveBeenCalledWith('foo', undefined, {
             cwd: testGenerator.destinationRoot(),
             stdio: 'inherit',
           });
@@ -79,8 +71,7 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
     it('passes any args and opts along to execa()', () => {
       // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
       testGenerator.spawn('foo', ['arg1', 2, 'the third arg'], { verbose: true });
-      expect(execa.execa).toHaveBeenCalledWith('foo', ['arg1', 2, 'the third arg'], {
-        // @ts-expect-error We know that destinationRoot() exists for the generator.
+      expect(execa).toHaveBeenCalledWith('foo', ['arg1', 2, 'the third arg'], {
         cwd: testGenerator.destinationRoot(),
         stdio: 'inherit',
         verbose: true,
@@ -88,10 +79,8 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
     });
 
     it('can override default stdio option', () => {
-      // @ts-expect-error We know that spawn exists on the generator. It is added with applyMixins().
       testGenerator.spawn('foo', undefined, { stdio: 'pipe' });
-      expect(execa.execa).toHaveBeenCalledWith('foo', undefined, {
-        // @ts-expect-error We know that destinationRoot() exists for the generator.
+      expect(execa).toHaveBeenCalledWith('foo', undefined, {
         cwd: testGenerator.destinationRoot(),
         stdio: 'pipe',
       });
@@ -102,10 +91,8 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
     describe('only the command is required', () => {
       describe('no args and no options are given', () => {
         it('calls execaCommandSync with the command, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
-          // @ts-expect-error We know that spawnCommandSync exists on the generator. It is added with applyMixins().
           testGenerator.spawnCommandSync('foo');
-          expect(execa.execaCommandSync).toHaveBeenCalledWith('foo', {
-            // @ts-expect-error We know that destinationRoot() exists for the generator.
+          expect(execaCommandSync).toHaveBeenCalledWith('foo', {
             cwd: testGenerator.destinationRoot(),
             stdio: 'inherit',
           });
@@ -115,27 +102,18 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
 
     describe('calls spawnSync if args and/or opts are given', () => {
       it('args given are passed to spawnSync', () => {
-        // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
         const spawnSyncSpy = spy(testGenerator, 'spawnSync');
-        // @ts-expect-error We know that spawnCommandSync exists on the generator. It is added with applyMixins().
         testGenerator.spawnCommandSync('foo', ['bar']);
-        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
         assert.ok(spawnSyncSpy.calledWith('foo', ['bar']));
       });
       it('opts given are passed to spawnSync', () => {
-        // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
         const spawnSyncSpy = spy(testGenerator, 'spawnSync');
-        // @ts-expect-error We know that spawnCommandSync exists on the generator. It is added with applyMixins().
         testGenerator.spawnCommandSync('foo', undefined, { verbose: true });
-        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
         assert.ok(spawnSyncSpy.calledWith('foo', undefined, { verbose: true }));
       });
       it('both args and opts given are passed to spawnSync', () => {
-        // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
         const spawnSyncSpy = spy(testGenerator, 'spawnSync');
-        // @ts-expect-error We know that spawnCommandSync exists on the generator. It is added with applyMixins().
         testGenerator.spawnCommandSync('foo', ['bar'], { verbose: true });
-        // @ts-expect-error TypeScript doesn't like the args type for .calledWith
         assert.ok(spawnSyncSpy.calledWith('foo', ['bar'], { verbose: true }));
       });
     });
@@ -145,10 +123,8 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
     describe('only the command is required', () => {
       describe('no args and no options are given', () => {
         it('calls execaSync with the command, args, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
-          // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
           testGenerator.spawnSync('foo');
-          expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
-            // @ts-expect-error We know that destinationRoot() exists for the generator.
+          expect(execaSync).toHaveBeenCalledWith('foo', undefined, {
             cwd: testGenerator.destinationRoot(),
             stdio: 'inherit',
           });
@@ -157,10 +133,8 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
     });
 
     it('passes any args and opts along to execaSync()', () => {
-      // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
       testGenerator.spawnSync('foo', ['arg1', 2, 'the third arg'], { verbose: true });
-      expect(execa.execaSync).toHaveBeenCalledWith('foo', ['arg1', 2, 'the third arg'], {
-        // @ts-expect-error We know that destinationRoot() exists for the generator.
+      expect(execaSync).toHaveBeenCalledWith('foo', ['arg1', 2, 'the third arg'], {
         cwd: testGenerator.destinationRoot(),
         stdio: 'inherit',
         verbose: true,
@@ -168,10 +142,8 @@ describe.skip('generators.Base (actions/spawn-command)', async () => {
     });
 
     it('can override default stdio option', () => {
-      // @ts-expect-error We know that spawnSync exists on the generator. It is added with applyMixins().
       testGenerator.spawnSync('foo', undefined, { stdio: 'pipe' });
-      expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
-        // @ts-expect-error We know that destinationRoot() exists for the generator.
+      expect(execaSync).toHaveBeenCalledWith('foo', undefined, {
         cwd: testGenerator.destinationRoot(),
         stdio: 'pipe',
       });

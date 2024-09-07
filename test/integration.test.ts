@@ -1,20 +1,19 @@
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { before, describe, it } from 'esmocha';
+import { beforeAll, describe, it } from 'vitest';
 import helpers, { result } from 'yeoman-test';
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
 describe('Integration', () => {
-  before(async function () {
-    this.timeout(5000);
+  beforeAll(async () => {
     await helpers
       .create(path.join(_dirname, 'fixtures/generator-defaults/app'))
       .withAnswers({ foo: 'fooValue' })
       .withOptions({ extra: 'extraValue' })
       .run();
-  });
+  }, 5000);
   it('writes prompt value to foo-template.js', () => {
     result.assertFileContent('foo-template.js', "fooValue = 'fooValue");
   });

@@ -7,7 +7,7 @@
 // object, which means that you can use the API as if you were extending
 // `Base`.
 
-import Base from '../../../../src/index.js';
+import Base from '../../../../dist/index.js';
 import options from './options.js';
 import prompts from './prompts.js';
 
