@@ -8,6 +8,7 @@ import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
 import helpers from 'yeoman-test';
 import { type Store, create as createMemFs } from 'mem-fs';
 import Storage from '../src/util/storage.js';
+import { afterEach, beforeEach, describe, it } from 'vitest';
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);

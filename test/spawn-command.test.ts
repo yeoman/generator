@@ -4,13 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { spy } from 'sinon';
 import { execa, execaCommand, execaCommandSync, execaSync } from 'execa';
 
-
-vi.mock('pg', () => ({
+vi.mock('execa', () => ({
   execa: vi.fn(execa),
   execaSync: vi.fn(execaSync),
   execaCommand: vi.fn(execaCommand),
   execaCommandSync: vi.fn(execaCommandSync),
-}))
+}));
 
 describe.skip('generators.Base (actions/spawn-command)', () => {
   let testGenerator: Generator;

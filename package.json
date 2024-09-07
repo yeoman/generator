@@ -45,7 +45,7 @@
     "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
     "prepare": "npm run build",
     "pretest": "eslint .",
-    "test": "c8 esmocha --forbid-only"
+    "test": "vitest run --coverage"
   },
   "config": {
     "doc_path": "../yeoman-generator-doc/"

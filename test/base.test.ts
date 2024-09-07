@@ -902,16 +902,20 @@ describe('Base', () => {
     describe('object as first argument', () => {
       it('fails for missing Generator property', async () => {
         const gen = dummy;
-        await expect(gen.composeWith({
-          path: 'foo-path',
-        })).rejects.toThrow('Missing Generator property');
+        await expect(
+          gen.composeWith({
+            path: 'foo-path',
+          }),
+        ).rejects.toThrow('Missing Generator property');
       });
 
       it('fails for missing path property', async () => {
         const gen = dummy;
-        await expect(gen.composeWith({
-          Generator: GenCompose,
-        })).rejects.toThrow('path property is not a string');
+        await expect(
+          gen.composeWith({
+            Generator: GenCompose,
+          }),
+        ).rejects.toThrow('path property is not a string');
       });
     });
 

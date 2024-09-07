@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { afterEach, beforeEach, describe, it } from 'esmocha';
+import { afterEach, beforeEach, describe, it } from 'vitest';
 import nock from 'nock';
 import { simpleGit } from 'simple-git';
 import helpers from 'yeoman-test';
@@ -7,27 +7,27 @@ import Generator from '../src/index.js';
 
 /* eslint max-nested-callbacks: ["warn", 5] */
 
-describe('Base#user', function () {
-  this.timeout(10_000);
+describe('Base#user', () => {
+  let user;
 
-  beforeEach(async function () {
+  beforeEach(async () => {
     const context = helpers.create(Generator);
     await context.build();
-    this.user = context.generator;
+    user = context.generator;
     const git = simpleGit();
     await git.init().addConfig('user.name', 'Yeoman').addConfig('user.email', 'yo@yeoman.io');
   });
 
   describe('.git', () => {
     describe('.name()', () => {
-      it('is the name used by git', async function () {
-        assert.equal(await this.user.git.name(), 'Yeoman');
+      it('is the name used by git', async () => {
+        assert.equal(await user.git.name(), 'Yeoman');
       });
     });
 
     describe('.email()', () => {
-      it('is the email used by git', async function () {
-        assert.equal(await this.user.git.email(), 'yo@yeoman.io');
+      it('is the email used by git', async () => {
+        assert.equal(await user.git.email(), 'yo@yeoman.io');
       });
     });
   });
@@ -48,9 +48,9 @@ describe('Base#user', function () {
         nock.restore();
       });
 
-      it('is the username used by GitHub', async function () {
-        assert.equal(await this.user.github.username(), 'mockname');
+      it('is the username used by GitHub', async () => {
+        assert.equal(await user.github.username(), 'mockname');
       });
     });
   });
-});
+}, 10_000);
