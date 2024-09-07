@@ -31,7 +31,7 @@ describe('Base', () => {
   let dummy;
 
   beforeEach(async () => {
-    await helpers.prepareTemporaryDir({ cwd: tmpdir, tmpdir: true }).run();
+    await helpers.prepareTemporaryDir().run();
 
     env = createEnv();
     // Ignore error forwarded to environment

@@ -27,7 +27,9 @@ describe('Storage', () => {
   let memFsInstance: Store;
   let editor: MemFsEditor;
 
-  beforeEach(helpers.setUpTestDirectory(tmpdir));
+  beforeEach(async () => {
+    await helpers.prepareTemporaryDir();
+  });
 
   beforeEach(() => {
     beforeDir = process.cwd();

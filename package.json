@@ -44,7 +44,7 @@
     "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path$DOC_FOLDER",
     "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
     "prepare": "npm run build",
-    "pretest": "eslint .",
+    "pretest": "eslint . && npm run build",
     "test": "vitest run --coverage"
   },
   "config": {
