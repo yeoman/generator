@@ -1,7 +1,4 @@
-import os from 'node:os';
-import path from 'node:path';
 import { beforeEach, describe, it } from 'vitest';
-import { mkdirSync } from 'node:fs';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import type { SinonSpy } from 'sinon';
 import { assert as sinonAssert, spy as sinonSpy } from 'sinon';
@@ -10,8 +7,6 @@ import assert from 'yeoman-assert';
 import helpers from 'yeoman-test';
 import Base from './utils.js';
 
-const tmpdir = path.join(os.tmpdir(), 'yeoman-base');
-const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
 const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAdapter() });
 
 describe('Multiples generators', () => {
@@ -36,7 +31,6 @@ describe('Multiples generators', () => {
     await helpers.prepareTemporaryDir().run();
 
     env = createEnv();
-    mkdirSync(resolveddir, { recursive: true });
     Dummy = class extends Base {};
     spyExec = sinonSpy();
     Dummy.prototype.exec = spyExec;

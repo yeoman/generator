@@ -31,7 +31,7 @@ describe('Base', () => {
   let dummy;
 
   beforeEach(async () => {
-    await helpers.prepareTemporaryDir().run();
+    await helpers.prepareTemporaryDir({ cwd: tmpdir, autoCleanup: true, tmpdir: true }).run();
 
     env = createEnv();
     // Ignore error forwarded to environment
@@ -50,6 +50,10 @@ describe('Base', () => {
       env,
       'skip-install': true,
     });
+  });
+
+  afterEach(() => {
+    rmSync(path.join(resolveddir, 'package.json'), { force: true });
   });
 
   describe('constructor', () => {
@@ -175,10 +179,6 @@ describe('Base', () => {
   });
 
   describe('#determineAppname()', () => {
-    beforeEach(() => {
-      process.chdir(tmpdir);
-    });
-
     afterEach(() => {
       rmSync('bower.json', { force: true });
       rmSync('package.json', { force: true });
@@ -1279,10 +1279,6 @@ describe('Base', () => {
   });
 
   describe('#rootGeneratorName', () => {
-    afterEach(() => {
-      rmSync(path.join(resolveddir, 'package.json'), { force: true });
-    });
-
     it('returns the default name', () => {
       assert.equal(dummy.rootGeneratorName(), '*');
     });
