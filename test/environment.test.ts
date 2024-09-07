@@ -1,5 +1,3 @@
-import os from 'node:os';
-import path from 'node:path';
 import assert from 'node:assert';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import { afterAll, beforeAll, describe, it } from 'vitest';
@@ -8,8 +6,6 @@ import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
 import helpers from 'yeoman-test';
 import Base from './utils.js';
-
-const tmpdir = path.join(os.tmpdir(), 'yeoman-generator-environment');
 
 describe('Generator with environment version', () => {
   let env: Environment;
