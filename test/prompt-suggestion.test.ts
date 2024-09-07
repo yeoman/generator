@@ -2,7 +2,7 @@ import path from 'node:path';
 import assert from 'node:assert';
 import os from 'node:os';
 import { rmSync } from 'node:fs';
-import { afterEach, beforeEach, describe, it } from 'esmocha';
+import { afterEach, beforeEach, describe, it } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import inquirer from 'inquirer';
 import Environment from 'yeoman-environment';

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import assert from 'node:assert';
-import { afterEach, beforeEach, describe, it } from 'esmocha';
+import { afterEach, beforeEach, describe, it } from 'vitest';
 import chalk from 'chalk';
 import sinon, { type SinonSpy } from 'sinon';
 import deprecate from '../src/util/deprecate.js';

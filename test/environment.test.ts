@@ -2,8 +2,8 @@ import os from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert';
 import { TestAdapter } from '@yeoman/adapter/testing';
-import { after, before, describe, it } from 'esmocha';
-import type { SinonStub} from 'sinon';
+import { afterAll, beforeAll, describe, it } from 'vitest';
+import type { SinonStub } from 'sinon';
 import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
 import helpers from 'yeoman-test';
@@ -17,11 +17,12 @@ describe('Generator with environment version', () => {
   let dummy: Base;
   let getVersionStub: SinonStub;
 
-  before(helpers.setUpTestDirectory(tmpdir));
+  beforeAll(async () => {
+    await helpers.prepareTemporaryDir().run();
+  });
 
   describe('mocked 3.0.0', () => {
-    before(function () {
-      this.timeout(100_000);
+    beforeAll(() => {
       env = new Environment({ skipInstall: true, adapter: new TestAdapter() });
       env.getVersion = env.getVersion || (() => {});
       getVersionStub = sinonStub(env, 'getVersion');
@@ -35,9 +36,9 @@ describe('Generator with environment version', () => {
         'skip-install': true,
         skipCheckEnv: true,
       });
-    });
+    }, 100_000);
 
-    after(() => {
+    afterAll(() => {
       getVersionStub.restore();
     });
 
@@ -50,7 +51,7 @@ describe('Generator with environment version', () => {
       });
 
       describe('with required environment', () => {
-        before(() => {
+        beforeAll(() => {
           getVersionStub.returns('3.0.1');
         });
 
@@ -59,11 +60,11 @@ describe('Generator with environment version', () => {
         });
 
         describe('with ignoreVersionCheck', () => {
-          before(() => {
+          beforeAll(() => {
             dummy.options.ignoreVersionCheck = true;
           });
 
-          after(() => {
+          afterAll(() => {
             dummy.options.ignoreVersionCheck = false;
           });
 
@@ -82,7 +83,7 @@ describe('Generator with environment version', () => {
       });
 
       describe('with less than required environment', () => {
-        before(() => {
+        beforeAll(() => {
           getVersionStub.returns('3.0.0');
         });
 
@@ -100,11 +101,11 @@ describe('Generator with environment version', () => {
         });
 
         describe('with ignoreVersionCheck', () => {
-          before(() => {
+          beforeAll(() => {
             dummy.options.ignoreVersionCheck = true;
           });
 
-          after(() => {
+          afterAll(() => {
             dummy.options.ignoreVersionCheck = false;
           });
 
@@ -129,7 +130,7 @@ describe('Generator with environment version', () => {
       });
 
       describe('with less than required inquirer', () => {
-        before(() => {
+        beforeAll(() => {
           getVersionStub.withArgs('inquirer').returns('7.1.0');
         });
 
@@ -147,11 +148,11 @@ describe('Generator with environment version', () => {
         });
 
         describe('with ignoreVersionCheck', () => {
-          before(() => {
+          beforeAll(() => {
             dummy.options.ignoreVersionCheck = true;
           });
 
-          after(() => {
+          afterAll(() => {
             dummy.options.ignoreVersionCheck = false;
           });
 
@@ -172,8 +173,7 @@ describe('Generator with environment version', () => {
   });
 
   describe('mocked 2.8.1', () => {
-    before(function () {
-      this.timeout(100_000);
+    beforeAll(() => {
       env = new Environment({ skipInstall: true, adapter: new TestAdapter() });
       env.getVersion = undefined;
 
@@ -186,7 +186,7 @@ describe('Generator with environment version', () => {
         skipCheckEnv: true,
         'skip-install': true,
       });
-    });
+    }, 100_000);
 
     describe('#checkEnvironmentVersion', () => {
       describe('without args', () => {
@@ -199,11 +199,11 @@ describe('Generator with environment version', () => {
       });
 
       describe('with ignoreVersionCheck', () => {
-        before(() => {
+        beforeAll(() => {
           dummy.options.ignoreVersionCheck = true;
         });
 
-        after(() => {
+        afterAll(() => {
           dummy.options.ignoreVersionCheck = false;
         });
 

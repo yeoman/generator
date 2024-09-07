@@ -6,7 +6,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
-import { afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { extend } from 'lodash-es';
 import { assert as sinonAssert, fake as sinonFake, spy as sinonSpy } from 'sinon';
 import { passthrough } from '@yeoman/transform';
@@ -31,7 +31,7 @@ describe('Base', () => {
   let dummy;
 
   beforeEach(async () => {
-    await helpers.prepareTemporaryDir();
+    await helpers.prepareTemporaryDir({ cwd: tmpdir, tmpdir: true }).run();
 
     env = createEnv();
     // Ignore error forwarded to environment
@@ -900,26 +900,18 @@ describe('Base', () => {
     });
 
     describe('object as first argument', () => {
-      it('fails for missing Generator property', () => {
+      it('fails for missing Generator property', async () => {
         const gen = dummy;
-        assert.rejects(
-          () =>
-            gen.composeWith({
-              path: 'foo-path',
-            }),
-          error => error.message.includes('Missing Generator property'),
-        );
+        await expect(gen.composeWith({
+          path: 'foo-path',
+        })).rejects.toThrow('Missing Generator property');
       });
 
-      it('fails for missing path property', () => {
+      it('fails for missing path property', async () => {
         const gen = dummy;
-        assert.rejects(
-          () =>
-            gen.composeWith({
-              Generator: GenCompose,
-            }),
-          error => error.message.includes('path property is not a string'),
-        );
+        await expect(gen.composeWith({
+          Generator: GenCompose,
+        })).rejects.toThrow('path property is not a string');
       });
     });
 
@@ -1217,7 +1209,7 @@ describe('Base', () => {
           .on('method:createSomething', assertEvent('method:createSomething'))
           .on('method:createSomethingElse', assertEvent('method:createSomethingElse'));
 
-        angular.run();
+        angular.run().catch(() => {});
       }));
 
     it('only call the end event once (bug #402)', () =>
@@ -1252,7 +1244,7 @@ describe('Base', () => {
           isFirstEndEvent = false;
         });
 
-        generatorOnce.run();
+        generatorOnce.run().catch(() => {});
       }));
 
     it('triggers end event after all generators methods are ran (#709)', () =>
@@ -1278,7 +1270,7 @@ describe('Base', () => {
           'skip-install': true,
         });
 
-        generatorEnd.run();
+        generatorEnd.run().catch(() => {});
       }));
   });
 
@@ -1526,7 +1518,7 @@ describe('Base', () => {
         run: false,
       });
 
-      const secondTask = esmocha.fn();
+      const secondTask = vi.fn();
       gen.queueTask({
         method: secondTask,
         queueName,

@@ -605,6 +605,9 @@ export abstract class TasksMixin {
     { Generator, resolved = Generator.resolved }: { Generator?: any; resolved: string },
     options: EnvironmentComposeOptions<G> = {},
   ) {
+    if (!resolved) {
+      throw new Error('Generator path property is not a string');
+    }
     const generatorNamespace = this.env.namespace(resolved);
     const findGenerator = async () => {
       const generatorImport = await import(resolved);
@@ -618,7 +621,12 @@ export abstract class TasksMixin {
       return typeof generatorImport.default === 'function' ? generatorImport.default : generatorImport;
     };
 
-    Generator = Generator ?? (await findGenerator());
+    try {
+      Generator = Generator ?? (await findGenerator());
+    } catch {
+      throw new Error('Missing Generator property');
+    }
+
     Generator.namespace = generatorNamespace;
     Generator.resolved = resolved;
     return this.env.composeWith<G>(Generator, options);

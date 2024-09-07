@@ -1,6 +1,6 @@
 import os from 'node:os';
 import path from 'node:path';
-import { beforeEach, describe, it } from 'esmocha';
+import { beforeEach, describe, it } from 'vitest';
 import { mkdirSync } from 'node:fs';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import type { SinonSpy } from 'sinon';
@@ -32,9 +32,9 @@ describe('Multiples generators', () => {
   let spyEnd2: SinonSpy;
   let spyExec3: SinonSpy;
 
-  beforeEach(helpers.setUpTestDirectory(tmpdir));
+  beforeEach(async () => {
+    await helpers.prepareTemporaryDir().run();
 
-  beforeEach(() => {
     env = createEnv();
     mkdirSync(resolveddir, { recursive: true });
     Dummy = class extends Base {};

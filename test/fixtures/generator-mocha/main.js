@@ -12,7 +12,7 @@
 // It works with simple generator, if you need to do a bit more complex
 // stuff, extends from Generator.Base and defines your generator steps
 // in several methods.
-import Base from '../../../src/index.js';
+import Base from '../../../dist/index.js';
 
 class Generator extends Base {
   notEmpty() {}
