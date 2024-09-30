@@ -48,6 +48,7 @@ jobs:
           cd $GITHUB_WORKSPACE/yeoman-test
           npm ci
           jq 'del(.peerDependencies)' package.json > package.json
+          cat package.json
           npm install ${{ github.repository }}#$GITHUB_SHA
           npm install yeoman/environment#main
           npm test
