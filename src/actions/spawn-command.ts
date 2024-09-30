@@ -20,7 +20,7 @@ export class SpawnCommandMixin {
    * @see https://github.com/sindresorhus/execa#execacommandcommand-options
    */
   spawnCommand(command: string, opt?: ExecaOptions): ExecaChildProcess;
-  spawnCommand(command: string, opt?: ExecaOptions<undefined>): ExecaChildProcess<Buffer>;
+  spawnCommand(command: string, opt?: ExecaOptions): ExecaChildProcess<Buffer>;
   /**
    * @deprecated use `spawn` for file with args execution
    * Normalize a command across OS and spawn it (asynchronously).
@@ -38,12 +38,12 @@ export class SpawnCommandMixin {
    * @param args list of arguments to pass to the program
    * @param opt execa options options
    */
-  spawnCommand(command: string, args?: readonly string[], opt?: ExecaOptions<undefined>): ExecaChildProcess<Buffer>;
+  spawnCommand(command: string, args?: readonly string[], opt?: ExecaOptions): ExecaChildProcess<Buffer>;
   spawnCommand(
     this: BaseGenerator,
     command: string,
-    args?: readonly string[] | ExecaOptions<any>,
-    opt?: ExecaOptions<any>,
+    args?: readonly string[] | ExecaOptions,
+    opt?: ExecaOptions,
   ): ExecaChildProcess<any> {
     if (Array.isArray(args) || (opt && args === undefined)) {
       return this.spawn(command, args, opt);
@@ -70,7 +70,7 @@ export class SpawnCommandMixin {
     this: BaseGenerator,
     command: string,
     args?: readonly string[],
-    opt?: ExecaOptions<any>,
+    opt?: ExecaOptions,
   ): ExecaChildProcess<any> {
     return execa(command, args, {
       stdio: 'inherit',
@@ -87,7 +87,7 @@ export class SpawnCommandMixin {
    * @see https://github.com/sindresorhus/execa#execacommandsynccommand-options
    */
   spawnCommandSync(command: string, opt?: SyncOptions): ExecaSyncReturnValue;
-  spawnCommandSync(command: string, opt?: SyncOptions<undefined>): ExecaSyncReturnValue<Buffer>;
+  spawnCommandSync(command: string, opt?: SyncOptions): ExecaSyncReturnValue<Buffer>;
   /**
    * @deprecated use `spawnSync` for file with args execution
    * Normalize a command across OS and spawn it (synchronously).
@@ -108,13 +108,13 @@ export class SpawnCommandMixin {
   spawnCommandSync(
     command: string,
     args?: readonly string[],
-    opt?: SyncOptions<undefined>,
+    opt?: SyncOptions,
   ): ExecaSyncReturnValue<Buffer>;
   spawnCommandSync(
     this: BaseGenerator,
     command: string,
     args?: readonly string[] | SyncOptions,
-    opt?: SyncOptions<any>,
+    opt?: SyncOptions,
   ): ExecaSyncReturnValue<any> {
     if (Array.isArray(args) || (opt && args === undefined)) {
       return this.spawnSync(command, args, opt);
@@ -136,12 +136,12 @@ export class SpawnCommandMixin {
    * @see https://github.com/sindresorhus/execa#execafile-arguments-options
    */
   spawnSync(command: string, args?: readonly string[], opt?: SyncOptions): ExecaSyncReturnValue;
-  spawnSync(command: string, args?: readonly string[], opt?: SyncOptions<undefined>): ExecaSyncReturnValue<Buffer>;
+  spawnSync(command: string, args?: readonly string[], opt?: SyncOptions): ExecaSyncReturnValue<Buffer>;
   spawnSync(
     this: BaseGenerator,
     command: string,
     args?: readonly string[],
-    opt?: SyncOptions<any>,
+    opt?: SyncOptions,
   ): ExecaSyncReturnValue<any> {
     return execaSync(command, args, {
       stdio: 'inherit',
