@@ -72,7 +72,6 @@
   "devDependencies": {
     "@types/debug": "^4.1.9",
     "@types/ejs": "^3.1.4",
-    "@types/inquirer": "^9.0.4",
     "@types/json-schema": "^7.0.15",
     "@types/minimist": "^1.2.3",
     "@types/semver": "^7.5.3",
@@ -84,7 +83,7 @@
     "@yeoman/transform": "^1.2.0",
     "cpy-cli": "^5.0.0",
     "ejs": "^3.1.9",
-    "inquirer": "^9.2.11",
+    "inquirer": "^11.1.0",
     "jsdoc": "^4.0.2",
     "nock": "^13.3.4",
     "prettier": "^3.0.3",
