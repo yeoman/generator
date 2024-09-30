@@ -1,9 +1,8 @@
-import type Buffer from 'node:buffer';
 import {
-  type ExecaChildProcess,
   type Options as ExecaOptions,
-  type ExecaSyncReturnValue,
+  type ResultPromise,
   type SyncOptions,
+  type SyncResult,
   execa,
   execaCommand,
   execaCommandSync,
@@ -19,41 +18,13 @@ export class SpawnCommandMixin {
    * @param opt execa options options
    * @see https://github.com/sindresorhus/execa#execacommandcommand-options
    */
-  spawnCommand(command: string, opt?: ExecaOptions): ExecaChildProcess;
-  spawnCommand(command: string, opt?: ExecaOptions<undefined>): ExecaChildProcess<Buffer>;
-  /**
-   * @deprecated use `spawn` for file with args execution
-   * Normalize a command across OS and spawn it (asynchronously).
-   *
-   * @param command program to execute
-   * @param args list of arguments to pass to the program
-   * @param opt execa options options
-   */
-  spawnCommand(command: string, args?: readonly string[], opt?: ExecaOptions): ExecaChildProcess;
-  /**
-   * @deprecated use `spawn` for file with args execution
-   * Normalize a command across OS and spawn it (asynchronously).
-   *
-   * @param command program to execute
-   * @param args list of arguments to pass to the program
-   * @param opt execa options options
-   */
-  spawnCommand(command: string, args?: readonly string[], opt?: ExecaOptions<undefined>): ExecaChildProcess<Buffer>;
-  spawnCommand(
+  spawnCommand<const OptionsType extends ExecaOptions>(
     this: BaseGenerator,
     command: string,
-    args?: readonly string[] | ExecaOptions<any>,
-    opt?: ExecaOptions<any>,
-  ): ExecaChildProcess<any> {
-    if (Array.isArray(args) || (opt && args === undefined)) {
-      return this.spawn(command, args, opt);
-    }
-
-    return execaCommand(command, {
-      stdio: 'inherit',
-      cwd: this.destinationRoot(),
-      ...args,
-    });
+    opt?: OptionsType,
+  ): ResultPromise<OptionsType> {
+    opt = { cwd: this.destinationRoot(), ...opt } as OptionsType;
+    return execaCommand(command, opt) as any;
   }
 
   /**
@@ -64,19 +35,14 @@ export class SpawnCommandMixin {
    * @param opt execa options options
    * @see https://github.com/sindresorhus/execa#execafile-arguments-options
    */
-  spawn(command: string, args?: readonly string[], opt?: ExecaOptions): ExecaChildProcess;
-  spawn(command: string, args?: readonly string[], opt?: ExecaOptions<undefined>): ExecaChildProcess<Buffer>;
-  spawn(
+  spawn<const OptionsType extends ExecaOptions>(
     this: BaseGenerator,
     command: string,
     args?: readonly string[],
-    opt?: ExecaOptions<any>,
-  ): ExecaChildProcess<any> {
-    return execa(command, args, {
-      stdio: 'inherit',
-      cwd: this.destinationRoot(),
-      ...opt,
-    });
+    opt?: OptionsType,
+  ): ResultPromise<OptionsType> {
+    opt = { cwd: this.destinationRoot(), ...opt } as OptionsType;
+    return execa(command, args, opt) as any;
   }
 
   /**
@@ -86,45 +52,13 @@ export class SpawnCommandMixin {
    * @param opt execa options options
    * @see https://github.com/sindresorhus/execa#execacommandsynccommand-options
    */
-  spawnCommandSync(command: string, opt?: SyncOptions): ExecaSyncReturnValue;
-  spawnCommandSync(command: string, opt?: SyncOptions<undefined>): ExecaSyncReturnValue<Buffer>;
-  /**
-   * @deprecated use `spawnSync` for file with args execution
-   * Normalize a command across OS and spawn it (synchronously).
-   *
-   * @param command program to execute
-   * @param args list of arguments to pass to the program
-   * @param opt execa options options
-   */
-  spawnCommandSync(command: string, args?: readonly string[], opt?: SyncOptions): ExecaSyncReturnValue;
-  /**
-   * @deprecated use `spawnSync` for file with args execution
-   * Normalize a command across OS and spawn it (synchronously).
-   *
-   * @param command program to execute
-   * @param args list of arguments to pass to the program
-   * @param opt execa options options
-   */
-  spawnCommandSync(
-    command: string,
-    args?: readonly string[],
-    opt?: SyncOptions<undefined>,
-  ): ExecaSyncReturnValue<Buffer>;
-  spawnCommandSync(
+  spawnCommandSync<const OptionsType extends SyncOptions>(
     this: BaseGenerator,
     command: string,
-    args?: readonly string[] | SyncOptions,
-    opt?: SyncOptions<any>,
-  ): ExecaSyncReturnValue<any> {
-    if (Array.isArray(args) || (opt && args === undefined)) {
-      return this.spawnSync(command, args, opt);
-    }
-
-    return execaCommandSync(command, {
-      stdio: 'inherit',
-      cwd: this.destinationRoot(),
-      ...args,
-    });
+    opt?: OptionsType,
+  ): SyncResult<OptionsType> {
+    opt = { cwd: this.destinationRoot(), ...opt } as OptionsType;
+    return execaCommandSync<OptionsType>(command, opt);
   }
 
   /**
@@ -135,18 +69,13 @@ export class SpawnCommandMixin {
    * @param opt execa options options
    * @see https://github.com/sindresorhus/execa#execafile-arguments-options
    */
-  spawnSync(command: string, args?: readonly string[], opt?: SyncOptions): ExecaSyncReturnValue;
-  spawnSync(command: string, args?: readonly string[], opt?: SyncOptions<undefined>): ExecaSyncReturnValue<Buffer>;
-  spawnSync(
+  spawnSync<const OptionsType extends SyncOptions>(
     this: BaseGenerator,
     command: string,
     args?: readonly string[],
-    opt?: SyncOptions<any>,
-  ): ExecaSyncReturnValue<any> {
-    return execaSync(command, args, {
-      stdio: 'inherit',
-      cwd: this.destinationRoot(),
-      ...opt,
-    });
+    opt?: OptionsType,
+  ): SyncResult<OptionsType> {
+    opt = { cwd: this.destinationRoot(), ...opt } as OptionsType;
+    return execaSync(command, args, opt);
   }
 }
