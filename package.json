@@ -97,7 +97,6 @@
     "yeoman-test": "^9.0.0"
   },
   "peerDependencies": {
-    "@yeoman/transform": "^2.1.0",
     "@yeoman/types": "^1.1.1",
     "mem-fs": "^4.0.0"
   },
