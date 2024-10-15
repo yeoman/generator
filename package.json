@@ -59,7 +59,7 @@
     "execa": "^8.0.1",
     "github-username": "^7.0.0",
     "json-schema": "^0.4.0",
-    "latest-version": "^7.0.0",
+    "latest-version": "^9.0.0",
     "lodash-es": "^4.17.21",
     "mem-fs-editor": "^11.0.1",
     "minimist": "^1.2.8",
