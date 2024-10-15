@@ -36,7 +36,6 @@ jobs:
       - name: Checkout yeoman-environment
         uses: actions/checkout@v4
         with:
-          repository: mshima/environment
           path: yeoman-environment
 
       - uses: actions/setup-node@v4
@@ -50,8 +49,7 @@ jobs:
           jq 'del(.peerDependencies)' package.json.original > package.json
           cat package.json
           npm install
-          npm install ${{ github.repository }}#$GITHUB_SHA
-          npm install yeoman/environment#main
+          npm install ${{ github.repository }}#$GITHUB_SHA yeoman/environment#main
           npm test
 
       - name: Run yeoman-generator test
@@ -59,8 +57,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/yeoman-generator
           npm ci
-          npm install yeoman/yeoman-test#main
-          npm install yeoman/environment#main
+          npm install yeoman/yeoman-test#main yeoman/environment#main
           npm test
 
       - name: Run yeoman-environment test
@@ -68,6 +65,5 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/yeoman-environment
           npm ci
-          npm install ${{ github.repository }}#$GITHUB_SHA
-          npm install yeoman/yeoman-test#main
+          npm install yeoman-generator-7@${{ github.repository }}#$GITHUB_SHA yeoman/yeoman-test#main
           npm test
