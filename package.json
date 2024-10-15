@@ -94,7 +94,7 @@
     "vitest": "^2.0.5",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^4.4.1",
-    "yeoman-test": "^9.0.0"
+    "yeoman-test": "^10.0.1"
   },
   "peerDependencies": {
     "@yeoman/types": "^1.1.1",
