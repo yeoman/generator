@@ -1776,8 +1776,8 @@ describe('Base', () => {
 
   describe('#prompt', () => {
     let promptSpy;
-    const input1Prompt = { type: 'input', name: 'prompt1' };
-    const input2Prompt = { type: 'input', name: 'prompt2' };
+    const input1Prompt = { type: 'input', name: 'prompt1', message: 'dummy' };
+    const input2Prompt = { type: 'input', name: 'prompt2', message: 'dummy' };
     beforeEach(() => {
       dummy.env.adapter = new TestAdapter({
         mockedAnswers: {
