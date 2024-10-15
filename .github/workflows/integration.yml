@@ -36,7 +36,6 @@ jobs:
       - name: Checkout yeoman-environment
         uses: actions/checkout@v4
         with:
-          repository: mshima/environment
           path: yeoman-environment
 
       - uses: actions/setup-node@v4
