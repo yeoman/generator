@@ -78,7 +78,7 @@
     "@types/sinon": "^17.0.1",
     "@types/text-table": "^0.2.3",
     "@vitest/coverage-v8": "^2.0.5",
-    "@yeoman/adapter": "^1.4.0",
+    "@yeoman/adapter": "^2.0.0",
     "@yeoman/eslint": "^0.2.0",
     "@yeoman/transform": "^2.0.0",
     "cpy-cli": "^5.0.0",
