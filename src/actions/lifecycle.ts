@@ -1,7 +1,7 @@
 import { dirname, isAbsolute, resolve as pathResolve, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
-import { Duplex } from 'node:stream';
+import { Transform } from 'node:stream';
 import { stat } from 'node:fs/promises';
 import createDebug from 'debug';
 import type { BaseGenerator, ComposeOptions as EnvironmentComposeOptions, GetGeneratorOptions } from '@yeoman/types';
@@ -679,11 +679,12 @@ export abstract class TasksMixin {
         env.sharedFs.pipeline(
           { filter, ...memFsPipelineOptions },
           ...transforms,
-          Duplex.from(async function* (generator: AsyncGenerator<MemFsEditorFile>) {
-            for await (const file of generator) {
+          new Transform({
+            objectMode: true,
+            transform(file: MemFsEditorFile, _encoding, callback) {
               step('Completed', relative(env.logCwd, file.path));
-              yield file;
-            }
+              callback(null, file);
+            },
           }),
         ),
       { disabled, name },
