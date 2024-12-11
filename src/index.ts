@@ -5,6 +5,7 @@ import type { BaseFeatures, BaseOptions } from './types.js';
 import { DESTINATION_ROOT_CHANGE_EVENT } from './constants.js';
 
 export type * from './types.js';
+export type * from './questions.js';
 export type * from './util/storage.js';
 export { default as Storage } from './util/storage.js';
 
