@@ -895,10 +895,7 @@ describe('Base', () => {
       });
       await dummy.run();
       assert.equal(spy.firstCall.thisValue.options.namespace, 'mocha');
-      assert.equal(
-        spy.firstCall.thisValue.options.resolved,
-        createRequire(import.meta.url).resolve(stubPath),
-      );
+      assert.equal(spy.firstCall.thisValue.options.resolved, createRequire(import.meta.url).resolve(stubPath));
     });
 
     describe('object as first argument', () => {
