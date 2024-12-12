@@ -4,7 +4,7 @@ import os from 'node:os';
 import { EventEmitter } from 'node:events';
 import { fileURLToPath } from 'node:url';
 import * as _ from 'lodash-es';
-import semver from 'semver';
+import { lte as semverLte } from 'semver';
 import { readPackageUpSync } from 'read-package-up';
 import chalk from 'chalk';
 import minimist from 'minimist';
@@ -291,7 +291,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
 
       console.warn(`It's not possible to check version with running Environment less than ${ENV_VER_WITH_VER_API}`);
       console.warn('Some features may be missing');
-      if (semver.lte(versionToCheck, '2.8.1')) {
+      if (semverLte(versionToCheck, '2.8.1')) {
         return undefined;
       }
 
@@ -299,7 +299,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     }
 
     const runningVersion = this.env.getVersion(packageDependency);
-    if (runningVersion !== undefined && semver.lte(versionToCheck, runningVersion)) {
+    if (runningVersion !== undefined && semverLte(versionToCheck, runningVersion)) {
       return true;
     }
 

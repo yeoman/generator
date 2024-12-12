@@ -8,10 +8,10 @@ import type { StorageRecord, StorageValue } from '../types.js';
  * Proxy handler for Storage
  */
 const proxyHandler: ProxyHandler<Storage> = {
-  get(storage: Storage, property: string, receiver: any): StorageValue {
+  get(storage: Storage, property: string, _receiver: any): StorageValue {
     return storage.get(property);
   },
-  set(storage: Storage, property: string, value: any, receiver: any): boolean {
+  set(storage: Storage, property: string, value: any, _receiver: any): boolean {
     if (typeof property === 'string') {
       storage.set(property, value);
       return true;

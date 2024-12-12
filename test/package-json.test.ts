@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import semver from 'semver';
+import { lte as semverLte } from 'semver';
 import helpers from 'yeoman-test';
 import type { BaseEnvironment } from '@yeoman/types';
 import Generator from '../src/index.js';
@@ -21,7 +21,7 @@ describe('Base#package-json', () => {
 
   describe('_resolvePackageJsonDependencies()', () => {
     it('should accept empty version and resolve', async ctx => {
-      if (semver.lte(env.getVersion(), '3.1.0')) {
+      if (semverLte(env.getVersion(), '3.1.0')) {
         ctx.skip();
       }
       const dependencies = await generator._resolvePackageJsonDependencies('yeoman-generator');
@@ -40,7 +40,7 @@ describe('Base#package-json', () => {
     });
 
     it('should resolve object with empty version and resolve', async ctx => {
-      if (semver.lte(env.getVersion(), '3.1.0')) {
+      if (semverLte(env.getVersion(), '3.1.0')) {
         ctx.skip();
       }
 
