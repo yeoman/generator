@@ -2,7 +2,7 @@
 import fs, { mkdirSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path, { dirname } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
