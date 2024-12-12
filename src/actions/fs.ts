@@ -82,9 +82,13 @@ export class FsMixin {
     ...args: OverloadParameters<MemFsEditor['copy']>
   ): OverloadReturnType<MemFsEditor['copy']> {
     const [from, to, options = {}, ...remaining] = args;
-    options.fromBasePath = options.fromBasePath ?? this.templatePath();
 
-    return this.fs.copy(from, this.destinationPath(to), options, ...remaining);
+    return this.fs.copy(
+      from,
+      this.destinationPath(to),
+      { fromBasePath: this.templatePath(), ...options },
+      ...remaining,
+    );
   }
 
   /**
@@ -173,9 +177,13 @@ export class FsMixin {
     ...args: OverloadParameters<MemFsEditor['copy']>
   ): OverloadReturnType<MemFsEditor['copy']> {
     const [from, to, options = {}, ...remaining] = args;
-    options.fromBasePath = options.fromBasePath ?? this.destinationPath();
 
-    return this.fs.copy(from, this.destinationPath(to), options, ...remaining);
+    return this.fs.copy(
+      from,
+      this.destinationPath(to),
+      { fromBasePath: this.destinationPath(), ...options },
+      ...remaining,
+    );
   }
 
   /**
@@ -187,10 +195,14 @@ export class FsMixin {
     this: BaseGenerator,
     ...args: OverloadParameters<MemFsEditor['move']>
   ): OverloadReturnType<MemFsEditor['move']> {
-    const [from, to, options = {}, ...remaining] = args;
-    options.fromBasePath = options.fromBasePath ?? this.destinationPath();
+    const [from, to, options, ...remaining] = args;
 
-    return this.fs.move(from, this.destinationPath(to), options, ...remaining);
+    return this.fs.move(
+      from,
+      this.destinationPath(to),
+      { fromBasePath: this.destinationPath(), ...options },
+      ...remaining,
+    );
   }
 
   /**
@@ -233,7 +245,10 @@ export class FsMixin {
     destination = Array.isArray(destination) ? destination : [destination];
     const destinationPath = this.destinationPath(...destination);
 
-    this.fs.copyTpl(templatePath, destinationPath, templateData as TemplateData, templateOptions, copyOptions);
+    this.fs.copyTpl(templatePath, destinationPath, templateData as TemplateData, templateOptions, {
+      fromBasePath: this.templatePath(),
+      ...copyOptions,
+    });
   }
 
   /**
@@ -264,13 +279,10 @@ export class FsMixin {
     destination = Array.isArray(destination) ? destination : [destination];
     const destinationPath = this.destinationPath(...destination);
 
-    return this.fs.copyTplAsync(
-      templatePath,
-      destinationPath,
-      templateData as TemplateData,
-      templateOptions,
-      copyOptions,
-    );
+    return this.fs.copyTplAsync(templatePath, destinationPath, templateData as TemplateData, templateOptions, {
+      fromBasePath: this.templatePath(),
+      ...copyOptions,
+    });
   }
 
   /**
@@ -289,7 +301,10 @@ export class FsMixin {
     for (const template of templates) {
       const { templateData: eachData = templateData, source, destination } = template;
       if (!template.when || template.when(eachData as D, this)) {
-        this.renderTemplate(source, destination, eachData, template.templateOptions, template.copyOptions);
+        this.renderTemplate(source, destination, eachData, template.templateOptions, {
+          fromBasePath: this.templatePath(),
+          ...template.copyOptions,
+        });
       }
     }
   }
@@ -314,13 +329,10 @@ export class FsMixin {
       templates.map(async template => {
         const { templateData: eachData = templateData, source, destination } = template;
         if (!template.when || template.when(eachData as D, this)) {
-          return this.renderTemplateAsync(
-            source,
-            destination,
-            eachData,
-            template.templateOptions,
-            template.copyOptions,
-          );
+          return this.renderTemplateAsync(source, destination, eachData, template.templateOptions, {
+            fromBasePath: this.templatePath(),
+            ...template.copyOptions,
+          });
         }
 
         return;
