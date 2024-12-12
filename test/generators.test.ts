@@ -5,7 +5,7 @@ import { beforeEach, describe, it } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
-import semver from 'semver';
+import { valid as semverValid } from 'semver';
 import Base from './utils.js';
 
 const NAMESPACE = 'somenamespace';
@@ -31,7 +31,7 @@ describe('Generators module', () => {
     });
 
     it('should expose yoGeneratorVersion', () => {
-      assert(semver.valid(generator.yoGeneratorVersion), `Not valid version ${generator.yoGeneratorVersion as string}`);
+      assert(semverValid(generator.yoGeneratorVersion), `Not valid version ${generator.yoGeneratorVersion as string}`);
     });
 
     it('is an EventEmitter', () =>

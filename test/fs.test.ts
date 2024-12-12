@@ -5,7 +5,7 @@ import { TestAdapter } from '@yeoman/adapter/testing';
 import { type SinonStub, stub as sinonStub } from 'sinon';
 import type { Data as TemplateData } from 'ejs';
 import Environment from 'yeoman-environment';
-import BaseGenerator from '../src/generator.js';
+import { BaseGenerator } from '../src/generator.js';
 import Base from './utils.js';
 
 const randomString = () => Math.random().toString(36).slice(7);

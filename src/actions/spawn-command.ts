@@ -9,7 +9,7 @@ import {
   execaCommandSync,
   execaSync,
 } from 'execa';
-import type BaseGenerator from '../generator.js';
+import type { BaseGenerator } from '../generator.js';
 
 export class SpawnCommandMixin {
   /**

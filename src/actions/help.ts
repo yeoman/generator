@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import table from 'text-table';
 import type { ArgumentSpec, CliOptionSpec } from '../types.js';
-import type BaseGenerator from '../generator.js';
+import type { BaseGenerator } from '../generator.js';
 
 function formatArg(config: ArgumentSpec) {
   let arg = `<${config.name}>`;

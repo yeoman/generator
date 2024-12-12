@@ -1,9 +1,9 @@
-/* eslint max-params: [1, 5] */
+/* eslint max-params: [1, 6] */
 import assert from 'node:assert';
 import { type CopyOptions, type MemFsEditor } from 'mem-fs-editor';
 import type { Data as TemplateData, Options as TemplateOptions } from 'ejs';
 import type { OverloadParameters, OverloadReturnType } from '../types-utils.js';
-import type BaseGenerator from '../generator.js';
+import type { BaseGenerator } from '../generator.js';
 
 export type Template<D extends TemplateData, G> = {
   /**
