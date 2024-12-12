@@ -610,7 +610,7 @@ export abstract class TasksMixin {
     }
     const generatorNamespace = this.env.namespace(resolved);
     const findGenerator = async () => {
-      const generatorImport = await import(resolved);
+      const generatorImport = await import(pathToFileURL(resolved).href);
       const getFactory = (module: any) =>
         module.createGenerator ?? module.default?.createGenerator ?? module.default?.default?.createGenerator;
       const factory = getFactory(generatorImport);
@@ -649,7 +649,7 @@ export abstract class TasksMixin {
     if (!generatorResolvedFile) {
       // Resolve the generator file.
       // Use import.resolve when stable.
-      generatorResolvedFile = pathToFileURL(createRequire(import.meta.url).resolve(generatorFile)).href;
+      generatorResolvedFile = createRequire(import.meta.url).resolve(generatorFile);
     }
 
     return generatorResolvedFile;
