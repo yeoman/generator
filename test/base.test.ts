@@ -2,7 +2,7 @@
 import fs, { mkdirSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path, { dirname } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
@@ -897,7 +897,7 @@ describe('Base', () => {
       assert.equal(spy.firstCall.thisValue.options.namespace, 'mocha');
       assert.equal(
         spy.firstCall.thisValue.options.resolved,
-        pathToFileURL(createRequire(import.meta.url).resolve(stubPath)).href,
+        createRequire(import.meta.url).resolve(stubPath),
       );
     });
 
@@ -950,7 +950,7 @@ describe('Base', () => {
         spy = sinonSpy();
         dummy.resolved = _filename;
         stubPath = './fixtures/generator-mocha';
-        resolvedStub = pathToFileURL(require.resolve(stubPath)).href;
+        resolvedStub = require.resolve(stubPath);
         const module = await import(resolvedStub);
         LocalDummy = module.default;
         LocalDummy.prototype.exec = spy;
