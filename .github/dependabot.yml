@@ -10,6 +10,11 @@ updates:
         versions: ['>=17']
       - dependency-name: '*'
         update-types: ['version-update:semver-minor', 'version-update:semver-patch']
+    groups:
+      eslint:
+        patterns:
+          - '@vitest/*'
+          - 'vitest'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
