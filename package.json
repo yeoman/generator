@@ -90,7 +90,7 @@
     "sinon": "^19.0.0",
     "type-fest": "^4.26.1",
     "typescript": "^5.2.2",
-    "vitest": "^2.1.8",
+    "vitest": "^3.0.2",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^4.4.1",
     "yeoman-test": "^10.0.1"
