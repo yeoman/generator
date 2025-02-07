@@ -12,7 +12,8 @@ on:
         required: false
 
 permissions:
-  contents: read
+  contents: write  # for peter-evans/create-pull-request to create branch
+  pull-requests: write  # for peter-evans/create-pull-request to create a PR
 
 jobs:
   build:
@@ -22,14 +23,14 @@ jobs:
     name: Update api docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           path: source
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: gh-pages
           path: yeoman-generator-doc
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version: 16
       - run: npm ci
@@ -51,14 +52,14 @@ jobs:
         if: always()
         run: |
           git add .
-          git config --local user.email ""
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "Github Actions"
           git diff --cached
           git commit -a -m "Update api for ${{steps.version.outputs.version}}" || true
       - name: Create Pull Request
         if: always()
         id: cpr
-        uses: peter-evans/create-pull-request@v7.0.6
+        uses: peter-evans/create-pull-request@67ccf781d68cd99b580ae25a5c18a1cc84ffff1f # v7.0.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Update api for ${{steps.version.outputs.version}}'
