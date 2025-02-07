@@ -12,7 +12,8 @@ on:
         required: false
 
 permissions:
-  contents: read
+  contents: write  # for peter-evans/create-pull-request to create branch
+  pull-requests: write  # for peter-evans/create-pull-request to create a PR
 
 jobs:
   build:
@@ -51,7 +52,7 @@ jobs:
         if: always()
         run: |
           git add .
-          git config --local user.email ""
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "Github Actions"
           git diff --cached
           git commit -a -m "Update api for ${{steps.version.outputs.version}}" || true
