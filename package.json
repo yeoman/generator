@@ -105,6 +105,7 @@
   "overrides": {
     "yeoman-test": {
       "yeoman-generator": "file:."
-    }
+    },
+    "whatwg-url": "^14.1.0"
   }
 }
