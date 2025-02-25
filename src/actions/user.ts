@@ -47,7 +47,7 @@ export abstract class GitMixin {
   get github() {
     return {
       /**
-       * @deprecated Will be removed in version 8. Use 'github-username' package directly instead.
+       * @deprecated Will be removed in version 8. Use 'github-username' package with `await this.git.email()` result instead.
        *
        * Retrieves GitHub's username from the GitHub API
        * @return Resolved with the GitHub username or rejected if unable to
