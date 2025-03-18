@@ -807,6 +807,24 @@ describe('Base', () => {
     });
   });
 
+  describe('#executeTask()', () => {
+    it('should execute the task passing priority args', () => {
+      const priority = {
+        priorityName: 'initializing',
+        args: ['an arg array'],
+      };
+      dummy.registerPriorities([priority]);
+
+      const task = vi.fn();
+      dummy.executeTask({
+        queueName: 'dummy#initializing',
+        method: task,
+        taskName: 'testTask',
+      });
+      expect(task).toHaveBeenCalledWith('an arg array');
+    });
+  });
+
   describe('#parseOptions()', () => {
     beforeEach(() => {
       dummy = new Dummy(['start', '--foo', 'bar', '-s', 'baz', 'remain'], {

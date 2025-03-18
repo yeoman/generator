@@ -37,17 +37,17 @@ export abstract class TasksMixin {
    * Register priorities for this generator
    */
   registerPriorities(this: BaseGeneratorImpl, priorities: Priority[]) {
-    priorities = priorities.filter(priority => {
-      if (priority.edit) {
-        const queue = this._queues[priority.priorityName];
+    priorities = priorities.filter(({ priorityName, edit, ...priority }) => {
+      if (edit) {
+        const queue = this._queues[priorityName];
         if (!queue) {
-          throw new Error(`Error editing priority ${priority.priorityName}, not found`);
+          throw new Error(`Error editing priority ${priorityName}, not found`);
         }
 
         Object.assign(queue, { ...priority, edit: undefined });
       }
 
-      return !priority.edit;
+      return !edit;
     });
 
     const customPriorities = priorities.map(customPriority => ({ ...customPriority }));
@@ -321,13 +321,11 @@ export abstract class TasksMixin {
   async executeTask(
     this: BaseGeneratorImpl,
     task: Task,
-    args = task.args ?? this.args,
+    args = task.args,
     taskStatus: TaskStatus | undefined = this._taskStatus,
   ): Promise<void> {
     const { reject, queueName = 'default', taskName: methodName, method } = task;
     const { _namespace: namespace } = this;
-    const priority = Object.entries(this._queues).find(([_, options]) => (options as any).queueName === queueName);
-    const priorityName = priority ? priority[0] : undefined;
 
     debug(`Running ${namespace}#${methodName}`);
     this.emit(`method:${methodName}`);
@@ -335,7 +333,9 @@ export abstract class TasksMixin {
     if (taskCancelled) {
       return;
     }
-
+    const [priorityName, priority] =
+      Object.entries(this._queues).find(([_, queue]) => queue.queueName === queueName) ?? [];
+    args ??= priority?.args ?? this.args;
     args = typeof args === 'function' ? args(this as any) : args;
     this.runningState = { namespace, queueName, methodName };
     try {
