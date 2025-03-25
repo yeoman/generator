@@ -86,7 +86,7 @@
     "jsdoc": "^4.0.2",
     "prettier": "^3.0.3",
     "prettier-plugin-packagejson": "^2.4.6",
-    "sinon": "^19.0.0",
+    "sinon": "^20.0.0",
     "type-fest": "^4.26.1",
     "typescript": "^5.2.2",
     "vitest": "^3.0.2",
