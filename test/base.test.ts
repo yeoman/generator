@@ -58,6 +58,11 @@ describe('Base', () => {
     rmSync(path.join(resolveddir, 'package.json'), { force: true });
   });
 
+  it('allows to be required', () => {
+    const required = createRequire(import.meta.url)('..');
+    assert.equal(typeof required, 'function');
+  });
+
   describe('constructor', () => {
     it('uses the destinationRoot passed at options', () => {
       const projectDir = path.join(_dirname, 'fixtures/dummy-project');
