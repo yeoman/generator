@@ -91,8 +91,8 @@
     "typescript": "5.8.3",
     "vitest": "^3.1.3",
     "yeoman-assert": "^3.1.1",
-    "yeoman-environment": "^4.4.3",
-    "yeoman-test": "^10.1.0"
+    "yeoman-environment": "^5.0.0-beta.0",
+    "yeoman-test": "^10.1.1"
   },
   "peerDependencies": {
     "@types/node": ">=18.18.5",
