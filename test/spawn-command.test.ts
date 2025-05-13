@@ -30,28 +30,15 @@ describe('generators.Base (actions/spawn-command)', () => {
           testGenerator.spawnCommand('foo');
           expect(execaCommand).toHaveBeenCalledWith('foo', {
             cwd: testGenerator.destinationRoot(),
-            stdio: 'inherit',
           });
         });
       });
     });
 
-    describe('calls spawn if args and/or opts are given', () => {
-      it('args given are passed to spawnSync', () => {
-        const spawnSpy = spy(testGenerator, 'spawn');
-        testGenerator.spawnCommand('foo', ['bar']);
-        assert.ok(spawnSpy.calledWith('foo', ['bar']));
-      });
-      it('opts given are passed to spawnSync', () => {
-        const spawnSpy = spy(testGenerator, 'spawn');
-        testGenerator.spawnCommand('foo', undefined, { verbose: true });
-        assert.ok(spawnSpy.calledWith('foo', undefined, { verbose: true }));
-      });
-      it('both args and opts given are passed to spawnSync', () => {
-        const spawnSpy = spy(testGenerator, 'spawn');
-        testGenerator.spawnCommand('foo', ['bar'], { verbose: true });
-        assert.ok(spawnSpy.calledWith('foo', ['bar'], { verbose: true }));
-      });
+    it('opts given are passed to spawnCommand', () => {
+      const spawnSpy = spy(testGenerator, 'spawnCommand');
+      testGenerator.spawnCommand('foo', { verbose: true });
+      assert.ok(spawnSpy.calledWith('foo', { verbose: true }));
     });
   });
 
@@ -62,7 +49,6 @@ describe('generators.Base (actions/spawn-command)', () => {
           testGenerator.spawn('foo');
           expect(execa).toHaveBeenCalledWith('foo', undefined, {
             cwd: testGenerator.destinationRoot(),
-            stdio: 'inherit',
           });
         });
       });
@@ -73,7 +59,6 @@ describe('generators.Base (actions/spawn-command)', () => {
       testGenerator.spawn('foo', ['arg1', 2, 'the third arg'], { verbose: true });
       expect(execa).toHaveBeenCalledWith('foo', ['arg1', 2, 'the third arg'], {
         cwd: testGenerator.destinationRoot(),
-        stdio: 'inherit',
         verbose: true,
       });
     });
@@ -94,28 +79,15 @@ describe('generators.Base (actions/spawn-command)', () => {
           testGenerator.spawnCommandSync('foo');
           expect(execaCommandSync).toHaveBeenCalledWith('foo', {
             cwd: testGenerator.destinationRoot(),
-            stdio: 'inherit',
           });
         });
       });
     });
 
-    describe('calls spawnSync if args and/or opts are given', () => {
-      it('args given are passed to spawnSync', () => {
-        const spawnSyncSpy = spy(testGenerator, 'spawnSync');
-        testGenerator.spawnCommandSync('foo', ['bar']);
-        assert.ok(spawnSyncSpy.calledWith('foo', ['bar']));
-      });
-      it('opts given are passed to spawnSync', () => {
-        const spawnSyncSpy = spy(testGenerator, 'spawnSync');
-        testGenerator.spawnCommandSync('foo', undefined, { verbose: true });
-        assert.ok(spawnSyncSpy.calledWith('foo', undefined, { verbose: true }));
-      });
-      it('both args and opts given are passed to spawnSync', () => {
-        const spawnSyncSpy = spy(testGenerator, 'spawnSync');
-        testGenerator.spawnCommandSync('foo', ['bar'], { verbose: true });
-        assert.ok(spawnSyncSpy.calledWith('foo', ['bar'], { verbose: true }));
-      });
+    it('opts given are passed to spawnCommandSync', () => {
+      const spawnSyncSpy = spy(testGenerator, 'spawnCommandSync');
+      testGenerator.spawnCommandSync('foo', { verbose: true });
+      assert.ok(spawnSyncSpy.calledWith('foo', { verbose: true }));
     });
   });
 
@@ -126,7 +98,6 @@ describe('generators.Base (actions/spawn-command)', () => {
           testGenerator.spawnSync('foo');
           expect(execaSync).toHaveBeenCalledWith('foo', undefined, {
             cwd: testGenerator.destinationRoot(),
-            stdio: 'inherit',
           });
         });
       });
@@ -136,7 +107,6 @@ describe('generators.Base (actions/spawn-command)', () => {
       testGenerator.spawnSync('foo', ['arg1', 2, 'the third arg'], { verbose: true });
       expect(execaSync).toHaveBeenCalledWith('foo', ['arg1', 2, 'the third arg'], {
         cwd: testGenerator.destinationRoot(),
-        stdio: 'inherit',
         verbose: true,
       });
     });
