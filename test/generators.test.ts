@@ -1,7 +1,7 @@
 import EventEmitter from 'node:events';
 import path from 'node:path';
 import os from 'node:os';
-import { beforeEach, describe, it } from 'vitest';
+import { beforeEach, describe, expect, it, vitest } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import Environment from 'yeoman-environment';
 import assert from 'yeoman-assert';
@@ -117,6 +117,33 @@ describe('Generators module', () => {
       const customStorage = generator.createStorage(global);
       assert.equal(global, customStorage.path);
       assert.equal(undefined, customStorage.name);
+    });
+  });
+
+  describe('#getContextData', () => {
+    beforeEach(() => {
+      generator = new Base({
+        env: env,
+        resolved: 'test',
+        localConfigOnly: true,
+      });
+    });
+
+    it('non existing key should throw', () => {
+      expect(() => generator.getContextData('foo')).toThrow('Context data foo not found and no factory provided');
+    });
+
+    it('non existing key should use factory if provided', () => {
+      const data = 'bar';
+      const factory: () => string = vitest.fn().mockReturnValue(data);
+      expect(generator.getContextData('foo', factory)).toBe(data);
+      expect(factory).toHaveBeenCalled();
+    });
+
+    it('retrieves the data', () => {
+      const data = 'bar';
+      generator._contextMap.set('foo', data);
+      expect(generator.getContextData('foo')).toBe(data);
     });
   });
 
