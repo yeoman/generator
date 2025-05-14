@@ -4,3 +4,4 @@ coverage
 yarn.lock
 .project
 dist
+test/**/package-lock.json
