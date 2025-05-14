@@ -43,6 +43,7 @@
     "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path$DOC_FOLDER/global.html || true",
     "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path$DOC_FOLDER",
     "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
+    "fix": "eslint . --fix && prettier . --write",
     "prepare": "npm run build",
     "pretest": "eslint . && prettier . --check && npm run build",
     "test": "vitest run --coverage"

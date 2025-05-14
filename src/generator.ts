@@ -65,6 +65,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
   /** @deprecated */
   arguments!: string[];
   _destinationRoot!: string;
+  _contextMap?: Map<string, any>;
   _sourceRoot!: string;
 
   generatorConfig?: Storage;
@@ -744,6 +745,9 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
   destinationRoot(rootPath?: string) {
     if (typeof rootPath === 'string') {
       this._destinationRoot = pathResolve(rootPath);
+      if ('getContextMap' in this.env) {
+        this._contextMap = (this.env as any).getContextMap(this._destinationRoot);
+      }
 
       if (!fs.existsSync(this._destinationRoot)) {
         fs.mkdirSync(this._destinationRoot, { recursive: true });
@@ -813,6 +817,24 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
   determineAppname(): string {
     const appName: string = this.packageJson.get('name') ?? path.basename(this.destinationRoot());
     return appName.replaceAll(/[^\s\w]+?/g, ' ');
+  }
+
+  getContextData<const T = any>(key: string, factory?: () => T): T {
+    if (!this._contextMap) {
+      throw new Error('getContextMap is not implemented in the environment');
+    }
+
+    if (this._contextMap.has(key)) {
+      return this._contextMap.get(key);
+    }
+
+    if (factory) {
+      const value = factory();
+      this._contextMap.set(key, value);
+      return value;
+    }
+
+    throw new Error(`Context data ${key} not found and no factory provided`);
   }
 }
 
