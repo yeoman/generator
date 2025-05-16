@@ -819,22 +819,53 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     return appName.replaceAll(/[^\s\w]+?/g, ' ');
   }
 
-  getContextData<const T = any>(key: string, factory?: () => T): T {
-    if (!this._contextMap) {
+  /**
+   * @experimental
+   * Get a value from the context map.
+   * Fallback to factory function if the value is not set.
+   */
+  getContextData<const T = any>(context: string | { context: string; key: string }, factory?: () => T): T {
+    if (!('getContextMap' in this.env)) {
       throw new Error('getContextMap is not implemented in the environment');
     }
 
-    if (this._contextMap.has(key)) {
-      return this._contextMap.get(key);
+    const key = typeof context === 'string' ? context : context.key;
+    const map: Map<string, any> =
+      typeof context === 'object' ? (this.env as any).getContextMap(context.context) : this._contextMap;
+
+    if (map.has(key)) {
+      return map.get(key);
     }
 
     if (factory) {
       const value = factory();
-      this._contextMap.set(key, value);
+      map.set(key, value);
       return value;
     }
 
     throw new Error(`Context data ${key} not found and no factory provided`);
+  }
+
+  /**
+   * @experimental
+   * Set a value to the context map.
+   * Returns the old value.
+   *
+   * @example
+   * const oldValue = this.setContextData('runOnce', true); // returns undefined
+   */
+  setContextData<const T = any>(context: string | { context: string; key: string }, value: T): T | undefined {
+    if (!('getContextMap' in this.env)) {
+      throw new Error('getContextMap is not implemented in the environment');
+    }
+
+    const key = typeof context === 'string' ? context : context.key;
+    const map: Map<string, any> =
+      typeof context === 'object' ? (this.env as any).getContextMap(context.context) : this._contextMap;
+
+    const oldValue = map.get(key);
+    map.set(key, value);
+    return oldValue;
   }
 }
 

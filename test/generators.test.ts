@@ -145,6 +145,42 @@ describe('Generators module', () => {
       generator._contextMap.set('foo', data);
       expect(generator.getContextData('foo')).toBe(data);
     });
+
+    it('supports custon context', () => {
+      const context = 'ctx';
+      const key = 'foo';
+      const data = 'bar';
+      const factory: () => string = vitest.fn().mockReturnValue(data);
+      expect(generator.getContextData({ context, key }, factory)).toBe(data);
+      expect(factory).toHaveBeenCalled();
+      expect(env.getContextMap(context).get(key)).toBe(data);
+    });
+  });
+
+  describe('#setContextData', () => {
+    beforeEach(() => {
+      generator = new Base({
+        env: env,
+        resolved: 'test',
+        localConfigOnly: true,
+      });
+    });
+
+    it('sets new data and retrieves old data', () => {
+      const key = 'foo';
+      const data = 'bar';
+      expect(generator.setContextData(key, data)).toBe(undefined);
+      expect(generator.setContextData(key, 'new')).toBe(data);
+    });
+
+    it('supports custon context', () => {
+      const context = 'ctx';
+      const key = 'foo';
+      const data = 'bar';
+      expect(generator.setContextData({ context, key }, data)).toBe(undefined);
+      expect(generator.setContextData({ context, key }, 'new')).toBe(data);
+      expect(env.getContextMap(context).get(key)).toBe('new');
+    });
   });
 
   it('running standalone', () =>
