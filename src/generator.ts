@@ -824,7 +824,10 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    * Get a value from the context map.
    * Fallback to factory function if the value is not set.
    */
-  getContextData<const T = any>(context: string | { context: string; key: string }, factory?: () => T): T {
+  getContextData<const T = any>(
+    context: string | { context: string; key: string },
+    opts: { override?: T } | { factory?: () => T } = {},
+  ): T {
     if (!('getContextMap' in this.env)) {
       throw new Error('getContextMap is not implemented in the environment');
     }
@@ -833,39 +836,23 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
     const map: Map<string, any> =
       typeof context === 'object' ? (this.env as any).getContextMap(context.context) : this._contextMap;
 
-    if (map.has(key)) {
-      return map.get(key);
+    const value = map.get(key);
+    if ('override' in opts) {
+      map.set(key, opts.override);
+      return value;
     }
 
-    if (factory) {
-      const value = factory();
+    if (map.has(key)) {
+      return value;
+    }
+
+    if ('factory' in opts && opts.factory) {
+      const value = opts.factory();
       map.set(key, value);
       return value;
     }
 
     throw new Error(`Context data ${key} not found and no factory provided`);
-  }
-
-  /**
-   * @experimental
-   * Set a value to the context map.
-   * Returns the old value.
-   *
-   * @example
-   * const oldValue = this.setContextData('runOnce', true); // returns undefined
-   */
-  setContextData<const T = any>(context: string | { context: string; key: string }, value: T): T | undefined {
-    if (!('getContextMap' in this.env)) {
-      throw new Error('getContextMap is not implemented in the environment');
-    }
-
-    const key = typeof context === 'string' ? context : context.key;
-    const map: Map<string, any> =
-      typeof context === 'object' ? (this.env as any).getContextMap(context.context) : this._contextMap;
-
-    const oldValue = map.get(key);
-    map.set(key, value);
-    return oldValue;
   }
 }
 
