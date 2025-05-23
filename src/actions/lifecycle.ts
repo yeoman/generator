@@ -478,7 +478,7 @@ export abstract class TasksMixin {
   async composeWith<G extends BaseGenerator = BaseGenerator>(
     generator: string,
     options?: ComposeOptions<G>,
-  ): Promise<G[]>;
+  ): Promise<G>;
 
   async composeWith<G extends BaseGenerator = BaseGenerator>(
     this: BaseGeneratorImpl,
@@ -554,7 +554,7 @@ export abstract class TasksMixin {
     this: BaseGeneratorImpl,
     generator: string | { Generator: any; path: string },
     options: ComposeOptions<G> = {},
-  ): Promise<G | G[]> {
+  ): Promise<G> {
     const { forceResolve, skipEnvRegister = false, forwardOptions, ...composeOptions } = options;
     const optionsToForward = forwardOptions
       ? this.options
