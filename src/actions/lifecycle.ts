@@ -336,7 +336,13 @@ export abstract class TasksMixin {
     const [priorityName, priority] =
       Object.entries(this._queues).find(([_, queue]) => queue.queueName === queueName) ?? [];
     args ??= priority?.args ?? this.args;
-    args = typeof args === 'function' ? args(this as any) : args;
+    try {
+      args = typeof args === 'function' ? args(this as any) : args;
+    } catch (error: any) {
+      throw new Error(`Error while building arguments for ${namespace}#${methodName}: ${error.message}`, {
+        cause: error,
+      });
+    }
     this.runningState = { namespace, queueName, methodName };
     try {
       await method.apply(this, args);
