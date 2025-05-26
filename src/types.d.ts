@@ -175,7 +175,6 @@ export type CliOptionSpec = {
 };
 
 export type ComposeOptions<G extends BaseGenerator = BaseGenerator> = EnvironmentComposeOptions<G> & {
-  destinationRoot?: string;
   skipEnvRegister?: boolean;
   forceResolve?: boolean;
   forwardOptions?: boolean;
