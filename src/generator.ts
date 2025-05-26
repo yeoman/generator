@@ -826,7 +826,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    */
   getContextData<const T = any>(
     context: string | { context: string; key: string },
-    opts: { override?: T } | { factory?: () => T } = {},
+    opts: { replacement?: T } | { override?: T } | { factory?: () => T } = {},
   ): T {
     if (!('getContextMap' in this.env)) {
       throw new Error('getContextMap is not implemented in the environment');
@@ -837,6 +837,10 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
       typeof context === 'object' ? (this.env as any).getContextMap(context.context) : this._contextMap;
 
     const value = map.get(key);
+    if ('replacement' in opts) {
+      map.set(key, opts.replacement);
+      return value;
+    }
     if ('override' in opts) {
       map.set(key, opts.override);
       return value;

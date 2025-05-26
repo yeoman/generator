@@ -156,19 +156,19 @@ describe('Generators module', () => {
       expect(env.getContextMap(context).get(key)).toBe(data);
     });
 
-    it('using overrides option sets new data and retrieves old data', () => {
+    it('using replacement option sets new data and retrieves old data', () => {
       const key = 'foo';
       const data = 'bar';
-      expect(generator.getContextData(key, { override: data })).toBe(undefined);
-      expect(generator.getContextData(key, { override: 'new' })).toBe(data);
+      expect(generator.getContextData(key, { replacement: data })).toBe(undefined);
+      expect(generator.getContextData(key, { replacement: 'new' })).toBe(data);
     });
 
-    it('supports overrides option with custon context', () => {
+    it('supports replacement option with custon context', () => {
       const context = 'ctx';
       const key = 'foo';
       const data = 'bar';
-      expect(generator.getContextData({ context, key }, { override: data })).toBe(undefined);
-      expect(generator.getContextData({ context, key }, { override: 'new' })).toBe(data);
+      expect(generator.getContextData({ context, key }, { replacement: data })).toBe(undefined);
+      expect(generator.getContextData({ context, key }, { replacement: 'new' })).toBe(data);
       expect(env.getContextMap(context).get(key)).toBe('new');
     });
   });
