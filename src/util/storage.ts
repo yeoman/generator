@@ -323,9 +323,11 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    *                         Some paths need to be escaped. Eg: ["dotted.path"]
    * @return Returns a new Storage.
    */
-  createStorage<const KeyPath extends string>(path: KeyPath): Storage<Get<StorageRecord, KeyPath>> {
+  createStorage<StoredType extends Record<any, any>>(path: string): Storage<StoredType>;
+  createStorage<const KeyPath extends string>(path: KeyPath): Storage<Get<StorageRecord, KeyPath>>;
+  createStorage(path: string): Storage<any> {
     const childName = this.name ? `${this.name}.${path}` : path;
-    return new Storage<Get<StorageRecord, KeyPath>>(childName, this.fs, this.path, { lodashPath: true });
+    return new Storage(childName, this.fs, this.path, { lodashPath: true });
   }
 
   /**
