@@ -10,9 +10,10 @@ export type * from './util/storage.js';
 export { default as Storage } from './util/storage.js';
 
 export default class Generator<
+  C extends Record<any, any> = Record<any, any>,
   O extends BaseOptions = BaseOptions,
   F extends BaseFeatures = BaseFeatures,
-> extends BaseGenerator<O, F> {
+> extends BaseGenerator<C, O, F> {
   _simpleGit?: SimpleGit;
 
   constructor(...args: any[]) {

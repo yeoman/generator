@@ -23,6 +23,7 @@ import { PackageJsonMixin } from './actions/package-json.js';
 import { SpawnCommandMixin } from './actions/spawn-command.js';
 import { GitMixin } from './actions/user.js';
 import { TasksMixin } from './actions/lifecycle.js';
+import type { PackageJson } from 'type-fest';
 
 type Environment = BaseEnvironment<QueuedAdapter>;
 
@@ -33,10 +34,17 @@ const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
 
 const ENV_VER_WITH_VER_API = '2.9.0';
 
-const packageJson = JSON.parse(readFileSync(pathJoin(_dirname, '../package.json'), 'utf8'));
+const packageJson: PackageJson = JSON.parse(readFileSync(pathJoin(_dirname, '../package.json'), 'utf8'));
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFeatures = BaseFeatures>
+export class BaseGenerator<
+    ConfigType extends Record<any, any> = Record<any, any>,
+    O extends BaseOptions = BaseOptions,
+    F extends BaseFeatures = BaseFeatures,
+    GeneratorConfigType extends Record<any, any> = Record<any, any>,
+    InstanceConfigType extends Record<any, any> = Record<any, any>,
+    GlobalConfigType extends Record<any, any> = Record<any, any>,
+  >
   extends EventEmitter
   implements Omit<GeneratorApi<O, F>, 'features'>
 {
@@ -68,12 +76,12 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
   _contextMap?: Map<string, any>;
   _sourceRoot!: string;
 
-  generatorConfig?: Storage;
-  instanceConfig?: Storage;
-  _config?: Storage;
-  _packageJson?: Storage;
+  generatorConfig?: Storage<GeneratorConfigType>;
+  instanceConfig?: Storage<InstanceConfigType>;
+  _config?: Storage<ConfigType>;
+  _packageJson?: Storage<PackageJson>;
 
-  _globalConfig!: Storage;
+  _globalConfig!: Storage<GlobalConfigType>;
 
   // If for some reason environment adds more queues, we should use or own for stability.
   static get queues() {
@@ -92,7 +100,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
 
   _running = false;
   readonly features!: F;
-  readonly yoGeneratorVersion: string = packageJson.version as string;
+  readonly yoGeneratorVersion: string = packageJson.version!;
 
   /**
    * @classdesc The `Generator` class provides the common API shared by all generators.
@@ -630,9 +638,9 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
   /**
    * Generator config Storage.
    */
-  get config() {
+  get config(): Storage<ConfigType> {
     if (!this._config) {
-      this._config = this._getStorage();
+      this._config = this._getStorage<ConfigType>();
     }
 
     return this._config;
@@ -657,7 +665,7 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    *   },
    * });
    */
-  get packageJson(): Storage {
+  get packageJson(): Storage<PackageJson> {
     if (!this._packageJson) {
       this._packageJson = this.createStorage('package.json');
     }
@@ -699,7 +707,11 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    * @param storePath  The path of the json file
    * @param options storage options or the storage name
    */
-  createStorage(storePath: string, options?: string | StorageOptions): Storage {
+  createStorage<StoredType extends Record<any, any> = Record<any, any>>(
+    storePath: string,
+    options?: string | StorageOptions,
+  ): Storage<StoredType>;
+  createStorage(storePath: string, options?: string | StorageOptions): Storage<any> {
     if (typeof options === 'string') {
       options = { name: options };
     }
@@ -714,13 +726,16 @@ export class BaseGenerator<O extends BaseOptions = BaseOptions, F extends BaseFe
    * @param options Storage options
    * @return Generator storage
    */
-  _getStorage(rootName: string | StorageOptions = this.rootGeneratorName(), options: StorageOptions = {}) {
+  _getStorage<StoredType extends Record<any, any> = Record<any, any>>(
+    rootName: string | StorageOptions = this.rootGeneratorName(),
+    options: StorageOptions = {},
+  ): Storage<StoredType> {
     if (typeof rootName === 'object') {
       options = rootName;
       rootName = this.rootGeneratorName();
     }
 
-    return this.createStorage('.yo-rc.json', { ...options, name: rootName });
+    return this.createStorage<StoredType>('.yo-rc.json', { ...options, name: rootName });
   }
 
   /**

@@ -1,8 +1,9 @@
 import assert from 'node:assert';
 import { cloneDeep, get, merge, set, defaults as setDefaults } from 'lodash-es';
 import sortKeys from 'sort-keys';
+import type { Get } from 'type-fest';
 import type { MemFsEditor } from 'mem-fs-editor';
-import type { StorageRecord, StorageValue } from '../types.js';
+import type { StorageValue } from '../types.js';
 
 /**
  * Proxy handler for Storage
@@ -71,7 +72,7 @@ export type StorageOptions = {
  *   }
  * }
  */
-class Storage {
+class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   path: string;
   name?: string;
   fs: MemFsEditor;
@@ -196,7 +197,7 @@ class Storage {
       if (this.lodashPath) {
         set(fullStore, this.name, value);
       } else {
-        fullStore[this.name] = value;
+        (fullStore as any)[this.name] = value;
       }
     } else {
       fullStore = value;
@@ -217,8 +218,8 @@ class Storage {
    * @param key  The key under which the value is stored.
    * @return The stored value. Any JSON valid type could be returned
    */
-  get<T extends StorageValue = StorageValue>(key: string): T {
-    return this._store[key] as T;
+  get<const Key extends keyof StorageRecord>(key: Key): StorageRecord[Key] {
+    return this._store[key];
   }
 
   /**
@@ -226,8 +227,8 @@ class Storage {
    * @param path  The path under which the value is stored.
    * @return The stored value. Any JSON valid type could be returned
    */
-  getPath<T extends StorageValue = StorageValue>(path: string): T {
-    return get(this._store, path) as T;
+  getPath<const KeyPath extends string>(path: KeyPath): Get<StorageValue, KeyPath> {
+    return get(this._store, path);
   }
 
   /**
@@ -244,21 +245,26 @@ class Storage {
    * @param val  Any valid JSON type value (String, Number, Array, Object).
    * @return val  Whatever was passed in as val.
    */
-  set<V = StorageValue>(value: V): V;
-  set<V = StorageValue>(key: string | number, value?: V): V | undefined;
-  set<V = StorageValue>(key: string | number | V, value?: V): V | undefined {
+  set(value: Partial<StorageRecord>): StorageRecord;
+  set<const Key extends keyof StorageRecord, const Value extends StorageRecord[Key]>(
+    key: Key,
+    value?: Value,
+  ): Value | undefined;
+  set(key: string | number | Partial<StorageRecord>, value?: StorageValue): StorageRecord | StorageValue | undefined {
     const store = this._store;
+    let ret: StorageValue | StorageValue | undefined;
 
     if (typeof key === 'object') {
-      value = Object.assign(store, key);
+      ret = Object.assign(store, key);
     } else if (typeof key === 'string' || typeof key === 'number') {
-      store[key] = value as any;
+      (store as any)[key] = value;
+      ret = value;
     } else {
       throw new TypeError(`key not supported ${typeof key}`);
     }
 
     this._persist(store);
-    return value;
+    return ret;
   }
 
   /**
@@ -267,7 +273,7 @@ class Storage {
    * @param val  Any valid JSON type value (String, Number, Array, Object).
    * @return val  Whatever was passed in as val.
    */
-  setPath(path: string | number, value: StorageValue) {
+  setPath<const KeyPath extends string>(path: KeyPath, value: Get<StorageValue, KeyPath>): Get<StorageValue, KeyPath> {
     assert(typeof value !== 'function', "Storage value can't be a function");
 
     const store = this._store;
@@ -280,7 +286,7 @@ class Storage {
    * Delete a key from the store and schedule a save.
    * @param key  The key under which the value is stored.
    */
-  delete(key: string) {
+  delete(key: keyof StorageRecord): void {
     const store = this._store;
 
     delete store[key];
@@ -293,7 +299,7 @@ class Storage {
    * @param defaults  Key-value object to store.
    * @return val  Returns the merged options.
    */
-  defaults(defaults: StorageRecord): StorageRecord {
+  defaults(defaults: Partial<StorageRecord>): StorageRecord {
     assert(typeof defaults === 'object', 'Storage `defaults` method only accept objects');
     const store = setDefaults({}, this._store, defaults);
     this._persist(store);
@@ -304,7 +310,7 @@ class Storage {
    * @param defaults  Key-value object to store.
    * @return val  Returns the merged object.
    */
-  merge(source: StorageRecord) {
+  merge(source: Partial<StorageRecord>): StorageRecord {
     assert(typeof source === 'object', 'Storage `merge` method only accept objects');
     const value = merge({}, this._store, source);
     this._persist(value);
@@ -317,9 +323,9 @@ class Storage {
    *                         Some paths need to be escaped. Eg: ["dotted.path"]
    * @return Returns a new Storage.
    */
-  createStorage(path: string): Storage {
+  createStorage<const KeyPath extends string>(path: KeyPath): Storage<Get<StorageRecord, KeyPath>> {
     const childName = this.name ? `${this.name}.${path}` : path;
-    return new Storage(childName, this.fs, this.path, { lodashPath: true });
+    return new Storage<Get<StorageRecord, KeyPath>>(childName, this.fs, this.path, { lodashPath: true });
   }
 
   /**
