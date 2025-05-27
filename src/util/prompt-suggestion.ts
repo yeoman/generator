@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import type { JSONSchema7Object } from 'json-schema';
 import type { PromptAnswers, PromptQuestion } from '../questions.js';
 import type Storage from './storage.js';
 
@@ -173,7 +172,7 @@ export const storeAnswers = (store: Storage, questions: any, answers: PromptAnsw
   assert.ok(typeof answers === 'object', 'answers must be a object');
 
   storeAll = storeAll || false;
-  const promptValues = store.get<JSONSchema7Object>('promptValues') ?? {};
+  const promptValues = store.get('promptValues') ?? {};
 
   questions = [questions].flat();
 

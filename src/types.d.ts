@@ -5,14 +5,13 @@ import type {
   GeneratorOptions as OptionsApi,
   ProgressOptions,
 } from '@yeoman/types';
-import type { JSONSchema7Type } from 'json-schema';
 import type { PipelineOptions } from 'mem-fs';
 import type { MemFsEditorFile } from 'mem-fs-editor';
+import type { JsonValue } from 'type-fest';
 import type Storage from './util/storage.js';
 import type Generator from './index.js';
 
-export type StorageValue = JSONSchema7Type;
-export type StorageRecord = Record<string, StorageValue>;
+export type StorageValue = JsonValue;
 export type GeneratorPipelineOptions = PipelineOptions<MemFsEditorFile> & ProgressOptions & { pendingFiles?: boolean };
 
 /**

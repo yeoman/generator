@@ -348,7 +348,7 @@ export class FsMixin {
    */
   _templateData<D extends TemplateData = TemplateData>(this: BaseGenerator, path?: string): D {
     if (path) {
-      return this.config.getPath(path);
+      return this.config.getPath(path) as any as D;
     }
 
     const allConfig: D = this.config.getAll() as D;
