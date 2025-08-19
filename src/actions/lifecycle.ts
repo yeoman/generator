@@ -454,39 +454,36 @@ export abstract class TasksMixin {
    * @example <caption>Passing a Generator class</caption>
    * await this.composeWith({ Generator: MyGenerator, path: '../generator-bootstrap/app/main.js' }, { sass: true });
    */
-  async composeWith<G extends BaseGenerator = BaseGenerator>(
+  composeWith<G extends BaseGenerator = BaseGenerator>(
     generator: string | { Generator: any; path: string },
     immediately?: boolean,
   ): Promise<G>;
-  async composeWith<G extends BaseGenerator = BaseGenerator>(generator: string[], immediately?: boolean): Promise<G[]>;
-  async composeWith<G extends BaseGenerator = BaseGenerator>(
+  composeWith<G extends BaseGenerator = BaseGenerator>(generator: string[], immediately?: boolean): Promise<G[]>;
+  composeWith<G extends BaseGenerator = BaseGenerator>(
     generator: string | { Generator: any; path: string },
     options: Partial<GetGeneratorOptions<G>>,
     immediately?: boolean,
   ): Promise<G>;
-  async composeWith<G extends BaseGenerator = BaseGenerator>(
+  composeWith<G extends BaseGenerator = BaseGenerator>(
     generator: string[],
     options: Partial<GetGeneratorOptions<G>>,
     immediately?: boolean,
   ): Promise<G[]>;
-  async composeWith<G extends BaseGenerator = BaseGenerator>(
+  composeWith<G extends BaseGenerator = BaseGenerator>(
     generator: string | { Generator: any; path: string },
     args: string[],
     options?: Partial<GetGeneratorOptions<G>>,
     immediately?: boolean,
   ): Promise<G>;
-  async composeWith<G extends BaseGenerator = BaseGenerator>(
+  composeWith<G extends BaseGenerator = BaseGenerator>(
     generator: string[],
     args: string[],
     options?: Partial<GetGeneratorOptions<G>>,
     immediately?: boolean,
   ): Promise<G[]>;
-  async composeWith<G extends BaseGenerator = BaseGenerator>(
-    generator: string,
-    options?: ComposeOptions<G>,
-  ): Promise<G>;
+  composeWith<G extends BaseGenerator = BaseGenerator>(generator: string, options?: ComposeOptions<G>): Promise<G>;
 
-  async composeWith<G extends BaseGenerator = BaseGenerator>(
+  composeWith<G extends BaseGenerator = BaseGenerator>(
     this: BaseGeneratorImpl,
     generator: string | string[] | { Generator: any; path: string },
     args?:
@@ -496,14 +493,17 @@ export abstract class TasksMixin {
       | ComposeOptions<G>,
     options?: Partial<GetGeneratorOptions<G>> | boolean,
     immediately = false,
-  ): Promise<G | G[]> {
+  ): Promise<G | G[]> | G {
     if (Array.isArray(generator)) {
-      const generators: Generator[] = [];
-      for (const each of generator) {
-        generators.push(await this.composeWith(each, args as any, options as any));
-      }
+      const composeWithArray = async () => {
+        const generators: G[] = [];
+        for (const each of generator) {
+          generators.push(await this.composeWith<G>(each, args as any, options as any));
+        }
+        return generators;
+      };
 
-      return generators as any;
+      return composeWithArray();
     }
 
     if (
