@@ -1,8 +1,9 @@
 {
   "include": ["**/*"],
-  "exclude": [],
+  "exclude": ["dist", "node_modules", "**/templates/**", "test/fixtures"],
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "rootDir": ".",
     "types": []
   }
 }
