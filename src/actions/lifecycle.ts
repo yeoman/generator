@@ -146,7 +146,7 @@ export abstract class TasksMixin {
     if (this.features.inheritTasks) {
       const queueNames = Object.keys(this._queues);
       let currentPrototype = Object.getPrototypeOf(this);
-      let propertyDescriptors = [];
+      let propertyDescriptors: [string, PropertyDescriptor][] = [];
       while (currentPrototype) {
         propertyDescriptors.unshift(...Object.entries(Object.getOwnPropertyDescriptors(currentPrototype)));
         currentPrototype = Object.getPrototypeOf(currentPrototype);

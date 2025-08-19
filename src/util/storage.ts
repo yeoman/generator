@@ -227,7 +227,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @param path  The path under which the value is stored.
    * @return The stored value. Any JSON valid type could be returned
    */
-  getPath<const KeyPath extends string>(path: KeyPath): Get<StorageValue, KeyPath> {
+  getPath<const KeyPath extends string>(path: KeyPath): Get<StorageRecord, KeyPath> {
     return get(this._store, path);
   }
 
