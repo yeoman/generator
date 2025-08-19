@@ -19,6 +19,7 @@
     /* Emit */
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
     "declaration": true,
+    "isolatedModules": true,
 
     /* Interop Constraints */
     "allowSyntheticDefaultImports": true /* Allow 'import x from y' when a module doesn't have a default export. */,

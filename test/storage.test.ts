@@ -483,8 +483,8 @@ describe('Storage', () => {
 
     it('works with in operator', () => {
       store.set({ foo: 'bar', john: 'doe' });
-      assert('foo' in proxy);
-      assert(!('foo2' in proxy));
+      assert.ok('foo' in proxy);
+      assert.ok(!('foo2' in proxy));
     });
 
     it('works with deepEquals', () => {
@@ -506,38 +506,38 @@ describe('Storage', () => {
     });
 
     it('should load', () => {
-      assert(store._cachedStore);
+      assert.ok(store._cachedStore);
     });
 
     it('should not load when disabled', () => {
       const store = new Storage('test', editor, storePath, {
         disableCache: true,
       });
-      assert(store._cachedStore === undefined);
+      assert.ok(store._cachedStore === undefined);
       store.get('foo');
-      assert(store._cachedStore === undefined);
+      assert.ok(store._cachedStore === undefined);
     });
 
     it('cleanups when the file changes', () => {
       editor.writeJSON(store.path, {});
-      assert(store._cachedStore === undefined);
+      assert.ok(store._cachedStore === undefined);
     });
 
     it("doesn't cleanup when another file changes", () => {
       editor.write('a.txt', 'anything');
-      assert(store._cachedStore);
+      assert.ok(store._cachedStore);
     });
 
     it('cleanups when per file cache is disabled and another file changes', () => {
       editor.writeJSON(store.path, { disableCacheByFile: true });
       editor.write('a.txt', 'anything');
-      assert(store._cachedStore === undefined);
+      assert.ok(store._cachedStore === undefined);
     });
 
     // Compatibility for mem-fs <= 1.1.3
     it('cleanups when change event argument is undefined', () => {
       memFsInstance.emit('change');
-      assert(store._cachedStore === undefined);
+      assert.ok(store._cachedStore === undefined);
     });
   });
 

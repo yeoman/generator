@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    pool: 'vmForks',
+    pool: 'forks',
     dangerouslyIgnoreUnhandledErrors: true,
   },
 });

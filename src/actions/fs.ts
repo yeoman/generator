@@ -293,7 +293,7 @@ export class FsMixin {
     templates: Templates<D, typeof this>,
     templateData?: string | D,
   ) {
-    assert(Array.isArray(templates), 'Templates must an array');
+    assert.ok(Array.isArray(templates), 'Templates must an array');
     if (templateData === undefined || typeof templateData === 'string') {
       templateData = this._templateData<D>(templateData);
     }
@@ -320,7 +320,7 @@ export class FsMixin {
     templates: Templates<D, typeof this>,
     templateData?: string | D,
   ) {
-    assert(Array.isArray(templates), 'Templates must an array');
+    assert.ok(Array.isArray(templates), 'Templates must an array');
     if (templateData === undefined || typeof templateData === 'string') {
       templateData = this._templateData<D>(templateData);
     }
