@@ -2,14 +2,14 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     /* Language and Environment */
-    "target": "ES2022" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "target": "ES2023" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "lib": [
-      "ES2022"
+      "ES2023"
     ] /* Specify a set of bundled library declaration files that describe the target runtime environment. */,
     "types": ["node", "inquirer"],
 
     /* Modules */
-    "module": "node16" /* Specify what module code is generated. */,
+    "module": "node20" /* Specify what module code is generated. */,
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     "resolveJsonModule": true,
 
