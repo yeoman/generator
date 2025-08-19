@@ -159,7 +159,7 @@ describe('generators.Base (actions/fs)', () => {
       });
 
       it('exists on the generator', () => {
-        assert(operation.name in Base.prototype);
+        assert.ok(operation.name in Base.prototype);
       });
 
       it('returns the correct value', () => {
@@ -174,20 +174,20 @@ describe('generators.Base (actions/fs)', () => {
 
       it.skip('handles the second parameter', () => {
         if (operation.second && operation.first === operation.second) {
-          assert(secondArgumentHandler.calledTwice);
+          assert.ok(secondArgumentHandler.calledTwice);
           expect(secondArgumentHandler.getCall(1).args[0]).toMatch(passedArg2);
         } else if (operation.second) {
-          assert(secondArgumentHandler.calledOnce);
+          assert.ok(secondArgumentHandler.calledOnce);
           expect(secondArgumentHandler.getCall(0).args[0]).toMatch(passedArg2);
           if (firstArgumentHandler) {
-            assert(firstArgumentHandler.calledOnce);
+            assert.ok(firstArgumentHandler.calledOnce);
           }
         }
       });
 
       it('calls fs with correct arguments', () => {
         const destCall = base.fs[operation.dest];
-        assert(destCall.calledOnce);
+        assert.ok(destCall.calledOnce);
         const call = destCall.getCall(0);
         // First argument should be the trated first arguments
         expect(call.args[0]).toMatch(operation.first ? baseReturns[operation.first] : passedArg1);
@@ -241,7 +241,7 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplate('a', 'b');
       const { copyTpl } = gen.fs;
 
-      assert(copyTpl.calledOnce);
+      assert.ok(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
       assert.equal(firsCall.args[ARG_DATA], getAllReturn);
     });
@@ -250,7 +250,7 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplate('a', 'b', 'test');
       const { copyTpl } = gen.fs;
 
-      assert(copyTpl.calledOnce);
+      assert.ok(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
       assert.equal(firsCall.args[ARG_DATA], getPathReturn);
     });
@@ -263,7 +263,7 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplate(source, destination, data);
       const { copyTpl } = gen.fs;
 
-      assert(copyTpl.calledOnce);
+      assert.ok(copyTpl.calledOnce);
       const firsCall = copyTpl.getCall(0);
       assert.equal(firsCall.args[ARG_FROM], path.join(...source));
       assert.equal(firsCall.args[ARG_TO], path.join(...destination));
@@ -300,7 +300,7 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplateAsync('a', 'b');
       const { copyTplAsync } = gen.fs;
 
-      assert(copyTplAsync.calledOnce);
+      assert.ok(copyTplAsync.calledOnce);
       const firsCall = copyTplAsync.getCall(0);
       assert.equal(firsCall.args[ARG_DATA], getAllReturn);
     });
@@ -309,7 +309,7 @@ describe('generators.Base (actions/fs)', () => {
       await gen.renderTemplateAsync('a', 'b', 'test');
       const { copyTplAsync } = gen.fs;
 
-      assert(copyTplAsync.calledOnce);
+      assert.ok(copyTplAsync.calledOnce);
       const firsCall = copyTplAsync.getCall(0);
       assert.equal(firsCall.args[ARG_DATA], getPathReturn);
     });
@@ -322,7 +322,7 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplateAsync(source, destination, data);
       const { copyTplAsync } = gen.fs;
 
-      assert(copyTplAsync.calledOnce);
+      assert.ok(copyTplAsync.calledOnce);
       const firsCall = copyTplAsync.getCall(0);
       assert.equal(firsCall.args[ARG_FROM], path.join(...source));
       assert.equal(firsCall.args[ARG_TO], path.join(...destination));

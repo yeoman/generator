@@ -19,6 +19,7 @@
     /* Emit */
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
     "declaration": true,
+    "isolatedModules": true,
 
     /* Interop Constraints */
     "allowSyntheticDefaultImports": true /* Allow 'import x from y' when a module doesn't have a default export. */,
@@ -26,10 +27,6 @@
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
 
     /* Type Checking */
-    "strict": true /* Enable all strict type-checking options. */,
-    "noImplicitAny": true,
-
-    /* Completeness */
-    "skipLibCheck": false /* Skip type checking all .d.ts files. */
+    "strict": true /* Enable all strict type-checking options. */
   }
 }

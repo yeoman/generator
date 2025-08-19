@@ -119,7 +119,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
       throw new Error(`Check parameters`);
     }
 
-    assert(actualConfigPath, 'A config filepath is required to create a storage');
+    assert.ok(actualConfigPath, 'A config filepath is required to create a storage');
 
     this.path = actualConfigPath;
     this.name = actualName ?? actualOptions.name;
@@ -274,7 +274,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return val  Whatever was passed in as val.
    */
   setPath<const KeyPath extends string>(path: KeyPath, value: Get<StorageValue, KeyPath>): Get<StorageValue, KeyPath> {
-    assert(typeof value !== 'function', "Storage value can't be a function");
+    assert.ok(typeof value !== 'function', "Storage value can't be a function");
 
     const store = this._store;
     set(store, path, value);
@@ -300,7 +300,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return val  Returns the merged options.
    */
   defaults(defaults: Partial<StorageRecord>): StorageRecord {
-    assert(typeof defaults === 'object', 'Storage `defaults` method only accept objects');
+    assert.ok(typeof defaults === 'object', 'Storage `defaults` method only accept objects');
     const store = setDefaults({}, this._store, defaults);
     this._persist(store);
     return this.getAll();
@@ -311,7 +311,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return val  Returns the merged object.
    */
   merge(source: Partial<StorageRecord>): StorageRecord {
-    assert(typeof source === 'object', 'Storage `merge` method only accept objects');
+    assert.ok(typeof source === 'object', 'Storage `merge` method only accept objects');
     const value = merge({}, this._store, source);
     this._persist(value);
     return this.getAll();
