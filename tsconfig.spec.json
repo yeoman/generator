@@ -1,9 +1,10 @@
 {
   "include": ["**/*"],
-  "exclude": ["dist", "node_modules", "**/templates/**", "test/fixtures"],
+  "exclude": ["dist", "node_modules", "**/templates/**", "test/fixtures", "coverage"],
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": ".",
+    "noEmit": true,
     "types": []
   }
 }

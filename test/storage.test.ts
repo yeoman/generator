@@ -41,8 +41,8 @@ describe('Storage', () => {
   afterEach(() => {
     if (fs.existsSync(storePath)) {
       const json = editor.read(storePath);
-      assert.ok(json.endsWith('\n'));
-      assert.ok(!json.endsWith('\n\n'));
+      assert.ok(json!.endsWith('\n'));
+      assert.ok(!json!.endsWith('\n\n'));
       rm(storePath);
       process.chdir(beforeDir);
     }
@@ -51,12 +51,14 @@ describe('Storage', () => {
   describe('.constructor()', () => {
     it('require a parameter', () => {
       assert.throws(() => {
+        // @ts-expect-error invalid arguments
         new Storage();
       });
     });
 
     it('require at least 2 parameter', () => {
       assert.throws(() => {
+        // @ts-expect-error invalid arguments
         new Storage({});
       });
     });
@@ -76,6 +78,7 @@ describe('Storage', () => {
 
   it('a config path is required', () => {
     assert.throws(() => {
+      // @ts-expect-error invalid arguments
       new Storage('yo', editor);
     });
   });
@@ -386,7 +389,7 @@ describe('Storage', () => {
   });
 
   describe('#getStorage()', () => {
-    let store: Storage;
+    let store: Storage<{ foo: 'bar'; name: string; 'path.key': { name: string }; path: { name: string } }>;
 
     beforeEach(() => {
       store = new Storage('test', editor, storePath);
@@ -419,6 +422,7 @@ describe('Storage', () => {
       it('should get and set value', () => {
         assert.equal(pathStore.setPath('name', 'initial'), 'initial');
         assert.equal(store.get(keyName).name, 'initial');
+        // @ts-expect-error pattern not supported by types
         assert.equal(store.getPath(`["${keyName}"]`).name, 'initial');
         store.set(keyName, { name: 'test' });
         assert.equal(pathStore.get('name'), 'test');
