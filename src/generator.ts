@@ -432,7 +432,7 @@ export class BaseGenerator<
     const answers = await this.env.adapter.prompt(questions, initialAnswers);
 
     for (const [name, questionStorage] of Object.entries(storageForQuestion)) {
-      const answer: any = answers[name] === undefined ? null : answers[name];
+      const answer: any = _.get(answers, name, null);
       questionStorage.setPath(name, answer);
     }
 
