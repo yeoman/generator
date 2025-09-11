@@ -65,7 +65,7 @@
     "read-package-up": "^11.0.0",
     "semver": "^7.7.2",
     "simple-git": "^3.28.0",
-    "sort-keys": "^5.1.0",
+    "sort-keys": "^6.0.0",
     "text-table": "^0.2.0",
     "type-fest": "^4.41.0"
   },
