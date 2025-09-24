@@ -76,7 +76,7 @@
     "@types/sinon": "^17.0.4",
     "@types/text-table": "^0.2.5",
     "@vitest/coverage-v8": "^3.2.4",
-    "@yeoman/adapter": "^2.1.1",
+    "@yeoman/adapter": "^3.1.0",
     "@yeoman/eslint": "1.0.0",
     "@yeoman/transform": "^2.1.0",
     "cpy-cli": "^6.0.0",
@@ -91,7 +91,7 @@
     "vitest": "^3.2.4",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^5.0.0-beta.1",
-    "yeoman-test": "^10.1.1"
+    "yeoman-test": "^11.0.0-0"
   },
   "peerDependencies": {
     "@types/node": ">=18.18.5",
