@@ -1869,10 +1869,25 @@ describe('Base', () => {
     });
   });
 
+  describe('feature', () => {
+    it('should not override existing features', () => {
+      class Dummy extends Base {
+        customFeatures = { foo: true } as any;
+      }
+
+      const gen = new Dummy([], { env }, { bar: true });
+
+      expect(gen.customFeatures.foo).toBe(true);
+      expect(gen.customFeatures.bar).toBe(undefined);
+      expect(gen.features.foo).toBe(true);
+      expect(gen.features.bar).toBe(true);
+    });
+  });
+
   describe('#getFeatures', () => {
     it('should return namespace as uniqueBy when unique is true', () => {
       const gen = new Base([], { namespace: 'foo', env }, { unique: true });
-      assert.equal(gen.getFeatures().uniqueBy, 'foo');
+      assert.equal(gen.features.uniqueBy, 'foo');
     });
 
     it("should return namespace as uniqueBy when unique is 'namespace'", () => {
@@ -1886,7 +1901,7 @@ describe('Base', () => {
           unique: 'namespace',
         },
       );
-      assert.equal(gen.getFeatures().uniqueBy, 'foo');
+      assert.equal(gen.features.uniqueBy, 'foo');
     });
 
     it("should return namespace with first argument as uniqueBy when unique is 'namespace'", () => {
@@ -1900,7 +1915,7 @@ describe('Base', () => {
           unique: 'argument',
         },
       );
-      assert.equal(gen.getFeatures().uniqueBy, 'foo#bar');
+      assert.equal(gen.features.uniqueBy, 'foo#bar');
     });
   });
 

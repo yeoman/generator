@@ -99,7 +99,17 @@ export class BaseGenerator<
   }
 
   _running = false;
-  readonly features!: F;
+  /**
+   * Custom features provided at initialization
+   * @example
+   * import Generator from 'yeoman-generator';
+   *
+   * export default class extends Generator {
+   *   customFeatures = { foo: true };
+   * };
+   */
+  readonly customFeatures!: F;
+  readonly #features!: F;
   readonly yoGeneratorVersion: string = packageJson.version!;
 
   /**
@@ -150,7 +160,7 @@ export class BaseGenerator<
     this._args = actualArgs;
     this.options = generatorOptions as any;
 
-    this.features = actualFeatures ?? ({} as F);
+    this.#features = { ...actualFeatures } as F;
 
     // Initialize properties
     this._options = {};
@@ -161,9 +171,9 @@ export class BaseGenerator<
     this._initOptions = { ...actualOptions };
     this._namespace = actualOptions.namespace;
     this._namespaceId = toNamespace(actualOptions.namespace);
-    this._customPriorities = this.features?.customPriorities;
-    this.features.skipParseOptions = this.features.skipParseOptions ?? this.options.skipParseOptions;
-    this.features.customPriorities = this.features.customPriorities ?? this.options.customPriorities;
+    this._customPriorities = this.#features?.customPriorities;
+    this.#features.skipParseOptions = this.#features.skipParseOptions ?? this.options.skipParseOptions;
+    this.#features.customPriorities = this.#features.customPriorities ?? this.options.customPriorities;
 
     this.option('help', {
       type: Boolean,
@@ -221,20 +231,20 @@ export class BaseGenerator<
       return;
     }
 
-    if (this.features.unique && !this.features.uniqueBy) {
+    if (this.#features.unique && !this.#features.uniqueBy) {
       let uniqueBy: string;
-      if (this.features.unique === true || this.features.unique === 'namespace') {
+      if (this.#features.unique === true || this.#features.unique === 'namespace') {
         uniqueBy = this._namespace;
-      } else if (this.features.unique === 'argument' && this._args.length === 1) {
+      } else if (this.#features.unique === 'argument' && this._args.length === 1) {
         const namespaceId = requireNamespace(this._namespace).with({ instanceId: this._args[0] });
         uniqueBy = namespaceId.id;
       } else {
         throw new Error(
-          `Error generating a uniqueBy value. Uniqueness '${this.features.unique}' not supported by '${this._namespace}'`,
+          `Error generating a uniqueBy value. Uniqueness '${this.#features.unique}' not supported by '${this._namespace}'`,
         );
       }
 
-      this.features.uniqueBy = uniqueBy;
+      this.#features.uniqueBy = uniqueBy;
     }
 
     if (!this.env) {
@@ -278,14 +288,11 @@ export class BaseGenerator<
    *
    */
   setFeatures(features: F) {
-    Object.assign(this.features, features);
+    Object.assign(this.#features, features);
   }
 
-  /**
-   * Specifications for Environment features.
-   */
-  getFeatures(): F {
-    return this.features;
+  get features(): F {
+    return { ...this.customFeatures, ...this.#features };
   }
 
   checkEnvironmentVersion(version: string, warning?: boolean): boolean | undefined;

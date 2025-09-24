@@ -143,7 +143,8 @@ export abstract class TasksMixin {
    * Get task sources property descriptors.
    */
   getTaskSourcesPropertyDescriptors(this: BaseGeneratorImpl): any {
-    if (this.features.inheritTasks) {
+    const { inheritTasks, taskPrefix = '' } = this.features;
+    if (inheritTasks) {
       const queueNames = Object.keys(this._queues);
       let currentPrototype = Object.getPrototypeOf(this);
       let propertyDescriptors: [string, PropertyDescriptor][] = [];
@@ -152,7 +153,6 @@ export abstract class TasksMixin {
         currentPrototype = Object.getPrototypeOf(currentPrototype);
       }
 
-      const { taskPrefix = '' } = this.features;
       propertyDescriptors = propertyDescriptors.filter(
         ([name]) => name.startsWith(taskPrefix) && queueNames.includes(name.slice(taskPrefix.length)),
       );
@@ -241,13 +241,13 @@ export abstract class TasksMixin {
   getTaskNames(this: BaseGeneratorImpl): string[] {
     const methods = Object.keys(this.getTaskSourcesPropertyDescriptors());
     let validMethods = methods.filter(method => methodIsValid(method));
-    const { taskPrefix } = this.features;
+    const { taskPrefix, tasksMatchingPriority } = this.features;
 
     validMethods = taskPrefix
       ? validMethods.filter(method => method.startsWith(taskPrefix)).map(method => method.slice(taskPrefix.length))
       : validMethods.filter(method => !method.startsWith('#'));
 
-    if (this.features.tasksMatchingPriority) {
+    if (tasksMatchingPriority) {
       const queueNames = Object.keys(this._queues);
       validMethods = validMethods.filter(method => queueNames.includes(method));
     }
