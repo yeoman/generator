@@ -122,15 +122,28 @@ export class BaseGenerator<
    *   }
    * };
    */
-  constructor(options: O, features?: F);
-  constructor(args: string[], options: O, features?: F);
-
-  constructor(args: string[] | O, options: O | F, features?: F) {
+  constructor(args?: string[], options?: O, features?: F);
+  constructor(args?: string | string[] | O, options?: O | F, features?: F) {
     super();
 
-    const actualArgs: string[] = Array.isArray(args) ? args : [];
-    const actualOptions = Array.isArray(args) ? (options as O) : args;
-    const actualFeatures = Array.isArray(args) ? features : (options as F);
+    args = typeof args === 'string' ? [args] : args;
+
+    // Handle backward Compatibility
+    let actualArgs: string[];
+    let actualOptions: O;
+    let actualFeatures: F | undefined;
+    if (typeof features === 'object') {
+      actualArgs = args as string[];
+      actualOptions = options as O;
+      actualFeatures = features;
+    } else if (typeof args === 'object' && !Array.isArray(args)) {
+      actualArgs = [];
+      actualOptions = args as O;
+    } else {
+      actualArgs = args ?? [];
+      actualOptions = options as O;
+    }
+
     const { env, ...generatorOptions } = actualOptions;
 
     // Load parameters

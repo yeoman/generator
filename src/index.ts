@@ -17,8 +17,6 @@ export default class Generator<
   _simpleGit?: SimpleGit;
 
   constructor(...args: any[]) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     super(...args);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
