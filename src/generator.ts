@@ -51,9 +51,9 @@ export class BaseGenerator<
   readonly options: O;
   readonly _initOptions: O;
   readonly _args: string[];
-  readonly _options: Record<string, CliOptionSpec>;
-  readonly _arguments: ArgumentSpec[];
-  readonly _prompts: QuestionRegistrationOptions[];
+  readonly _options!: Record<string, CliOptionSpec>;
+  readonly _arguments!: ArgumentSpec[];
+  readonly _prompts?: QuestionRegistrationOptions[];
 
   readonly _namespace: string;
   readonly _namespaceId?: YeomanNamespace;
@@ -153,9 +153,11 @@ export class BaseGenerator<
     this.features = actualFeatures ?? ({} as F);
 
     // Initialize properties
-    this._options = {};
-    this._arguments = [];
-    this._prompts = [];
+    if (!this.features.disableInGeneratorOptionsSupport) {
+      this._options = {};
+      this._arguments = [];
+      this._prompts = [];
+    }
 
     // Parse parameters
     this._initOptions = { ...actualOptions };
@@ -165,35 +167,37 @@ export class BaseGenerator<
     this.features.skipParseOptions = this.features.skipParseOptions ?? this.options.skipParseOptions;
     this.features.customPriorities = this.features.customPriorities ?? this.options.customPriorities;
 
-    this.option('help', {
-      type: Boolean,
-      alias: 'h',
-      description: "Print the generator's options and usage",
-    });
+    if (!this.features.disableInGeneratorOptionsSupport) {
+      this.option('help', {
+        type: Boolean,
+        alias: 'h',
+        description: "Print the generator's options and usage",
+      });
 
-    this.option('skip-cache', {
-      type: Boolean,
-      description: 'Do not remember prompt answers',
-      default: false,
-    });
+      this.option('skip-cache', {
+        type: Boolean,
+        description: 'Do not remember prompt answers',
+        default: false,
+      });
 
-    this.option('skip-install', {
-      type: Boolean,
-      description: 'Do not automatically install dependencies',
-      default: false,
-    });
+      this.option('skip-install', {
+        type: Boolean,
+        description: 'Do not automatically install dependencies',
+        default: false,
+      });
 
-    this.option('force-install', {
-      type: Boolean,
-      description: 'Fail on install dependencies error',
-      default: false,
-    });
+      this.option('force-install', {
+        type: Boolean,
+        description: 'Fail on install dependencies error',
+        default: false,
+      });
 
-    this.option('ask-answered', {
-      type: Boolean,
-      description: 'Show prompts for already configured options',
-      default: false,
-    });
+      this.option('ask-answered', {
+        type: Boolean,
+        description: 'Show prompts for already configured options',
+        default: false,
+      });
+    }
 
     this.env = env as any;
 
@@ -357,6 +361,9 @@ export class BaseGenerator<
    * @param question.storage - Storage to store the answers.
    */
   registerConfigPrompts(questions: QuestionRegistrationOptions[]) {
+    if (this.features.disableInGeneratorOptionsSupport) {
+      throw new Error('Options are disabled in this generator by disableInGeneratorOptionsSupport feature.');
+    }
     questions = Array.isArray(questions) ? questions : [questions];
     const getOptionTypeFromInquirerType = (type?: string) => {
       if (type === 'number') {
@@ -387,7 +394,7 @@ export class BaseGenerator<
         });
       }
 
-      this._prompts.push(question);
+      this._prompts!.push(question);
     }
   }
 
@@ -475,6 +482,9 @@ export class BaseGenerator<
    * @return This generator
    */
   option(name: string | CliOptionSpec | CliOptionSpec[], config?: Partial<Omit<CliOptionSpec, 'name'>>) {
+    if (this.features.disableInGeneratorOptionsSupport) {
+      throw new Error('Options are disabled in this generator by disableInGeneratorOptionsSupport feature.');
+    }
     if (Array.isArray(name)) {
       for (const option of name) {
         this.option(option);
@@ -536,12 +546,15 @@ export class BaseGenerator<
    * @return This generator
    */
   argument(name: string, config: Partial<ArgumentSpec> = {}) {
+    if (this.features.disableInGeneratorOptionsSupport) {
+      throw new Error('Options are disabled in this generator by disableInGeneratorOptionsSupport feature.');
+    }
     // Alias default to defaults for backward compatibility.
     if ('defaults' in config) {
       config.default = config.defaults;
     }
 
-    this._arguments.push({
+    this._arguments!.push({
       name,
       required: config.default === null || config.default === undefined,
       type: String,
@@ -556,6 +569,9 @@ export class BaseGenerator<
   }
 
   parseOptions() {
+    if (this.features.disableInGeneratorOptionsSupport) {
+      throw new Error('Options are disabled in this generator by disableInGeneratorOptionsSupport feature.');
+    }
     const booleans: string[] = [];
     const strings: string[] = [];
     const alias: Record<string, string> = {};
@@ -628,6 +644,9 @@ export class BaseGenerator<
   }
 
   checkRequiredArgs() {
+    if (this.features.disableInGeneratorOptionsSupport) {
+      throw new Error('Options are disabled in this generator by disableInGeneratorOptionsSupport feature.');
+    }
     // If the help option was provided, we don't want to check for required
     // arguments, since we're only going to print the help message anyway.
     if (this.options.help) {

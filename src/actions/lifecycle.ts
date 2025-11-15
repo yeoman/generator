@@ -263,13 +263,13 @@ export abstract class TasksMixin {
     this._taskStatus = { cancelled: false, timestamp: new Date() };
 
     const validMethods = this.getTaskNames();
-    if (validMethods.length === 0 && this._prompts.length === 0 && !this.customLifecycle) {
+    if (validMethods.length === 0 && !this._prompts?.length && !this.customLifecycle) {
       throw new Error('This Generator is empty. Add at least one method for it to run.');
     }
 
     this.emit('before:queueOwnTasks');
 
-    if (this._prompts.length > 0) {
+    if (this._prompts?.length) {
       this.queueTask({
         method: async () => (this as any).prompt(this._prompts, this.config),
         taskName: 'Prompt registered questions',
