@@ -97,6 +97,9 @@ export type BaseFeatures = FeaturesApi & {
   /** Disable args/options parsing. Whenever options/arguments are provided parsed like using commander based parsing. */
   skipParseOptions?: boolean;
 
+  /** Disable args/options support. Whenever options/arguments are provided parsed like using commander based parsing. */
+  disableInGeneratorOptionsSupport?: boolean;
+
   /** Custom priorities for more fine tuned workflows. */
   customPriorities?: Priority[];
 
