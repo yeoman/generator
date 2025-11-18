@@ -1884,7 +1884,7 @@ describe('Base', () => {
     });
   });
 
-  describe('#getFeatures', () => {
+  describe('#features', () => {
     it('should return namespace as uniqueBy when unique is true', () => {
       const gen = new Base([], { namespace: 'foo', env }, { unique: true });
       assert.equal(gen.features.uniqueBy, 'foo');

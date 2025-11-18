@@ -12,7 +12,7 @@ import createDebug from 'debug';
 import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import type { BaseEnvironment, BaseGenerator as GeneratorApi, Logger, QueuedAdapter } from '@yeoman/types';
-import type { ArgumentSpec, BaseFeatures, BaseOptions, CliOptionSpec, Priority } from './types.js';
+import type { ArgumentSpec, BaseFeatures, BaseOptions, CliOptionSpec } from './types.js';
 import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
 import Storage, { type StorageOptions } from './util/storage.js';
 import { prefillQuestions, storeAnswers } from './util/prompt-suggestion.js';
@@ -57,7 +57,6 @@ export class BaseGenerator<
 
   readonly _namespace: string;
   readonly _namespaceId?: YeomanNamespace;
-  readonly _customPriorities?: Priority[];
   readonly resolved: string;
   description: string;
   contextRoot!: string;
@@ -171,9 +170,6 @@ export class BaseGenerator<
     this._initOptions = { ...actualOptions };
     this._namespace = actualOptions.namespace;
     this._namespaceId = toNamespace(actualOptions.namespace);
-    this._customPriorities = this.#features?.customPriorities;
-    this.#features.skipParseOptions = this.#features.skipParseOptions ?? this.options.skipParseOptions;
-    this.#features.customPriorities = this.#features.customPriorities ?? this.options.customPriorities;
 
     this.option('help', {
       type: Boolean,

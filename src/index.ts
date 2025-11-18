@@ -29,8 +29,8 @@ export default class Generator<
     }
 
     // Add custom queues
-    if (Array.isArray(this._customPriorities)) {
-      this.registerPriorities(this._customPriorities);
+    if (Array.isArray(this.features.customPriorities)) {
+      this.registerPriorities(this.features.customPriorities);
     }
   }
 
