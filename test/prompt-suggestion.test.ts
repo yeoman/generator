@@ -31,10 +31,12 @@ describe('PromptSuggestion', () => {
 
   describe('.prefillQuestions()', () => {
     it('require a store parameter', () => {
+      // @ts-expect-error - testing missing parameter
       assert.throws(prefillQuestions.bind(null));
     });
 
     it('require a questions parameter', () => {
+      // @ts-expect-error - testing missing parameter
       assert.throws(prefillQuestions.bind(store));
     });
 
@@ -45,22 +47,25 @@ describe('PromptSuggestion', () => {
     it('take a question object', () => {
       const question = {
         name: 'respuesta',
+        type: 'input',
+        message: 'Respuesta',
         default: 'bar',
         store: true,
-      };
+      } as const;
       const [result] = prefillQuestions(store, question);
       assert.equal(result.default, 'foo');
     });
 
     it('take a question array', () => {
-      const question = [
+      const [result] = prefillQuestions(store, [
         {
           name: 'respuesta',
+          type: 'input',
+          message: 'Respuesta',
           default: 'bar',
           store: true,
         },
-      ];
-      const [result] = prefillQuestions(store, question);
+      ]);
       assert.equal(result.default, 'foo');
     });
 
@@ -75,24 +80,25 @@ describe('PromptSuggestion', () => {
     });
 
     it('override default when store is set to true', () => {
-      const question = {
+      const [result] = prefillQuestions(store, {
         name: 'respuesta',
+        type: 'input',
         default: 'bar',
+        message: 'Respuesta',
         store: true,
-      };
-      const [result] = prefillQuestions(store, question);
+      });
       assert.equal(result.default, 'foo');
     });
 
     it('keep inquirer objects', () => {
-      const question = {
+      const [result] = prefillQuestions(store, {
         type: 'checkbox',
         name: 'respuesta',
+        message: 'Respuesta',
         default: ['bar'],
         store: true,
         choices: [new inquirer.Separator('spacer')],
-      };
-      const [result] = prefillQuestions(store, question);
+      });
       assert.ok(result.choices[0] instanceof inquirer.Separator);
     });
 
@@ -135,14 +141,14 @@ describe('PromptSuggestion', () => {
       });
 
       it('override default from an array with strings', () => {
-        const question = {
+        const [result] = prefillQuestions(store, {
           type: 'checkbox',
           name: 'respuesta',
+          message: 'Respuesta',
           default: ['bar'],
           store: true,
           choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
-        };
-        const [result] = prefillQuestions(store, question);
+        });
         assert.deepEqual(result.default, ['foo']);
       });
 
@@ -154,9 +160,10 @@ describe('PromptSuggestion', () => {
         });
 
         it('from an array with objects', () => {
-          const question = {
+          const [result] = prefillQuestions(store, {
             type: 'checkbox',
             name: 'respuesta',
+            message: 'Respuesta',
             default: ['bar'],
             store: true,
             choices: [
@@ -174,8 +181,7 @@ describe('PromptSuggestion', () => {
                 name: 'baz',
               },
             ],
-          };
-          const [result] = prefillQuestions(store, question);
+          });
 
           for (const choice of result.choices) {
             assert.equal(choice.checked, false);

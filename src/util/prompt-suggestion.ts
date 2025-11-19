@@ -3,7 +3,13 @@ import type { PromptAnswers, PromptQuestion } from '../questions.js';
 import type Storage from './storage.js';
 
 const getChoices = <A extends PromptAnswers = PromptAnswers>(question: PromptQuestion<A>) => {
+  // @ts-ignore - deprecated type
   if (question.type === 'list') {
+    // @ts-ignore - deprecated type
+    return question.choices;
+  }
+
+  if (question.type === 'select') {
     return question.choices;
   }
 
@@ -111,7 +117,7 @@ const storeAnswer = (question: any, answer: PromptAnswers, storeAll: boolean) =>
  */
 export const prefillQuestions = <A extends PromptAnswers = PromptAnswers>(
   store: Storage,
-  questions: Array<PromptQuestion<A>>,
+  questions: Array<PromptQuestion<A>> | PromptQuestion<A>,
 ) => {
   assert.ok(store, 'A store parameter is required');
   assert.ok(questions, 'A questions parameter is required');
