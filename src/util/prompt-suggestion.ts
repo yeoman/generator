@@ -3,8 +3,10 @@ import type { PromptAnswers, PromptQuestion } from '../questions.js';
 import type Storage from './storage.js';
 
 const getChoices = <A extends PromptAnswers = PromptAnswers>(question: PromptQuestion<A>) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore - deprecated type
   if (question.type === 'list') {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - deprecated type
     return question.choices;
   }
