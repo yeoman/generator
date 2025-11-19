@@ -6,7 +6,7 @@
     "lib": [
       "ES2023"
     ] /* Specify a set of bundled library declaration files that describe the target runtime environment. */,
-    "types": ["node", "inquirer"],
+    "types": ["node"],
 
     /* Modules */
     "module": "node20" /* Specify what module code is generated. */,
