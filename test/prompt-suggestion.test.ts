@@ -4,7 +4,7 @@ import os from 'node:os';
 import { rmSync } from 'node:fs';
 import { afterEach, beforeEach, describe, it } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
-import inquirer from 'inquirer';
+import { TerminalAdapter } from '@yeoman/adapter';
 import Environment from 'yeoman-environment';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import Storage from '../src/util/storage.js';
@@ -12,6 +12,8 @@ import { prefillQuestions, storeAnswers } from '../src/util/prompt-suggestion.js
 
 const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAdapter() });
 /* eslint max-nested-callbacks: ["warn", 6] */
+
+const adapter = new TerminalAdapter();
 
 describe('PromptSuggestion', () => {
   let storePath: string;
@@ -31,10 +33,12 @@ describe('PromptSuggestion', () => {
 
   describe('.prefillQuestions()', () => {
     it('require a store parameter', () => {
+      // @ts-expect-error - testing missing parameter
       assert.throws(prefillQuestions.bind(null));
     });
 
     it('require a questions parameter', () => {
+      // @ts-expect-error - testing missing parameter
       assert.throws(prefillQuestions.bind(store));
     });
 
@@ -45,22 +49,25 @@ describe('PromptSuggestion', () => {
     it('take a question object', () => {
       const question = {
         name: 'respuesta',
+        type: 'input',
+        message: 'Respuesta',
         default: 'bar',
         store: true,
-      };
+      } as const;
       const [result] = prefillQuestions(store, question);
       assert.equal(result.default, 'foo');
     });
 
     it('take a question array', () => {
-      const question = [
+      const [result] = prefillQuestions(store, [
         {
           name: 'respuesta',
+          type: 'input',
+          message: 'Respuesta',
           default: 'bar',
           store: true,
         },
-      ];
-      const [result] = prefillQuestions(store, question);
+      ]);
       assert.equal(result.default, 'foo');
     });
 
@@ -75,25 +82,27 @@ describe('PromptSuggestion', () => {
     });
 
     it('override default when store is set to true', () => {
-      const question = {
+      const [result] = prefillQuestions(store, {
         name: 'respuesta',
+        type: 'input',
         default: 'bar',
+        message: 'Respuesta',
         store: true,
-      };
-      const [result] = prefillQuestions(store, question);
+      });
       assert.equal(result.default, 'foo');
     });
 
     it('keep inquirer objects', () => {
-      const question = {
+      const separator = adapter.separator('spacer');
+      const [result] = prefillQuestions(store, {
         type: 'checkbox',
         name: 'respuesta',
+        message: 'Respuesta',
         default: ['bar'],
         store: true,
-        choices: [new inquirer.Separator('spacer')],
-      };
-      const [result] = prefillQuestions(store, question);
-      assert.ok(result.choices[0] instanceof inquirer.Separator);
+        choices: [separator],
+      });
+      assert.equal(result.choices[0], separator);
     });
 
     describe('take a checkbox', () => {
@@ -114,7 +123,7 @@ describe('PromptSuggestion', () => {
               value: 'foo',
               name: 'foo',
             },
-            new inquirer.Separator('spacer'),
+            adapter.separator('spacer'),
             {
               value: 'bar',
               name: 'bar',
@@ -135,14 +144,14 @@ describe('PromptSuggestion', () => {
       });
 
       it('override default from an array with strings', () => {
-        const question = {
+        const [result] = prefillQuestions(store, {
           type: 'checkbox',
           name: 'respuesta',
+          message: 'Respuesta',
           default: ['bar'],
           store: true,
-          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
-        };
-        const [result] = prefillQuestions(store, question);
+          choices: ['foo', adapter.separator('spacer'), 'bar', 'baz'],
+        });
         assert.deepEqual(result.default, ['foo']);
       });
 
@@ -154,9 +163,10 @@ describe('PromptSuggestion', () => {
         });
 
         it('from an array with objects', () => {
-          const question = {
+          const [result] = prefillQuestions(store, {
             type: 'checkbox',
             name: 'respuesta',
+            message: 'Respuesta',
             default: ['bar'],
             store: true,
             choices: [
@@ -164,7 +174,7 @@ describe('PromptSuggestion', () => {
                 value: 'foo',
                 name: 'foo',
               },
-              new inquirer.Separator('spacer'),
+              adapter.separator('spacer'),
               {
                 value: 'bar',
                 name: 'bar',
@@ -174,8 +184,7 @@ describe('PromptSuggestion', () => {
                 name: 'baz',
               },
             ],
-          };
-          const [result] = prefillQuestions(store, question);
+          });
 
           for (const choice of result.choices) {
             assert.equal(choice.checked, false);
@@ -190,7 +199,7 @@ describe('PromptSuggestion', () => {
             name: 'respuesta',
             default: ['bar'],
             store: true,
-            choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
+            choices: ['foo', adapter.separator('spacer'), 'bar', 'baz'],
           };
           const [result] = prefillQuestions(store, question);
           assert.deepEqual(result.default, ['foo', 'bar']);
@@ -216,7 +225,7 @@ describe('PromptSuggestion', () => {
               value: 'foo',
               name: 'foo',
             },
-            new inquirer.Separator('spacer'),
+            adapter.separator('spacer'),
             {
               value: 'bar',
               name: 'bar',
@@ -238,7 +247,7 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: ['bar'],
           store: true,
-          choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
+          choices: () => ['foo', adapter.separator('spacer'), 'bar', 'baz'],
         };
         const [result] = prefillQuestions(store, question);
         assert.deepEqual(result.default, ['bar']);
@@ -262,7 +271,7 @@ describe('PromptSuggestion', () => {
                 value: 'foo',
                 name: 'foo',
               },
-              new inquirer.Separator('spacer'),
+              adapter.separator('spacer'),
               {
                 value: 'bar',
                 name: 'bar',
@@ -284,7 +293,7 @@ describe('PromptSuggestion', () => {
             name: 'respuesta',
             default: ['bar'],
             store: true,
-            choices: () => ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
+            choices: () => ['foo', adapter.separator('spacer'), 'bar', 'baz'],
           };
           const [result] = prefillQuestions(store, question);
           assert.deepEqual(result.default, ['bar']);
@@ -310,7 +319,7 @@ describe('PromptSuggestion', () => {
               value: 'foo',
               name: 'foo',
             },
-            new inquirer.Separator('spacer'),
+            adapter.separator('spacer'),
             {
               value: 'bar',
               name: 'bar',
@@ -331,7 +340,7 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: 0,
           store: true,
-          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
+          choices: ['foo', adapter.separator('spacer'), 'bar', 'baz'],
         };
         const [result] = prefillQuestions(store, question);
         assert.equal(result.default, 2);
@@ -436,7 +445,7 @@ describe('PromptSuggestion', () => {
         name: 'respuesta',
         default: 0,
         store: true,
-        choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
+        choices: ['foo', adapter.separator('spacer'), 'bar', 'baz'],
       };
 
       const mockAnswers = {
@@ -458,7 +467,7 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: 0,
           store: true,
-          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
+          choices: ['foo', adapter.separator('spacer'), 'bar', 'baz'],
         };
 
         const mockAnswers = {
@@ -476,7 +485,7 @@ describe('PromptSuggestion', () => {
           name: 'respuesta',
           default: 0,
           store: true,
-          choices: ['foo', new inquirer.Separator('spacer'), 'bar', 'baz'],
+          choices: ['foo', adapter.separator('spacer'), 'bar', 'baz'],
         };
 
         const mockAnswers = {
