@@ -125,12 +125,6 @@ export type BaseOptions = OptionsApi & {
   skipLocalCache?: boolean;
 
   description?: string;
-
-  /** @deprecated moved to features */
-  skipParseOptions?: boolean;
-
-  /** @deprecated moved to features */
-  customPriorities?: Priority[];
 };
 
 export type ArgumentSpec = {
