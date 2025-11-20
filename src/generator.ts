@@ -292,7 +292,7 @@ export class BaseGenerator<
   }
 
   get features(): F {
-    return { ...this.customFeatures, ...this.#features };
+    return Object.freeze({ ...this.customFeatures, ...this.#features });
   }
 
   checkEnvironmentVersion(version: string, warning?: boolean): boolean | undefined;
