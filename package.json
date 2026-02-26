@@ -37,7 +37,7 @@
   ],
   "scripts": {
     "build": "tsc && npm run copy-types",
-    "copy-types": "cpy \"src/**/*.d.(|c|m)ts\" dist/",
+    "copy-types": "cpy --cwd=src \"**/*.d.(|c|m)ts\" ../dist/",
     "coverage": "c8 report --reporter=text-lcov | coveralls",
     "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
     "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path$DOC_FOLDER/global.html || true",
@@ -79,7 +79,7 @@
     "@yeoman/adapter": "^4.0.1",
     "@yeoman/eslint": "1.0.0",
     "@yeoman/transform": "^2.1.0",
-    "cpy-cli": "^6.0.0",
+    "cpy-cli": "^7.0.0",
     "ejs": "^4.0.1",
     "eslint": "9.39.3",
     "jsdoc": "^4.0.5",
