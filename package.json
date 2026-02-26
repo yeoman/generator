@@ -79,7 +79,7 @@
     "@yeoman/adapter": "^4.0.1",
     "@yeoman/eslint": "1.0.0",
     "@yeoman/transform": "^2.1.0",
-    "cpy-cli": "^6.0.0",
+    "cpy-cli": "^7.0.0",
     "ejs": "^4.0.1",
     "eslint": "9.39.3",
     "jsdoc": "^4.0.5",
