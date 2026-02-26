@@ -38,13 +38,13 @@ const packageJson: PackageJson = JSON.parse(readFileSync(pathJoin(_dirname, '../
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class BaseGenerator<
-    ConfigType extends Record<any, any> = Record<any, any>,
-    O extends BaseOptions = BaseOptions,
-    F extends BaseFeatures = BaseFeatures,
-    GeneratorConfigType extends Record<any, any> = Record<any, any>,
-    InstanceConfigType extends Record<any, any> = Record<any, any>,
-    GlobalConfigType extends Record<any, any> = Record<any, any>,
-  >
+  ConfigType extends Record<any, any> = Record<any, any>,
+  O extends BaseOptions = BaseOptions,
+  F extends BaseFeatures = BaseFeatures,
+  GeneratorConfigType extends Record<any, any> = Record<any, any>,
+  InstanceConfigType extends Record<any, any> = Record<any, any>,
+  GlobalConfigType extends Record<any, any> = Record<any, any>,
+>
   extends EventEmitter
   implements Omit<GeneratorApi<O, F>, 'features'>
 {
@@ -912,13 +912,7 @@ export class BaseGenerator<
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface BaseGenerator
-  extends FsMixin,
-    HelpMixin,
-    PackageJsonMixin,
-    SpawnCommandMixin,
-    GitMixin,
-    TasksMixin,
-    EventEmitter {}
+  extends FsMixin, HelpMixin, PackageJsonMixin, SpawnCommandMixin, GitMixin, TasksMixin, EventEmitter {}
 
 applyMixins(BaseGenerator, [FsMixin, HelpMixin, PackageJsonMixin, SpawnCommandMixin, GitMixin, TasksMixin]);
 
