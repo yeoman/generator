@@ -152,7 +152,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
       throw new Error(`${this.path} is not a valid Storage`);
     }
 
-    return content;
+    return content as StorageRecord;
   }
 
   /**
