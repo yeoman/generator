@@ -15,8 +15,7 @@ const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAd
 const ARG_FROM = 0;
 const ARG_TO = 1;
 const ARG_DATA = 2; // A.k.a. context
-const ARG_TPLSETTINGS = 3; // Template settings
-const ARG_COPYSETTINGS = 4;
+const ARG_COPYSETTINGS = 3;
 
 type FSOpResult = {
   name: string;
@@ -367,7 +366,6 @@ describe('generators.Base (actions/fs)', () => {
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
       const data = {};
-      const templateOptions = { foo: '123' };
       const copyOptions = {};
 
       gen.renderTemplates(
@@ -376,7 +374,6 @@ describe('generators.Base (actions/fs)', () => {
           {
             source: secondCallArg1,
             destination: secondCallArg2,
-            templateOptions,
             copyOptions,
           },
         ],
@@ -395,7 +392,6 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(secondCall.args[ARG_FROM], secondCallArg1);
       assert.equal(secondCall.args[ARG_TO], secondCallArg2);
       assert.equal(secondCall.args[ARG_DATA], data);
-      assert.equal(secondCall.args[ARG_TPLSETTINGS].foo, templateOptions.foo);
       expect(secondCall.args[ARG_COPYSETTINGS]).toMatchObject({ ...copyOptions, fromBasePath: expect.any(String) });
     });
 
@@ -404,7 +400,6 @@ describe('generators.Base (actions/fs)', () => {
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
       const data = {};
-      const templateOptions = {};
       const copyOptions = {};
 
       gen.renderTemplates(
@@ -414,7 +409,6 @@ describe('generators.Base (actions/fs)', () => {
             source: secondCallArg1,
             when: () => false,
             destination: secondCallArg2,
-            templateOptions,
             copyOptions,
           },
         ],
@@ -491,7 +485,6 @@ describe('generators.Base (actions/fs)', () => {
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
       const data = {};
-      const templateOptions = { foo: '123' };
       const copyOptions = {};
 
       gen.renderTemplatesAsync(
@@ -500,7 +493,6 @@ describe('generators.Base (actions/fs)', () => {
           {
             source: secondCallArg1,
             destination: secondCallArg2,
-            templateOptions,
             copyOptions,
           },
         ],
@@ -519,7 +511,6 @@ describe('generators.Base (actions/fs)', () => {
       assert.equal(secondCall.args[ARG_FROM], secondCallArg1);
       assert.equal(secondCall.args[ARG_TO], secondCallArg2);
       assert.equal(secondCall.args[ARG_DATA], data);
-      assert.equal(secondCall.args[ARG_TPLSETTINGS].foo, templateOptions.foo);
       expect(secondCall.args[ARG_COPYSETTINGS]).toMatchObject({ ...copyOptions, fromBasePath: expect.any(String) });
     });
 
@@ -528,7 +519,6 @@ describe('generators.Base (actions/fs)', () => {
       const secondCallArg1 = 'bar';
       const secondCallArg2 = 'bar2';
       const data = {};
-      const templateOptions = {};
       const copyOptions = {};
 
       await gen.renderTemplatesAsync(
@@ -538,7 +528,6 @@ describe('generators.Base (actions/fs)', () => {
             source: secondCallArg1,
             when: () => false,
             destination: secondCallArg2,
-            templateOptions,
             copyOptions,
           },
         ],

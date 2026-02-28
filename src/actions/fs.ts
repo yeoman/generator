@@ -1,11 +1,34 @@
 /* eslint max-params: [1, 6] */
 import assert from 'node:assert';
-import { type CopyOptions, type MemFsEditor } from 'mem-fs-editor';
-import type { Data as TemplateData, Options as TemplateOptions } from 'ejs';
+import { type MemFsEditor } from 'mem-fs-editor';
 import type { OverloadParameters, OverloadReturnType } from '../types-utils.js';
 import type { BaseGenerator } from '../generator.js';
 
-export type Template<D extends TemplateData, G> = {
+type ExtractOverload1<T> = T extends {
+  (...args: infer P): infer R; // Captura a 2ª (P = Parâmetros, R = Retorno)
+  (...args: any[]): any; // Ignora a 1ª
+  (...args: any[]): any; // Ignora a 1ª
+  (...args: any[]): any; // Ignora a 1ª
+}
+  ? (...args: P) => R
+  : never;
+
+type ExtractOverload2<T> = T extends {
+  (...args: any[]): any; // Ignora a 1ª
+  (...args: infer P): infer R; // Captura a 2ª (P = Parâmetros, R = Retorno)
+  (...args: any[]): any; // Ignora a 1ª
+  (...args: any[]): any; // Ignora a 1ª
+}
+  ? (...args: P) => R
+  : never;
+
+type ReadOverload1 = ExtractOverload1<MemFsEditor['read']>;
+type ReadOverload2 = ExtractOverload2<MemFsEditor['read']>;
+
+type ReadJSONOverload1 = ExtractOverload1<MemFsEditor['readJSON']>;
+type ReadJSONOverload2 = ExtractOverload2<MemFsEditor['readJSON']>;
+
+export type Template<G, C extends 'copyTplAsync' | 'copyTpl', D extends NonNullable<Parameters<MemFsEditor[C]>[2]>> = {
   /**
    * Template file, absolute or relative to templatePath().
    */
@@ -24,20 +47,20 @@ export type Template<D extends TemplateData, G> = {
   /**
    * Mem-fs-editor copy options
    */
-  copyOptions?: CopyOptions;
+  copyOptions?: NonNullable<Parameters<MemFsEditor[C]>[3]>;
   /**
    * Ejs data
    */
-  templateData?: TemplateData;
-  /**
-   * Ejs options
-   */
-  templateOptions?: TemplateOptions;
+  templateData?: string | D;
 };
 
-export type Templates<D extends TemplateData, G> = Array<Template<D, G>>;
+export type Templates<
+  G,
+  C extends 'copyTplAsync' | 'copyTpl',
+  D extends NonNullable<Parameters<MemFsEditor[C]>[2]>,
+> = Array<Template<G, C, D>>;
 
-function applyToFirstStringArg<Type extends [string | string[], ...any]>(
+function applyToFirstStringArg<Type extends [string | string[], ...any] = [string | string[], ...any[]]>(
   customizer: (arg1: string) => string,
   args: Type,
 ): Type {
@@ -63,10 +86,12 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.read(this.templatePath(filepath))
    */
+  readTemplate(this: BaseGenerator, ...args: Parameters<ReadOverload1>): ReturnType<ReadOverload1>;
+  readTemplate(this: BaseGenerator, ...args: Parameters<ReadOverload2>): ReturnType<ReadOverload2>;
   readTemplate(
     this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['read']>
-  ): OverloadReturnType<MemFsEditor['read']> {
+    ...args: Parameters<ReadOverload1> | Parameters<ReadOverload2>
+  ): ReturnType<ReadOverload1> | ReturnType<ReadOverload2> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     return this.fs.read(...applyToFirstStringArg(this.templatePath.bind(this), args));
@@ -110,10 +135,12 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.read(this.destinationPath(filepath)).
    */
+  readDestination(this: BaseGenerator, ...args: Parameters<ReadOverload1>): ReturnType<ReadOverload1>;
+  readDestination(this: BaseGenerator, ...args: Parameters<ReadOverload2>): ReturnType<ReadOverload2>;
   readDestination(
     this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['read']>
-  ): OverloadReturnType<MemFsEditor['read']> {
+    ...args: Parameters<ReadOverload1> | Parameters<ReadOverload2>
+  ): ReturnType<ReadOverload1> | ReturnType<ReadOverload2> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     return this.fs.read(...applyToFirstStringArg(this.destinationPath.bind(this), args));
@@ -124,10 +151,12 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.readJSON(this.destinationPath(filepath)).
    */
+  readDestinationJSON(this: BaseGenerator, ...args: Parameters<ReadJSONOverload1>): ReturnType<ReadJSONOverload1>;
+  readDestinationJSON(this: BaseGenerator, ...args: Parameters<ReadJSONOverload2>): ReturnType<ReadJSONOverload2>;
   readDestinationJSON(
     this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['readJSON']>
-  ): OverloadReturnType<MemFsEditor['readJSON']> {
+    ...args: Parameters<ReadJSONOverload1> | Parameters<ReadJSONOverload2>
+  ): ReturnType<ReadJSONOverload1> | ReturnType<ReadJSONOverload2> {
     return this.fs.readJSON(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -226,28 +255,29 @@ export class FsMixin {
    * @param templateOptions - ejs options
    * @param copyOptions - mem-fs-editor copy options
    */
-  renderTemplate<D extends TemplateData = TemplateData>(
+  renderTemplate<const D extends NonNullable<Parameters<MemFsEditor['copyTpl']>[2]>>(
     this: BaseGenerator,
     source: string | string[] = '',
     destination: string | string[] = source,
     templateData?: string | D,
-    templateOptions?: TemplateOptions,
-    copyOptions?: CopyOptions,
+    copyOptions?: NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>,
   ) {
     if (templateData === undefined || typeof templateData === 'string') {
-      templateData = this._templateData<D>(templateData);
+      templateData = this._templateData(templateData) as D;
     }
-
-    templateOptions = { context: this, ...templateOptions };
 
     source = Array.isArray(source) ? source : [source];
     const templatePath = this.templatePath(...source);
     destination = Array.isArray(destination) ? destination : [destination];
     const destinationPath = this.destinationPath(...destination);
 
-    this.fs.copyTpl(templatePath, destinationPath, templateData as TemplateData, templateOptions, {
+    this.fs.copyTpl(templatePath, destinationPath, templateData, {
       fromBasePath: this.templatePath(),
       ...copyOptions,
+      transformOptions: {
+        context: this,
+        ...copyOptions?.transformOptions,
+      },
     });
   }
 
@@ -260,48 +290,49 @@ export class FsMixin {
    * @param templateOptions - ejs options
    * @param copyOptions - mem-fs-editor copy options
    */
-  async renderTemplateAsync<D extends TemplateData = TemplateData>(
+  async renderTemplateAsync<const D extends NonNullable<Parameters<MemFsEditor['copyTplAsync']>[2]>>(
     this: BaseGenerator,
     source: string | string[] = '',
     destination: string | string[] = source,
     templateData?: string | D,
-    templateOptions?: TemplateOptions,
-    copyOptions?: CopyOptions,
+    copyOptions?: NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>,
   ) {
     if (templateData === undefined || typeof templateData === 'string') {
-      templateData = this._templateData<D>(templateData);
+      templateData = this._templateData(templateData) as D;
     }
-
-    templateOptions = { context: this, ...templateOptions };
 
     source = Array.isArray(source) ? source : [source];
     const templatePath = this.templatePath(...source);
     destination = Array.isArray(destination) ? destination : [destination];
     const destinationPath = this.destinationPath(...destination);
 
-    return this.fs.copyTplAsync(templatePath, destinationPath, templateData as TemplateData, templateOptions, {
+    return this.fs.copyTplAsync(templatePath, destinationPath, templateData, {
       fromBasePath: this.templatePath(),
       ...copyOptions,
+      transformOptions: {
+        context: this,
+        ...copyOptions?.transformOptions,
+      },
     });
   }
 
   /**
    * Copy templates from templates folder to the destination.
    */
-  renderTemplates<D extends TemplateData = TemplateData>(
+  renderTemplates<const D extends NonNullable<Parameters<MemFsEditor['copyTpl']>[2]>>(
     this: BaseGenerator,
-    templates: Templates<D, typeof this>,
+    templates: Templates<typeof this, 'copyTpl', D>,
     templateData?: string | D,
   ) {
     assert.ok(Array.isArray(templates), 'Templates must an array');
     if (templateData === undefined || typeof templateData === 'string') {
-      templateData = this._templateData<D>(templateData);
+      templateData = this._templateData(templateData) as D;
     }
 
     for (const template of templates) {
       const { templateData: eachData = templateData, source, destination } = template;
       if (!template.when || template.when(eachData as D, this)) {
-        this.renderTemplate(source, destination, eachData, template.templateOptions, {
+        this.renderTemplate(source, destination, eachData, {
           fromBasePath: this.templatePath(),
           ...template.copyOptions,
         });
@@ -315,21 +346,21 @@ export class FsMixin {
    * @param templates - template file, absolute or relative to templatePath().
    * @param templateData - ejs data
    */
-  async renderTemplatesAsync<D extends TemplateData = TemplateData>(
+  async renderTemplatesAsync<const D extends NonNullable<Parameters<MemFsEditor['copyTplAsync']>[2]>>(
     this: BaseGenerator,
-    templates: Templates<D, typeof this>,
+    templates: Templates<typeof this, 'copyTplAsync', D>,
     templateData?: string | D,
   ) {
     assert.ok(Array.isArray(templates), 'Templates must an array');
     if (templateData === undefined || typeof templateData === 'string') {
-      templateData = this._templateData<D>(templateData);
+      templateData = this._templateData(templateData) as D;
     }
 
     return Promise.all(
       templates.map(async template => {
         const { templateData: eachData = templateData, source, destination } = template;
         if (!template.when || template.when(eachData as D, this)) {
-          return this.renderTemplateAsync(source, destination, eachData, template.templateOptions, {
+          return this.renderTemplateAsync(source, destination, eachData, {
             fromBasePath: this.templatePath(),
             ...template.copyOptions,
           });
@@ -346,18 +377,18 @@ export class FsMixin {
    * @param path - path to the storage key.
    * @return data to be passed to the templates.
    */
-  _templateData<D extends TemplateData = TemplateData>(this: BaseGenerator, path?: string): D {
+  _templateData(this: BaseGenerator, path?: string) {
     if (path) {
-      return this.config.getPath(path) as any as D;
+      return this.config.getPath(path);
     }
 
-    const allConfig: D = this.config.getAll() as D;
+    const allConfig = this.config.getAll();
     if (this.generatorConfig) {
-      Object.assign(allConfig as any, this.generatorConfig.getAll());
+      Object.assign(allConfig, this.generatorConfig.getAll());
     }
 
     if (this.instanceConfig) {
-      Object.assign(allConfig as any, this.instanceConfig.getAll());
+      Object.assign(allConfig, this.instanceConfig.getAll());
     }
 
     return allConfig;
