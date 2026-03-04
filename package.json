@@ -83,7 +83,7 @@
     "@yeoman/types": "^1.10.3",
     "cpy-cli": "^7.0.0",
     "ejs": "^4.0.1",
-    "eslint": "9.39.3",
+    "eslint": "10.0.2",
     "jsdoc": "^4.0.5",
     "prettier": "3.8.1",
     "prettier-plugin-packagejson": "3.0.0",
