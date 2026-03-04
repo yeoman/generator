@@ -257,11 +257,23 @@ export class FsMixin {
    */
   renderTemplate<const D extends NonNullable<Parameters<MemFsEditor['copyTpl']>[2]>>(
     this: BaseGenerator,
+    source?: string | string[],
+    destination?: string | string[],
+    templateData?: string | D,
+    copyOptions?: NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>,
+  ): void;
+  renderTemplate<const D extends NonNullable<Parameters<MemFsEditor['copyTpl']>[2]>>(
+    this: BaseGenerator,
     source: string | string[] = '',
     destination: string | string[] = source,
     templateData?: string | D,
     copyOptions?: NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>,
-  ) {
+    compatOptions?: NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>,
+  ): void {
+    if (compatOptions || 'context' in (copyOptions ?? {})) {
+      copyOptions = { ...compatOptions, transformOptions: copyOptions as any };
+    }
+
     if (templateData === undefined || typeof templateData === 'string') {
       templateData = this._templateData(templateData) as D;
     }
@@ -292,11 +304,23 @@ export class FsMixin {
    */
   async renderTemplateAsync<const D extends NonNullable<Parameters<MemFsEditor['copyTplAsync']>[2]>>(
     this: BaseGenerator,
+    source?: string | string[],
+    destination?: string | string[],
+    templateData?: string | D,
+    copyOptions?: NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>,
+  ): Promise<void>;
+  async renderTemplateAsync<const D extends NonNullable<Parameters<MemFsEditor['copyTplAsync']>[2]>>(
+    this: BaseGenerator,
     source: string | string[] = '',
     destination: string | string[] = source,
     templateData?: string | D,
     copyOptions?: NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>,
-  ) {
+    compatOptions?: NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>,
+  ): Promise<void> {
+    if (compatOptions || 'context' in (copyOptions ?? {})) {
+      copyOptions = { ...compatOptions, transformOptions: copyOptions as any };
+    }
+
     if (templateData === undefined || typeof templateData === 'string') {
       templateData = this._templateData(templateData) as D;
     }
@@ -350,7 +374,7 @@ export class FsMixin {
     this: BaseGenerator,
     templates: Templates<typeof this, 'copyTplAsync', D>,
     templateData?: string | D,
-  ) {
+  ): Promise<void[]> {
     assert.ok(Array.isArray(templates), 'Templates must an array');
     if (templateData === undefined || typeof templateData === 'string') {
       templateData = this._templateData(templateData) as D;
