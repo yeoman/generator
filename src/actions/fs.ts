@@ -1,7 +1,6 @@
 /* eslint max-params: [1, 6] */
 import assert from 'node:assert';
 import { type MemFsEditor } from 'mem-fs-editor';
-import type { OverloadParameters, OverloadReturnType } from '../types-utils.js';
 import type { BaseGenerator } from '../generator.js';
 
 type ExtractOverload1<T> = T extends {
@@ -102,10 +101,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.copy(this.templatePath(from), this.destinationPath(to))
    */
-  copyTemplate(
-    this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['copy']>
-  ): OverloadReturnType<MemFsEditor['copy']> {
+  copyTemplate(this: BaseGenerator, ...args: Parameters<MemFsEditor['copy']>): ReturnType<MemFsEditor['copy']> {
     const [from, to, options = {}, ...remaining] = args;
 
     return this.fs.copy(
@@ -123,8 +119,8 @@ export class FsMixin {
    */
   async copyTemplateAsync(
     this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['copyAsync']>
-  ): OverloadReturnType<MemFsEditor['copyAsync']> {
+    ...args: Parameters<MemFsEditor['copyAsync']>
+  ): ReturnType<MemFsEditor['copyAsync']> {
     return this.fs.copyAsync(
       ...applyToFirstAndSecondStringArg(this.templatePath.bind(this), this.destinationPath.bind(this), args),
     );
@@ -165,10 +161,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.write(this.destinationPath(filepath)).
    */
-  writeDestination(
-    this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['write']>
-  ): OverloadReturnType<MemFsEditor['write']> {
+  writeDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['write']>): ReturnType<MemFsEditor['write']> {
     return this.fs.write(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -179,8 +172,8 @@ export class FsMixin {
    */
   writeDestinationJSON(
     this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['writeJSON']>
-  ): OverloadReturnType<MemFsEditor['writeJSON']> {
+    ...args: Parameters<MemFsEditor['writeJSON']>
+  ): ReturnType<MemFsEditor['writeJSON']> {
     return this.fs.writeJSON(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -191,8 +184,8 @@ export class FsMixin {
    */
   deleteDestination(
     this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['delete']>
-  ): OverloadReturnType<MemFsEditor['delete']> {
+    ...args: Parameters<MemFsEditor['delete']>
+  ): ReturnType<MemFsEditor['delete']> {
     return this.fs.delete(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
@@ -201,10 +194,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.copy(this.destinationPath(from), this.destinationPath(to)).
    */
-  copyDestination(
-    this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['copy']>
-  ): OverloadReturnType<MemFsEditor['copy']> {
+  copyDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['copy']>): ReturnType<MemFsEditor['copy']> {
     const [from, to, options = {}, ...remaining] = args;
 
     return this.fs.copy(
@@ -220,10 +210,7 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.move(this.destinationPath(from), this.destinationPath(to)).
    */
-  moveDestination(
-    this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['move']>
-  ): OverloadReturnType<MemFsEditor['move']> {
+  moveDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['move']>): ReturnType<MemFsEditor['move']> {
     const [from, to, options, ...remaining] = args;
 
     return this.fs.move(
@@ -241,8 +228,8 @@ export class FsMixin {
    */
   existsDestination(
     this: BaseGenerator,
-    ...args: OverloadParameters<MemFsEditor['exists']>
-  ): OverloadReturnType<MemFsEditor['exists']> {
+    ...args: Parameters<MemFsEditor['exists']>
+  ): ReturnType<MemFsEditor['exists']> {
     return this.fs.exists(...applyToFirstStringArg(this.destinationPath.bind(this), args));
   }
 
