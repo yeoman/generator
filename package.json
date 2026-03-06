@@ -82,7 +82,7 @@
     "@yeoman/transform": "^2.1.0",
     "@yeoman/types": "^1.10.3",
     "cpy-cli": "^7.0.0",
-    "ejs": "^4.0.1",
+    "ejs": "^5.0.1",
     "eslint": "9.39.3",
     "jsdoc": "^4.0.5",
     "prettier": "3.8.1",
