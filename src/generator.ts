@@ -416,7 +416,7 @@ export class BaseGenerator<
    */
   async prompt<A extends PromptAnswers = PromptAnswers>(
     questions: PromptQuestions<A>,
-    storage?: string | Storage,
+    storage?: string | Storage<any>,
   ): Promise<A> {
     const storageForQuestion: Record<string, Storage> = {};
 
@@ -747,7 +747,7 @@ export class BaseGenerator<
     storePath: string,
     options?: string | StorageOptions,
   ): Storage<StoredType>;
-  createStorage(storePath: string, options?: string | StorageOptions): Storage<any> {
+  createStorage(storePath: string, options?: string | StorageOptions): Storage<Record<string, any>> {
     if (typeof options === 'string') {
       options = { name: options };
     }
