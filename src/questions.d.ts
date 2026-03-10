@@ -12,7 +12,7 @@ export type PromptQuestion<T extends PromptAnswers = PromptAnswers> = PromptQues
   /**
    * The storage to store the answer.
    */
-  storage?: Storage;
+  storage?: Storage<any>;
 
   /**
    * A value indicating whether to store the user's previous answer for others projects.

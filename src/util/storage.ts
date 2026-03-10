@@ -5,6 +5,8 @@ import type { Get } from 'type-fest';
 import type { MemFsEditor } from 'mem-fs-editor';
 import type { StorageValue } from '../types.js';
 
+type TransformConfig<A extends Record<string, any>> = (content: A, name?: string) => A;
+
 /**
  * Proxy handler for Storage
  */
@@ -35,7 +37,7 @@ const proxyHandler: ProxyHandler<Storage> = {
   },
 };
 
-export type StorageOptions<StorageRecord extends Record<string, any> = Record<string, any>> = {
+export type StorageOptions = {
   name?: string;
   /**
    * Set true to treat name as a lodash path.
@@ -56,7 +58,7 @@ export type StorageOptions<StorageRecord extends Record<string, any> = Record<st
   /**
    * Transform the content of the storage when reading it. This can be used to sanitize or modify the data before it is returned.
    */
-  transform?: (content: StorageRecord) => StorageRecord;
+  transform?: TransformConfig<Record<string, any>>;
 };
 
 /**
@@ -85,22 +87,22 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   disableCache: boolean;
   disableCacheByFile: boolean;
   sorted: boolean;
-  transform?: (content: StorageRecord) => StorageRecord;
   existed: boolean;
   _cachedStore?: StorageRecord;
+  private transform?: TransformConfig<Record<string, any>>;
 
-  constructor(name: string | undefined, fs: MemFsEditor, configPath: string, options?: StorageOptions<StorageRecord>);
-  constructor(fs: MemFsEditor, configPath: string, options?: StorageOptions<StorageRecord>);
+  constructor(name: string | undefined, fs: MemFsEditor, configPath: string, options?: StorageOptions);
+  constructor(fs: MemFsEditor, configPath: string, options?: StorageOptions);
   constructor(
     name: string | MemFsEditor | undefined,
     fs: MemFsEditor | string,
-    configPath?: string | StorageOptions<StorageRecord>,
-    options: StorageOptions<StorageRecord> = {},
+    configPath?: string | StorageOptions,
+    options: StorageOptions = {},
   ) {
     let editor: MemFsEditor | undefined;
     let actualName: string | undefined;
     let actualConfigPath: string | undefined;
-    let actualOptions: StorageOptions<StorageRecord> = options;
+    let actualOptions: StorageOptions = options;
 
     if (typeof name === 'string') {
       actualName = name;
@@ -346,7 +348,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
 
   private transformedStore({ forceClone = false }: { forceClone?: boolean } = {}): StorageRecord {
     if (this.transform) {
-      return this.transform(cloneDeep(this._store));
+      return this.transform(cloneDeep(this._store), this.name) as StorageRecord;
     }
     if (forceClone) {
       return cloneDeep(this._store);
