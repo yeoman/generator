@@ -8,7 +8,7 @@ import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
 import helpers from 'yeoman-test';
 import { type Store, create as createMemFs } from 'mem-fs';
 import Storage from '../src/util/storage.js';
-import { afterEach, beforeEach, describe, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -605,6 +605,39 @@ describe('Storage', () => {
 }
 `,
       );
+    });
+  });
+
+  describe('transform', () => {
+    let store: Storage;
+
+    beforeEach(() => {
+      store = new Storage('test', editor, storePath, {
+        transform: obj => ({ transformed: obj }),
+      });
+      store.set('foo', 'bar');
+      store.set('bar', 'foo');
+      store.set('array', [3, 2, 1]);
+      store.set('object', { b: 'shouldBeLast', a: 'shouldBeFirst' });
+    });
+    it('should read file', () => {
+      expect(store.getAll()).toMatchInlineSnapshot(`
+        {
+          "transformed": {
+            "array": [
+              3,
+              2,
+              1,
+            ],
+            "bar": "foo",
+            "foo": "bar",
+            "object": {
+              "a": "shouldBeFirst",
+              "b": "shouldBeLast",
+            },
+          },
+        }
+      `);
     });
   });
 });

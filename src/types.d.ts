@@ -105,6 +105,9 @@ export type BaseFeatures = FeaturesApi & {
 
   /** Inherit tasks from parent prototypes, implies tasksMatchingPriority */
   inheritTasks?: boolean;
+
+  /** Transform the configuration before reading. */
+  configTransform?: (config: any) => any;
 };
 
 export type BaseOptions = OptionsApi & {
@@ -167,7 +170,7 @@ export type CliOptionSpec = {
   hide?: boolean;
 
   /** The storage to persist the option */
-  storage?: string | Storage;
+  storage?: string | Storage<any>;
 };
 
 export type ComposeOptions<G extends BaseGenerator = BaseGenerator> = EnvironmentComposeOptions<G> & {

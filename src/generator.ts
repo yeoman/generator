@@ -148,6 +148,7 @@ export class BaseGenerator<
     } else if (typeof args === 'object' && !Array.isArray(args)) {
       actualArgs = [];
       actualOptions = args as O;
+      actualFeatures = options as F;
     } else {
       actualArgs = args ?? [];
       actualOptions = options as O;
@@ -770,7 +771,11 @@ export class BaseGenerator<
       rootName = this.rootGeneratorName();
     }
 
-    return this.createStorage<StoredType>('.yo-rc.json', { ...options, name: rootName });
+    return this.createStorage<StoredType>('.yo-rc.json', {
+      transform: this.#features.configTransform,
+      ...options,
+      name: rootName,
+    });
   }
 
   /**
@@ -782,7 +787,7 @@ export class BaseGenerator<
     const globalStorageDir = this.options.localConfigOnly ? this.destinationRoot() : os.homedir();
     const storePath = path.join(globalStorageDir, '.yo-rc-global.json');
     const storeName = `${this.rootGeneratorName()}:${this.rootGeneratorVersion()}`;
-    return this.createStorage(storePath, { name: storeName });
+    return this.createStorage(storePath, { transform: this.#features.configTransform, name: storeName });
   }
 
   /**

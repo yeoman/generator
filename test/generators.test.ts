@@ -197,4 +197,47 @@ describe('Generators module', () => {
         done();
       }
     }));
+
+  describe('configTransform', () => {
+    describe('with args', () => {
+      beforeEach(() => {
+        generator = new Base(
+          [],
+          {
+            env: env,
+            resolved: 'test',
+            localConfigOnly: true,
+          },
+          {
+            configTransform: config => ({ transformed: config }),
+          },
+        );
+        generator.config.set('foo', 'bar');
+      });
+
+      it('with path', () => {
+        expect(generator.config.getAll()).toEqual({ transformed: { foo: 'bar' } });
+      });
+    });
+
+    describe('without args', () => {
+      beforeEach(() => {
+        generator = new Base(
+          {
+            env: env,
+            resolved: 'test',
+            localConfigOnly: true,
+          },
+          {
+            configTransform: config => ({ transformed: config }),
+          },
+        );
+        generator.config.set('foo', 'bar');
+      });
+
+      it('with path', () => {
+        expect(generator.config.getAll()).toEqual({ transformed: { foo: 'bar' } });
+      });
+    });
+  });
 });

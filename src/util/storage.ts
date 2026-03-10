@@ -35,7 +35,7 @@ const proxyHandler: ProxyHandler<Storage> = {
   },
 };
 
-export type StorageOptions = {
+export type StorageOptions<StorageRecord extends Record<string, any> = Record<string, any>> = {
   name?: string;
   /**
    * Set true to treat name as a lodash path.
@@ -53,6 +53,10 @@ export type StorageOptions = {
    * Set true to write sorted json.
    */
   sorted?: boolean;
+  /**
+   * Transform the content of the storage when reading it. This can be used to sanitize or modify the data before it is returned.
+   */
+  transform?: (content: StorageRecord) => StorageRecord;
 };
 
 /**
@@ -81,21 +85,22 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   disableCache: boolean;
   disableCacheByFile: boolean;
   sorted: boolean;
+  transform?: (content: StorageRecord) => StorageRecord;
   existed: boolean;
   _cachedStore?: StorageRecord;
 
-  constructor(name: string | undefined, fs: MemFsEditor, configPath: string, options?: StorageOptions);
-  constructor(fs: MemFsEditor, configPath: string, options?: StorageOptions);
+  constructor(name: string | undefined, fs: MemFsEditor, configPath: string, options?: StorageOptions<StorageRecord>);
+  constructor(fs: MemFsEditor, configPath: string, options?: StorageOptions<StorageRecord>);
   constructor(
     name: string | MemFsEditor | undefined,
     fs: MemFsEditor | string,
-    configPath?: string | StorageOptions,
-    options: StorageOptions = {},
+    configPath?: string | StorageOptions<StorageRecord>,
+    options: StorageOptions<StorageRecord> = {},
   ) {
     let editor: MemFsEditor | undefined;
     let actualName: string | undefined;
     let actualConfigPath: string | undefined;
-    let actualOptions: StorageOptions = options;
+    let actualOptions: StorageOptions<StorageRecord> = options;
 
     if (typeof name === 'string') {
       actualName = name;
@@ -129,6 +134,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
     this.disableCache = actualOptions.disableCache ?? false;
     this.disableCacheByFile = actualOptions.disableCacheByFile ?? false;
     this.sorted = actualOptions.sorted ?? false;
+    this.transform = actualOptions.transform;
 
     this.existed = Object.keys(this._store).length > 0;
 
@@ -147,12 +153,12 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return the store content
    */
   readContent(): StorageRecord {
-    const content = this.fs.readJSON(this.path, {});
+    const content = this.fs.readJSON(this.path, {}) as StorageRecord;
     if (!content || typeof content !== 'object' || Array.isArray(content)) {
       throw new Error(`${this.path} is not a valid Storage`);
     }
 
-    return content as StorageRecord;
+    return content;
   }
 
   /**
@@ -219,7 +225,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return The stored value. Any JSON valid type could be returned
    */
   get<const Key extends keyof StorageRecord>(key: Key): StorageRecord[Key] {
-    return this._store[key];
+    return this.transformedStore()[key];
   }
 
   /**
@@ -228,7 +234,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return The stored value. Any JSON valid type could be returned
    */
   getPath<const KeyPath extends string>(path: KeyPath): Get<StorageRecord, KeyPath> {
-    return get(this._store, path);
+    return get(this.transformedStore(), path);
   }
 
   /**
@@ -236,7 +242,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return key-value object
    */
   getAll(): StorageRecord {
-    return cloneDeep(this._store);
+    return this.transformedStore({ forceClone: true });
   }
 
   /**
@@ -327,7 +333,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   createStorage<const KeyPath extends string>(path: KeyPath): Storage<Get<StorageRecord, KeyPath>>;
   createStorage(path: string): Storage<any> {
     const childName = this.name ? `${this.name}.${path}` : path;
-    return new Storage(childName, this.fs, this.path, { lodashPath: true });
+    return new Storage(childName, this.fs, this.path, { lodashPath: true, transform: this.transform });
   }
 
   /**
@@ -335,7 +341,17 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return proxy.
    */
   createProxy(): StorageRecord {
-    return new Proxy(this, proxyHandler) as unknown as StorageRecord;
+    return new Proxy(this, proxyHandler as ProxyHandler<Storage<StorageRecord>>) as unknown as StorageRecord;
+  }
+
+  private transformedStore({ forceClone = false }: { forceClone?: boolean } = {}): StorageRecord {
+    if (this.transform) {
+      return this.transform(cloneDeep(this._store));
+    }
+    if (forceClone) {
+      return cloneDeep(this._store);
+    }
+    return this._store;
   }
 }
 
