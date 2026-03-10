@@ -118,7 +118,7 @@ const storeAnswer = (question: any, answer: PromptAnswers, storeAll: boolean) =>
  * @return Prompt questions array with prefilled values.
  */
 export const prefillQuestions = <A extends PromptAnswers = PromptAnswers>(
-  store: Storage,
+  store: Storage<any>,
   questions: Array<PromptQuestion<A>> | PromptQuestion<A>,
 ) => {
   assert.ok(store, 'A store parameter is required');
@@ -173,7 +173,7 @@ export const prefillQuestions = <A extends PromptAnswers = PromptAnswers>(
  * @param answers   The inquirer answers
  * @param storeAll  Should store default values
  */
-export const storeAnswers = (store: Storage, questions: any, answers: PromptAnswers, storeAll: boolean) => {
+export const storeAnswers = (store: Storage<any>, questions: any, answers: PromptAnswers, storeAll: boolean) => {
   assert.ok(store, 'A store parameter is required');
   assert.ok(answers, 'A answers parameter is required');
   assert.ok(questions, 'A questions parameter is required');
