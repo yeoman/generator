@@ -620,6 +620,26 @@ describe('Storage', () => {
       store.set('array', [3, 2, 1]);
       store.set('object', { b: 'shouldBeLast', a: 'shouldBeFirst' });
     });
+
+    it('proxy should not be transformed', () => {
+      const proxy = store.createProxy();
+      expect(proxy).toMatchObject({
+        array: [3, 2, 1],
+        bar: 'foo',
+        foo: 'bar',
+        object: {
+          a: 'shouldBeFirst',
+          b: 'shouldBeLast',
+        },
+      });
+    });
+
+    it('proxy should be edit the store', () => {
+      const proxy = store.createProxy();
+      proxy.foo = 'changed';
+      expect(store.get('transformed').foo).toBe('changed');
+    });
+
     it('should read file', () => {
       expect(store.getAll()).toMatchInlineSnapshot(`
         {

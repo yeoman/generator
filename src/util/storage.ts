@@ -10,7 +10,7 @@ import type { StorageTransform, StorageValue } from '../types.js';
  */
 const proxyHandler: ProxyHandler<Storage> = {
   get(storage: Storage, property: string, _receiver: any): StorageValue {
-    return storage.get(property);
+    return storage.get(property, { raw: true });
   },
   set(storage: Storage, property: string, value: any, _receiver: any): boolean {
     if (typeof property === 'string') {
@@ -24,7 +24,7 @@ const proxyHandler: ProxyHandler<Storage> = {
     return Reflect.ownKeys(storage._store);
   },
   has(storage: Storage, prop: string) {
-    return storage.get(prop) !== undefined;
+    return storage.get(prop, { raw: true }) !== undefined;
   },
   getOwnPropertyDescriptor(storage: Storage, key: string): PropertyDescriptor {
     return {
@@ -224,7 +224,10 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @param key  The key under which the value is stored.
    * @return The stored value. Any JSON valid type could be returned
    */
-  get<const Key extends keyof StorageRecord>(key: Key): StorageRecord[Key] {
+  get<const Key extends keyof StorageRecord>(key: Key, { raw }: { raw?: boolean } = {}): StorageRecord[Key] {
+    if (raw) {
+      return this._store[key];
+    }
     return this.transformedStore()[key];
   }
 
