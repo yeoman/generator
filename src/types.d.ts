@@ -14,6 +14,8 @@ import type Generator from './index.js';
 export type StorageValue = JsonValue;
 export type GeneratorPipelineOptions = PipelineOptions<MemFsEditorFile> & ProgressOptions & { pendingFiles?: boolean };
 
+export type StorageTransform<A extends Record<string, any>> = (content: A, name?: string) => A;
+
 /**
  * Queue options.
  */
@@ -107,7 +109,7 @@ export type BaseFeatures = FeaturesApi & {
   inheritTasks?: boolean;
 
   /** Transform the configuration before reading. */
-  configTransform?: (config: any) => any;
+  configTransform?: StorageTransform<Record<string, any>>;
 };
 
 export type BaseOptions = OptionsApi & {

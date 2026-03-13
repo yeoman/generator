@@ -3,9 +3,7 @@ import { cloneDeep, get, merge, set, defaults as setDefaults } from 'lodash-es';
 import sortKeys from 'sort-keys';
 import type { Get } from 'type-fest';
 import type { MemFsEditor } from 'mem-fs-editor';
-import type { StorageValue } from '../types.js';
-
-type TransformConfig<A extends Record<string, any>> = (content: A, name?: string) => A;
+import type { StorageTransform, StorageValue } from '../types.js';
 
 /**
  * Proxy handler for Storage
@@ -58,7 +56,7 @@ export type StorageOptions = {
   /**
    * Transform the content of the storage when reading it. This can be used to sanitize or modify the data before it is returned.
    */
-  transform?: TransformConfig<Record<string, any>>;
+  transform?: StorageTransform<Record<string, any>>;
 };
 
 /**
@@ -89,7 +87,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   sorted: boolean;
   existed: boolean;
   _cachedStore?: StorageRecord;
-  private transform?: TransformConfig<Record<string, any>>;
+  private transform?: StorageTransform<Record<string, any>>;
 
   constructor(name: string | undefined, fs: MemFsEditor, configPath: string, options?: StorageOptions);
   constructor(fs: MemFsEditor, configPath: string, options?: StorageOptions);
