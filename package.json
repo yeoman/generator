@@ -88,7 +88,7 @@
     "prettier": "3.8.1",
     "prettier-plugin-packagejson": "3.0.0",
     "sinon": "^21.0.1",
-    "typescript": "5.9.3",
+    "typescript": "6.0.2",
     "vitest": "^4.0.18",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^6.0.0",
