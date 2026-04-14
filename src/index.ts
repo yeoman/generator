@@ -37,9 +37,10 @@ export default class Generator<
   get simpleGit(): SimpleGit {
     if (!this._simpleGit) {
       this._simpleGit = simpleGit({ baseDir: this.destinationPath() }).env({
-        ...process.env,
-
-        LANG: 'en',
+        HOME: process.env.HOME,
+        PATH: process.env.PATH,
+        LANG: 'C',
+        LC_ALL: 'C',
       });
       this.on(DESTINATION_ROOT_CHANGE_EVENT, () => {
         this._simpleGit = undefined;
