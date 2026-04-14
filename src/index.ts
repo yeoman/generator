@@ -1,21 +1,23 @@
 import process from 'node:process';
-import { type SimpleGit, simpleGit } from 'simple-git';
+import { CheckRepoActions, CleanOptions, type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 import { BaseGenerator } from './generator.js';
 import type { BaseFeatures, BaseOptions } from './types.js';
-import { DESTINATION_ROOT_CHANGE_EVENT } from './constants.js';
 
 export type * from './types.js';
 export type * from './questions.js';
 export type * from './util/storage.js';
 export { default as Storage } from './util/storage.js';
 
+type SimpleGitWithConstants = SimpleGit & {
+  CheckRepoActions: typeof CheckRepoActions;
+  CleanOptions: typeof CleanOptions;
+};
+
 export default class Generator<
   C extends Record<any, any> = Record<any, any>,
   O extends BaseOptions = BaseOptions,
   F extends BaseFeatures = BaseFeatures,
 > extends BaseGenerator<C, O, F> {
-  _simpleGit?: SimpleGit;
-
   constructor(...args: any[]) {
     super(...args);
 
@@ -34,19 +36,19 @@ export default class Generator<
     }
   }
 
-  get simpleGit(): SimpleGit {
-    if (!this._simpleGit) {
-      this._simpleGit = simpleGit({ baseDir: this.destinationPath() }).env({
-        HOME: process.env.HOME,
-        PATH: process.env.PATH,
-        LANG: 'C',
-        LC_ALL: 'C',
-      });
-      this.on(DESTINATION_ROOT_CHANGE_EVENT, () => {
-        this._simpleGit = undefined;
-      });
-    }
+  get simpleGit(): SimpleGitWithConstants {
+    return this.createSimpleGit();
+  }
 
-    return this._simpleGit;
+  createSimpleGit(options?: Partial<SimpleGitOptions>): SimpleGitWithConstants {
+    const git = simpleGit({ baseDir: this.destinationPath(), ...options }).env({
+      HOME: process.env.HOME,
+      PATH: process.env.PATH,
+      LANG: 'C',
+      LC_ALL: 'C',
+    }) as SimpleGitWithConstants;
+    git.CheckRepoActions = CheckRepoActions;
+    git.CleanOptions = CleanOptions;
+    return git;
   }
 }
