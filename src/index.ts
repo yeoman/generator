@@ -18,8 +18,8 @@ export default class Generator<
   O extends BaseOptions = BaseOptions,
   F extends BaseFeatures = BaseFeatures,
 > extends BaseGenerator<C, O, F> {
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(arguments_?: string[], options?: O, features?: F) {
+    super(arguments_, options, features);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
