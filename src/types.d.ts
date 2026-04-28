@@ -7,7 +7,7 @@ import type {
 } from '@yeoman/types';
 import type { PipelineOptions } from 'mem-fs';
 import type { MemFsEditorFile } from 'mem-fs-editor';
-import type { JsonValue } from 'type-fest';
+import type { JsonValue, Merge } from 'type-fest';
 import type Storage from './util/storage.js';
 import type Generator from './index.js';
 
@@ -77,40 +77,43 @@ export type Task<TaskContext = any> = TaskOptions & {
   taskName: string;
 };
 
-export type BaseFeatures = FeaturesApi & {
-  /** The Generator instance unique identifier. The Environment will ignore duplicated identifiers. */
-  uniqueBy?: string;
+// Use Merge to override local features by official features from @yeoman/types when they are available.
+export type BaseFeatures = Merge<
+  {
+    /** UniqueBy calculation method */
+    unique?: true | 'argument' | 'namespace';
 
-  /** UniqueBy calculation method */
-  unique?: true | 'argument' | 'namespace';
+    /** Only queue methods that matches a priority. */
+    tasksMatchingPriority?: boolean;
 
-  /** Only queue methods that matches a priority. */
-  tasksMatchingPriority?: boolean;
+    /** Tasks methods starts with prefix. Allows api methods (non tasks) without prefix. */
+    taskPrefix?: string;
 
-  /** Tasks methods starts with prefix. Allows api methods (non tasks) without prefix. */
-  taskPrefix?: string;
+    // Provided by @yeoman/types since v1.11.0
+    /** Provides a custom install task. Environment built-in task will not be executed */
+    customInstallTask?: boolean | ((...args: any[]) => void | Promise<void>);
 
-  /** Provides a custom install task. Environment built-in task will not be executed */
-  customInstallTask?: boolean | ((...args: any[]) => void | Promise<void>);
+    // Provided by @yeoman/types since v1.11.0
+    /** Provides a custom commit task. */
+    customCommitTask?: boolean | ((...args: any[]) => void | Promise<void>);
 
-  /** Provides a custom commit task. */
-  customCommitTask?: boolean | ((...args: any[]) => void | Promise<void>);
+    /** Disable args/options parsing. Whenever options/arguments are provided parsed like using commander based parsing. */
+    skipParseOptions?: boolean;
 
-  /** Disable args/options parsing. Whenever options/arguments are provided parsed like using commander based parsing. */
-  skipParseOptions?: boolean;
+    /** Disable args/options support. Whenever options/arguments are provided parsed like using commander based parsing. */
+    disableInGeneratorOptionsSupport?: boolean;
 
-  /** Disable args/options support. Whenever options/arguments are provided parsed like using commander based parsing. */
-  disableInGeneratorOptionsSupport?: boolean;
+    /** Custom priorities for more fine tuned workflows. */
+    customPriorities?: Priority[];
 
-  /** Custom priorities for more fine tuned workflows. */
-  customPriorities?: Priority[];
+    /** Inherit tasks from parent prototypes, implies tasksMatchingPriority */
+    inheritTasks?: boolean;
 
-  /** Inherit tasks from parent prototypes, implies tasksMatchingPriority */
-  inheritTasks?: boolean;
-
-  /** Transform the configuration before reading. */
-  configTransform?: StorageTransform<Record<string, any>>;
-};
+    /** Transform the configuration before reading. */
+    configTransform?: StorageTransform<Record<string, any>>;
+  },
+  FeaturesApi
+>;
 
 export type BaseOptions = OptionsApi & {
   destinationRoot?: string;
