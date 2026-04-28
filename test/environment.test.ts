@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import { TestAdapter } from '@yeoman/adapter/testing';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import Environment from 'yeoman-environment';
@@ -24,11 +22,8 @@ describe('Generator with environment version', () => {
 
       Dummy = class extends Base {};
       dummy = new Dummy(['bar', 'baz', 'bom'], {
-        foo: false,
-        something: 'else',
         namespace: 'dummy',
         env: env,
-        'skip-install': true,
         skipCheckEnv: true,
       });
     }, 100_000);
@@ -173,12 +168,9 @@ describe('Generator with environment version', () => {
 
       Dummy = class extends Base {};
       dummy = new Dummy(['bar', 'baz', 'bom'], {
-        foo: false,
-        something: 'else',
         namespace: 'dummy',
         env: env,
         skipCheckEnv: true,
-        'skip-install': true,
       });
     }, 100_000);
 

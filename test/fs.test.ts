@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import path from 'node:path';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
@@ -17,18 +15,41 @@ const ARG_TO = 1;
 const ARG_DATA = 2; // A.k.a. context
 const ARG_COPYSETTINGS = 3;
 
+const fsOperations = [
+  'read',
+  'copy',
+  'copyAsync',
+  'write',
+  'writeJSON',
+  'delete',
+  'move',
+  'exists',
+  'copyTpl',
+  'copyTplAsync',
+] as const;
+
 type FSOpResult = {
-  name: string;
-  first?: string;
-  second?: string;
-  fromBasePath?: string;
-  dest: string;
+  name:
+    | 'readTemplate'
+    | 'copyTemplate'
+    | 'copyTemplateAsync'
+    | 'readDestination'
+    | 'writeDestination'
+    | 'writeDestinationJSON'
+    | 'deleteDestination'
+    | 'copyDestination'
+    | 'moveDestination'
+    | 'existsDestination'
+    | 'renderTemplate'
+    | 'renderTemplateAsync';
+  first?: 'templatePath' | 'destinationPath';
+  second?: 'templatePath' | 'destinationPath';
+  fromBasePath?: 'templatePath' | 'destinationPath';
+  dest: (typeof fsOperations)[number];
   returnsUndefined?: boolean;
 };
 
-let testResults: FSOpResult[] = [];
-testResults = [
-  ...testResults,
+const testResults: FSOpResult[] = [
   { name: 'readTemplate', first: 'templatePath', dest: 'read' },
   {
     name: 'copyTemplate',
@@ -96,7 +117,7 @@ describe('generators.Base (actions/fs)', () => {
 
   beforeEach(() => {
     returns = {};
-    base = new BaseGenerator({ namespace: 'foo', help: true, resolved: 'unknown' });
+    base = new BaseGenerator([], { namespace: 'foo', help: true, resolved: 'unknown' });
 
     // Why not use a sinonStub for base.config as is done in #renderTemplate and #renderTemplateAsync below?
     //  base get config is not being tested in any way below.
@@ -117,18 +138,7 @@ describe('generators.Base (actions/fs)', () => {
       checkEnvironmentVersion() {},
       fs: {},
     });
-    for (const op of [
-      'read',
-      'copy',
-      'copyAsync',
-      'write',
-      'writeJSON',
-      'delete',
-      'move',
-      'exists',
-      'copyTpl',
-      'copyTplAsync',
-    ]) {
+    for (const op of fsOperations) {
       const returnValue = randomString();
       base.fs[op] = vi.fn().mockReturnValue(returnValue);
       returns[op] = returnValue;
@@ -141,19 +151,19 @@ describe('generators.Base (actions/fs)', () => {
     const passedArg3 = {};
     const passedArg4 = { foo: 'bar' };
 
-    describe(`#${operation.name}`, () => {
+    describe(`#${operation.name as string}`, () => {
       let returnValue: string | undefined;
       let expectedReturn: string | undefined;
       let firstArgumentHandler: ReturnType<typeof vi.fn> | undefined;
       let secondArgumentHandler: ReturnType<typeof vi.fn>;
 
       beforeEach(async () => {
-        returnValue = await base[operation.name](passedArg1, passedArg2, passedArg3, passedArg4);
+        returnValue = await (base[operation.name] as any)(passedArg1, passedArg2, passedArg3, passedArg4);
 
         expectedReturn = operation.returnsUndefined ? undefined : returns[operation.dest];
-        firstArgumentHandler = operation.first ? base[operation.first] : undefined;
+        firstArgumentHandler = operation.first ? (base[operation.first] as ReturnType<typeof vi.fn>) : undefined;
         if (operation.second !== undefined && operation.second !== null) {
-          secondArgumentHandler = base[operation.second];
+          secondArgumentHandler = base[operation.second] as ReturnType<typeof vi.fn>;
         }
       });
 
@@ -185,7 +195,7 @@ describe('generators.Base (actions/fs)', () => {
       });
 
       it('calls fs with correct arguments', () => {
-        const destCall = base.fs[operation.dest];
+        const destCall = base.fs[operation.dest] as ReturnType<typeof vi.fn>;
         expect(destCall).toHaveBeenCalledOnce();
         const [call] = destCall.mock.calls;
         // First argument should be the trated first arguments
@@ -221,8 +231,9 @@ describe('generators.Base (actions/fs)', () => {
       vi.spyOn(gen.config, 'getAll').mockReturnValue(getAllReturn);
       vi.spyOn(gen.config, 'getPath').mockReturnValue(getPathReturn);
 
-      for (const op of ['copyTpl']) {
+      for (const op of ['copyTpl'] as const) {
         const returnValue = randomString();
+        // @ts-expect-error testing only
         vi.spyOn(gen.fs, op).mockReturnValue(returnValue);
         returns[op] = returnValue;
       }
@@ -276,8 +287,9 @@ describe('generators.Base (actions/fs)', () => {
       vi.spyOn(gen.config, 'getAll').mockReturnValue(getAllReturn);
       vi.spyOn(gen.config, 'getPath').mockReturnValue(getPathReturn);
 
-      for (const op of ['copyTplAsync']) {
+      for (const op of ['copyTplAsync'] as const) {
         const returnValue = randomString();
+        // @ts-expect-error testing only
         vi.spyOn(gen.fs, op).mockReturnValue(returnValue);
         returns[op] = returnValue;
       }
@@ -326,8 +338,9 @@ describe('generators.Base (actions/fs)', () => {
       vi.spyOn(gen, 'sourceRoot').mockReturnValue('');
       vi.spyOn(gen, 'destinationRoot').mockReturnValue('');
 
-      for (const op of ['copyTpl']) {
+      for (const op of ['copyTpl'] as const) {
         const returnValue = randomString();
+        // @ts-expect-error testing only
         vi.spyOn(gen.fs, op).mockReturnValue(returnValue);
         returns[op] = returnValue;
       }
@@ -425,6 +438,7 @@ describe('generators.Base (actions/fs)', () => {
             source: passedArg1,
             when(data: TemplateData) {
               receivedData = data;
+              return false;
             },
           },
         ],
@@ -443,8 +457,9 @@ describe('generators.Base (actions/fs)', () => {
       vi.spyOn(gen, 'sourceRoot').mockReturnValue('');
       vi.spyOn(gen, 'destinationRoot').mockReturnValue('');
 
-      for (const op of ['copyTplAsync']) {
+      for (const op of ['copyTplAsync'] as const) {
         const returnValue = randomString();
+        // @ts-expect-error testing only
         vi.spyOn(gen.fs, op).mockReturnValue(returnValue);
         returns[op] = returnValue;
       }
@@ -542,6 +557,7 @@ describe('generators.Base (actions/fs)', () => {
             source: passedArg1,
             when(data: TemplateData) {
               receivedData = data;
+              return false;
             },
           },
         ],

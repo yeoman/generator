@@ -134,9 +134,9 @@ describe('Storage', () => {
 
     it('save on each changes', () => {
       store.set('foo', 'bar');
-      expect(editor.readJSON(storePath).test.foo).toBe('bar');
+      expect(editor.readJSON(storePath)?.test.foo).toBe('bar');
       store.set('foo', 'oo');
-      expect(editor.readJSON(storePath).test.foo).toBe('oo');
+      expect(editor.readJSON(storePath)?.test.foo).toBe('oo');
     });
 
     describe('@return', () => {
@@ -455,7 +455,7 @@ describe('Storage', () => {
 
   describe('#createProxy()', () => {
     let store: Storage;
-    let proxy;
+    let proxy: Record<string, any>;
     beforeEach(() => {
       store = new Storage('test', editor, storePath);
       store.set('foo', 'bar');

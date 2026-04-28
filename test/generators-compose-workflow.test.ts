@@ -41,9 +41,6 @@ describe('Multiples generators', () => {
         resolved: 'unknown',
         namespace: 'dummy',
         env: env,
-        'skip-install': true,
-        'force-install': true,
-        'skip-cache': true,
       });
 
       spyExec1 = vi.fn();
@@ -143,9 +140,6 @@ describe('Multiples generators', () => {
           resolved: 'unknown',
           namespace: 'dummy',
           env: env,
-          'skip-install': true,
-          'force-install': true,
-          'skip-cache': true,
         });
 
         const runSpy = vi.spyOn(dummy2, 'run');
@@ -202,9 +196,6 @@ describe('Multiples generators', () => {
           resolved: 'unknown',
           namespace: 'dummy',
           env: env,
-          'skip-install': true,
-          'force-install': true,
-          'skip-cache': true,
         });
 
         const runSpy = vi.spyOn(dummy2, 'run');
@@ -272,9 +263,6 @@ describe('Multiples generators', () => {
       resolved: 'unknown',
       namespace: 'dummy',
       env: env,
-      'skip-install': true,
-      'force-install': true,
-      'skip-cache': true,
     });
 
     await dummy.run();
