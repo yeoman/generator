@@ -1,5 +1,11 @@
 # Changelog
 
+## [8.2.1](https://github.com/yeoman/generator/compare/v8.2.0...v8.2.1) (2026-04-28)
+
+### Bug Fixes
+
+- add return type to avoid complex type generation ([#1795](https://github.com/yeoman/generator/issues/1795)) ([ddb534c](https://github.com/yeoman/generator/commit/ddb534c0c2011223e428014439e5b445e4793e1c))
+
 ## [8.2.0](https://github.com/yeoman/generator/compare/v8.1.2...v8.2.0) (2026-04-28)
 
 ### Features
