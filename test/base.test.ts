@@ -8,13 +8,13 @@ import { createRequire } from 'node:module';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { extend } from 'lodash-es';
 import { passthrough } from '@yeoman/transform';
 import Environment, { type EnvironmentOptions } from 'yeoman-environment';
 import helpers from 'yeoman-test';
 import { TestAdapter } from '@yeoman/adapter/testing';
+import type { TestGeneratorOptions } from './utils.js';
 import Base from './utils.js';
-import type { BaseFeatures, BaseOptions } from '../src/types.js';
+import type { BaseFeatures } from '../src/types.js';
 
 const require = createRequire(import.meta.url);
 
@@ -81,7 +81,7 @@ describe('Base', () => {
       env.register(class extends Base {}, { namespace: 'ember:model' });
 
       const generator = await env.create('ember:model', {
-        options: {
+        generatorOptions: {
           'test-framework': 'jasmine',
         },
       });
@@ -100,7 +100,7 @@ describe('Base', () => {
     });
 
     it('set options based on nopt arguments', () => {
-      const generator = new Base(['--foo', 'bar'], {
+      const generator = new Base<any>(['--foo', 'bar'], {
         env,
         resolved: 'test',
       });
@@ -111,7 +111,7 @@ describe('Base', () => {
     });
 
     it('set arguments based on nopt arguments', () => {
-      const generator = new Base(['--foo', 'bar'], {
+      const generator = new Base<any>(['--foo', 'bar'], {
         env,
         resolved: 'test',
       });
@@ -172,7 +172,7 @@ describe('Base', () => {
   describe('prototype', () => {
     it("methods doesn't conflict with Env#runQueue", () => {
       for (const queue of (env as any).runLoop.queueNames) {
-        expect(Base.prototype[queue]).toBeFalsy();
+        expect((Base.prototype as any)[queue]).toBeFalsy();
       }
     });
   });
@@ -206,7 +206,7 @@ describe('Base', () => {
     let execSpy: ReturnType<typeof vi.fn>;
     beforeEach(() => {
       TestGenerator = class extends Base {};
-      extend(TestGenerator.prototype, {
+      Object.assign(TestGenerator.prototype, {
         _beforeQueue: vi.fn(),
         exec: vi.fn(),
         exec2: vi.fn(),
@@ -227,7 +227,6 @@ describe('Base', () => {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
         env,
-        'skip-install': true,
       });
     });
 
@@ -254,7 +253,7 @@ describe('Base', () => {
     });
 
     it("don't try running prototype attributes", () => {
-      TestGenerator.prototype.prop = 'something';
+      Object.assign(TestGenerator.prototype, { prop: 'something' });
       return testGen.run();
     });
 
@@ -269,9 +268,11 @@ describe('Base', () => {
       new Promise<void>(done => {
         const error = new Error('Some error');
 
-        TestGenerator.prototype.throwing = () => {
-          throw error;
-        };
+        Object.assign(TestGenerator.prototype, {
+          throwing: () => {
+            throw error;
+          },
+        });
 
         testGen.env.on('error', error_ => {
           expect(error_).toBe(error);
@@ -285,11 +286,12 @@ describe('Base', () => {
       const error = new Error('Some error');
       const spy = vi.fn();
 
-      TestGenerator.prototype.throwing = () => {
-        throw error;
-      };
-
-      TestGenerator.prototype.afterError = spy;
+      Object.assign(TestGenerator.prototype, {
+        throwing: () => {
+          throw error;
+        },
+        afterError: spy,
+      });
 
       testGen.on('error', vi.fn());
       return testGen.run().catch(error_ => {
@@ -301,18 +303,18 @@ describe('Base', () => {
       const spy1 = vi.fn();
       const spy2 = vi.fn();
 
-      TestGenerator.prototype.first = async () => {
-        return new Promise<void>(resolve => {
-          setTimeout(() => {
-            spy1();
-            resolve();
-          }, 10);
-        });
-      };
-
-      TestGenerator.prototype.second = () => {
-        spy2();
-      };
+      Object.assign(TestGenerator.prototype, {
+        first: async () =>
+          new Promise<void>(resolve => {
+            setTimeout(() => {
+              spy1();
+              resolve();
+            }, 10);
+          }),
+        second: () => {
+          spy2();
+        },
+      });
 
       return testGen.run().then(() => {
         expect(spy1.mock.invocationCallOrder[0]).toBeLessThan(spy2.mock.invocationCallOrder[0]);
@@ -321,11 +323,12 @@ describe('Base', () => {
 
     it('handle failing promises as errors', () =>
       new Promise<void>(done => {
-        TestGenerator.prototype.failing = async () => {
-          return new Promise((resolve, reject) => {
-            reject(new Error('some error'));
-          });
-        };
+        Object.assign(TestGenerator.prototype, {
+          failing: async () =>
+            new Promise((resolve, reject) => {
+              reject(new Error('some error'));
+            }),
+        });
 
         testGen.env.on('error', error => {
           expect(error.message).toBe('some error');
@@ -422,14 +425,16 @@ describe('Base', () => {
     });
 
     it('commit mem-fs to disk', () => {
-      let filepath;
+      let filepath: string | undefined;
 
-      TestGenerator.prototype.writing = function () {
-        this.fs.write((filepath = path.join(this.destinationRoot(), 'fromfs.txt')), 'generated');
-      };
+      Object.assign(TestGenerator.prototype, {
+        writing(this: Base) {
+          this.fs.write((filepath = path.join(this.destinationRoot(), 'fromfs.txt')), 'generated');
+        },
+      });
 
       return testGen.run().then(() => {
-        expect(fs.existsSync(filepath)).toBeTruthy();
+        expect(fs.existsSync(filepath!)).toBeTruthy();
       });
     });
 
@@ -438,9 +443,11 @@ describe('Base', () => {
       const filepath = path.join(_dirname, '/fixtures/conflict.js');
       expect(fs.existsSync(filepath)).toBeTruthy();
 
-      TestGenerator.prototype.writing = function () {
-        this.fs.write(filepath, 'some new content');
-      };
+      Object.assign(TestGenerator.prototype, {
+        writing(this: Base) {
+          this.fs.write(filepath, 'some new content');
+        },
+      });
 
       const env = createEnv({ adapter: new TestAdapter({ mockedAnswers: action }) });
       const testGen = new TestGenerator([], {
@@ -455,9 +462,11 @@ describe('Base', () => {
     });
 
     it('allows file writes in any priorities', () => {
-      TestGenerator.prototype.end = function () {
-        this.fs.write(this.destinationPath('foo.txt'), 'test');
-      };
+      Object.assign(TestGenerator.prototype, {
+        end(this: Base) {
+          this.fs.write(this.destinationPath('foo.txt'), 'test');
+        },
+      });
 
       return testGen.run().then(() => {
         expect(fs.existsSync(testGen.destinationPath('foo.txt'))).toBeTruthy();
@@ -466,13 +475,14 @@ describe('Base', () => {
 
     it('can cancel cancellable tasks', () =>
       new Promise<void>(done => {
-        TestGenerator.prototype.cancel = function () {
-          this.cancelCancellableTasks();
-        };
-
-        TestGenerator.prototype.throwing = () => {
-          throw new Error('not thrown');
-        };
+        Object.assign(TestGenerator.prototype, {
+          cancel(this: Base) {
+            this.cancelCancellableTasks();
+          },
+          throwing: () => {
+            throw new Error('not thrown');
+          },
+        });
 
         testGen.run().then(done);
       }));
@@ -482,19 +492,20 @@ describe('Base', () => {
         const spy1 = vi.fn();
         const spy2 = vi.fn();
 
-        TestGenerator.prototype.cancel = function () {
-          spy1();
-          if (!this.startedOver) {
-            this.startOver({ startedOver: true });
-            this.startedOver = true;
-          }
-        };
-
-        TestGenerator.prototype.after = function () {
-          expect(this.options.startedOver).toBeTruthy();
-          expect(this.startedOver).toBeTruthy();
-          spy2();
-        };
+        Object.assign(TestGenerator.prototype, {
+          cancel(this: Base) {
+            spy1();
+            if (!this.startedOver) {
+              this.startOver({ startedOver: true });
+              this.startedOver = true;
+            }
+          },
+          after(this: Base) {
+            expect(this.options.startedOver).toBeTruthy();
+            expect(this.startedOver).toBeTruthy();
+            spy2();
+          },
+        });
 
         testGen.run().then(() => {
           expect(spy1).toHaveBeenCalledTimes(2);
@@ -507,14 +518,16 @@ describe('Base', () => {
       new Promise<void>(done => {
         const spy1 = vi.fn();
 
-        TestGenerator.prototype.cancel = function () {
-          spy1();
-          if (!this.startedOver) {
-            this.queueOwnTask('cancel');
-            this.startOver();
-            this.startedOver = true;
-          }
-        };
+        Object.assign(TestGenerator.prototype, {
+          cancel(this: Base) {
+            spy1();
+            if (!this.startedOver) {
+              this.queueOwnTask('cancel');
+              this.startOver();
+              this.startedOver = true;
+            }
+          },
+        });
 
         testGen.run().then(() => {
           expect(spy1).toHaveBeenCalledTimes(2);
@@ -529,7 +542,7 @@ describe('Base', () => {
 
     beforeEach(() => {
       TestGenerator = class extends Base {};
-      extend(TestGenerator.prototype, {
+      Object.assign(TestGenerator.prototype, {
         beforeQueue: vi.fn(),
         _private: vi.fn(),
         '#composed': vi.fn(),
@@ -579,31 +592,30 @@ describe('Base', () => {
 
     it('allows specifying default argument values', () => {
       const Generator = class extends Base {
-        constructor(args?: string[], options?: BaseOptions) {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
           super(args, options);
 
           this.argument('bar', { default: 'baz' });
         }
       };
 
-      const gen = new Generator({
+      const gen = new Generator([], {
         env,
-        resolved: 'test',
       });
 
       expect(gen.options.bar).toBe('baz');
     });
 
     it('allows specifying default argument values', () => {
-      const Generator = class extends Base {
-        constructor(args?: string[], options?: BaseOptions) {
+      const Generator = class extends Base<any> {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
           super(args, options);
 
           this.argument('bar', { default: 'baz' });
         }
       };
 
-      const gen = new Generator({
+      const gen = new Generator([], {
         env,
         resolved: 'test',
       });
@@ -613,7 +625,7 @@ describe('Base', () => {
 
     it('properly uses arguments values passed from constructor', () => {
       const Generator = class extends Base {
-        constructor(args?: string[], options?: BaseOptions) {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
           super(args, options);
 
           this.argument('bar', { default: 'baz' });
@@ -693,7 +705,7 @@ describe('Base', () => {
 
     it('allow aliasing options', () => {
       const Generator = class extends Base {
-        constructor(args?: string[], options?: BaseOptions) {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
           super(args, options);
 
           this.option('long-name', {
@@ -714,14 +726,14 @@ describe('Base', () => {
 
     it('allows Boolean options to be undefined', () => {
       const Generator = class extends Base {
-        constructor(args?: string[], options?: BaseOptions) {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
           super(args, options);
 
           this.option('undef', { type: Boolean });
         }
       };
 
-      const gen = new Generator({
+      const gen = new Generator([], {
         env,
         resolved: 'test',
       });
@@ -1117,7 +1129,7 @@ describe('Base', () => {
     beforeEach(() => {
       filepath = path.join(os.tmpdir(), '/yeoman-transform-stream/filea.txt');
       TestGenerator = class extends Base {};
-      TestGenerator.prototype.exec = vi.fn();
+      Object.assign(TestGenerator.prototype, { exec: vi.fn() });
       testGen = new TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
@@ -1130,40 +1142,42 @@ describe('Base', () => {
     });
 
     it('add the transform stream to the commit stream', () => {
-      TestGenerator.prototype.writing = function () {
-        this.fs.write(filepath, 'not correct');
+      Object.assign(TestGenerator.prototype, {
+        writing(this: Base) {
+          this.fs.write(filepath, 'not correct');
 
-        this.queueTransformStream(
-          passthrough(file => {
-            if (file.path === filepath) {
-              file.contents = Buffer.from(`${file.contents.toString()} a`);
-            }
-          }),
-        )
-          .queueTransformStream(
+          this.queueTransformStream(
             passthrough(file => {
               if (file.path === filepath) {
-                file.contents = Buffer.from(`${file.contents.toString()} b`);
+                file.contents = Buffer.from(`${file.contents.toString()} a`);
               }
             }),
           )
-          .queueTransformStream(
-            { priorityToQueue: 'prompting' },
-            passthrough(file => {
-              if (file.path === filepath) {
-                file.contents = Buffer.from(`${file.contents.toString()} prompting`);
-              }
-            }),
-          )
-          .queueTransformStream(
-            { priorityToQueue: 'initializing' },
-            passthrough(file => {
-              if (file.path === filepath) {
-                file.contents = Buffer.from('initializing');
-              }
-            }),
-          );
-      };
+            .queueTransformStream(
+              passthrough(file => {
+                if (file.path === filepath) {
+                  file.contents = Buffer.from(`${file.contents.toString()} b`);
+                }
+              }),
+            )
+            .queueTransformStream(
+              { priorityToQueue: 'prompting' },
+              passthrough(file => {
+                if (file.path === filepath) {
+                  file.contents = Buffer.from(`${file.contents.toString()} prompting`);
+                }
+              }),
+            )
+            .queueTransformStream(
+              { priorityToQueue: 'initializing' },
+              passthrough(file => {
+                if (file.path === filepath) {
+                  file.contents = Buffer.from('initializing');
+                }
+              }),
+            );
+        },
+      });
 
       return testGen.run().then(() => {
         expect(fs.readFileSync(filepath, 'utf8')).toBe('initializing prompting a b');
@@ -1171,22 +1185,24 @@ describe('Base', () => {
     });
 
     it('add multiple transform streams to the commit stream', () => {
-      TestGenerator.prototype.writing = function () {
-        this.fs.write(filepath, 'not correct');
+      Object.assign(TestGenerator.prototype, {
+        writing(this: Base) {
+          this.fs.write(filepath, 'not correct');
 
-        this.queueTransformStream(
-          passthrough(file => {
-            if (file.path === filepath) {
-              file.contents = Buffer.from('a');
-            }
-          }),
-          passthrough(file => {
-            if (file.path === filepath) {
-              file.contents = Buffer.from(`${file.contents.toString()}b`);
-            }
-          }),
-        );
-      };
+          this.queueTransformStream(
+            passthrough(file => {
+              if (file.path === filepath) {
+                file.contents = Buffer.from('a');
+              }
+            }),
+            passthrough(file => {
+              if (file.path === filepath) {
+                file.contents = Buffer.from(`${file.contents.toString()}b`);
+              }
+            }),
+          );
+        },
+      });
 
       return testGen.run().then(() => {
         expect(fs.readFileSync(filepath, 'utf8')).toBe('ab');
@@ -1238,7 +1254,7 @@ describe('Base', () => {
     it('only call the end event once (bug #402)', () =>
       new Promise<void>(done => {
         class GeneratorOnce extends Base {
-          constructor(args?: string[], options?: BaseOptions) {
+          constructor(args?: string[], options?: TestGeneratorOptions) {
             super(args, options);
             this.sourceRoot(path.join(_dirname, 'fixtures'));
             this.destinationRoot(path.join(os.tmpdir(), 'yeoman-base-once'));
@@ -1274,7 +1290,7 @@ describe('Base', () => {
       new Promise<void>(done => {
         const endSpy = vi.fn();
         const GeneratorEnd = class extends Base {
-          constructor(args?: string[], options?: BaseOptions) {
+          constructor(args?: string[], options?: TestGeneratorOptions) {
             super(args, options);
             this.on('end', () => {
               expect(endSpy).toHaveBeenCalledOnce();
@@ -1327,7 +1343,7 @@ describe('Base', () => {
     let Generator;
     beforeEach(() => {
       Generator = class extends Base {
-        constructor(args?: string[], options?: BaseOptions) {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
           super(args, options);
 
           this.queueMethod(
@@ -1362,7 +1378,7 @@ describe('Base', () => {
     it('queued method is executed by derived generator', () =>
       new Promise<void>(done => {
         const Derived = class extends Generator {
-          constructor(args?: string[], options?: BaseOptions) {
+          constructor(args?: string[], options?: TestGeneratorOptions) {
             super(args, options);
 
             this.prop = 'a';
@@ -1435,7 +1451,7 @@ describe('Base', () => {
     let Generator;
     beforeEach(() => {
       Generator = class extends Base {
-        constructor(args?: string[], options?: BaseOptions) {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
           super(args, options);
 
           this.queueMethod(
@@ -1552,12 +1568,12 @@ describe('Base', () => {
   });
 
   describe('Custom priorities', () => {
-    let TestGenerator;
-    let testGen;
+    let TestGenerator: typeof Base;
+    let testGen: InstanceType<typeof Base>;
 
     beforeEach(() => {
       TestGenerator = class extends Base {
-        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
+        constructor(args?: string[], options?: TestGeneratorOptions, features?: BaseFeatures) {
           super(
             args,
             {
@@ -1597,7 +1613,7 @@ describe('Base', () => {
     });
 
     it('generates correct _queues and runLoop queueNames', () => {
-      extend(TestGenerator.prototype, {
+      Object.assign(TestGenerator.prototype, {
         assert() {
           expect(this._queues).toStrictEqual({
             initializing: {
@@ -1679,7 +1695,7 @@ describe('Base', () => {
       const configuring = vi.fn();
       const end = vi.fn();
 
-      extend(TestGenerator.prototype, {
+      Object.assign(TestGenerator.prototype, {
         prePrompting1,
         preConfiguring1,
         preConfiguring2,
@@ -1713,7 +1729,7 @@ describe('Base', () => {
       const customPreConfiguring1 = vi.fn();
       const customPreConfiguring2 = vi.fn();
 
-      extend(TestGenerator.prototype, {
+      Object.assign(TestGenerator.prototype, {
         get preConfiguring1() {
           return { commonPreConfiguring };
         },
@@ -1735,7 +1751,6 @@ describe('Base', () => {
         resolved: 'unknown',
         namespace: 'dummy',
         env,
-        'skip-install': true,
       });
 
       await testGen.composeWith({
@@ -1754,7 +1769,7 @@ describe('Base', () => {
   describe('Custom priorities errors', () => {
     it('error is thrown with duplicate custom queue', () => {
       const TestGenerator = class extends Base {
-        constructor(args?: string[], options?: BaseOptions) {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
           super(
             args,
             {
@@ -1782,7 +1797,6 @@ describe('Base', () => {
             resolved: 'generator-ember/all/index.js',
             namespace: 'dummy',
             env,
-            'skip-install': true,
           }),
       ).toThrow();
     });
@@ -1790,8 +1804,8 @@ describe('Base', () => {
 
   describe('#prompt', () => {
     let promptSpy: ReturnType<typeof vi.spyOn>;
-    const input1Prompt = { type: 'input', name: 'prompt1', message: 'dummy' };
-    const input2Prompt = { type: 'input', name: 'prompt2', message: 'dummy' };
+    const input1Prompt = { type: 'input', name: 'prompt1', message: 'dummy' } as const;
+    const input2Prompt = { type: 'input', name: 'prompt2', message: 'dummy' } as const;
     beforeEach(() => {
       dummy.env.adapter = new TestAdapter({
         mockedAnswers: {
@@ -1920,8 +1934,8 @@ describe('Base', () => {
 
   describe('getTaskNames', () => {
     class TestGen extends Base {
-      constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
-        const customPriorities = [{ priorityName: 'customPriority', before: 'prompting' }];
+      constructor(args?: string[], options?: TestGeneratorOptions, features?: BaseFeatures) {
+        const customPriorities = [{ priorityName: 'customPriority', before: 'prompting' }] as const;
         super(
           args,
           Array.isArray(args)
@@ -1966,7 +1980,7 @@ describe('Base', () => {
 
     it('should return only priorities tasks when tasksMatchingPriority is true', async () => {
       const Gen = class extends TestGen {
-        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
+        constructor(args?: string[], options?: TestGeneratorOptions, features?: BaseFeatures) {
           super(args, options, { ...features, tasksMatchingPriority: true });
         }
 
@@ -1982,7 +1996,7 @@ describe('Base', () => {
 
     it('should return only inherited tasks when inheritTasks is true', async () => {
       const Gen = class extends TestGen {
-        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
+        constructor(args?: string[], options?: TestGeneratorOptions, features?: BaseFeatures) {
           super(args, options, { ...features, inheritTasks: true });
         }
 
@@ -2000,7 +2014,7 @@ describe('Base', () => {
 
     it('passing taskPrefix should return tasks without taskPrefix', async () => {
       const Gen = class extends TestGen {
-        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
+        constructor(args?: string[], options?: TestGeneratorOptions, features?: BaseFeatures) {
           super(args, options, { ...features, taskPrefix: 'foo' });
         }
 
@@ -2015,14 +2029,14 @@ describe('Base', () => {
 
     it('passing taskPrefix and inheritTasks should return tasks without taskPrefix', async () => {
       const Parent = class extends TestGen {
-        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
+        constructor(args?: string[], options?: TestGeneratorOptions, features?: BaseFeatures) {
           super(args, options, { ...features, taskPrefix: 'foo', inheritTasks: true });
         }
 
         foodefault() {}
       };
       const Gen = class extends Parent {
-        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
+        constructor(args?: string[], options?: TestGeneratorOptions, features?: BaseFeatures) {
           super(args, options, { ...features, taskPrefix: 'foo', inheritTasks: true });
         }
 

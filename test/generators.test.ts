@@ -180,7 +180,7 @@ describe('Generators module', () => {
       try {
         new Generator();
       } catch (error) {
-        expect(error.message).toBe('This generator requires an environment.');
+        expect((error as Error).message).toBe('This generator requires an environment.');
         done();
       }
     }));
@@ -189,7 +189,7 @@ describe('Generators module', () => {
     new Promise<void>(done => {
       const Generator = class extends Base {};
       try {
-        new Generator({ env: {} });
+        new Generator({ env: {} as any });
       } catch (error) {
         expect((error as Error).message).toBe(
           "Current environment doesn't provides some necessary feature this generator needs.",
