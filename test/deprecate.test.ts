@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import assert from 'node:assert';
-import { afterEach, beforeEach, describe, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import chalk from 'chalk';
 import sinon, { type SinonSpy } from 'sinon';
 import deprecate from '../src/util/deprecate.js';
@@ -37,10 +36,7 @@ describe('deprecate()', () => {
       const deprecatedFunction = deprecate('this is function deprecated', originalFunction);
 
       deprecatedFunction('baz', 3);
-      assert.ok(
-        originalFunction.calledWith('baz', 3),
-        `original function called with (${originalFunction.lastCall.args[0]}, ${originalFunction.lastCall.args[1]})`,
-      );
+      expect(originalFunction.calledWith('baz', 3)).toBeTruthy();
     });
 
     it('a call to deprecate.log(msg) is added', () => {
@@ -48,18 +44,18 @@ describe('deprecate()', () => {
       const deprecatedFunction = deprecate('this is function deprecated', originalFunction);
 
       originalFunction('bar', 2);
-      assert.ok(originalFunction.calledWith('bar', 2), 'original function not called with ("bar", 2)');
-      assert.ok(deprecatedLogSpy.notCalled);
+      expect(originalFunction.calledWith('bar', 2)).toBeTruthy();
+      expect(deprecatedLogSpy.notCalled).toBeTruthy();
 
       deprecatedFunction('baz', 3);
-      assert.ok(deprecatedLogSpy.calledWith('this is function deprecated'));
+      expect(deprecatedLogSpy.calledWith('this is function deprecated')).toBeTruthy();
     });
   });
 
   describe('.log', () => {
     it('logs the message in yellow, starting with "(!) "', () => {
       deprecate.log('this is the message');
-      assert.ok(fakeConsoleLog.calledWith(`${chalk.yellow('(!) ')}this is the message`));
+      expect(fakeConsoleLog.calledWith(`${chalk.yellow('(!) ')}this is the message`)).toBeTruthy();
     });
   });
 
@@ -92,17 +88,11 @@ describe('deprecate()', () => {
       const deprecatedObject = deprecate.object('<%= name %> is deprecated', originalObject);
       // @ts-expect-error  The method functionInObj() does exist on deprecatedObject. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       deprecatedObject.functionInObj(42);
-      assert.ok(
-        deprecatedLogSpy.calledWith('functionInObj is deprecated'),
-        `last call with args: ${deprecatedLogSpy.lastCall.args[0]}`,
-      );
+      expect(deprecatedLogSpy.calledWith('functionInObj is deprecated')).toBeTruthy();
 
       // @ts-expect-error  The method anotherFunction() does exist on deprecatedObject. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       deprecatedObject.anotherFunction('something');
-      assert.ok(
-        deprecatedLogSpy.calledWith('anotherFunction is deprecated'),
-        `last call with args: ${deprecatedLogSpy.lastCall.args[0]}`,
-      );
+      expect(deprecatedLogSpy.calledWith('anotherFunction is deprecated')).toBeTruthy();
     });
 
     it('properties that are not functions are not changed', () => {
@@ -116,8 +106,8 @@ describe('deprecate()', () => {
       const deprecatedObject = deprecate.object('The function "<%= name %>" is deprecated', originalObject);
       // @ts-expect-error  The property foo does exist on deprecatedObject. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       const fooValue = deprecatedObject.foo;
-      assert.equal(fooValue, 1);
-      assert.ok(deprecatedLogSpy.notCalled);
+      expect(fooValue).toBe(1);
+      expect(deprecatedLogSpy.notCalled).toBeTruthy();
     });
 
     it('property getters and setters are not changed', () => {
@@ -145,7 +135,7 @@ describe('deprecate()', () => {
       // @ts-expect-error The setter bar does exist on the object. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       deprecatedObject.bar = 7;
 
-      assert.ok(deprecatedLogSpy.notCalled);
+      expect(deprecatedLogSpy.notCalled).toBeTruthy();
     });
 
     it('deprecation message can be a template', () => {
@@ -161,10 +151,7 @@ describe('deprecate()', () => {
       // @ts-expect-error The method functionInObj() does exist on deprecatedObject. This should be a DeprecatedObject<SimpleObject>. When deprecate.js is changed to .ts, this can be implemented and no error will occur here.
       deprecatedObject.functionInObj(42);
 
-      assert.ok(
-        deprecatedLogSpy.calledWith('The function "functionInObj" is deprecated'),
-        `last call with args: ${deprecatedLogSpy.lastCall.args[0]}`,
-      );
+      expect(deprecatedLogSpy.calledWith('The function "functionInObj" is deprecated')).toBeTruthy();
     });
   });
 
@@ -186,12 +173,9 @@ describe('deprecate()', () => {
       deprecate.property('foo property is deprecated', originalObject, 'foo');
 
       // Value is not affected; it remains the same
-      assert.equal(originalObject.foo, 1);
+      expect(originalObject.foo).toBe(1);
 
-      assert.ok(
-        deprecatedLogSpy.calledWith('foo property is deprecated'),
-        `deprecatedLogSpy called with (${deprecatedLogSpy.lastCall.args[0]})`,
-      );
+      expect(deprecatedLogSpy.calledWith('foo property is deprecated')).toBeTruthy();
     });
 
     it('property getters and setters are deprecated', () => {
@@ -215,16 +199,10 @@ describe('deprecate()', () => {
 
       deprecate.property('bar is deprecated', originalObject, 'bar');
       originalObject.bar;
-      assert.ok(
-        deprecatedLogSpy.calledWith('bar is deprecated'),
-        `deprecatedLogSpy called with (${deprecatedLogSpy.lastCall.args[0]})`,
-      );
+      expect(deprecatedLogSpy.calledWith('bar is deprecated')).toBeTruthy();
 
       originalObject.bar = 7;
-      assert.ok(
-        deprecatedLogSpy.calledWith('bar is deprecated'),
-        `deprecatedLogSpy called with (${deprecatedLogSpy.lastCall.args[0]})`,
-      );
+      expect(deprecatedLogSpy.calledWith('bar is deprecated')).toBeTruthy();
     });
   });
 });

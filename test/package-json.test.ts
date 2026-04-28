@@ -1,4 +1,3 @@
-import assert from 'node:assert';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lte as semverLte } from 'semver';
 import helpers from 'yeoman-test';
@@ -29,14 +28,14 @@ describe('Base#package-json', () => {
     });
 
     it('should accept semver version', async () => {
-      assert.deepStrictEqual(await generator._resolvePackageJsonDependencies('yeoman-generator@^2'), {
+      expect(await generator._resolvePackageJsonDependencies('yeoman-generator@^2')).toStrictEqual({
         'yeoman-generator': '^2',
       });
     });
 
     it('should accept object and return it', async () => {
       const a = { 'yeoman-generator': '^4' };
-      assert.deepStrictEqual(await generator._resolvePackageJsonDependencies(a), a);
+      expect(await generator._resolvePackageJsonDependencies(a)).toStrictEqual(a);
     });
 
     it('should resolve object with empty version and resolve', async ctx => {
@@ -50,27 +49,26 @@ describe('Base#package-json', () => {
     });
 
     it('should accept arrays', async () => {
-      assert.deepStrictEqual(
+      expect(
         await generator._resolvePackageJsonDependencies(['yeoman-generator@^2', 'yeoman-environment@^2']),
-        {
-          'yeoman-generator': '^2',
-          'yeoman-environment': '^2',
-        },
-      );
+      ).toStrictEqual({
+        'yeoman-generator': '^2',
+        'yeoman-environment': '^2',
+      });
     });
   });
 
   describe('addDependencies()', () => {
     it('should generate dependencies inside package.json', async () => {
       await generator.addDependencies('yeoman-generator@^2');
-      assert.deepStrictEqual(generator.packageJson.getAll(), {
+      expect(generator.packageJson.getAll()).toStrictEqual({
         dependencies: { 'yeoman-generator': '^2' },
       });
     });
 
     it('should accept object and merge inside package.json', async () => {
       await generator.addDependencies({ 'yeoman-generator': '^2' });
-      assert.deepStrictEqual(generator.packageJson.getAll(), {
+      expect(generator.packageJson.getAll()).toStrictEqual({
         dependencies: { 'yeoman-generator': '^2' },
       });
     });
@@ -79,14 +77,14 @@ describe('Base#package-json', () => {
   describe('addDependencies()', () => {
     it('should generate dependencies inside package.json', async () => {
       await generator.addDevDependencies('yeoman-generator@^2');
-      assert.deepStrictEqual(generator.packageJson.getAll(), {
+      expect(generator.packageJson.getAll()).toStrictEqual({
         devDependencies: { 'yeoman-generator': '^2' },
       });
     });
 
     it('should accept object and merge devDependencies inside package.json', async () => {
       await generator.addDevDependencies({ 'yeoman-generator': '^2' });
-      assert.deepStrictEqual(generator.packageJson.getAll(), {
+      expect(generator.packageJson.getAll()).toStrictEqual({
         devDependencies: { 'yeoman-generator': '^2' },
       });
     });

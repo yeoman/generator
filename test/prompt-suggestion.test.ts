@@ -1,8 +1,7 @@
 import path from 'node:path';
-import assert from 'node:assert';
 import os from 'node:os';
 import { rmSync } from 'node:fs';
-import { afterEach, beforeEach, describe, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import { TerminalAdapter } from '@yeoman/adapter';
 import Environment from 'yeoman-environment';
@@ -34,12 +33,12 @@ describe('PromptSuggestion', () => {
   describe('.prefillQuestions()', () => {
     it('require a store parameter', () => {
       // @ts-expect-error - testing missing parameter
-      assert.throws(prefillQuestions.bind(null));
+      expect(prefillQuestions.bind(null)).toThrow();
     });
 
     it('require a questions parameter', () => {
       // @ts-expect-error - testing missing parameter
-      assert.throws(prefillQuestions.bind(store));
+      expect(prefillQuestions.bind(store)).toThrow();
     });
 
     it('take a questions parameter', () => {
@@ -55,7 +54,7 @@ describe('PromptSuggestion', () => {
         store: true,
       } as const;
       const [result] = prefillQuestions(store, question);
-      assert.equal(result.default, 'foo');
+      expect(result.default).toBe('foo');
     });
 
     it('take a question array', () => {
@@ -68,7 +67,7 @@ describe('PromptSuggestion', () => {
           store: true,
         },
       ]);
-      assert.equal(result.default, 'foo');
+      expect(result.default).toBe('foo');
     });
 
     it("don't override default when store is set to false", () => {
@@ -78,7 +77,7 @@ describe('PromptSuggestion', () => {
         store: false,
       };
       const [result] = prefillQuestions(store, question);
-      assert.equal(result.default, 'bar');
+      expect(result.default).toBe('bar');
     });
 
     it('override default when store is set to true', () => {
@@ -89,7 +88,7 @@ describe('PromptSuggestion', () => {
         message: 'Respuesta',
         store: true,
       });
-      assert.equal(result.default, 'foo');
+      expect(result.default).toBe('foo');
     });
 
     it('keep inquirer objects', () => {
@@ -102,7 +101,7 @@ describe('PromptSuggestion', () => {
         store: true,
         choices: [separator],
       });
-      assert.equal(result.choices[0], separator);
+      expect(result.choices[0]).toBe(separator);
     });
 
     describe('take a checkbox', () => {
@@ -137,10 +136,10 @@ describe('PromptSuggestion', () => {
         const [result] = prefillQuestions(store, question);
 
         for (const choice of result.choices) {
-          assert.equal(choice.checked, false);
+          expect(choice.checked).toBe(false);
         }
 
-        assert.deepEqual(result.default, ['foo']);
+        expect(result.default).toEqual(['foo']);
       });
 
       it('override default from an array with strings', () => {
@@ -152,7 +151,7 @@ describe('PromptSuggestion', () => {
           store: true,
           choices: ['foo', adapter.separator('spacer'), 'bar', 'baz'],
         });
-        assert.deepEqual(result.default, ['foo']);
+        expect(result.default).toEqual(['foo']);
       });
 
       describe('with multiple defaults', () => {
@@ -187,10 +186,10 @@ describe('PromptSuggestion', () => {
           });
 
           for (const choice of result.choices) {
-            assert.equal(choice.checked, false);
+            expect(choice.checked).toBe(false);
           }
 
-          assert.deepEqual(result.default, ['foo', 'bar']);
+          expect(result.default).toEqual(['foo', 'bar']);
         });
 
         it('from an array with strings', () => {
@@ -202,7 +201,7 @@ describe('PromptSuggestion', () => {
             choices: ['foo', adapter.separator('spacer'), 'bar', 'baz'],
           };
           const [result] = prefillQuestions(store, question);
-          assert.deepEqual(result.default, ['foo', 'bar']);
+          expect(result.default).toEqual(['foo', 'bar']);
         });
       });
     });
@@ -238,7 +237,7 @@ describe('PromptSuggestion', () => {
         };
         const [result] = prefillQuestions(store, question);
 
-        assert.deepEqual(result.default, ['bar']);
+        expect(result.default).toEqual(['bar']);
       });
 
       it('does not override default from an array with strings', () => {
@@ -250,7 +249,7 @@ describe('PromptSuggestion', () => {
           choices: () => ['foo', adapter.separator('spacer'), 'bar', 'baz'],
         };
         const [result] = prefillQuestions(store, question);
-        assert.deepEqual(result.default, ['bar']);
+        expect(result.default).toEqual(['bar']);
       });
 
       describe('does not override even with multiple defaults', () => {
@@ -284,7 +283,7 @@ describe('PromptSuggestion', () => {
           };
           const [result] = prefillQuestions(store, question);
 
-          assert.deepEqual(result.default, ['bar']);
+          expect(result.default).toEqual(['bar']);
         });
 
         it('from an array with strings', () => {
@@ -296,7 +295,7 @@ describe('PromptSuggestion', () => {
             choices: () => ['foo', adapter.separator('spacer'), 'bar', 'baz'],
           };
           const [result] = prefillQuestions(store, question);
-          assert.deepEqual(result.default, ['bar']);
+          expect(result.default).toEqual(['bar']);
         });
       });
     });
@@ -331,7 +330,7 @@ describe('PromptSuggestion', () => {
           ],
         };
         const [result] = prefillQuestions(store, question);
-        assert.equal(result.default, 2);
+        expect(result.default).toBe(2);
       });
 
       it('override default arrayWithObjects', () => {
@@ -343,7 +342,7 @@ describe('PromptSuggestion', () => {
           choices: ['foo', adapter.separator('spacer'), 'bar', 'baz'],
         };
         const [result] = prefillQuestions(store, question);
-        assert.equal(result.default, 2);
+        expect(result.default).toBe(2);
       });
     });
   });
@@ -354,15 +353,15 @@ describe('PromptSuggestion', () => {
     });
 
     it('require a store parameter', () => {
-      assert.throws(storeAnswers.bind(null));
+      expect(storeAnswers.bind(null)).toThrow();
     });
 
     it('require a question parameter', () => {
-      assert.throws(storeAnswers.bind(store));
+      expect(storeAnswers.bind(store)).toThrow();
     });
 
     it('require a answer parameter', () => {
-      assert.throws(storeAnswers.bind(store, []));
+      expect(() => storeAnswers(store, [])).toThrow();
     });
 
     it('take a answer parameter', () => {
@@ -386,7 +385,7 @@ describe('PromptSuggestion', () => {
 
       prefillQuestions(store, question);
       storeAnswers(store, question, mockAnswers);
-      assert.equal(store.get('promptValues').respuesta, 'baz');
+      expect(store.get('promptValues').respuesta).toBe('baz');
     });
 
     it("don't store default answer in global store", () => {
@@ -403,7 +402,7 @@ describe('PromptSuggestion', () => {
       store.delete('promptValues');
       prefillQuestions(store, question);
       storeAnswers(store, question, mockAnswers, false);
-      assert.equal(store.get('promptValues'), undefined);
+      expect(store.get('promptValues')).toBe(undefined);
     });
 
     it('force store default answer in global store', () => {
@@ -420,7 +419,7 @@ describe('PromptSuggestion', () => {
       store.delete('promptValues');
       prefillQuestions(store, question);
       storeAnswers(store, question, mockAnswers, true);
-      assert.equal(store.get('promptValues').respuesta, 'bar');
+      expect(store.get('promptValues').respuesta).toBe('bar');
     });
 
     it("don't store answer in global store", () => {
@@ -436,7 +435,7 @@ describe('PromptSuggestion', () => {
 
       prefillQuestions(store, question);
       storeAnswers(store, question, mockAnswers);
-      assert.equal(store.get('promptValues').respuesta, 'foo');
+      expect(store.get('promptValues').respuesta).toBe('foo');
     });
 
     it('store answer from rawlist type', () => {
@@ -454,7 +453,7 @@ describe('PromptSuggestion', () => {
 
       prefillQuestions(store, question);
       storeAnswers(store, question, mockAnswers);
-      assert.equal(store.get('promptValues').respuesta, 'baz');
+      expect(store.get('promptValues').respuesta).toBe('baz');
     });
 
     describe('empty store', () => {
@@ -476,7 +475,7 @@ describe('PromptSuggestion', () => {
 
         prefillQuestions(store, question);
         storeAnswers(store, question, mockAnswers, false);
-        assert.equal(store.get('promptValues'), undefined);
+        expect(store.get('promptValues')).toBe(undefined);
       });
 
       it('force store default answer from rawlist type', () => {
@@ -494,7 +493,7 @@ describe('PromptSuggestion', () => {
 
         prefillQuestions(store, question);
         storeAnswers(store, question, mockAnswers, true);
-        assert.equal(store.get('promptValues').respuesta, 'foo');
+        expect(store.get('promptValues').respuesta).toBe('foo');
       });
     });
 
@@ -511,7 +510,7 @@ describe('PromptSuggestion', () => {
 
       prefillQuestions(store, question);
       storeAnswers(store, question, mockAnswers);
-      assert.equal(store.get('promptValues').respuesta, false);
+      expect(store.get('promptValues').respuesta).toBe(false);
     });
   });
 });

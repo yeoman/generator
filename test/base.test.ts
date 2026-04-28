@@ -11,7 +11,6 @@ import { extend } from 'lodash-es';
 import type { SinonSpy } from 'sinon';
 import { assert as sinonAssert, fake as sinonFake, spy as sinonSpy } from 'sinon';
 import { passthrough } from '@yeoman/transform';
-import assert from 'node:assert';
 import Environment, { type EnvironmentOptions } from 'yeoman-environment';
 import helpers from 'yeoman-test';
 import { TestAdapter } from '@yeoman/adapter/testing';
@@ -74,9 +73,9 @@ describe('Base', () => {
         destinationRoot: subdir,
       });
 
-      assert.equal(process.cwd(), subdir);
-      assert.equal(dummy.destinationPath(), subdir);
-      assert.equal(dummy.contextRoot, subdir);
+      expect(process.cwd()).toBe(subdir);
+      expect(dummy.destinationPath()).toBe(subdir);
+      expect(dummy.contextRoot).toBe(subdir);
     });
 
     it('use the environment options', async () => {
@@ -88,7 +87,7 @@ describe('Base', () => {
         },
       });
 
-      assert.equal(generator.options['test-framework'], 'jasmine');
+      expect(generator.options['test-framework']).toBe('jasmine');
     });
 
     it('set generator.options from constructor options', () => {
@@ -98,7 +97,7 @@ describe('Base', () => {
         'test-framework': 'mocha',
       });
 
-      assert.equal(generator.options['test-framework'], 'mocha');
+      expect(generator.options['test-framework']).toBe('mocha');
     });
 
     it('set options based on nopt arguments', () => {
@@ -108,8 +107,8 @@ describe('Base', () => {
       });
 
       generator.option('foo');
-      assert.equal(generator.options.foo, true);
-      assert.deepEqual(generator.args, ['bar']);
+      expect(generator.options.foo).toBe(true);
+      expect(generator.args).toEqual(['bar']);
     });
 
     it('set arguments based on nopt arguments', () => {
@@ -120,7 +119,7 @@ describe('Base', () => {
 
       generator.option('foo');
       generator.argument('baz');
-      assert.equal(generator.options.baz, 'bar');
+      expect(generator.options.baz).toBe('bar');
     });
 
     it('set options with false values', async () => {
@@ -129,7 +128,7 @@ describe('Base', () => {
         .withOptions({ testOption: false })
         .run();
 
-      assert.equal(runResult.env.rootGenerator().options.testOption, false);
+      expect(runResult.env.rootGenerator().options.testOption).toBe(false);
     });
 
     it('setup fs editor', () => {
@@ -138,7 +137,7 @@ describe('Base', () => {
         resolved: 'test',
       });
 
-      assert.ok(generator.fs);
+      expect(generator.fs).toBeTruthy();
     });
 
     it('setup required fields for a working generator for help', () => {
@@ -148,10 +147,10 @@ describe('Base', () => {
         resolved: 'test',
       });
 
-      assert.ok(generator.env);
-      assert.ok(generator.fs);
-      assert.ok(generator._debug);
-      assert.ok(generator._);
+      expect(generator.env).toBeTruthy();
+      expect(generator.fs).toBeTruthy();
+      expect(generator._debug).toBeTruthy();
+      expect(generator._).toBeTruthy();
 
       generator.option('foo');
       generator.argument('baz');
@@ -163,8 +162,8 @@ describe('Base', () => {
         resolved: 'test',
       });
 
-      assert.ok(generator._debug);
-      assert.ok(generator._);
+      expect(generator._debug).toBeTruthy();
+      expect(generator._).toBeTruthy();
 
       generator.option('foo');
       generator.argument('baz');
@@ -174,14 +173,14 @@ describe('Base', () => {
   describe('prototype', () => {
     it("methods doesn't conflict with Env#runQueue", () => {
       for (const queue of env.runLoop.queueNames) {
-        assert.ok(!Base.prototype[queue]);
+        expect(Base.prototype[queue]).toBeFalsy();
       }
     });
   });
 
   describe('#appname', () => {
     it('is set to the `determineAppname()` return value', () => {
-      assert.equal(dummy.appname, dummy.determineAppname());
+      expect(dummy.appname).toBe(dummy.determineAppname());
     });
   });
 
@@ -194,11 +193,11 @@ describe('Base', () => {
     it('returns appname from package.json', () => {
       dummy.fs.write(dummy.destinationPath('package.json'), '{ "name": "package_app-name" }');
 
-      assert.equal(dummy.determineAppname(), 'package_app name');
+      expect(dummy.determineAppname()).toBe('package_app name');
     });
 
     it('returns appname from the current directory', () => {
-      assert.equal(dummy.determineAppname(), 'yeoman base');
+      expect(dummy.determineAppname()).toBe('yeoman base');
     });
   });
 
@@ -239,19 +238,19 @@ describe('Base', () => {
 
     it('turn on _running flag', async () => {
       await testGen.queueTasks();
-      assert.ok(testGen._running);
+      expect(testGen._running).toBeTruthy();
     });
 
     it('should call _beforeQueue', async () => {
       await testGen.queueTasks();
-      assert.ok(testGen._beforeQueue.calledOnce);
+      expect(testGen._beforeQueue.calledOnce).toBeTruthy();
     });
 
     it('run prototype methods (not instances one)', () => {
       testGen.exec = sinonSpy();
       return testGen.run().then(() => {
-        assert.ok(execSpy.calledOnce);
-        assert.equal(testGen.exec.callCount, 0);
+        expect(execSpy.calledOnce).toBeTruthy();
+        expect(testGen.exec.callCount).toBe(0);
       });
     });
 
@@ -263,7 +262,7 @@ describe('Base', () => {
     it('pass instance .args property to the called methods', () => {
       testGen.args = ['2', 'args'];
       return testGen.run().then(() => {
-        assert.ok(execSpy.withArgs('2', 'args').calledOnce);
+        expect(execSpy.withArgs('2', 'args').calledOnce).toBeTruthy();
       });
     });
 
@@ -276,7 +275,7 @@ describe('Base', () => {
         };
 
         testGen.env.on('error', error_ => {
-          assert.equal(error_, error);
+          expect(error_).toBe(error);
           done();
         });
 
@@ -295,7 +294,7 @@ describe('Base', () => {
 
       testGen.on('error', sinonSpy());
       return testGen.run().catch(error_ => {
-        assert.equal(error_, error);
+        expect(error_).toBe(error);
       });
     });
 
@@ -330,7 +329,7 @@ describe('Base', () => {
         };
 
         testGen.env.on('error', error => {
-          assert.equal(error.message, 'some error');
+          expect(error.message).toBe('some error');
           done();
         });
 
@@ -345,7 +344,7 @@ describe('Base', () => {
       });
 
       return gen.run().catch(error => {
-        assert.ok(error.toString().includes('This Generator is empty'));
+        expect(error.toString().includes('This Generator is empty')).toBeTruthy();
       });
     });
 
@@ -376,32 +375,32 @@ describe('Base', () => {
       });
 
       return gen.run().then(() => {
-        assert.ok(gen.nonenumerable.called);
+        expect(gen.nonenumerable.called).toBeTruthy();
       });
     });
 
     it('ignore underscore prefixed method', () => {
       return testGen.run().then(() => {
-        assert.ok(TestGenerator.prototype._private.notCalled);
+        expect(TestGenerator.prototype._private.notCalled).toBeTruthy();
       });
     });
 
     it('ignore hashtag prefixed method', () => {
       return testGen.run().then(() => {
-        assert.ok(TestGenerator.prototype['#composed'].notCalled);
+        expect(TestGenerator.prototype['#composed'].notCalled).toBeTruthy();
       });
     });
 
     it('run methods in a queue hash', () => {
       return testGen.run().then(() => {
-        assert.ok(TestGenerator.prototype.prompting.m1.calledOnce);
-        assert.ok(TestGenerator.prototype.prompting.m2.calledOnce);
+        expect(TestGenerator.prototype.prompting.m1.calledOnce).toBeTruthy();
+        expect(TestGenerator.prototype.prompting.m2.calledOnce).toBeTruthy();
       });
     });
 
     it('ignore underscore prefixed method in a queue hash', () => {
       return testGen.run().then(() => {
-        assert.ok(TestGenerator.prototype.prompting._private.notCalled);
+        expect(TestGenerator.prototype.prompting._private.notCalled).toBeTruthy();
       });
     });
 
@@ -410,7 +409,7 @@ describe('Base', () => {
       const promptSpy = TestGenerator.prototype.prompting.m1;
 
       return testGen.run().then(() => {
-        assert.ok(initSpy.calledBefore(promptSpy));
+        expect(initSpy.calledBefore(promptSpy)).toBeTruthy();
       });
     });
 
@@ -419,7 +418,7 @@ describe('Base', () => {
       const execSpy = TestGenerator.prototype.exec;
 
       return testGen.run().then(() => {
-        assert.ok(initSpy.calledBefore(execSpy));
+        expect(initSpy.calledBefore(execSpy)).toBeTruthy();
       });
     });
 
@@ -431,14 +430,14 @@ describe('Base', () => {
       };
 
       return testGen.run().then(() => {
-        assert.ok(fs.existsSync(filepath));
+        expect(fs.existsSync(filepath)).toBeTruthy();
       });
     });
 
     it('allow skipping file writes to disk', () => {
       const action = { action: 'skip' };
       const filepath = path.join(_dirname, '/fixtures/conflict.js');
-      assert.ok(fs.existsSync(filepath));
+      expect(fs.existsSync(filepath)).toBeTruthy();
 
       TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'some new content');
@@ -452,7 +451,7 @@ describe('Base', () => {
       });
 
       return testGen.run().then(() => {
-        assert.equal(fs.readFileSync(filepath, 'utf8'), 'var a = 1;\n');
+        expect(fs.readFileSync(filepath, 'utf8')).toBe('var a = 1;\n');
       });
     });
 
@@ -462,7 +461,7 @@ describe('Base', () => {
       };
 
       return testGen.run().then(() => {
-        assert.ok(fs.existsSync(testGen.destinationPath('foo.txt')));
+        expect(fs.existsSync(testGen.destinationPath('foo.txt'))).toBeTruthy();
       });
     });
 
@@ -493,14 +492,14 @@ describe('Base', () => {
         };
 
         TestGenerator.prototype.after = function () {
-          assert.ok(this.options.startedOver);
-          assert.ok(this.startedOver);
+          expect(this.options.startedOver).toBeTruthy();
+          expect(this.startedOver).toBeTruthy();
           spy2();
         };
 
         testGen.run().then(() => {
-          assert.ok(spy1.calledTwice);
-          assert.ok(spy2.calledOnce);
+          expect(spy1.calledTwice).toBeTruthy();
+          expect(spy2.calledOnce).toBeTruthy();
           done();
         });
       }));
@@ -519,7 +518,7 @@ describe('Base', () => {
         };
 
         testGen.run().then(() => {
-          assert.ok(spy1.calledTwice);
+          expect(spy1.calledTwice).toBeTruthy();
           done();
         });
       }));
@@ -554,29 +553,29 @@ describe('Base', () => {
 
     it('should run hashtag prefixed method', async () => {
       await testGen.run();
-      assert.ok(TestGenerator.prototype['#composed'].calledOnce);
-      assert.ok(TestGenerator.prototype.composed.notCalled);
-      assert.ok(TestGenerator.prototype['#initializing'].calledOnce);
-      assert.ok(TestGenerator.prototype.initializing.notCalled);
-      assert.ok(TestGenerator.prototype._private.notCalled);
+      expect(TestGenerator.prototype['#composed'].calledOnce).toBeTruthy();
+      expect(TestGenerator.prototype.composed.notCalled).toBeTruthy();
+      expect(TestGenerator.prototype['#initializing'].calledOnce).toBeTruthy();
+      expect(TestGenerator.prototype.initializing.notCalled).toBeTruthy();
+      expect(TestGenerator.prototype._private.notCalled).toBeTruthy();
     });
 
     it('should call beforeQueue', async () => {
       await testGen.queueTasks();
-      assert.ok(testGen.beforeQueue.calledOnce);
+      expect(testGen.beforeQueue.calledOnce).toBeTruthy();
     });
   });
 
   describe('#argument()', () => {
     it('add a new argument to the generator instance', () => {
-      assert.equal(dummy._arguments.length, 0);
+      expect(dummy._arguments.length).toBe(0);
       dummy.argument('foo');
-      assert.equal(dummy._arguments.length, 1);
+      expect(dummy._arguments.length).toBe(1);
     });
 
     it('create the property specified with value from positional args', () => {
       dummy.argument('foo');
-      assert.equal(dummy.options.foo, 'bar');
+      expect(dummy.options.foo).toBe('bar');
     });
 
     it('allows specifying default argument values', () => {
@@ -593,7 +592,7 @@ describe('Base', () => {
         resolved: 'test',
       });
 
-      assert.equal(gen.options.bar, 'baz');
+      expect(gen.options.bar).toBe('baz');
     });
 
     it('allows specifying default argument values', () => {
@@ -610,7 +609,7 @@ describe('Base', () => {
         resolved: 'test',
       });
 
-      assert.equal(gen.options.bar, 'baz');
+      expect(gen.options.bar).toBe('baz');
     });
 
     it('properly uses arguments values passed from constructor', () => {
@@ -628,12 +627,12 @@ describe('Base', () => {
         bar: 'foo',
       });
 
-      assert.equal(gen.options.bar, 'foo');
+      expect(gen.options.bar).toBe('foo');
     });
 
     it('slice positional arguments when config.type is Array', () => {
       dummy.argument('bar', { type: Array });
-      assert.deepEqual(dummy.options.bar, ['bar', 'baz', 'bom']);
+      expect(dummy.options.bar).toEqual(['bar', 'baz', 'bom']);
     });
 
     it('raise an error if required arguments are not provided', () =>
@@ -646,7 +645,7 @@ describe('Base', () => {
         try {
           dummy.argument('foo', { required: true });
         } catch (error) {
-          assert.ok(error.message.startsWith('Did not provide required argument '));
+          expect(error.message.startsWith('Did not provide required argument ')).toBeTruthy();
           done();
         }
       }));
@@ -658,9 +657,9 @@ describe('Base', () => {
         help: true,
       });
 
-      assert.equal(dummy._arguments.length, 0);
-      assert.doesNotThrow(dummy.argument.bind(dummy, 'foo', { required: true }));
-      assert.equal(dummy._arguments.length, 1);
+      expect(dummy._arguments.length).toBe(0);
+      expect(dummy.argument.bind(dummy, 'foo', { required: true })).not.toThrow();
+      expect(dummy._arguments.length).toBe(1);
     });
 
     it('can be called before #option()', () => {
@@ -672,7 +671,7 @@ describe('Base', () => {
       dummy.argument('baz');
       dummy.option('foo', { type: String });
 
-      assert.equal(dummy.options.baz, 'baz');
+      expect(dummy.options.baz).toBe('baz');
     });
   });
 
@@ -685,7 +684,7 @@ describe('Base', () => {
       });
 
       generator.option('foo');
-      assert.deepEqual(generator._options.foo, {
+      expect(generator._options.foo).toEqual({
         description: 'Description for foo',
         name: 'foo',
         type: Boolean,
@@ -711,7 +710,7 @@ describe('Base', () => {
         'short-name': 'that value',
       });
 
-      assert.equal(gen.options['long-name'], 'that value');
+      expect(gen.options['long-name']).toBe('that value');
     });
 
     it('allows Boolean options to be undefined', () => {
@@ -728,7 +727,7 @@ describe('Base', () => {
         resolved: 'test',
       });
 
-      assert.equal(gen.options.undef, undefined);
+      expect(gen.options.undef).toBe(undefined);
     });
 
     it('disallows Boolean options starting with no-', () => {
@@ -740,7 +739,7 @@ describe('Base', () => {
         generator.option('no-op');
       };
 
-      assert.throws(addWrongOp, /this\.option\('op', {type: Boolean}\)/);
+      expect(addWrongOp).toThrow(/this\.option\('op', {type: Boolean}\)/);
     });
   });
 
@@ -752,9 +751,9 @@ describe('Base', () => {
         type: 'number',
         prompt: true,
       });
-      assert.equal(dummy._prompts[0].name, 'foo');
-      assert.equal(dummy._prompts[0].message, 'bar');
-      assert.equal(dummy._prompts[0].type, 'number');
+      expect(dummy._prompts[0].name).toBe('foo');
+      expect(dummy._prompts[0].message).toBe('bar');
+      expect(dummy._prompts[0].type).toBe('number');
     });
 
     it('should export option', () => {
@@ -764,12 +763,12 @@ describe('Base', () => {
         type: 'string',
         exportOption: true,
       });
-      assert.equal(dummy._prompts[0].name, 'foo');
-      assert.equal(dummy._prompts[0].message, 'bar2');
-      assert.equal(dummy._prompts[0].type, 'string');
-      assert.equal(dummy._options.foo.name, 'foo');
-      assert.equal(dummy._options.foo.description, 'bar2');
-      assert.equal(dummy._options.foo.type, String);
+      expect(dummy._prompts[0].name).toBe('foo');
+      expect(dummy._prompts[0].message).toBe('bar2');
+      expect(dummy._prompts[0].type).toBe('string');
+      expect(dummy._options.foo.name).toBe('foo');
+      expect(dummy._options.foo.description).toBe('bar2');
+      expect(dummy._options.foo.type).toBe(String);
     });
 
     it('allows to customize option config', () => {
@@ -783,12 +782,12 @@ describe('Base', () => {
           type: Number,
         },
       });
-      assert.equal(dummy._prompts[0].name, 'foo');
-      assert.equal(dummy._prompts[0].message, 'bar2');
-      assert.equal(dummy._prompts[0].type, 'string');
-      assert.equal(dummy._options.foo2.name, 'foo2');
-      assert.equal(dummy._options.foo2.description, 'bar3');
-      assert.equal(dummy._options.foo2.type, Number);
+      expect(dummy._prompts[0].name).toBe('foo');
+      expect(dummy._prompts[0].message).toBe('bar2');
+      expect(dummy._prompts[0].type).toBe('string');
+      expect(dummy._options.foo2.name).toBe('foo2');
+      expect(dummy._options.foo2.description).toBe('bar3');
+      expect(dummy._options.foo2.type).toBe(Number);
     });
   });
 
@@ -799,7 +798,7 @@ describe('Base', () => {
         before: 'initializing',
       };
       dummy.registerPriorities([priority]);
-      assert.ok(dummy._queues.foo);
+      expect(dummy._queues.foo).toBeTruthy();
     });
     it('edits a existing priority', () => {
       const priority = {
@@ -807,8 +806,8 @@ describe('Base', () => {
         args: 'an arg array',
       };
       dummy.registerPriorities([priority]);
-      assert.equal(dummy._queues.initializing.args, 'an arg array');
-      assert.equal(dummy._queues.initializing.edit, undefined);
+      expect(dummy._queues.initializing.args).toBe('an arg array');
+      expect(dummy._queues.initializing.edit).toBe(undefined);
     });
   });
 
@@ -849,17 +848,17 @@ describe('Base', () => {
 
     it('set generator options', () => {
       dummy.parseOptions();
-      assert.equal(dummy.options.foo, 'bar');
+      expect(dummy.options.foo).toBe('bar');
     });
 
     it('set generator alias options', () => {
       dummy.parseOptions();
-      assert.equal(dummy.options.shortOpt, 'baz');
+      expect(dummy.options.shortOpt).toBe('baz');
     });
 
     it('set args to what remains', () => {
       dummy.parseOptions();
-      assert.deepEqual(dummy.args, ['start', 'remain']);
+      expect(dummy.args).toEqual(['start', 'remain']);
     });
 
     it('gracefully handle no args', () => {
@@ -873,7 +872,7 @@ describe('Base', () => {
       });
 
       dummy.parseOptions();
-      assert.equal(dummy.options.foo, undefined);
+      expect(dummy.options.foo).toBe(undefined);
     });
   });
 
@@ -897,7 +896,7 @@ describe('Base', () => {
     });
 
     it('returns the composed generator', async () => {
-      assert.ok((await dummy.composeWith('composed:gen')) instanceof GenCompose);
+      expect((await dummy.composeWith('composed:gen')) instanceof GenCompose).toBeTruthy();
     });
 
     it('runs the composed generators', async () => {
@@ -906,7 +905,7 @@ describe('Base', () => {
       const runSpy = sinonSpy(dummy, 'run');
       await dummy.run();
       sinonAssert.callOrder(runSpy, spy);
-      assert.ok(spy.calledAfter(runSpy));
+      expect(spy.calledAfter(runSpy)).toBeTruthy();
     });
 
     it('runs the composed Generator class in the passed path', async () => {
@@ -917,8 +916,8 @@ describe('Base', () => {
         path: stubPath,
       });
       await dummy.run();
-      assert.equal(spy.firstCall.thisValue.options.namespace, 'mocha');
-      assert.equal(spy.firstCall.thisValue.options.resolved, createRequire(import.meta.url).resolve(stubPath));
+      expect(spy.firstCall.thisValue.options.namespace).toBe('mocha');
+      expect(spy.firstCall.thisValue.options.resolved).toBe(createRequire(import.meta.url).resolve(stubPath));
     });
 
     describe('object as first argument', () => {
@@ -947,7 +946,7 @@ describe('Base', () => {
       };
 
       return dummy.run().then(() => {
-        assert.ok(spy.called);
+        expect(spy.called).toBeTruthy();
       });
     });
 
@@ -958,7 +957,7 @@ describe('Base', () => {
       });
 
       return dummy.run().then(() => {
-        assert.equal(spy.firstCall.thisValue.options.foo, 'bar');
+        expect(spy.firstCall.thisValue.options.foo).toBe('bar');
       });
     });
 
@@ -983,7 +982,7 @@ describe('Base', () => {
       it('runs the composed generator', async () => {
         await dummy.composeWith(stubPath, {});
         await dummy.run();
-        assert.ok(LocalDummy.prototype.exec.called);
+        expect(LocalDummy.prototype.exec.called).toBeTruthy();
       });
 
       it('pass options and arguments to the composed generators', async () => {
@@ -992,14 +991,14 @@ describe('Base', () => {
           'skip-install': true,
         });
         await dummy.run();
-        assert.equal(spy.firstCall.thisValue.options.foo, 'bar');
+        expect(spy.firstCall.thisValue.options.foo).toBe('bar');
       });
 
       it('sets correct metadata on the Generator constructor', async () => {
         await dummy.composeWith(stubPath, {});
         await dummy.run();
-        assert.equal(spy.firstCall.thisValue.options.namespace, 'mocha');
-        assert.equal(spy.firstCall.thisValue.options.resolved, resolvedStub);
+        expect(spy.firstCall.thisValue.options.namespace).toBe('mocha');
+        expect(spy.firstCall.thisValue.options.resolved).toBe(resolvedStub);
       });
     });
   });
@@ -1007,7 +1006,7 @@ describe('Base', () => {
   describe('#desc()', () => {
     it('update the internal description', () => {
       dummy.desc('A new desc for this generator');
-      assert.equal(dummy.description, 'A new desc for this generator');
+      expect(dummy.description).toBe('A new desc for this generator');
     });
   });
 
@@ -1044,7 +1043,7 @@ describe('Base', () => {
       for (const [i, line] of help.split('\n').entries()) {
         // Do not test whitespace; we care about the content, not formatting.
         // formatting is best left up to the tests for module "text-table"
-        assert.equal(line.trim().replaceAll(/\s+/g, ' '), expected[i]);
+        expect(line.trim().replaceAll(/\s+/g, ' ')).toBe(expected[i]);
       }
     });
   });
@@ -1057,27 +1056,27 @@ describe('Base', () => {
       });
 
       const usage = dummy.usage();
-      assert.equal(usage.trim(), 'yo dummy [<baz>] [options]');
+      expect(usage.trim()).toBe('yo dummy [<baz>] [options]');
     });
 
     it('returns the expected usage output without arguments', () => {
       dummy._arguments.length = 0;
       const usage = dummy.usage();
-      assert.equal(usage.trim(), 'yo dummy [options]');
+      expect(usage.trim()).toBe('yo dummy [options]');
     });
 
     it('returns the expected usage output without options', () => {
       dummy._arguments.length = 0;
       dummy._options = {};
       const usage = dummy.usage();
-      assert.equal(usage.trim(), 'yo dummy');
+      expect(usage.trim()).toBe('yo dummy');
     });
   });
 
   describe('#config', () => {
     it('provide a storage instance', async () => {
       const module = await import('../src/util/storage.js');
-      assert.ok(dummy.config instanceof module.default);
+      expect(dummy.config instanceof module.default).toBeTruthy();
     });
 
     it('is updated when destinationRoot change', () => {
@@ -1085,30 +1084,30 @@ describe('Base', () => {
       dummy.destinationRoot('foo');
 
       dummy.config;
-      assert.equal(Dummy.prototype._getStorage.callCount, 1);
+      expect(Dummy.prototype._getStorage.callCount).toBe(1);
       dummy.destinationRoot();
 
       dummy.config;
-      assert.equal(Dummy.prototype._getStorage.callCount, 1);
+      expect(Dummy.prototype._getStorage.callCount).toBe(1);
       dummy.destinationRoot('foo');
 
       dummy.config;
-      assert.equal(Dummy.prototype._getStorage.callCount, 2);
+      expect(Dummy.prototype._getStorage.callCount).toBe(2);
       Dummy.prototype._getStorage.restore();
     });
   });
 
   describe('#templatePath()', () => {
     it('joins path to the source root', () => {
-      assert.equal(dummy.templatePath('bar.js'), path.join(dummy.sourceRoot(), 'bar.js'));
-      assert.equal(dummy.templatePath('dir/', 'bar.js'), path.join(dummy.sourceRoot(), '/dir/bar.js'));
+      expect(dummy.templatePath('bar.js')).toBe(path.join(dummy.sourceRoot(), 'bar.js'));
+      expect(dummy.templatePath('dir/', 'bar.js')).toBe(path.join(dummy.sourceRoot(), '/dir/bar.js'));
     });
   });
 
   describe('#destinationPath()', () => {
     it('joins path to the source root', () => {
-      assert.equal(dummy.destinationPath('bar.js'), path.join(dummy.destinationRoot(), 'bar.js'));
-      assert.equal(dummy.destinationPath('dir/', 'bar.js'), path.join(dummy.destinationRoot(), '/dir/bar.js'));
+      expect(dummy.destinationPath('bar.js')).toBe(path.join(dummy.destinationRoot(), 'bar.js'));
+      expect(dummy.destinationPath('dir/', 'bar.js')).toBe(path.join(dummy.destinationRoot(), '/dir/bar.js'));
     });
   });
 
@@ -1169,7 +1168,7 @@ describe('Base', () => {
       };
 
       return testGen.run().then(() => {
-        assert.equal(fs.readFileSync(filepath, 'utf8'), 'initializing prompting a b');
+        expect(fs.readFileSync(filepath, 'utf8')).toBe('initializing prompting a b');
       });
     });
 
@@ -1192,7 +1191,7 @@ describe('Base', () => {
       };
 
       return testGen.run().then(() => {
-        assert.equal(fs.readFileSync(filepath, 'utf8'), 'ab');
+        expect(fs.readFileSync(filepath, 'utf8')).toBe('ab');
       });
     });
   });
@@ -1218,7 +1217,7 @@ describe('Base', () => {
 
         function assertEvent(error) {
           return function () {
-            assert.equal(error, lifecycle.shift());
+            expect(error).toBe(lifecycle.shift());
 
             if (error === 'end') {
               done();
@@ -1261,7 +1260,7 @@ describe('Base', () => {
         });
 
         generatorOnce.on('end', () => {
-          assert.ok(isFirstEndEvent);
+          expect(isFirstEndEvent).toBeTruthy();
 
           if (isFirstEndEvent) {
             done();
@@ -1302,12 +1301,12 @@ describe('Base', () => {
 
   describe('#rootGeneratorName', () => {
     it('returns the default name', () => {
-      assert.equal(dummy.rootGeneratorName(), '*');
+      expect(dummy.rootGeneratorName()).toBe('*');
     });
 
     it('returns generator name', () => {
       fs.writeFileSync(path.join(resolveddir, 'package.json'), '{ "name": "generator-name" }');
-      assert.equal(dummy.rootGeneratorName(), 'generator-name');
+      expect(dummy.rootGeneratorName()).toBe('generator-name');
     });
   });
 
@@ -1317,12 +1316,12 @@ describe('Base', () => {
     });
 
     it('returns the default version', () => {
-      assert.equal(dummy.rootGeneratorVersion(), '0.0.0');
+      expect(dummy.rootGeneratorVersion()).toBe('0.0.0');
     });
 
     it('returns generator version', () => {
       fs.writeFileSync(path.join(resolveddir, 'package.json'), '{ "version": "1.0.0" }');
-      assert.equal(dummy.rootGeneratorVersion(), '1.0.0');
+      expect(dummy.rootGeneratorVersion()).toBe('1.0.0');
     });
   });
 
@@ -1357,7 +1356,7 @@ describe('Base', () => {
         });
 
         gen.run().then(() => {
-          assert.equal(gen.queue, 'This value');
+          expect(gen.queue).toBe('This value');
           done();
         });
       }));
@@ -1373,11 +1372,11 @@ describe('Base', () => {
 
           // At least a method is required otherwise will fail. Is this a problem?
           exec() {
-            assert.equal(this.prop, 'a');
+            expect(this.prop).toBe('a');
           }
 
           get initializing() {
-            assert.equal(this.prop, 'a');
+            expect(this.prop).toBe('a');
             return {};
           }
         };
@@ -1390,7 +1389,7 @@ describe('Base', () => {
         });
 
         derivedGen.run().then(() => {
-          assert.equal(derivedGen.queue, 'That value');
+          expect(derivedGen.queue).toBe('That value');
           done();
         });
       }));
@@ -1408,8 +1407,8 @@ describe('Base', () => {
       const noop = () => {};
       gen.queueMethod(noop, 'configuring', noop);
 
-      assert.ok(env.queueTask.calledOnce);
-      assert.equal('default', env.queueTask.getCall(0).args[0]);
+      expect(env.queueTask.calledOnce).toBeTruthy();
+      expect('default').toBe(env.queueTask.getCall(0).args[0]);
     });
 
     it('queued method with object, queueName and reject', () => {
@@ -1429,8 +1428,8 @@ describe('Base', () => {
       };
       gen.queueMethod(tasks, queueName, noop);
 
-      assert.ok(env.queueTask.calledOnce);
-      assert.equal(queueName, env.queueTask.getCall(0).args[0]);
+      expect(env.queueTask.calledOnce).toBeTruthy();
+      expect(queueName).toBe(env.queueTask.getCall(0).args[0]);
     });
   });
 
@@ -1479,19 +1478,16 @@ describe('Base', () => {
         args: [arg],
       });
 
-      assert.ok(env.queueTask.calledOnce);
-      assert.equal(queueName, env.queueTask.getCall(0).args[0]);
-      assert.deepStrictEqual(
-        {
-          once: taskName,
-          startQueue: false,
-        },
-        env.queueTask.getCall(0).args[2],
-      );
+      expect(env.queueTask.calledOnce).toBeTruthy();
+      expect(queueName).toBe(env.queueTask.getCall(0).args[0]);
+      expect(env.queueTask.getCall(0).args[2]).toStrictEqual({
+        once: taskName,
+        startQueue: false,
+      });
 
       await gen.run();
-      assert.ok(method.calledOnce);
-      assert.equal(arg, method.getCall(0).args[0]);
+      expect(method.calledOnce).toBeTruthy();
+      expect(arg).toBe(method.getCall(0).args[0]);
     });
 
     it('queued method with function and options with reject', async () => {
@@ -1519,7 +1515,7 @@ describe('Base', () => {
       });
 
       await gen.run();
-      assert.equal(thrown, true);
+      expect(thrown).toBe(true);
     });
 
     it('rejecting a task should stop the queue', async () => {
@@ -1605,7 +1601,7 @@ describe('Base', () => {
     it('generates correct _queues and runLoop queueNames', () => {
       extend(TestGenerator.prototype, {
         assert() {
-          assert.deepStrictEqual(this._queues, {
+          expect(this._queues).toStrictEqual({
             initializing: {
               priorityName: 'initializing',
               queueName: 'initializing',
@@ -1643,7 +1639,7 @@ describe('Base', () => {
             end: { priorityName: 'end', queueName: 'end' },
             afterEnd: { priorityName: 'afterEnd', queueName: 'dummy#afterEnd' },
           });
-          assert.deepStrictEqual(env.runLoop.queueNames, [
+          expect(env.runLoop.queueNames).toStrictEqual([
             'environment:run',
             'initializing',
             'prompting',
@@ -1704,13 +1700,13 @@ describe('Base', () => {
       });
 
       return testGen.run().then(() => {
-        assert.ok(initializing.calledBefore(preConfiguring1));
-        assert.ok(preConfiguring1.calledBefore(preConfiguring2));
-        assert.ok(preConfiguring2.calledBefore(configuring));
-        assert.ok(configuring.calledBefore(prePrompting1));
-        assert.ok(prePrompting1.calledBefore(prompting));
-        assert.ok(prompting.calledBefore(end));
-        assert.ok(end.calledBefore(afterEnd));
+        expect(initializing.calledBefore(preConfiguring1)).toBeTruthy();
+        expect(preConfiguring1.calledBefore(preConfiguring2)).toBeTruthy();
+        expect(preConfiguring2.calledBefore(configuring)).toBeTruthy();
+        expect(configuring.calledBefore(prePrompting1)).toBeTruthy();
+        expect(prePrompting1.calledBefore(prompting)).toBeTruthy();
+        expect(prompting.calledBefore(end)).toBeTruthy();
+        expect(end.calledBefore(afterEnd)).toBeTruthy();
       });
     });
 
@@ -1782,7 +1778,7 @@ describe('Base', () => {
         }
       };
 
-      assert.throws(
+      expect(
         () =>
           new TestGenerator([], {
             resolved: 'generator-ember/all/index.js',
@@ -1790,7 +1786,7 @@ describe('Base', () => {
             env,
             'skip-install': true,
           }),
-      );
+      ).toThrow();
     });
   });
 
@@ -1818,7 +1814,7 @@ describe('Base', () => {
     it('passes config value as answer to adapter', () => {
       const expectedAnswers = { prompt1: 'prompt1Value' };
       return dummy.prompt(input1Prompt, dummy.config).then(_ => {
-        assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
+        expect(promptSpy.getCall(0).args[1]).toEqual(expectedAnswers);
       });
     });
 
@@ -1828,48 +1824,48 @@ describe('Base', () => {
         prompt2: 'prompt2Value',
       };
       return dummy.prompt([input1Prompt, input2Prompt], dummy.config).then(_ => {
-        assert.deepEqual(promptSpy.getCall(0).args[1], expectedAnswers);
+        expect(promptSpy.getCall(0).args[1]).toEqual(expectedAnswers);
       });
     });
 
     it('passes config values as the question default', () => {
       return dummy.prompt([input1Prompt, input2Prompt], dummy.config).then(_ => {
         const [prompts, answers] = promptSpy.getCall(0).args;
-        assert.deepEqual(prompts[0].default(answers), 'prompt1Value');
-        assert.deepEqual(prompts[1].default(answers), 'prompt2Value');
+        expect(prompts[0].default(answers)).toEqual('prompt1Value');
+        expect(prompts[1].default(answers)).toEqual('prompt2Value');
       });
     });
 
     it('saves answers to config', () => {
       return dummy.prompt([input1Prompt, input2Prompt], dummy.config).then(answers => {
-        assert.equal(answers.prompt1, 'prompt1NewValue');
-        assert.equal(answers.prompt2, 'prompt2NewValue');
-        assert.equal(dummy.config.get('prompt1'), 'prompt1NewValue');
-        assert.equal(dummy.config.get('prompt2'), 'prompt2NewValue');
+        expect(answers.prompt1).toBe('prompt1NewValue');
+        expect(answers.prompt2).toBe('prompt2NewValue');
+        expect(dummy.config.get('prompt1')).toBe('prompt1NewValue');
+        expect(dummy.config.get('prompt2')).toBe('prompt2NewValue');
       });
     });
 
     it('saves answers to config when specified as a property name', () => {
       return dummy.prompt([{ ...input1Prompt, storage: 'config' }, input2Prompt]).then(answers => {
-        assert.equal(answers.prompt1, 'prompt1NewValue');
-        assert.equal(answers.prompt2, 'prompt2NewValue');
-        assert.equal(dummy.config.get('prompt1'), 'prompt1NewValue');
-        assert.equal(dummy.config.get('prompt2'), 'prompt2Value');
+        expect(answers.prompt1).toBe('prompt1NewValue');
+        expect(answers.prompt2).toBe('prompt2NewValue');
+        expect(dummy.config.get('prompt1')).toBe('prompt1NewValue');
+        expect(dummy.config.get('prompt2')).toBe('prompt2Value');
       });
     });
 
     it('saves answers to specific storage', () => {
       return dummy.prompt([{ ...input1Prompt, storage: dummy.config }, input2Prompt]).then(answers => {
-        assert.equal(answers.prompt1, 'prompt1NewValue');
-        assert.equal(answers.prompt2, 'prompt2NewValue');
-        assert.equal(dummy.config.get('prompt1'), 'prompt1NewValue');
-        assert.equal(dummy.config.get('prompt2'), 'prompt2Value');
+        expect(answers.prompt1).toBe('prompt1NewValue');
+        expect(answers.prompt2).toBe('prompt2NewValue');
+        expect(dummy.config.get('prompt1')).toBe('prompt1NewValue');
+        expect(dummy.config.get('prompt2')).toBe('prompt2Value');
       });
     });
 
     it('passes correct askAnswered option to adapter', () => {
       return dummy.prompt([input1Prompt], dummy.config).then(_ => {
-        assert.deepEqual(promptSpy.getCall(0).args[0][0].askAnswered, true);
+        expect(promptSpy.getCall(0).args[0][0].askAnswered).toEqual(true);
       });
     });
   });
@@ -1892,7 +1888,7 @@ describe('Base', () => {
   describe('#features', () => {
     it('should return namespace as uniqueBy when unique is true', () => {
       const gen = new Base([], { namespace: 'foo', env }, { unique: true });
-      assert.equal(gen.features.uniqueBy, 'foo');
+      expect(gen.features.uniqueBy).toBe('foo');
     });
 
     it("should return namespace as uniqueBy when unique is 'namespace'", () => {
@@ -1906,7 +1902,7 @@ describe('Base', () => {
           unique: 'namespace',
         },
       );
-      assert.equal(gen.features.uniqueBy, 'foo');
+      expect(gen.features.uniqueBy).toBe('foo');
     });
 
     it("should return namespace with first argument as uniqueBy when unique is 'namespace'", () => {
@@ -1920,7 +1916,7 @@ describe('Base', () => {
           unique: 'argument',
         },
       );
-      assert.equal(gen.features.uniqueBy, 'foo#bar');
+      expect(gen.features.uniqueBy).toBe('foo#bar');
     });
   });
 
@@ -1958,7 +1954,7 @@ describe('Base', () => {
         },
         {},
       );
-      assert.deepStrictEqual(gen.getTaskNames(), ['anyMethod', 'default', 'customPriority']);
+      expect(gen.getTaskNames()).toStrictEqual(['anyMethod', 'default', 'customPriority']);
     });
 
     it('should return any public member when tasksMatchingPriority is false', async () => {
@@ -1967,7 +1963,7 @@ describe('Base', () => {
         customPriority() {},
         otherMethod() {},
       });
-      assert.deepStrictEqual(new Gen({ env }).getTaskNames(), ['default', 'customPriority', 'otherMethod']);
+      expect(new Gen({ env }).getTaskNames()).toStrictEqual(['default', 'customPriority', 'otherMethod']);
     });
 
     it('should return only priorities tasks when tasksMatchingPriority is true', async () => {
@@ -1983,7 +1979,7 @@ describe('Base', () => {
         otherMethod() {}
       };
 
-      assert.deepStrictEqual(new Gen([], { env }).getTaskNames(), ['default', 'customPriority']);
+      expect(new Gen([], { env }).getTaskNames()).toStrictEqual(['default', 'customPriority']);
     });
 
     it('should return only inherited tasks when inheritTasks is true', async () => {
@@ -1998,9 +1994,8 @@ describe('Base', () => {
       };
 
       const gen = new Gen([], { env });
-      assert.deepStrictEqual(gen.getTaskNames(), ['default', 'customPriority', 'initializing']);
-      assert.strictEqual(
-        gen.getTaskSourcesPropertyDescriptors().default.value,
+      expect(gen.getTaskNames()).toStrictEqual(['default', 'customPriority', 'initializing']);
+      expect(gen.getTaskSourcesPropertyDescriptors().default.value).toBe(
         Object.getOwnPropertyDescriptor(Object.getPrototypeOf(gen), 'default')!.value,
       );
     });
@@ -2017,7 +2012,7 @@ describe('Base', () => {
       };
 
       const gen = new Gen([], { env });
-      assert.deepStrictEqual(gen.getTaskNames(), ['default', 'bar']);
+      expect(gen.getTaskNames()).toStrictEqual(['default', 'bar']);
     });
 
     it('passing taskPrefix and inheritTasks should return tasks without taskPrefix', async () => {
@@ -2037,7 +2032,7 @@ describe('Base', () => {
       };
 
       const gen = new Gen([], { env });
-      assert.deepStrictEqual(gen.getTaskNames(), ['default', 'initializing']);
+      expect(gen.getTaskNames()).toStrictEqual(['default', 'initializing']);
     });
   });
 });

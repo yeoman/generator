@@ -1,4 +1,3 @@
-import assert from 'node:assert';
 import Generator from '../src/index.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { spy } from 'sinon';
@@ -38,7 +37,7 @@ describe('generators.Base (actions/spawn-command)', () => {
     it('opts given are passed to spawnCommand', () => {
       const spawnSpy = spy(testGenerator, 'spawnCommand');
       testGenerator.spawnCommand('foo', { verbose: true });
-      assert.ok(spawnSpy.calledWith('foo', { verbose: true }));
+      expect(spawnSpy.calledWith('foo', { verbose: true })).toBeTruthy();
     });
   });
 
@@ -87,7 +86,7 @@ describe('generators.Base (actions/spawn-command)', () => {
     it('opts given are passed to spawnCommandSync', () => {
       const spawnSyncSpy = spy(testGenerator, 'spawnCommandSync');
       testGenerator.spawnCommandSync('foo', { verbose: true });
-      assert.ok(spawnSyncSpy.calledWith('foo', { verbose: true }));
+      expect(spawnSyncSpy.calledWith('foo', { verbose: true })).toBeTruthy();
     });
   });
 
