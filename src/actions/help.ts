@@ -78,7 +78,7 @@ export class HelpMixin {
    *
    * @param description
    */
-  desc(this: BaseGenerator, description: string) {
+  desc(this: BaseGenerator, description: string): typeof this {
     this.description = description || '';
     return this;
   }
