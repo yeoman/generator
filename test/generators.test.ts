@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import EventEmitter from 'node:events';
 import path from 'node:path';
 import os from 'node:os';

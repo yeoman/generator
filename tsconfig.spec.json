@@ -6,6 +6,7 @@
     "rootDir": ".",
     "noEmit": true,
     "types": [],
+    "skipLibCheck": true,
     "noImplicitAny": false,
     "useUnknownInCatchVariables": false
   }

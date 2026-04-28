@@ -45,7 +45,7 @@
     "doc:prettier": "prettier $npm_package_config_doc_path$DOC_FOLDER --write --ignore-path .prettierignore-doc",
     "fix": "eslint . --fix && prettier . --write",
     "prepare": "npm run build",
-    "pretest": "eslint . && prettier . --check && npm run build",
+    "pretest": "eslint . && prettier . --check && npm run build && tsc -p tsconfig.spec.json",
     "test": "vitest run --coverage"
   },
   "config": {
@@ -72,6 +72,7 @@
   "devDependencies": {
     "@types/ejs": "^3.1.5",
     "@types/minimist": "^1.2.5",
+    "@types/node": "^24.12.2",
     "@types/picomatch": "^4.0.3",
     "@types/semver": "^7.7.1",
     "@types/text-table": "^0.2.5",

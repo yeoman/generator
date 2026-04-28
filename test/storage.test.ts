@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import fs from 'node:fs';
 import os from 'node:os';
 import path, { dirname } from 'node:path';

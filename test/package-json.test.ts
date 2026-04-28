@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { lte as semverLte } from 'semver';
 import helpers from 'yeoman-test';
