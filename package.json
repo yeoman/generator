@@ -91,7 +91,6 @@
     "sinon": "^21.1.2",
     "typescript": "6.0.3",
     "vitest": "^4.1.5",
-    "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^6.0.1",
     "yeoman-test": "^11.3.1"
   },
