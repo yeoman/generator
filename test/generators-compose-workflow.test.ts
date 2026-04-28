@@ -3,7 +3,7 @@ import { TestAdapter } from '@yeoman/adapter/testing';
 import type { SinonSpy } from 'sinon';
 import { assert as sinonAssert, spy as sinonSpy } from 'sinon';
 import Environment from 'yeoman-environment';
-import assert from 'yeoman-assert';
+import assert from 'node:assert';
 import helpers from 'yeoman-test';
 import Base from './utils.js';
 
@@ -69,8 +69,8 @@ describe('Multiples generators', () => {
       GenCompose2.prototype.writing = spyWrite2;
       GenCompose2.prototype.end = spyEnd2;
 
-      env.registerStub(GenCompose1, 'composed:gen');
-      env.registerStub(GenCompose2, 'composed:gen2');
+      env.register(GenCompose1, { namespace: 'composed:gen' });
+      env.register(GenCompose2, { namespace: 'composed:gen2' });
     });
 
     it('runs multiple composed generators', async () => {
@@ -93,10 +93,10 @@ describe('Multiples generators', () => {
         spyEnd1,
         spyEnd2,
       );
-      assert(spyInit1.calledAfter(runSpy));
-      assert(spyInit2.calledAfter(spyInit1));
-      assert(spyExec1.calledAfter(spyInit2));
-      assert(spyExec2.calledAfter(spyExec1));
+      assert.ok(spyInit1.calledAfter(runSpy));
+      assert.ok(spyInit2.calledAfter(spyInit1));
+      assert.ok(spyExec1.calledAfter(spyInit2));
+      assert.ok(spyExec2.calledAfter(spyExec1));
     });
 
     it('runs multiple composed generators (reverse)', async () => {
@@ -117,10 +117,10 @@ describe('Multiples generators', () => {
         spyEnd2,
         spyEnd1,
       );
-      assert(spyInit2.calledAfter(runSpy));
-      assert(spyInit1.calledAfter(spyInit2));
-      assert(spyExec2.calledAfter(spyInit1));
-      assert(spyExec1.calledAfter(spyExec2));
+      assert.ok(spyInit2.calledAfter(runSpy));
+      assert.ok(spyInit1.calledAfter(spyInit2));
+      assert.ok(spyExec2.calledAfter(spyInit1));
+      assert.ok(spyExec1.calledAfter(spyExec2));
     });
 
     it('runs 3 composed generators', async () => {
@@ -130,7 +130,7 @@ describe('Multiples generators', () => {
       GenCompose3.prototype.exec = spyExec3;
       GenCompose3.prototype.initializing = spyInit3;
 
-      env.registerStub(GenCompose3, 'composed:gen3');
+      env.register(GenCompose3, { namespace: 'composed:gen3' });
 
       await dummy.composeWith(['composed:gen', 'composed:gen2', 'composed:gen3']);
 
@@ -151,16 +151,16 @@ describe('Multiples generators', () => {
         spyEnd1,
         spyEnd2,
       );
-      assert(spyInit1.calledAfter(runSpy));
-      assert(spyInit2.calledAfter(spyInit1));
-      assert(spyInit3.calledAfter(spyInit2));
-      assert(spyExec1.calledAfter(spyInit3));
-      assert(spyExec2.calledAfter(spyExec1));
-      assert(spyExec3.calledAfter(spyExec2));
+      assert.ok(spyInit1.calledAfter(runSpy));
+      assert.ok(spyInit2.calledAfter(spyInit1));
+      assert.ok(spyInit3.calledAfter(spyInit2));
+      assert.ok(spyExec1.calledAfter(spyInit3));
+      assert.ok(spyExec2.calledAfter(spyExec1));
+      assert.ok(spyExec3.calledAfter(spyExec2));
     });
 
     it('runs multiple composed generators inside a running generator', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const Dummy2 = class extends Dummy {};
 
         const writingSpy1 = sinonSpy();
@@ -209,24 +209,24 @@ describe('Multiples generators', () => {
               spyEnd1,
               spyEnd2,
             );
-            assert(writingSpy1.calledAfter(runSpy));
-            assert(spyInit1.calledAfter(writingSpy1));
-            assert(spyInit2.calledAfter(spyInit1));
-            assert(spyExec1.calledAfter(spyInit2));
-            assert(spyExec2.calledAfter(spyExec1));
-            assert(writingSpy2.calledAfter(spyExec2));
-            assert(spyWrite1.calledAfter(writingSpy2));
-            assert(spyWrite2.calledAfter(spyWrite1));
-            assert(endSpy.calledAfter(spyWrite2));
-            assert(spyEnd1.calledAfter(endSpy));
-            assert(spyEnd2.calledAfter(spyEnd1));
+            assert.ok(writingSpy1.calledAfter(runSpy));
+            assert.ok(spyInit1.calledAfter(writingSpy1));
+            assert.ok(spyInit2.calledAfter(spyInit1));
+            assert.ok(spyExec1.calledAfter(spyInit2));
+            assert.ok(spyExec2.calledAfter(spyExec1));
+            assert.ok(writingSpy2.calledAfter(spyExec2));
+            assert.ok(spyWrite1.calledAfter(writingSpy2));
+            assert.ok(spyWrite2.calledAfter(spyWrite1));
+            assert.ok(endSpy.calledAfter(spyWrite2));
+            assert.ok(spyEnd1.calledAfter(endSpy));
+            assert.ok(spyEnd2.calledAfter(spyEnd1));
             done();
           });
         }, 100);
       }));
 
     it('runs multiple composed generators inside a running generator', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const Dummy2 = class extends Dummy {};
 
         const writingSpy1 = sinonSpy();
@@ -283,18 +283,18 @@ describe('Multiples generators', () => {
               spyEnd1,
               spyEnd2,
             );
-            assert(writingSpy1.calledAfter(runSpy));
-            assert(spyInit1.calledAfter(writingSpy1));
-            assert(spyExec1.calledAfter(spyInit1));
-            assert(writingSpy2.calledAfter(spyExec1));
-            assert(spyInit2.calledAfter(writingSpy2));
-            assert(spyExec2.calledAfter(spyExec1));
-            assert(writingSpy3.calledAfter(spyExec2));
-            assert(spyWrite1.calledAfter(writingSpy3));
-            assert(spyWrite2.calledAfter(spyWrite1));
-            assert(endSpy.calledAfter(spyWrite2));
-            assert(spyEnd1.calledAfter(endSpy));
-            assert(spyEnd2.calledAfter(spyEnd1));
+            assert.ok(writingSpy1.calledAfter(runSpy));
+            assert.ok(spyInit1.calledAfter(writingSpy1));
+            assert.ok(spyExec1.calledAfter(spyInit1));
+            assert.ok(writingSpy2.calledAfter(spyExec1));
+            assert.ok(spyInit2.calledAfter(writingSpy2));
+            assert.ok(spyExec2.calledAfter(spyExec1));
+            assert.ok(writingSpy3.calledAfter(spyExec2));
+            assert.ok(spyWrite1.calledAfter(writingSpy3));
+            assert.ok(spyWrite2.calledAfter(spyWrite1));
+            assert.ok(endSpy.calledAfter(spyWrite2));
+            assert.ok(spyEnd1.calledAfter(endSpy));
+            assert.ok(spyEnd2.calledAfter(spyEnd1));
             done();
           });
         }, 100);
@@ -334,9 +334,9 @@ describe('Multiples generators', () => {
       },
     };
 
-    env.registerStub(Generator, 'composed:gen');
-    env.registerStub(Generator2, 'composed:gen2');
-    env.registerStub(Generator3, 'composed:gen3');
+    env.register(Generator, { namespace: 'composed:gen' });
+    env.register(Generator2, { namespace: 'composed:gen2' });
+    env.register(Generator3, { namespace: 'composed:gen3' });
 
     const dummy = new Generator([], {
       resolved: 'unknown',
@@ -348,7 +348,7 @@ describe('Multiples generators', () => {
     });
 
     await dummy.run();
-    assert(writingSpy2.calledAfter(writingSpy1));
-    assert(writingSpy3.calledAfter(writingSpy2));
+    assert.ok(writingSpy2.calledAfter(writingSpy1));
+    assert.ok(writingSpy3.calledAfter(writingSpy2));
   });
 });

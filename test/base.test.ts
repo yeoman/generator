@@ -8,13 +8,15 @@ import process from 'node:process';
 import { Buffer } from 'node:buffer';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { extend } from 'lodash-es';
+import type { SinonSpy } from 'sinon';
 import { assert as sinonAssert, fake as sinonFake, spy as sinonSpy } from 'sinon';
 import { passthrough } from '@yeoman/transform';
-import assert from 'yeoman-assert';
-import Environment from 'yeoman-environment';
+import assert from 'node:assert';
+import Environment, { type EnvironmentOptions } from 'yeoman-environment';
 import helpers from 'yeoman-test';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import Base from './utils.js';
+import type { BaseFeatures, BaseOptions } from '../src/types.js';
 
 const require = createRequire(import.meta.url);
 
@@ -22,12 +24,13 @@ const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
 const resolveddir = path.join(os.tmpdir(), 'yeoman-base-generator');
-const createEnv = (options?) => new Environment({ skipInstall: true, adapter: new TestAdapter(), ...options });
+const createEnv = (options?: Partial<EnvironmentOptions>) =>
+  new Environment({ skipInstall: true, adapter: new TestAdapter(), ...options });
 
 describe('Base', () => {
-  let env;
-  let Dummy;
-  let dummy;
+  let env: Environment;
+  let Dummy: typeof Base;
+  let dummy: Base;
 
   beforeEach(async () => {
     await helpers.prepareTemporaryDir().run();
@@ -77,7 +80,7 @@ describe('Base', () => {
     });
 
     it('use the environment options', async () => {
-      env.registerStub(class extends Base {}, 'ember:model');
+      env.register(class extends Base {}, { namespace: 'ember:model' });
 
       const generator = await env.create('ember:model', {
         options: {
@@ -135,7 +138,7 @@ describe('Base', () => {
         resolved: 'test',
       });
 
-      assert(generator.fs);
+      assert.ok(generator.fs);
     });
 
     it('setup required fields for a working generator for help', () => {
@@ -145,10 +148,10 @@ describe('Base', () => {
         resolved: 'test',
       });
 
-      assert(generator.env);
-      assert(generator.fs);
-      assert(generator._debug);
-      assert(generator._);
+      assert.ok(generator.env);
+      assert.ok(generator.fs);
+      assert.ok(generator._debug);
+      assert.ok(generator._);
 
       generator.option('foo');
       generator.argument('baz');
@@ -160,8 +163,8 @@ describe('Base', () => {
         resolved: 'test',
       });
 
-      assert(generator._debug);
-      assert(generator._);
+      assert.ok(generator._debug);
+      assert.ok(generator._);
 
       generator.option('foo');
       generator.argument('baz');
@@ -170,7 +173,9 @@ describe('Base', () => {
 
   describe('prototype', () => {
     it("methods doesn't conflict with Env#runQueue", () => {
-      assert.notImplement(Base.prototype, env.runLoop.queueNames);
+      for (const queue of env.runLoop.queueNames) {
+        assert.ok(!Base.prototype[queue]);
+      }
     });
   });
 
@@ -198,9 +203,9 @@ describe('Base', () => {
   });
 
   describe('#run()', () => {
-    let TestGenerator;
-    let testGen;
-    let execSpy;
+    let TestGenerator: typeof Base;
+    let testGen: Base;
+    let execSpy: SinonSpy;
     beforeEach(() => {
       TestGenerator = class extends Base {};
       extend(TestGenerator.prototype, {
@@ -258,12 +263,12 @@ describe('Base', () => {
     it('pass instance .args property to the called methods', () => {
       testGen.args = ['2', 'args'];
       return testGen.run().then(() => {
-        assert(execSpy.withArgs('2', 'args').calledOnce);
+        assert.ok(execSpy.withArgs('2', 'args').calledOnce);
       });
     });
 
     it('can emit error from sync methods', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const error = new Error('Some error');
 
         TestGenerator.prototype.throwing = () => {
@@ -317,7 +322,7 @@ describe('Base', () => {
     });
 
     it('handle failing promises as errors', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         TestGenerator.prototype.failing = async () => {
           return new Promise((resolve, reject) => {
             reject(new Error('some error'));
@@ -340,7 +345,7 @@ describe('Base', () => {
       });
 
       return gen.run().catch(error => {
-        assert(error.toString().includes('This Generator is empty'));
+        assert.ok(error.toString().includes('This Generator is empty'));
       });
     });
 
@@ -371,32 +376,32 @@ describe('Base', () => {
       });
 
       return gen.run().then(() => {
-        assert(gen.nonenumerable.called);
+        assert.ok(gen.nonenumerable.called);
       });
     });
 
     it('ignore underscore prefixed method', () => {
       return testGen.run().then(() => {
-        assert(TestGenerator.prototype._private.notCalled);
+        assert.ok(TestGenerator.prototype._private.notCalled);
       });
     });
 
     it('ignore hashtag prefixed method', () => {
       return testGen.run().then(() => {
-        assert(TestGenerator.prototype['#composed'].notCalled);
+        assert.ok(TestGenerator.prototype['#composed'].notCalled);
       });
     });
 
     it('run methods in a queue hash', () => {
       return testGen.run().then(() => {
-        assert(TestGenerator.prototype.prompting.m1.calledOnce);
-        assert(TestGenerator.prototype.prompting.m2.calledOnce);
+        assert.ok(TestGenerator.prototype.prompting.m1.calledOnce);
+        assert.ok(TestGenerator.prototype.prompting.m2.calledOnce);
       });
     });
 
     it('ignore underscore prefixed method in a queue hash', () => {
       return testGen.run().then(() => {
-        assert(TestGenerator.prototype.prompting._private.notCalled);
+        assert.ok(TestGenerator.prototype.prompting._private.notCalled);
       });
     });
 
@@ -405,7 +410,7 @@ describe('Base', () => {
       const promptSpy = TestGenerator.prototype.prompting.m1;
 
       return testGen.run().then(() => {
-        assert(initSpy.calledBefore(promptSpy));
+        assert.ok(initSpy.calledBefore(promptSpy));
       });
     });
 
@@ -414,7 +419,7 @@ describe('Base', () => {
       const execSpy = TestGenerator.prototype.exec;
 
       return testGen.run().then(() => {
-        assert(initSpy.calledBefore(execSpy));
+        assert.ok(initSpy.calledBefore(execSpy));
       });
     });
 
@@ -426,14 +431,14 @@ describe('Base', () => {
       };
 
       return testGen.run().then(() => {
-        assert(fs.existsSync(filepath));
+        assert.ok(fs.existsSync(filepath));
       });
     });
 
     it('allow skipping file writes to disk', () => {
       const action = { action: 'skip' };
       const filepath = path.join(_dirname, '/fixtures/conflict.js');
-      assert(fs.existsSync(filepath));
+      assert.ok(fs.existsSync(filepath));
 
       TestGenerator.prototype.writing = function () {
         this.fs.write(filepath, 'some new content');
@@ -457,12 +462,12 @@ describe('Base', () => {
       };
 
       return testGen.run().then(() => {
-        assert(fs.existsSync(testGen.destinationPath('foo.txt')));
+        assert.ok(fs.existsSync(testGen.destinationPath('foo.txt')));
       });
     });
 
     it('can cancel cancellable tasks', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         TestGenerator.prototype.cancel = function () {
           this.cancelCancellableTasks();
         };
@@ -475,7 +480,7 @@ describe('Base', () => {
       }));
 
     it('can start over the generator', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const spy1 = sinonSpy();
         const spy2 = sinonSpy();
 
@@ -488,20 +493,20 @@ describe('Base', () => {
         };
 
         TestGenerator.prototype.after = function () {
-          assert(this.options.startedOver);
-          assert(this.startedOver);
+          assert.ok(this.options.startedOver);
+          assert.ok(this.startedOver);
           spy2();
         };
 
         testGen.run().then(() => {
-          assert(spy1.calledTwice);
-          assert(spy2.calledOnce);
+          assert.ok(spy1.calledTwice);
+          assert.ok(spy2.calledOnce);
           done();
         });
       }));
 
     it('can queue a method again', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const spy1 = sinonSpy();
 
         TestGenerator.prototype.cancel = function () {
@@ -514,15 +519,15 @@ describe('Base', () => {
         };
 
         testGen.run().then(() => {
-          assert(spy1.calledTwice);
+          assert.ok(spy1.calledTwice);
           done();
         });
       }));
   });
 
   describe('#run() with task prefix', () => {
-    let TestGenerator;
-    let testGen;
+    let TestGenerator: typeof Base;
+    let testGen: Base;
 
     beforeEach(() => {
       TestGenerator = class extends Base {};
@@ -549,11 +554,11 @@ describe('Base', () => {
 
     it('should run hashtag prefixed method', async () => {
       await testGen.run();
-      assert(TestGenerator.prototype['#composed'].calledOnce);
-      assert(TestGenerator.prototype.composed.notCalled);
-      assert(TestGenerator.prototype['#initializing'].calledOnce);
-      assert(TestGenerator.prototype.initializing.notCalled);
-      assert(TestGenerator.prototype._private.notCalled);
+      assert.ok(TestGenerator.prototype['#composed'].calledOnce);
+      assert.ok(TestGenerator.prototype.composed.notCalled);
+      assert.ok(TestGenerator.prototype['#initializing'].calledOnce);
+      assert.ok(TestGenerator.prototype.initializing.notCalled);
+      assert.ok(TestGenerator.prototype._private.notCalled);
     });
 
     it('should call beforeQueue', async () => {
@@ -576,7 +581,7 @@ describe('Base', () => {
 
     it('allows specifying default argument values', () => {
       const Generator = class extends Base {
-        constructor(args, options) {
+        constructor(args?: string[], options?: BaseOptions) {
           super(args, options);
 
           this.argument('bar', { default: 'baz' });
@@ -593,7 +598,7 @@ describe('Base', () => {
 
     it('allows specifying default argument values', () => {
       const Generator = class extends Base {
-        constructor(args, options) {
+        constructor(args?: string[], options?: BaseOptions) {
           super(args, options);
 
           this.argument('bar', { default: 'baz' });
@@ -610,7 +615,7 @@ describe('Base', () => {
 
     it('properly uses arguments values passed from constructor', () => {
       const Generator = class extends Base {
-        constructor(args, options) {
+        constructor(args?: string[], options?: BaseOptions) {
           super(args, options);
 
           this.argument('bar', { default: 'baz' });
@@ -632,7 +637,7 @@ describe('Base', () => {
     });
 
     it('raise an error if required arguments are not provided', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const dummy = new Base([], {
           env,
           resolved: 'dummy/all',
@@ -641,7 +646,7 @@ describe('Base', () => {
         try {
           dummy.argument('foo', { required: true });
         } catch (error) {
-          assert(error.message.startsWith('Did not provide required argument '));
+          assert.ok(error.message.startsWith('Did not provide required argument '));
           done();
         }
       }));
@@ -690,7 +695,7 @@ describe('Base', () => {
 
     it('allow aliasing options', () => {
       const Generator = class extends Base {
-        constructor(args, options) {
+        constructor(args?: string[], options?: BaseOptions) {
           super(args, options);
 
           this.option('long-name', {
@@ -711,7 +716,7 @@ describe('Base', () => {
 
     it('allows Boolean options to be undefined', () => {
       const Generator = class extends Base {
-        constructor(args, options) {
+        constructor(args?: string[], options?: BaseOptions) {
           super(args, options);
 
           this.option('undef', { type: Boolean });
@@ -888,11 +893,11 @@ describe('Base', () => {
       spy = sinonSpy();
       GenCompose = class extends Base {};
       GenCompose.prototype.exec = spy;
-      env.registerStub(GenCompose, 'composed:gen');
+      env.register(GenCompose, { namespace: 'composed:gen' });
     });
 
     it('returns the composed generator', async () => {
-      assert((await dummy.composeWith('composed:gen')) instanceof GenCompose);
+      assert.ok((await dummy.composeWith('composed:gen')) instanceof GenCompose);
     });
 
     it('runs the composed generators', async () => {
@@ -901,7 +906,7 @@ describe('Base', () => {
       const runSpy = sinonSpy(dummy, 'run');
       await dummy.run();
       sinonAssert.callOrder(runSpy, spy);
-      assert(spy.calledAfter(runSpy));
+      assert.ok(spy.calledAfter(runSpy));
     });
 
     it('runs the composed Generator class in the passed path', async () => {
@@ -942,7 +947,7 @@ describe('Base', () => {
       };
 
       return dummy.run().then(() => {
-        assert(spy.called);
+        assert.ok(spy.called);
       });
     });
 
@@ -978,7 +983,7 @@ describe('Base', () => {
       it('runs the composed generator', async () => {
         await dummy.composeWith(stubPath, {});
         await dummy.run();
-        assert(LocalDummy.prototype.exec.called);
+        assert.ok(LocalDummy.prototype.exec.called);
       });
 
       it('pass options and arguments to the composed generators', async () => {
@@ -1039,7 +1044,7 @@ describe('Base', () => {
       for (const [i, line] of help.split('\n').entries()) {
         // Do not test whitespace; we care about the content, not formatting.
         // formatting is best left up to the tests for module "text-table"
-        assert.textEqual(line.trim().replaceAll(/\s+/g, ' '), expected[i]);
+        assert.equal(line.trim().replaceAll(/\s+/g, ' '), expected[i]);
       }
     });
   });
@@ -1202,7 +1207,7 @@ describe('Base', () => {
     });
 
     it('emits the series of event on a specific generator', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const angular = new Generator([], {
           env: createEnv([], {}, new TestAdapter()),
           resolved: _filename,
@@ -1234,9 +1239,9 @@ describe('Base', () => {
       }));
 
     it('only call the end event once (bug #402)', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         class GeneratorOnce extends Base {
-          constructor(args, options) {
+          constructor(args?: string[], options?: BaseOptions) {
             super(args, options);
             this.sourceRoot(path.join(_dirname, 'fixtures'));
             this.destinationRoot(path.join(os.tmpdir(), 'yeoman-base-once'));
@@ -1269,10 +1274,10 @@ describe('Base', () => {
       }));
 
     it('triggers end event after all generators methods are ran (#709)', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const endSpy = sinonSpy();
         const GeneratorEnd = class extends Base {
-          constructor(args, options) {
+          constructor(args?: string[], options?: BaseOptions) {
             super(args, options);
             this.on('end', () => {
               sinonAssert.calledOnce(endSpy);
@@ -1325,7 +1330,7 @@ describe('Base', () => {
     let Generator;
     beforeEach(() => {
       Generator = class extends Base {
-        constructor(args, options) {
+        constructor(args?: string[], options?: BaseOptions) {
           super(args, options);
 
           this.queueMethod(
@@ -1343,7 +1348,7 @@ describe('Base', () => {
     });
 
     it('queued method is executed', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const gen = new Generator({
           resolved: resolveddir,
           namespace: 'dummy',
@@ -1358,9 +1363,9 @@ describe('Base', () => {
       }));
 
     it('queued method is executed by derived generator', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         const Derived = class extends Generator {
-          constructor(args, options) {
+          constructor(args?: string[], options?: BaseOptions) {
             super(args, options);
 
             this.prop = 'a';
@@ -1403,7 +1408,7 @@ describe('Base', () => {
       const noop = () => {};
       gen.queueMethod(noop, 'configuring', noop);
 
-      assert(env.queueTask.calledOnce);
+      assert.ok(env.queueTask.calledOnce);
       assert.equal('default', env.queueTask.getCall(0).args[0]);
     });
 
@@ -1424,7 +1429,7 @@ describe('Base', () => {
       };
       gen.queueMethod(tasks, queueName, noop);
 
-      assert(env.queueTask.calledOnce);
+      assert.ok(env.queueTask.calledOnce);
       assert.equal(queueName, env.queueTask.getCall(0).args[0]);
     });
   });
@@ -1433,7 +1438,7 @@ describe('Base', () => {
     let Generator;
     beforeEach(() => {
       Generator = class extends Base {
-        constructor(args, options) {
+        constructor(args?: string[], options?: BaseOptions) {
           super(args, options);
 
           this.queueMethod(
@@ -1474,7 +1479,7 @@ describe('Base', () => {
         args: [arg],
       });
 
-      assert(env.queueTask.calledOnce);
+      assert.ok(env.queueTask.calledOnce);
       assert.equal(queueName, env.queueTask.getCall(0).args[0]);
       assert.deepStrictEqual(
         {
@@ -1485,7 +1490,7 @@ describe('Base', () => {
       );
 
       await gen.run();
-      assert(method.calledOnce);
+      assert.ok(method.calledOnce);
       assert.equal(arg, method.getCall(0).args[0]);
     });
 
@@ -1558,7 +1563,7 @@ describe('Base', () => {
 
     beforeEach(() => {
       TestGenerator = class extends Base {
-        constructor(args, options, features) {
+        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
           super(
             args,
             {
@@ -1699,13 +1704,13 @@ describe('Base', () => {
       });
 
       return testGen.run().then(() => {
-        assert(initializing.calledBefore(preConfiguring1));
-        assert(preConfiguring1.calledBefore(preConfiguring2));
-        assert(preConfiguring2.calledBefore(configuring));
-        assert(configuring.calledBefore(prePrompting1));
-        assert(prePrompting1.calledBefore(prompting));
-        assert(prompting.calledBefore(end));
-        assert(end.calledBefore(afterEnd));
+        assert.ok(initializing.calledBefore(preConfiguring1));
+        assert.ok(preConfiguring1.calledBefore(preConfiguring2));
+        assert.ok(preConfiguring2.calledBefore(configuring));
+        assert.ok(configuring.calledBefore(prePrompting1));
+        assert.ok(prePrompting1.calledBefore(prompting));
+        assert.ok(prompting.calledBefore(end));
+        assert.ok(end.calledBefore(afterEnd));
       });
     });
 
@@ -1755,7 +1760,7 @@ describe('Base', () => {
   describe('Custom priorities errors', () => {
     it('error is thrown with duplicate custom queue', () => {
       const TestGenerator = class extends Base {
-        constructor(args, options) {
+        constructor(args?: string[], options?: BaseOptions) {
           super(
             args,
             {
@@ -1921,7 +1926,7 @@ describe('Base', () => {
 
   describe('getTaskNames', () => {
     class TestGen extends Base {
-      constructor(args, options, features) {
+      constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
         const customPriorities = [{ priorityName: 'customPriority', before: 'prompting' }];
         super(
           args,
@@ -1967,7 +1972,7 @@ describe('Base', () => {
 
     it('should return only priorities tasks when tasksMatchingPriority is true', async () => {
       const Gen = class extends TestGen {
-        constructor(args, options, features) {
+        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
           super(args, options, { ...features, tasksMatchingPriority: true });
         }
 
@@ -1983,7 +1988,7 @@ describe('Base', () => {
 
     it('should return only inherited tasks when inheritTasks is true', async () => {
       const Gen = class extends TestGen {
-        constructor(args, options, features) {
+        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
           super(args, options, { ...features, inheritTasks: true });
         }
 
@@ -2002,7 +2007,7 @@ describe('Base', () => {
 
     it('passing taskPrefix should return tasks without taskPrefix', async () => {
       const Gen = class extends TestGen {
-        constructor(args, options, features) {
+        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
           super(args, options, { ...features, taskPrefix: 'foo' });
         }
 
@@ -2017,14 +2022,14 @@ describe('Base', () => {
 
     it('passing taskPrefix and inheritTasks should return tasks without taskPrefix', async () => {
       const Parent = class extends TestGen {
-        constructor(args, options, features) {
+        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
           super(args, options, { ...features, taskPrefix: 'foo', inheritTasks: true });
         }
 
         foodefault() {}
       };
       const Gen = class extends Parent {
-        constructor(args, options, features) {
+        constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures) {
           super(args, options, { ...features, taskPrefix: 'foo', inheritTasks: true });
         }
 

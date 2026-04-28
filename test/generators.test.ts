@@ -4,7 +4,7 @@ import os from 'node:os';
 import { beforeEach, describe, expect, it, vitest } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import Environment from 'yeoman-environment';
-import assert from 'yeoman-assert';
+import assert from 'node:assert';
 import { valid as semverValid } from 'semver';
 import Base from './utils.js';
 
@@ -12,7 +12,7 @@ const NAMESPACE = 'somenamespace';
 const createEnv = () => new Environment({ skipInstall: true, adapter: new TestAdapter() });
 
 describe('Generators module', () => {
-  let generator: Generator;
+  let generator: Base;
   let env: Environment;
 
   beforeEach(() => {
@@ -31,11 +31,14 @@ describe('Generators module', () => {
     });
 
     it('should expose yoGeneratorVersion', () => {
-      assert(semverValid(generator.yoGeneratorVersion), `Not valid version ${generator.yoGeneratorVersion as string}`);
+      assert.ok(
+        semverValid(generator.yoGeneratorVersion),
+        `Not valid version ${generator.yoGeneratorVersion as string}`,
+      );
     });
 
     it('is an EventEmitter', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         assert.ok(generator instanceof EventEmitter);
         assert.strictEqual(typeof generator.on, 'function');
         assert.strictEqual(typeof generator.emit, 'function');
@@ -44,13 +47,13 @@ describe('Generators module', () => {
       }));
 
     it('emits done event', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         env.on(`done$${NAMESPACE}#exec`, data => {
-          assert(data.generator === generator);
-          assert(`done$${NAMESPACE}#exec`.includes(data.namespace));
-          assert(data.namespace === NAMESPACE);
-          assert(data.priorityName === 'default');
-          assert(data.queueName === 'default');
+          assert.ok(data.generator === generator);
+          assert.ok(`done$${NAMESPACE}#exec`.includes(data.namespace));
+          assert.ok(data.namespace === NAMESPACE);
+          assert.ok(data.priorityName === 'default');
+          assert.ok(data.queueName === 'default');
           done();
         });
         generator.run().catch(() => {});
@@ -88,7 +91,7 @@ describe('Generators module', () => {
     });
 
     it('forwards error to environment', () =>
-      new Promise(done => {
+      new Promise<void>(done => {
         env.on('error', () => {
           done();
         });
@@ -174,7 +177,7 @@ describe('Generators module', () => {
   });
 
   it('running standalone', () =>
-    new Promise(done => {
+    new Promise<void>(done => {
       const Generator = class extends Base {};
       try {
         new Generator();
@@ -185,7 +188,7 @@ describe('Generators module', () => {
     }));
 
   it('running with an empty env', () =>
-    new Promise(done => {
+    new Promise<void>(done => {
       const Generator = class extends Base {};
       try {
         new Generator({ env: {} });

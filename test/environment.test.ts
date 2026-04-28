@@ -42,6 +42,7 @@ describe('Generator with environment version', () => {
       describe('without args', () => {
         it('returns true', () => {
           getVersionStub.returns('3.0.0');
+          // @ts-expect-error - check deprecated api
           assert.equal(dummy.checkEnvironmentVersion(), true);
         });
       });
@@ -171,6 +172,7 @@ describe('Generator with environment version', () => {
   describe('mocked 2.8.1', () => {
     beforeAll(() => {
       env = new Environment({ skipInstall: true, adapter: new TestAdapter() });
+      // @ts-expect-error - check outdated environment
       env.getVersion = undefined;
 
       Dummy = class extends Base {};
@@ -188,6 +190,7 @@ describe('Generator with environment version', () => {
       describe('without args', () => {
         it('throws exception', () => {
           assert.throws(
+            // @ts-expect-error - check deprecated api
             () => dummy.checkEnvironmentVersion(),
             /requires yeoman-environment at least 2.9.0, current version is less than 2.9.0/,
           );
@@ -205,6 +208,7 @@ describe('Generator with environment version', () => {
 
         describe('without args', () => {
           it('returns false', () => {
+            // @ts-expect-error - check deprecated api
             assert.equal(dummy.checkEnvironmentVersion(), false);
           });
         });

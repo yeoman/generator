@@ -9,7 +9,7 @@ export default class BaseTest extends Base {
     features?: Base['features'],
   );
   constructor(
-    args: string[],
+    args?: string[],
     options?: Omit<Base['options'], 'namespace' | 'resolved'> &
       Partial<Pick<Base['options'], 'namespace' | 'resolved'>>,
     features?: Base['features'],
