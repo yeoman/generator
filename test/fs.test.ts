@@ -1,4 +1,3 @@
-import assert from 'node:assert';
 import path from 'node:path';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
@@ -158,35 +157,35 @@ describe('generators.Base (actions/fs)', () => {
       });
 
       it('exists on the generator', () => {
-        assert.ok(operation.name in Base.prototype);
+        expect(operation.name in Base.prototype).toBeTruthy();
       });
 
       it('returns the correct value', () => {
-        assert.equal(returnValue, expectedReturn);
+        expect(returnValue).toBe(expectedReturn);
       });
 
       it('handles the first parameter', () => {
         if (firstArgumentHandler) {
-          assert.equal(firstArgumentHandler.getCall(0).args[0], passedArg1);
+          expect(firstArgumentHandler.getCall(0).args[0]).toBe(passedArg1);
         }
       });
 
       it.skip('handles the second parameter', () => {
         if (operation.second && operation.first === operation.second) {
-          assert.ok(secondArgumentHandler.calledTwice);
+          expect(secondArgumentHandler.calledTwice).toBeTruthy();
           expect(secondArgumentHandler.getCall(1).args[0]).toMatch(passedArg2);
         } else if (operation.second) {
-          assert.ok(secondArgumentHandler.calledOnce);
+          expect(secondArgumentHandler.calledOnce).toBeTruthy();
           expect(secondArgumentHandler.getCall(0).args[0]).toMatch(passedArg2);
           if (firstArgumentHandler) {
-            assert.ok(firstArgumentHandler.calledOnce);
+            expect(firstArgumentHandler.calledOnce).toBeTruthy();
           }
         }
       });
 
       it('calls fs with correct arguments', () => {
         const destCall = base.fs[operation.dest];
-        assert.ok(destCall.calledOnce);
+        expect(destCall.calledOnce).toBeTruthy();
         const call = destCall.getCall(0);
         // First argument should be the trated first arguments
         expect(call.args[0]).toMatch(operation.first ? baseReturns[operation.first] : passedArg1);
@@ -240,18 +239,18 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplate('a', 'b');
       const { copyTpl } = gen.fs;
 
-      assert.ok(copyTpl.calledOnce);
+      expect(copyTpl.calledOnce).toBeTruthy();
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[ARG_DATA], getAllReturn);
+      expect(firsCall.args[ARG_DATA]).toBe(getAllReturn);
     });
 
     it('gets data with path from config', () => {
       gen.renderTemplate('a', 'b', 'test');
       const { copyTpl } = gen.fs;
 
-      assert.ok(copyTpl.calledOnce);
+      expect(copyTpl.calledOnce).toBeTruthy();
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[ARG_DATA], getPathReturn);
+      expect(firsCall.args[ARG_DATA]).toBe(getPathReturn);
     });
 
     it('concatenates source and destination', () => {
@@ -262,11 +261,11 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplate(source, destination, data);
       const { copyTpl } = gen.fs;
 
-      assert.ok(copyTpl.calledOnce);
+      expect(copyTpl.calledOnce).toBeTruthy();
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[ARG_FROM], path.join(...source));
-      assert.equal(firsCall.args[ARG_TO], path.join(...destination));
-      assert.equal(firsCall.args[ARG_DATA], data);
+      expect(firsCall.args[ARG_FROM]).toBe(path.join(...source));
+      expect(firsCall.args[ARG_TO]).toBe(path.join(...destination));
+      expect(firsCall.args[ARG_DATA]).toBe(data);
     });
   });
 
@@ -299,18 +298,18 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplateAsync('a', 'b');
       const { copyTplAsync } = gen.fs;
 
-      assert.ok(copyTplAsync.calledOnce);
+      expect(copyTplAsync.calledOnce).toBeTruthy();
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[ARG_DATA], getAllReturn);
+      expect(firsCall.args[ARG_DATA]).toBe(getAllReturn);
     });
 
     it('gets data with path from config', async () => {
       await gen.renderTemplateAsync('a', 'b', 'test');
       const { copyTplAsync } = gen.fs;
 
-      assert.ok(copyTplAsync.calledOnce);
+      expect(copyTplAsync.calledOnce).toBeTruthy();
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[ARG_DATA], getPathReturn);
+      expect(firsCall.args[ARG_DATA]).toBe(getPathReturn);
     });
 
     it('concatenates source and destination', () => {
@@ -321,11 +320,11 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplateAsync(source, destination, data);
       const { copyTplAsync } = gen.fs;
 
-      assert.ok(copyTplAsync.calledOnce);
+      expect(copyTplAsync.calledOnce).toBeTruthy();
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[ARG_FROM], path.join(...source));
-      assert.equal(firsCall.args[ARG_TO], path.join(...destination));
-      assert.equal(firsCall.args[ARG_DATA], data);
+      expect(firsCall.args[ARG_FROM]).toBe(path.join(...source));
+      expect(firsCall.args[ARG_TO]).toBe(path.join(...destination));
+      expect(firsCall.args[ARG_DATA]).toBe(data);
     });
   });
 
@@ -353,12 +352,12 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplates([{ source: passedArg1 }], data);
 
       const { copyTpl } = gen.fs;
-      assert.equal(copyTpl.callCount, 1);
+      expect(copyTpl.callCount).toBe(1);
 
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[ARG_FROM], passedArg1);
-      assert.equal(firsCall.args[ARG_TO], passedArg1);
-      assert.equal(firsCall.args[ARG_DATA], data);
+      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
+      expect(firsCall.args[ARG_DATA]).toBe(data);
     });
 
     it('handles more than 1 template', () => {
@@ -381,17 +380,17 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTpl } = gen.fs;
-      assert.equal(copyTpl.callCount, 2);
+      expect(copyTpl.callCount).toBe(2);
 
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[ARG_FROM], passedArg1);
-      assert.equal(firsCall.args[ARG_TO], passedArg1);
-      assert.equal(firsCall.args[ARG_DATA], data);
+      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
+      expect(firsCall.args[ARG_DATA]).toBe(data);
 
       const secondCall = copyTpl.getCall(1);
-      assert.equal(secondCall.args[ARG_FROM], secondCallArg1);
-      assert.equal(secondCall.args[ARG_TO], secondCallArg2);
-      assert.equal(secondCall.args[ARG_DATA], data);
+      expect(secondCall.args[ARG_FROM]).toBe(secondCallArg1);
+      expect(secondCall.args[ARG_TO]).toBe(secondCallArg2);
+      expect(secondCall.args[ARG_DATA]).toBe(data);
       expect(secondCall.args[ARG_COPYSETTINGS]).toMatchObject({ ...copyOptions, fromBasePath: expect.any(String) });
     });
 
@@ -416,12 +415,12 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTpl } = gen.fs;
-      assert.equal(copyTpl.callCount, 1);
+      expect(copyTpl.callCount).toBe(1);
 
       const firsCall = copyTpl.getCall(0);
-      assert.equal(firsCall.args[ARG_FROM], passedArg1);
-      assert.equal(firsCall.args[ARG_TO], passedArg1);
-      assert.equal(firsCall.args[ARG_DATA], data);
+      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
+      expect(firsCall.args[ARG_DATA]).toBe(data);
     });
 
     it('passes the data to when callback', () => {
@@ -442,9 +441,9 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTpl } = gen.fs;
-      assert.equal(copyTpl.callCount, 0);
+      expect(copyTpl.callCount).toBe(0);
 
-      assert.equal(receivedData, templateData);
+      expect(receivedData).toBe(templateData);
     });
   });
 
@@ -472,12 +471,12 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplatesAsync([{ source: passedArg1 }], data);
 
       const { copyTplAsync } = gen.fs;
-      assert.equal(copyTplAsync.callCount, 1);
+      expect(copyTplAsync.callCount).toBe(1);
 
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[ARG_FROM], passedArg1);
-      assert.equal(firsCall.args[ARG_TO], passedArg1);
-      assert.equal(firsCall.args[ARG_DATA], data);
+      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
+      expect(firsCall.args[ARG_DATA]).toBe(data);
     });
 
     it('handles more than 1 template', () => {
@@ -500,17 +499,17 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTplAsync } = gen.fs;
-      assert.equal(copyTplAsync.callCount, 2);
+      expect(copyTplAsync.callCount).toBe(2);
 
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[ARG_FROM], passedArg1);
-      assert.equal(firsCall.args[ARG_TO], passedArg1);
-      assert.equal(firsCall.args[ARG_DATA], data);
+      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
+      expect(firsCall.args[ARG_DATA]).toBe(data);
 
       const secondCall = copyTplAsync.getCall(1);
-      assert.equal(secondCall.args[ARG_FROM], secondCallArg1);
-      assert.equal(secondCall.args[ARG_TO], secondCallArg2);
-      assert.equal(secondCall.args[ARG_DATA], data);
+      expect(secondCall.args[ARG_FROM]).toBe(secondCallArg1);
+      expect(secondCall.args[ARG_TO]).toBe(secondCallArg2);
+      expect(secondCall.args[ARG_DATA]).toBe(data);
       expect(secondCall.args[ARG_COPYSETTINGS]).toMatchObject({ ...copyOptions, fromBasePath: expect.any(String) });
     });
 
@@ -535,12 +534,12 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTplAsync } = gen.fs;
-      assert.equal(copyTplAsync.callCount, 1);
+      expect(copyTplAsync.callCount).toBe(1);
 
       const firsCall = copyTplAsync.getCall(0);
-      assert.equal(firsCall.args[ARG_FROM], passedArg1);
-      assert.equal(firsCall.args[ARG_TO], passedArg1);
-      assert.equal(firsCall.args[ARG_DATA], data);
+      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
+      expect(firsCall.args[ARG_DATA]).toBe(data);
     });
 
     it('passes the data to when callback', () => {
@@ -561,9 +560,9 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTplAsync } = gen.fs;
-      assert.equal(copyTplAsync.callCount, 0);
+      expect(copyTplAsync.callCount).toBe(0);
 
-      assert.equal(receivedData, templateData);
+      expect(receivedData).toBe(templateData);
     });
   });
 });

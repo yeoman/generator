@@ -1,4 +1,3 @@
-import assert from 'node:assert';
 import fs from 'node:fs';
 import os from 'node:os';
 import path, { dirname } from 'node:path';
@@ -41,8 +40,8 @@ describe('Storage', () => {
   afterEach(() => {
     if (fs.existsSync(storePath)) {
       const json = editor.read(storePath);
-      assert.ok(json!.endsWith('\n'));
-      assert.ok(!json!.endsWith('\n\n'));
+      expect(json!.endsWith('\n').toBeTruthy());
+      expect(!json!.endsWith('\n\n').toBeTruthy());
       rm(storePath);
       process.chdir(beforeDir);
     }
@@ -50,36 +49,36 @@ describe('Storage', () => {
 
   describe('.constructor()', () => {
     it('require a parameter', () => {
-      assert.throws(() => {
+      expect(() => {
         // @ts-expect-error invalid arguments
         new Storage();
-      });
+      }).toThrow();
     });
 
     it('require at least 2 parameter', () => {
-      assert.throws(() => {
+      expect(() => {
         // @ts-expect-error invalid arguments
         new Storage({});
-      });
+      }).toThrow();
     });
 
     it('take a path parameter', () => {
       const store = new Storage('test', editor, path.join(_dirname, './fixtures/config.json'));
-      assert.equal(store.get('testFramework'), 'mocha');
-      assert.ok(store.existed);
+      expect(store.get('testFramework')).toBe('mocha');
+      expect(store.existed).toBeTruthy();
     });
 
     it('take a fs and path parameter without name', () => {
       const store = new Storage(editor, path.join(_dirname, './fixtures/config.json'));
-      assert.equal(store.get('test')!.testFramework, 'mocha');
-      assert.ok(store.existed);
+      expect(store.get('test')!.testFramework).toBe('mocha');
+      expect(store.existed).toBeTruthy();
     });
   });
 
   it('a config path is required', () => {
-    assert.throws(() => {
+    expect(() => {
       // @ts-expect-error invalid arguments
-      new Storage('yo', editor);
+      new Storage('yo').toThrow(editor);
     });
   });
 
@@ -94,7 +93,7 @@ describe('Storage', () => {
     it('namespace each store sharing the same store file', () => {
       const localStore = new Storage('foobar', editor, storePath);
       localStore.set('foo', 'something else');
-      assert.equal(store.get('foo'), 'bar');
+      expect(store.get('foo')).toBe('bar');
     });
 
     beforeEach(() => {
@@ -103,8 +102,8 @@ describe('Storage', () => {
     });
 
     it('get values', () => {
-      assert.equal(store.get('testFramework'), 'mocha');
-      assert.equal(store.get('name'), 'test');
+      expect(store.get('testFramework')).toBe('mocha');
+      expect(store.get('name')).toBe('test');
     });
   });
 
@@ -118,24 +117,24 @@ describe('Storage', () => {
 
     it('set values', () => {
       store.set('name', 'Yeoman!');
-      assert.equal(store.get('name'), 'Yeoman!');
+      expect(store.get('name')).toBe('Yeoman!');
     });
 
     it('set multiple values at once', () => {
       store.set({ foo: 'bar', john: 'doe' });
-      assert.equal(store.get('foo'), 'bar');
-      assert.equal(store.get('john'), 'doe');
+      expect(store.get('foo')).toBe('bar');
+      expect(store.get('john')).toBe('doe');
     });
 
-    it('throws when invalid JSON values are passed', function () {
-      assert.throws(store.set.bind(this, 'foo', () => {}));
+    it('throws when invalid JSON values are passed', () => {
+      expect(store.set.bind(this, 'foo', () => {})).toThrow();
     });
 
     it('save on each changes', () => {
       store.set('foo', 'bar');
-      assert.equal(editor.readJSON(storePath).test.foo, 'bar');
+      expect(editor.readJSON(storePath).test.foo).toBe('bar');
       store.set('foo', 'oo');
-      assert.equal(editor.readJSON(storePath).test.foo, 'oo');
+      expect(editor.readJSON(storePath).test.foo).toBe('oo');
     });
 
     describe('@return', () => {
@@ -149,11 +148,11 @@ describe('Storage', () => {
       });
 
       it('the saved value (with key)', () => {
-        assert.equal(store.set('name', 'Yeoman!'), 'Yeoman!');
+        expect(store.set('name', 'Yeoman!')).toBe('Yeoman!');
       });
 
       it('the saved value (without key)', () => {
-        assert.deepEqual(store.set({ foo: 'bar', john: 'doe' }), {
+        expect(store.set({ foo: 'bar', john: 'doe' })).toEqual({
           foo: 'bar',
           john: 'doe',
         });
@@ -161,7 +160,7 @@ describe('Storage', () => {
 
       it('the saved value (update values)', () => {
         store.set({ foo: 'bar', john: 'doe' });
-        assert.deepEqual(store.set({ foo: 'moo' }), {
+        expect(store.set({ foo: 'moo' })).toEqual({
           foo: 'moo',
           john: 'doe',
         });
@@ -183,8 +182,8 @@ describe('Storage', () => {
         store.set('foo', 'bar');
 
         const json = editor.readJSON(storePath);
-        assert.equal(json.test.foo, 'bar');
-        assert.equal(json.test2.bar, 'foo');
+        expect(json.test.foo).toBe('bar');
+        expect(json.test2.bar).toBe('foo');
       });
     });
 
@@ -202,12 +201,12 @@ describe('Storage', () => {
         store2.set('bar', 'foo');
         store.set('foo', 'bar');
 
-        assert.equal(store2.get('foo'), 'bar');
-        assert.equal(store.get('bar'), 'foo');
+        expect(store2.get('foo')).toBe('bar');
+        expect(store.get('bar')).toBe('foo');
 
         const json = editor.readJSON(storePath);
-        assert.equal(json.test.foo, 'bar');
-        assert.equal(json.test.bar, 'foo');
+        expect(json.test.foo).toBe('bar');
+        expect(json.test.bar).toBe('foo');
       });
     });
   });
@@ -225,12 +224,12 @@ describe('Storage', () => {
     });
 
     it('get all values', () => {
-      assert.deepEqual(store.getAll().foo, 'bar');
+      expect(store.getAll().foo).toEqual('bar');
     });
 
     it('does not return a reference to the inner store', () => {
       store.getAll().foo = 'uhoh';
-      assert.equal(store.getAll().foo, 'bar');
+      expect(store.getAll().foo).toBe('bar');
     });
   });
 
@@ -245,7 +244,7 @@ describe('Storage', () => {
 
     it('delete value', () => {
       store.delete('name');
-      assert.equal(store.get('name'), undefined);
+      expect(store.get('name')).toBe(undefined);
     });
   });
 
@@ -261,12 +260,12 @@ describe('Storage', () => {
     it('set defaults values if not predefined', () => {
       store.defaults({ val1: 3, val2: 4 });
 
-      assert.equal(store.get('val1'), 1);
-      assert.equal(store.get('val2'), 4);
+      expect(store.get('val1')).toBe(1);
+      expect(store.get('val2')).toBe(4);
     });
 
     it('require an Object as argument', () => {
-      assert.throws(store.defaults.bind(store, 'foo'));
+      expect(() => store.defaults('foo')).toThrow();
     });
 
     describe('@return', () => {
@@ -282,18 +281,18 @@ describe('Storage', () => {
       });
 
       it('the saved value when passed an empty object', () => {
-        assert.deepEqual(store.defaults({}), { foo: 'bar', val1: 1 });
+        expect(store.defaults({})).toEqual({ foo: 'bar', val1: 1 });
       });
 
       it('the saved value when passed the same key', () => {
-        assert.deepEqual(store.defaults({ foo: 'baz' }), {
+        expect(store.defaults({ foo: 'baz' })).toEqual({
           foo: 'bar',
           val1: 1,
         });
       });
 
       it('the saved value when passed new key', () => {
-        assert.deepEqual(store.defaults({ food: 'pizza' }), {
+        expect(store.defaults({ food: 'pizza' })).toEqual({
           foo: 'bar',
           val1: 1,
           food: 'pizza',
@@ -314,12 +313,12 @@ describe('Storage', () => {
     it('should merge values if not predefined', () => {
       store.merge({ val1: 3, val2: 4 });
 
-      assert.strictEqual(store.get('val1'), 3);
-      assert.strictEqual(store.get('val2'), 4);
+      expect(store.get('val1')).toBe(3);
+      expect(store.get('val2')).toBe(4);
     });
 
     it('should require an Object as argument', () => {
-      assert.throws(store.defaults.bind(store, 'foo'));
+      expect(() => store.defaults('foo')).toThrow();
     });
 
     describe('@return', () => {
@@ -335,18 +334,18 @@ describe('Storage', () => {
       });
 
       it('should return the original object', () => {
-        assert.deepStrictEqual(store.merge({}), { foo: 'bar', val1: 1 });
+        expect(store.merge({})).toStrictEqual({ foo: 'bar', val1: 1 });
       });
 
       it('should return an object with replaced values', () => {
-        assert.deepStrictEqual(store.merge({ foo: 'baz' }), {
+        expect(store.merge({ foo: 'baz' })).toStrictEqual({
           foo: 'baz',
           val1: 1,
         });
       });
 
       it('should return an object with new values', () => {
-        assert.deepStrictEqual(store.merge({ food: 'pizza' }), {
+        expect(store.merge({ food: 'pizza' })).toStrictEqual({
           foo: 'bar',
           val1: 1,
           food: 'pizza',
@@ -366,7 +365,7 @@ describe('Storage', () => {
     it('stores sharing the same store file with and without namespace', () => {
       const localstore = new Storage(editor, storePath);
       localstore.set('test', { bar: 'foo' });
-      assert.equal(store.get('bar'), 'foo');
+      expect(store.get('bar')).toBe('foo');
     });
   });
 
@@ -380,11 +379,11 @@ describe('Storage', () => {
 
     it('#getPath() & #setPath()', () => {
       store.set('name', { name: 'test' });
-      assert.ok(store.getPath('name'));
-      assert.equal(store.getPath('name.name'), 'test');
-      assert.equal(store.setPath('name.name', 'changed'), 'changed');
-      assert.equal(store.getPath('name.name'), 'changed');
-      assert.equal(store.get('name').name, 'changed');
+      expect(store.getPath('name')).toBeTruthy();
+      expect(store.getPath('name.name')).toBe('test');
+      expect(store.setPath('name.name', 'changed')).toBe('changed');
+      expect(store.getPath('name.name')).toBe('changed');
+      expect(store.get('name').name).toBe('changed');
     });
   });
 
@@ -402,13 +401,13 @@ describe('Storage', () => {
       });
 
       it('should get and set value', () => {
-        assert.equal(pathStore.setPath('name', 'initial'), 'initial');
-        assert.equal(store.get('path').name, 'initial');
-        assert.equal(store.getPath('path').name, 'initial');
+        expect(pathStore.setPath('name', 'initial')).toBe('initial');
+        expect(store.get('path').name).toBe('initial');
+        expect(store.getPath('path').name).toBe('initial');
         store.set('path', { name: 'test' });
-        assert.equal(pathStore.get('name'), 'test');
+        expect(pathStore.get('name')).toBe('test');
         pathStore.set('name', 'changed');
-        assert.equal(store.get('path').name, 'changed');
+        expect(store.get('path').name).toBe('changed');
       });
     });
     describe('with a path unsafe string', () => {
@@ -420,14 +419,14 @@ describe('Storage', () => {
       });
 
       it('should get and set value', () => {
-        assert.equal(pathStore.setPath('name', 'initial'), 'initial');
-        assert.equal(store.get(keyName).name, 'initial');
+        expect(pathStore.setPath('name', 'initial')).toBe('initial');
+        expect(store.get(keyName).name).toBe('initial');
         // @ts-expect-error pattern not supported by types
-        assert.equal(store.getPath(`["${keyName}"]`).name, 'initial');
+        expect(store.getPath(`["${keyName}"]`).name).toBe('initial');
         store.set(keyName, { name: 'test' });
-        assert.equal(pathStore.get('name'), 'test');
+        expect(pathStore.get('name')).toBe('test');
         pathStore.set('name', 'changed');
-        assert.equal(store.get(keyName).name, 'changed');
+        expect(store.get(keyName).name).toBe('changed');
       });
     });
   });
@@ -443,12 +442,12 @@ describe('Storage', () => {
     });
 
     it('get and set value', () => {
-      assert.equal(pathStore.setPath('name', 'initial'), 'initial');
-      assert.equal(store.get('path').name, 'initial');
+      expect(pathStore.setPath('name', 'initial')).toBe('initial');
+      expect(store.get('path').name).toBe('initial');
       store.set('path', { name: 'test' });
-      assert.equal(pathStore.get('name'), 'test');
+      expect(pathStore.get('name')).toBe('test');
       pathStore.set('name', 'changed');
-      assert.equal(store.get('path').name, 'changed');
+      expect(store.get('path').name).toBe('changed');
     });
   });
 
@@ -463,37 +462,37 @@ describe('Storage', () => {
 
     it('sets values', () => {
       proxy.name = 'Yeoman!';
-      assert.equal(store.get('name'), 'Yeoman!');
+      expect(store.get('name')).toBe('Yeoman!');
     });
 
     it('sets multiple values at once', () => {
       Object.assign(proxy, { foo: 'bar', john: 'doe' });
-      assert.equal(store.get('foo'), 'bar');
-      assert.equal(store.get('john'), 'doe');
+      expect(store.get('foo')).toBe('bar');
+      expect(store.get('john')).toBe('doe');
     });
 
     it('gets values', () => {
       store.set('name', 'Yeoman!');
-      assert.equal(proxy.name, 'Yeoman!');
+      expect(proxy.name).toBe('Yeoman!');
     });
 
     it('works with spread operator', () => {
       store.set({ foo: 'bar', john: 'doe' });
 
       const spread = { ...proxy };
-      assert.equal(spread.foo, 'bar');
-      assert.equal(spread.john, 'doe');
+      expect(spread.foo).toBe('bar');
+      expect(spread.john).toBe('doe');
     });
 
     it('works with in operator', () => {
       store.set({ foo: 'bar', john: 'doe' });
-      assert.ok('foo' in proxy);
-      assert.ok(!('foo2' in proxy));
+      expect('foo' in proxy).toBeTruthy();
+      expect('foo2' in proxy).toBeFalsy();
     });
 
     it('works with deepEquals', () => {
       store.set({ foo: 'bar', john: 'doe' });
-      assert.deepStrictEqual({ ...proxy }, { foo: 'bar', john: 'doe' });
+      expect({ ...proxy }).toStrictEqual({ foo: 'bar', john: 'doe' });
     });
   });
 
@@ -510,38 +509,38 @@ describe('Storage', () => {
     });
 
     it('should load', () => {
-      assert.ok(store._cachedStore);
+      expect(store._cachedStore).toBeTruthy();
     });
 
     it('should not load when disabled', () => {
       const store = new Storage('test', editor, storePath, {
         disableCache: true,
       });
-      assert.ok(store._cachedStore === undefined);
+      expect(store._cachedStore === undefined).toBeTruthy();
       store.get('foo');
-      assert.ok(store._cachedStore === undefined);
+      expect(store._cachedStore === undefined).toBeTruthy();
     });
 
     it('cleanups when the file changes', () => {
       editor.writeJSON(store.path, {});
-      assert.ok(store._cachedStore === undefined);
+      expect(store._cachedStore === undefined).toBeTruthy();
     });
 
     it("doesn't cleanup when another file changes", () => {
       editor.write('a.txt', 'anything');
-      assert.ok(store._cachedStore);
+      expect(store._cachedStore).toBeTruthy();
     });
 
     it('cleanups when per file cache is disabled and another file changes', () => {
       editor.writeJSON(store.path, { disableCacheByFile: true });
       editor.write('a.txt', 'anything');
-      assert.ok(store._cachedStore === undefined);
+      expect(store._cachedStore === undefined).toBeTruthy();
     });
 
     // Compatibility for mem-fs <= 1.1.3
     it('cleanups when change event argument is undefined', () => {
       memFsInstance.emit('change');
-      assert.ok(store._cachedStore === undefined);
+      expect(store._cachedStore === undefined).toBeTruthy();
     });
   });
 
@@ -555,9 +554,7 @@ describe('Storage', () => {
       store.set('array', [3, 2, 1]);
     });
     it('should write non sorted file', () => {
-      assert.strictEqual(
-        editor.read(storePath),
-        `{
+      expect(editor.read(storePath)).toBe(`{
   "test": {
     "foo": "bar",
     "bar": "foo",
@@ -568,8 +565,7 @@ describe('Storage', () => {
     ]
   }
 }
-`,
-      );
+`);
     });
   });
 
@@ -586,9 +582,7 @@ describe('Storage', () => {
       store.set('object', { b: 'shouldBeLast', a: 'shouldBeFirst' });
     });
     it('should write sorted file', () => {
-      assert.strictEqual(
-        editor.read(storePath),
-        `{
+      expect(editor.read(storePath)).toBe(`{
   "test": {
     "array": [
       3,
@@ -603,8 +597,7 @@ describe('Storage', () => {
     }
   }
 }
-`,
-      );
+`);
     });
   });
 

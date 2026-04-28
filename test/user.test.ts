@@ -1,5 +1,4 @@
-import assert from 'node:assert';
-import { beforeEach, describe, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { simpleGit } from 'simple-git';
 import helpers from 'yeoman-test';
 import Generator from '../src/index.js';
@@ -20,13 +19,13 @@ describe('Base#user', () => {
   describe('.git', () => {
     describe('.name()', () => {
       it('is the name used by git', async () => {
-        assert.equal(await user.git.name(), 'Yeoman');
+        expect(await user.git.name()).toBe('Yeoman');
       });
     });
 
     describe('.email()', () => {
       it('is the email used by git', async () => {
-        assert.equal(await user.git.email(), 'yo@yeoman.io');
+        expect(await user.git.email()).toBe('yo@yeoman.io');
       });
     });
   });
@@ -51,7 +50,7 @@ describe('Base#user', () => {
       */
 
       it('is the username used by GitHub', async () => {
-        assert.equal(await user.github.username(), 'mockname');
+        expect(await user.github.username()).toBe('mockname');
       });
     });
   });

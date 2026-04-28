@@ -4,7 +4,6 @@ import os from 'node:os';
 import { beforeEach, describe, expect, it, vitest } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import Environment from 'yeoman-environment';
-import assert from 'node:assert';
 import { valid as semverValid } from 'semver';
 import Base from './utils.js';
 
@@ -31,17 +30,14 @@ describe('Generators module', () => {
     });
 
     it('should expose yoGeneratorVersion', () => {
-      assert.ok(
-        semverValid(generator.yoGeneratorVersion),
-        `Not valid version ${generator.yoGeneratorVersion as string}`,
-      );
+      expect(semverValid(generator.yoGeneratorVersion)).toBeTruthy();
     });
 
     it('is an EventEmitter', () =>
       new Promise<void>(done => {
-        assert.ok(generator instanceof EventEmitter);
-        assert.strictEqual(typeof generator.on, 'function');
-        assert.strictEqual(typeof generator.emit, 'function');
+        expect(generator instanceof EventEmitter).toBeTruthy();
+        expect(typeof generator.on).toBe('function');
+        expect(typeof generator.emit).toBe('function');
         generator.on('yay-o-man', done);
         generator.emit('yay-o-man');
       }));
@@ -49,11 +45,11 @@ describe('Generators module', () => {
     it('emits done event', () =>
       new Promise<void>(done => {
         env.on(`done$${NAMESPACE}#exec`, data => {
-          assert.ok(data.generator === generator);
-          assert.ok(`done$${NAMESPACE}#exec`.includes(data.namespace));
-          assert.ok(data.namespace === NAMESPACE);
-          assert.ok(data.priorityName === 'default');
-          assert.ok(data.queueName === 'default');
+          expect(data.generator === generator).toBeTruthy();
+          expect(`done$${NAMESPACE}#exec`.includes(data.namespace)).toBeTruthy();
+          expect(data.namespace === NAMESPACE).toBeTruthy();
+          expect(data.priorityName === 'default').toBeTruthy();
+          expect(data.queueName === 'default').toBeTruthy();
           done();
         });
         generator.run().catch(() => {});
@@ -65,7 +61,7 @@ describe('Generators module', () => {
       env: env,
       resolved: 'test',
     });
-    assert.equal(path.join(os.homedir(), '.yo-rc-global.json'), generator._globalConfig.path);
+    expect(generator._globalConfig.path).toBe(path.join(os.homedir(), '.yo-rc-global.json'));
   });
 
   it('with localConfigOnly option', () => {
@@ -74,7 +70,7 @@ describe('Generators module', () => {
       resolved: 'test',
       localConfigOnly: true,
     });
-    assert.equal(path.join(env.cwd, '.yo-rc-global.json'), generator._globalConfig.path);
+    expect(generator._globalConfig.path).toBe(path.join(env.cwd, '.yo-rc-global.json'));
   });
 
   describe('#run', () => {
@@ -111,15 +107,15 @@ describe('Generators module', () => {
     it('with path and name', () => {
       const global = path.join(env.cwd, '.yo-rc-global.json');
       const customStorage = generator.createStorage(global, '*');
-      assert.equal(global, customStorage.path);
-      assert.equal('*', customStorage.name);
+      expect(global).toBe(customStorage.path);
+      expect('*').toBe(customStorage.name);
     });
 
     it('with path', () => {
       const global = path.join(env.cwd, '.yo-rc-global.json');
       const customStorage = generator.createStorage(global);
-      assert.equal(global, customStorage.path);
-      assert.equal(undefined, customStorage.name);
+      expect(global).toBe(customStorage.path);
+      expect(customStorage.name).toBeUndefined();
     });
   });
 
@@ -182,7 +178,7 @@ describe('Generators module', () => {
       try {
         new Generator();
       } catch (error) {
-        assert.equal(error.message, 'This generator requires an environment.');
+        expect(error.message).toBe('This generator requires an environment.');
         done();
       }
     }));
@@ -193,8 +189,7 @@ describe('Generators module', () => {
       try {
         new Generator({ env: {} });
       } catch (error) {
-        assert.equal(
-          error.message,
+        expect((error as Error).message).toBe(
           "Current environment doesn't provides some necessary feature this generator needs.",
         );
         done();

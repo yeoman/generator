@@ -1,9 +1,8 @@
-import { beforeEach, describe, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import type { SinonSpy } from 'sinon';
 import { assert as sinonAssert, spy as sinonSpy } from 'sinon';
 import Environment from 'yeoman-environment';
-import assert from 'node:assert';
 import helpers from 'yeoman-test';
 import Base from './utils.js';
 
@@ -93,10 +92,10 @@ describe('Multiples generators', () => {
         spyEnd1,
         spyEnd2,
       );
-      assert.ok(spyInit1.calledAfter(runSpy));
-      assert.ok(spyInit2.calledAfter(spyInit1));
-      assert.ok(spyExec1.calledAfter(spyInit2));
-      assert.ok(spyExec2.calledAfter(spyExec1));
+      expect(spyInit1.calledAfter(runSpy)).toBeTruthy();
+      expect(spyInit2.calledAfter(spyInit1)).toBeTruthy();
+      expect(spyExec1.calledAfter(spyInit2)).toBeTruthy();
+      expect(spyExec2.calledAfter(spyExec1)).toBeTruthy();
     });
 
     it('runs multiple composed generators (reverse)', async () => {
@@ -117,10 +116,10 @@ describe('Multiples generators', () => {
         spyEnd2,
         spyEnd1,
       );
-      assert.ok(spyInit2.calledAfter(runSpy));
-      assert.ok(spyInit1.calledAfter(spyInit2));
-      assert.ok(spyExec2.calledAfter(spyInit1));
-      assert.ok(spyExec1.calledAfter(spyExec2));
+      expect(spyInit2.calledAfter(runSpy)).toBeTruthy();
+      expect(spyInit1.calledAfter(spyInit2)).toBeTruthy();
+      expect(spyExec2.calledAfter(spyInit1)).toBeTruthy();
+      expect(spyExec1.calledAfter(spyExec2)).toBeTruthy();
     });
 
     it('runs 3 composed generators', async () => {
@@ -151,12 +150,12 @@ describe('Multiples generators', () => {
         spyEnd1,
         spyEnd2,
       );
-      assert.ok(spyInit1.calledAfter(runSpy));
-      assert.ok(spyInit2.calledAfter(spyInit1));
-      assert.ok(spyInit3.calledAfter(spyInit2));
-      assert.ok(spyExec1.calledAfter(spyInit3));
-      assert.ok(spyExec2.calledAfter(spyExec1));
-      assert.ok(spyExec3.calledAfter(spyExec2));
+      expect(spyInit1.calledAfter(runSpy)).toBeTruthy();
+      expect(spyInit2.calledAfter(spyInit1)).toBeTruthy();
+      expect(spyInit3.calledAfter(spyInit2)).toBeTruthy();
+      expect(spyExec1.calledAfter(spyInit3)).toBeTruthy();
+      expect(spyExec2.calledAfter(spyExec1)).toBeTruthy();
+      expect(spyExec3.calledAfter(spyExec2)).toBeTruthy();
     });
 
     it('runs multiple composed generators inside a running generator', () =>
@@ -209,17 +208,17 @@ describe('Multiples generators', () => {
               spyEnd1,
               spyEnd2,
             );
-            assert.ok(writingSpy1.calledAfter(runSpy));
-            assert.ok(spyInit1.calledAfter(writingSpy1));
-            assert.ok(spyInit2.calledAfter(spyInit1));
-            assert.ok(spyExec1.calledAfter(spyInit2));
-            assert.ok(spyExec2.calledAfter(spyExec1));
-            assert.ok(writingSpy2.calledAfter(spyExec2));
-            assert.ok(spyWrite1.calledAfter(writingSpy2));
-            assert.ok(spyWrite2.calledAfter(spyWrite1));
-            assert.ok(endSpy.calledAfter(spyWrite2));
-            assert.ok(spyEnd1.calledAfter(endSpy));
-            assert.ok(spyEnd2.calledAfter(spyEnd1));
+            expect(writingSpy1.calledAfter(runSpy)).toBeTruthy();
+            expect(spyInit1.calledAfter(writingSpy1)).toBeTruthy();
+            expect(spyInit2.calledAfter(spyInit1)).toBeTruthy();
+            expect(spyExec1.calledAfter(spyInit2)).toBeTruthy();
+            expect(spyExec2.calledAfter(spyExec1)).toBeTruthy();
+            expect(writingSpy2.calledAfter(spyExec2)).toBeTruthy();
+            expect(spyWrite1.calledAfter(writingSpy2)).toBeTruthy();
+            expect(spyWrite2.calledAfter(spyWrite1)).toBeTruthy();
+            expect(endSpy.calledAfter(spyWrite2)).toBeTruthy();
+            expect(spyEnd1.calledAfter(endSpy)).toBeTruthy();
+            expect(spyEnd2.calledAfter(spyEnd1)).toBeTruthy();
             done();
           });
         }, 100);
@@ -283,18 +282,18 @@ describe('Multiples generators', () => {
               spyEnd1,
               spyEnd2,
             );
-            assert.ok(writingSpy1.calledAfter(runSpy));
-            assert.ok(spyInit1.calledAfter(writingSpy1));
-            assert.ok(spyExec1.calledAfter(spyInit1));
-            assert.ok(writingSpy2.calledAfter(spyExec1));
-            assert.ok(spyInit2.calledAfter(writingSpy2));
-            assert.ok(spyExec2.calledAfter(spyExec1));
-            assert.ok(writingSpy3.calledAfter(spyExec2));
-            assert.ok(spyWrite1.calledAfter(writingSpy3));
-            assert.ok(spyWrite2.calledAfter(spyWrite1));
-            assert.ok(endSpy.calledAfter(spyWrite2));
-            assert.ok(spyEnd1.calledAfter(endSpy));
-            assert.ok(spyEnd2.calledAfter(spyEnd1));
+            expect(writingSpy1.calledAfter(runSpy)).toBeTruthy();
+            expect(spyInit1.calledAfter(writingSpy1)).toBeTruthy();
+            expect(spyExec1.calledAfter(spyInit1)).toBeTruthy();
+            expect(writingSpy2.calledAfter(spyExec1)).toBeTruthy();
+            expect(spyInit2.calledAfter(writingSpy2)).toBeTruthy();
+            expect(spyExec2.calledAfter(spyExec1)).toBeTruthy();
+            expect(writingSpy3.calledAfter(spyExec2)).toBeTruthy();
+            expect(spyWrite1.calledAfter(writingSpy3)).toBeTruthy();
+            expect(spyWrite2.calledAfter(spyWrite1)).toBeTruthy();
+            expect(endSpy.calledAfter(spyWrite2)).toBeTruthy();
+            expect(spyEnd1.calledAfter(endSpy)).toBeTruthy();
+            expect(spyEnd2.calledAfter(spyEnd1)).toBeTruthy();
             done();
           });
         }, 100);
@@ -348,7 +347,7 @@ describe('Multiples generators', () => {
     });
 
     await dummy.run();
-    assert.ok(writingSpy2.calledAfter(writingSpy1));
-    assert.ok(writingSpy3.calledAfter(writingSpy2));
+    expect(writingSpy2.calledAfter(writingSpy1)).toBeTruthy();
+    expect(writingSpy3.calledAfter(writingSpy2)).toBeTruthy();
   });
 });

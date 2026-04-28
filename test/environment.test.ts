@@ -1,6 +1,5 @@
-import assert from 'node:assert';
 import { TestAdapter } from '@yeoman/adapter/testing';
-import { afterAll, beforeAll, describe, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { SinonStub } from 'sinon';
 import { stub as sinonStub } from 'sinon';
 import Environment from 'yeoman-environment';
@@ -43,7 +42,7 @@ describe('Generator with environment version', () => {
         it('returns true', () => {
           getVersionStub.returns('3.0.0');
           // @ts-expect-error - check deprecated api
-          assert.equal(dummy.checkEnvironmentVersion(), true);
+          expect(dummy.checkEnvironmentVersion()).toBe(true);
         });
       });
 
@@ -53,7 +52,7 @@ describe('Generator with environment version', () => {
         });
 
         it('returns true', () => {
-          assert.equal(dummy.checkEnvironmentVersion('3.0.1'), true);
+          expect(dummy.checkEnvironmentVersion('3.0.1')).toBe(true);
         });
 
         describe('with ignoreVersionCheck', () => {
@@ -67,7 +66,7 @@ describe('Generator with environment version', () => {
 
           it('returns true', () => {
             getVersionStub.returns('3.0.1');
-            assert.equal(dummy.checkEnvironmentVersion('3.0.1'), true);
+            expect(dummy.checkEnvironmentVersion('3.0.1')).toBe(true);
           });
         });
       });
@@ -75,7 +74,7 @@ describe('Generator with environment version', () => {
       describe('with greater than required environment', () => {
         it('returns true', () => {
           getVersionStub.returns('3.0.2');
-          assert.equal(dummy.checkEnvironmentVersion('3.0.1'), true);
+          expect(dummy.checkEnvironmentVersion('3.0.1')).toBe(true);
         });
       });
 
@@ -85,15 +84,14 @@ describe('Generator with environment version', () => {
         });
 
         it('should throw', () => {
-          assert.throws(
-            () => dummy.checkEnvironmentVersion('3.0.1'),
+          expect(() => dummy.checkEnvironmentVersion('3.0.1')).toThrow(
             /requires yeoman-environment at least 3.0.1, current version is 3.0.0/,
           );
         });
 
         describe('with warning', () => {
           it('should return false', () => {
-            assert.equal(dummy.checkEnvironmentVersion('3.0.1', true), false);
+            expect(dummy.checkEnvironmentVersion('3.0.1', true)).toBe(false);
           });
         });
 
@@ -107,7 +105,7 @@ describe('Generator with environment version', () => {
           });
 
           it('returns false', () => {
-            assert.equal(dummy.checkEnvironmentVersion('3.0.1'), false);
+            expect(dummy.checkEnvironmentVersion('3.0.1')).toBe(false);
           });
         });
       });
@@ -115,14 +113,14 @@ describe('Generator with environment version', () => {
       describe('with required inquirer', () => {
         it('returns true', () => {
           getVersionStub.withArgs('inquirer').returns('7.1.0');
-          assert.equal(dummy.checkEnvironmentVersion('inquirer', '7.1.0'), true);
+          expect(dummy.checkEnvironmentVersion('inquirer', '7.1.0')).toBe(true);
         });
       });
 
       describe('with greater than required inquirer', () => {
         it('returns true', () => {
           getVersionStub.withArgs('inquirer').returns('7.1.1');
-          assert.equal(dummy.checkEnvironmentVersion('inquirer', '7.1.0'), true);
+          expect(dummy.checkEnvironmentVersion('inquirer', '7.1.0')).toBe(true);
         });
       });
 
@@ -132,15 +130,14 @@ describe('Generator with environment version', () => {
         });
 
         it('throws exception', () => {
-          assert.throws(
-            () => dummy.checkEnvironmentVersion('inquirer', '7.1.1'),
+          expect(() => dummy.checkEnvironmentVersion('inquirer', '7.1.1')).toThrow(
             /requires inquirer at least 7.1.1, current version is 7.1.0/,
           );
         });
 
         describe('with warning', () => {
           it('returns false', () => {
-            assert.equal(dummy.checkEnvironmentVersion('inquirer', '7.1.1', true), false);
+            expect(dummy.checkEnvironmentVersion('inquirer', '7.1.1', true)).toBe(false);
           });
         });
 
@@ -154,7 +151,7 @@ describe('Generator with environment version', () => {
           });
 
           it('returns false', () => {
-            assert.equal(dummy.checkEnvironmentVersion('inquirer', '7.1.1'), false);
+            expect(dummy.checkEnvironmentVersion('inquirer', '7.1.1')).toBe(false);
           });
         });
       });
@@ -189,11 +186,10 @@ describe('Generator with environment version', () => {
     describe('#checkEnvironmentVersion', () => {
       describe('without args', () => {
         it('throws exception', () => {
-          assert.throws(
+          expect(
             // @ts-expect-error - check deprecated api
             () => dummy.checkEnvironmentVersion(),
-            /requires yeoman-environment at least 2.9.0, current version is less than 2.9.0/,
-          );
+          ).toThrow(/requires yeoman-environment at least 2.9.0, current version is less than 2.9.0/);
         });
       });
 
@@ -209,13 +205,13 @@ describe('Generator with environment version', () => {
         describe('without args', () => {
           it('returns false', () => {
             // @ts-expect-error - check deprecated api
-            assert.equal(dummy.checkEnvironmentVersion(), false);
+            expect(dummy.checkEnvironmentVersion()).toBe(false);
           });
         });
 
         describe('without less then 3.0.0', () => {
           it('returns undefined', () => {
-            assert.equal(dummy.checkEnvironmentVersion('2.9.0'), false);
+            expect(dummy.checkEnvironmentVersion('2.9.0')).toBe(false);
           });
         });
       });
