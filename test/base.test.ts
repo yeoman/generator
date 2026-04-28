@@ -8,8 +8,6 @@ import process from 'node:process';
 import { Buffer } from 'node:buffer';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { extend } from 'lodash-es';
-import type { SinonSpy } from 'sinon';
-import { assert as sinonAssert, fake as sinonFake, spy as sinonSpy } from 'sinon';
 import { passthrough } from '@yeoman/transform';
 import Environment, { type EnvironmentOptions } from 'yeoman-environment';
 import helpers from 'yeoman-test';
@@ -43,7 +41,7 @@ describe('Base', () => {
 
     mkdirSync(resolveddir, { recursive: true });
     Dummy = class extends Base {};
-    Dummy.prototype.exec = sinonSpy();
+    Dummy.prototype.exec = vi.fn();
 
     dummy = new Dummy(['bar', 'baz', 'bom'], {
       foo: false,
@@ -204,23 +202,23 @@ describe('Base', () => {
   describe('#run()', () => {
     let TestGenerator: typeof Base;
     let testGen: Base;
-    let execSpy: SinonSpy;
+    let execSpy: ReturnType<typeof vi.fn>;
     beforeEach(() => {
       TestGenerator = class extends Base {};
       extend(TestGenerator.prototype, {
-        _beforeQueue: sinonSpy(),
-        exec: sinonSpy(),
-        exec2: sinonSpy(),
-        exec3: sinonSpy(),
-        _private: sinonSpy(),
-        '#composed': sinonSpy(),
+        _beforeQueue: vi.fn(),
+        exec: vi.fn(),
+        exec2: vi.fn(),
+        exec3: vi.fn(),
+        _private: vi.fn(),
+        '#composed': vi.fn(),
         prompting: {
-          m1: sinonSpy(),
-          m2: sinonSpy(),
-          _private: sinonSpy(),
+          m1: vi.fn(),
+          m2: vi.fn(),
+          _private: vi.fn(),
           prop: 'foo',
         },
-        initializing: sinonSpy(),
+        initializing: vi.fn(),
       });
       execSpy = TestGenerator.prototype.exec;
 
@@ -243,14 +241,14 @@ describe('Base', () => {
 
     it('should call _beforeQueue', async () => {
       await testGen.queueTasks();
-      expect(testGen._beforeQueue.calledOnce).toBeTruthy();
+      expect(testGen._beforeQueue).toHaveBeenCalledOnce();
     });
 
     it('run prototype methods (not instances one)', () => {
-      testGen.exec = sinonSpy();
+      testGen.exec = vi.fn();
       return testGen.run().then(() => {
-        expect(execSpy.calledOnce).toBeTruthy();
-        expect(testGen.exec.callCount).toBe(0);
+        expect(execSpy).toHaveBeenCalledOnce();
+        expect(testGen.exec).toHaveBeenCalledTimes(0);
       });
     });
 
@@ -262,7 +260,7 @@ describe('Base', () => {
     it('pass instance .args property to the called methods', () => {
       testGen.args = ['2', 'args'];
       return testGen.run().then(() => {
-        expect(execSpy.withArgs('2', 'args').calledOnce).toBeTruthy();
+        expect(execSpy).toHaveBeenCalledWith('2', 'args');
       });
     });
 
@@ -284,7 +282,7 @@ describe('Base', () => {
 
     it('stop queue processing once an error is thrown', () => {
       const error = new Error('Some error');
-      const spy = sinonSpy();
+      const spy = vi.fn();
 
       TestGenerator.prototype.throwing = () => {
         throw error;
@@ -292,15 +290,15 @@ describe('Base', () => {
 
       TestGenerator.prototype.afterError = spy;
 
-      testGen.on('error', sinonSpy());
+      testGen.on('error', vi.fn());
       return testGen.run().catch(error_ => {
         expect(error_).toBe(error);
       });
     });
 
     it('handle function returning promises as asynchronous', () => {
-      const spy1 = sinonSpy();
-      const spy2 = sinonSpy();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
 
       TestGenerator.prototype.first = async () => {
         return new Promise(resolve => {
@@ -316,7 +314,7 @@ describe('Base', () => {
       };
 
       return testGen.run().then(() => {
-        spy1.calledBefore(spy2);
+        expect(spy1.mock.invocationCallOrder[0]).toBeLessThan(spy2.mock.invocationCallOrder[0]);
       });
     });
 
@@ -363,7 +361,7 @@ describe('Base', () => {
       class Generator extends Base {}
 
       Object.defineProperty(Generator.prototype, 'nonenumerable', {
-        value: sinonSpy(),
+        value: vi.fn(),
         configurable: true,
         writable: true,
       });
@@ -375,32 +373,32 @@ describe('Base', () => {
       });
 
       return gen.run().then(() => {
-        expect(gen.nonenumerable.called).toBeTruthy();
+        expect(gen.nonenumerable).toHaveBeenCalled();
       });
     });
 
     it('ignore underscore prefixed method', () => {
       return testGen.run().then(() => {
-        expect(TestGenerator.prototype._private.notCalled).toBeTruthy();
+        expect(TestGenerator.prototype._private).not.toHaveBeenCalled();
       });
     });
 
     it('ignore hashtag prefixed method', () => {
       return testGen.run().then(() => {
-        expect(TestGenerator.prototype['#composed'].notCalled).toBeTruthy();
+        expect(TestGenerator.prototype['#composed']).not.toHaveBeenCalled();
       });
     });
 
     it('run methods in a queue hash', () => {
       return testGen.run().then(() => {
-        expect(TestGenerator.prototype.prompting.m1.calledOnce).toBeTruthy();
-        expect(TestGenerator.prototype.prompting.m2.calledOnce).toBeTruthy();
+        expect(TestGenerator.prototype.prompting.m1).toHaveBeenCalledOnce();
+        expect(TestGenerator.prototype.prompting.m2).toHaveBeenCalledOnce();
       });
     });
 
     it('ignore underscore prefixed method in a queue hash', () => {
       return testGen.run().then(() => {
-        expect(TestGenerator.prototype.prompting._private.notCalled).toBeTruthy();
+        expect(TestGenerator.prototype.prompting._private).not.toHaveBeenCalled();
       });
     });
 
@@ -409,7 +407,7 @@ describe('Base', () => {
       const promptSpy = TestGenerator.prototype.prompting.m1;
 
       return testGen.run().then(() => {
-        expect(initSpy.calledBefore(promptSpy)).toBeTruthy();
+        expect(initSpy.mock.invocationCallOrder[0]).toBeLessThan(promptSpy.mock.invocationCallOrder[0]);
       });
     });
 
@@ -418,7 +416,7 @@ describe('Base', () => {
       const execSpy = TestGenerator.prototype.exec;
 
       return testGen.run().then(() => {
-        expect(initSpy.calledBefore(execSpy)).toBeTruthy();
+        expect(initSpy.mock.invocationCallOrder[0]).toBeLessThan(execSpy.mock.invocationCallOrder[0]);
       });
     });
 
@@ -480,8 +478,8 @@ describe('Base', () => {
 
     it('can start over the generator', () =>
       new Promise<void>(done => {
-        const spy1 = sinonSpy();
-        const spy2 = sinonSpy();
+        const spy1 = vi.fn();
+        const spy2 = vi.fn();
 
         TestGenerator.prototype.cancel = function () {
           spy1();
@@ -498,15 +496,15 @@ describe('Base', () => {
         };
 
         testGen.run().then(() => {
-          expect(spy1.calledTwice).toBeTruthy();
-          expect(spy2.calledOnce).toBeTruthy();
+          expect(spy1).toHaveBeenCalledTimes(2);
+          expect(spy2).toHaveBeenCalledOnce();
           done();
         });
       }));
 
     it('can queue a method again', () =>
       new Promise<void>(done => {
-        const spy1 = sinonSpy();
+        const spy1 = vi.fn();
 
         TestGenerator.prototype.cancel = function () {
           spy1();
@@ -518,7 +516,7 @@ describe('Base', () => {
         };
 
         testGen.run().then(() => {
-          expect(spy1.calledTwice).toBeTruthy();
+          expect(spy1).toHaveBeenCalledTimes(2);
           done();
         });
       }));
@@ -531,12 +529,12 @@ describe('Base', () => {
     beforeEach(() => {
       TestGenerator = class extends Base {};
       extend(TestGenerator.prototype, {
-        beforeQueue: sinonSpy(),
-        _private: sinonSpy(),
-        '#composed': sinonSpy(),
-        composed: sinonSpy(),
-        '#initializing': sinonSpy(),
-        initializing: sinonSpy(),
+        beforeQueue: vi.fn(),
+        _private: vi.fn(),
+        '#composed': vi.fn(),
+        composed: vi.fn(),
+        '#initializing': vi.fn(),
+        initializing: vi.fn(),
       });
 
       testGen = new TestGenerator(
@@ -553,16 +551,16 @@ describe('Base', () => {
 
     it('should run hashtag prefixed method', async () => {
       await testGen.run();
-      expect(TestGenerator.prototype['#composed'].calledOnce).toBeTruthy();
-      expect(TestGenerator.prototype.composed.notCalled).toBeTruthy();
-      expect(TestGenerator.prototype['#initializing'].calledOnce).toBeTruthy();
-      expect(TestGenerator.prototype.initializing.notCalled).toBeTruthy();
-      expect(TestGenerator.prototype._private.notCalled).toBeTruthy();
+      expect(TestGenerator.prototype['#composed']).toHaveBeenCalledOnce();
+      expect(TestGenerator.prototype.composed).not.toHaveBeenCalled();
+      expect(TestGenerator.prototype['#initializing']).toHaveBeenCalledOnce();
+      expect(TestGenerator.prototype.initializing).not.toHaveBeenCalled();
+      expect(TestGenerator.prototype._private).not.toHaveBeenCalled();
     });
 
     it('should call beforeQueue', async () => {
       await testGen.queueTasks();
-      expect(testGen.beforeQueue.calledOnce).toBeTruthy();
+      expect(testGen.beforeQueue).toHaveBeenCalledOnce();
     });
   });
 
@@ -889,7 +887,7 @@ describe('Base', () => {
         'skip-cache': true,
       });
 
-      spy = sinonSpy();
+      spy = vi.fn();
       GenCompose = class extends Base {};
       GenCompose.prototype.exec = spy;
       env.register(GenCompose, { namespace: 'composed:gen' });
@@ -902,10 +900,9 @@ describe('Base', () => {
     it('runs the composed generators', async () => {
       await dummy.composeWith('composed:gen');
 
-      const runSpy = sinonSpy(dummy, 'run');
+      const runSpy = vi.spyOn(dummy, 'run');
       await dummy.run();
-      sinonAssert.callOrder(runSpy, spy);
-      expect(spy.calledAfter(runSpy)).toBeTruthy();
+      expect(spy.mock.invocationCallOrder[0]).toBeGreaterThan(runSpy.mock.invocationCallOrder[0]);
     });
 
     it('runs the composed Generator class in the passed path', async () => {
@@ -916,8 +913,8 @@ describe('Base', () => {
         path: stubPath,
       });
       await dummy.run();
-      expect(spy.firstCall.thisValue.options.namespace).toBe('mocha');
-      expect(spy.firstCall.thisValue.options.resolved).toBe(createRequire(import.meta.url).resolve(stubPath));
+      expect(spy.mock.instances[0].options.namespace).toBe('mocha');
+      expect(spy.mock.instances[0].options.resolved).toBe(createRequire(import.meta.url).resolve(stubPath));
     });
 
     describe('object as first argument', () => {
@@ -946,7 +943,7 @@ describe('Base', () => {
       };
 
       return dummy.run().then(() => {
-        expect(spy.called).toBeTruthy();
+        expect(spy).toHaveBeenCalled();
       });
     });
 
@@ -957,7 +954,7 @@ describe('Base', () => {
       });
 
       return dummy.run().then(() => {
-        expect(spy.firstCall.thisValue.options.foo).toBe('bar');
+        expect(spy.mock.instances[0].options.foo).toBe('bar');
       });
     });
 
@@ -966,7 +963,7 @@ describe('Base', () => {
       let resolvedStub;
       let LocalDummy;
       beforeEach(async () => {
-        spy = sinonSpy();
+        spy = vi.fn();
         dummy.resolved = _filename;
         stubPath = './fixtures/generator-mocha';
         resolvedStub = require.resolve(stubPath);
@@ -982,7 +979,7 @@ describe('Base', () => {
       it('runs the composed generator', async () => {
         await dummy.composeWith(stubPath, {});
         await dummy.run();
-        expect(LocalDummy.prototype.exec.called).toBeTruthy();
+        expect(LocalDummy.prototype.exec).toHaveBeenCalled();
       });
 
       it('pass options and arguments to the composed generators', async () => {
@@ -991,14 +988,14 @@ describe('Base', () => {
           'skip-install': true,
         });
         await dummy.run();
-        expect(spy.firstCall.thisValue.options.foo).toBe('bar');
+        expect(spy.mock.instances[0].options.foo).toBe('bar');
       });
 
       it('sets correct metadata on the Generator constructor', async () => {
         await dummy.composeWith(stubPath, {});
         await dummy.run();
-        expect(spy.firstCall.thisValue.options.namespace).toBe('mocha');
-        expect(spy.firstCall.thisValue.options.resolved).toBe(resolvedStub);
+        expect(spy.mock.instances[0].options.namespace).toBe('mocha');
+        expect(spy.mock.instances[0].options.resolved).toBe(resolvedStub);
       });
     });
   });
@@ -1080,20 +1077,20 @@ describe('Base', () => {
     });
 
     it('is updated when destinationRoot change', () => {
-      sinonSpy(Dummy.prototype, '_getStorage');
+      const getStorageSpy = vi.spyOn(Dummy.prototype, '_getStorage');
       dummy.destinationRoot('foo');
 
       dummy.config;
-      expect(Dummy.prototype._getStorage.callCount).toBe(1);
+      expect(getStorageSpy).toHaveBeenCalledTimes(1);
       dummy.destinationRoot();
 
       dummy.config;
-      expect(Dummy.prototype._getStorage.callCount).toBe(1);
+      expect(getStorageSpy).toHaveBeenCalledTimes(1);
       dummy.destinationRoot('foo');
 
       dummy.config;
-      expect(Dummy.prototype._getStorage.callCount).toBe(2);
-      Dummy.prototype._getStorage.restore();
+      expect(getStorageSpy).toHaveBeenCalledTimes(2);
+      getStorageSpy.mockRestore();
     });
   });
 
@@ -1119,7 +1116,7 @@ describe('Base', () => {
     beforeEach(() => {
       filepath = path.join(os.tmpdir(), '/yeoman-transform-stream/filea.txt');
       TestGenerator = class extends Base {};
-      TestGenerator.prototype.exec = sinonSpy();
+      TestGenerator.prototype.exec = vi.fn();
       testGen = new TestGenerator([], {
         resolved: 'generator-ember/all/index.js',
         namespace: 'dummy',
@@ -1274,12 +1271,12 @@ describe('Base', () => {
 
     it('triggers end event after all generators methods are ran (#709)', () =>
       new Promise<void>(done => {
-        const endSpy = sinonSpy();
+        const endSpy = vi.fn();
         const GeneratorEnd = class extends Base {
           constructor(args?: string[], options?: BaseOptions) {
             super(args, options);
             this.on('end', () => {
-              sinonAssert.calledOnce(endSpy);
+              expect(endSpy).toHaveBeenCalledOnce();
               done();
             });
           }
@@ -1403,12 +1400,12 @@ describe('Base', () => {
         testQueue: 'This value',
       });
 
-      sinonSpy(env, 'queueTask');
+      const queueTaskSpy = vi.spyOn(env, 'queueTask');
       const noop = () => {};
       gen.queueMethod(noop, 'configuring', noop);
 
-      expect(env.queueTask.calledOnce).toBeTruthy();
-      expect('default').toBe(env.queueTask.getCall(0).args[0]);
+      expect(env.queueTask).toHaveBeenCalledOnce();
+      expect('default').toBe(queueTaskSpy.mock.calls[0][0]);
     });
 
     it('queued method with object, queueName and reject', () => {
@@ -1420,7 +1417,7 @@ describe('Base', () => {
         testQueue: 'This value',
       });
 
-      sinonSpy(env, 'queueTask');
+      const queueTaskSpy = vi.spyOn(env, 'queueTask');
       const noop = () => {};
       const queueName = 'configuring';
       const tasks = {
@@ -1428,8 +1425,8 @@ describe('Base', () => {
       };
       gen.queueMethod(tasks, queueName, noop);
 
-      expect(env.queueTask.calledOnce).toBeTruthy();
-      expect(queueName).toBe(env.queueTask.getCall(0).args[0]);
+      expect(env.queueTask).toHaveBeenCalledOnce();
+      expect(queueName).toBe(queueTaskSpy.mock.calls[0][0]);
     });
   });
 
@@ -1463,8 +1460,8 @@ describe('Base', () => {
         testQueue: 'This value',
       });
 
-      sinonSpy(env, 'queueTask');
-      const method = sinonFake();
+      const queueTaskSpy = vi.spyOn(env, 'queueTask');
+      const method = vi.fn();
       const taskName = 'foo';
       const queueName = 'configuring';
       const arg = {};
@@ -1478,16 +1475,16 @@ describe('Base', () => {
         args: [arg],
       });
 
-      expect(env.queueTask.calledOnce).toBeTruthy();
-      expect(queueName).toBe(env.queueTask.getCall(0).args[0]);
-      expect(env.queueTask.getCall(0).args[2]).toStrictEqual({
+      expect(env.queueTask).toHaveBeenCalledOnce();
+      expect(queueName).toBe(queueTaskSpy.mock.calls[0][0]);
+      expect(queueTaskSpy.mock.calls[0][2]).toStrictEqual({
         once: taskName,
         startQueue: false,
       });
 
       await gen.run();
-      expect(method.calledOnce).toBeTruthy();
-      expect(arg).toBe(method.getCall(0).args[0]);
+      expect(method).toHaveBeenCalledOnce();
+      expect(arg).toBe(method.mock.calls[0][0]);
     });
 
     it('queued method with function and options with reject', async () => {
@@ -1671,15 +1668,15 @@ describe('Base', () => {
     });
 
     it('run custom priorities in correct order', () => {
-      const prePrompting1 = sinonSpy();
-      const preConfiguring1 = sinonSpy();
-      const preConfiguring2 = sinonSpy();
-      const afterEnd = sinonSpy();
+      const prePrompting1 = vi.fn();
+      const preConfiguring1 = vi.fn();
+      const preConfiguring2 = vi.fn();
+      const afterEnd = vi.fn();
 
-      const initializing = sinonSpy();
-      const prompting = sinonSpy();
-      const configuring = sinonSpy();
-      const end = sinonSpy();
+      const initializing = vi.fn();
+      const prompting = vi.fn();
+      const configuring = vi.fn();
+      const end = vi.fn();
 
       extend(TestGenerator.prototype, {
         prePrompting1,
@@ -1700,20 +1697,20 @@ describe('Base', () => {
       });
 
       return testGen.run().then(() => {
-        expect(initializing.calledBefore(preConfiguring1)).toBeTruthy();
-        expect(preConfiguring1.calledBefore(preConfiguring2)).toBeTruthy();
-        expect(preConfiguring2.calledBefore(configuring)).toBeTruthy();
-        expect(configuring.calledBefore(prePrompting1)).toBeTruthy();
-        expect(prePrompting1.calledBefore(prompting)).toBeTruthy();
-        expect(prompting.calledBefore(end)).toBeTruthy();
-        expect(end.calledBefore(afterEnd)).toBeTruthy();
+        expect(initializing.mock.invocationCallOrder[0]).toBeLessThan(preConfiguring1.mock.invocationCallOrder[0]);
+        expect(preConfiguring1.mock.invocationCallOrder[0]).toBeLessThan(preConfiguring2.mock.invocationCallOrder[0]);
+        expect(preConfiguring2.mock.invocationCallOrder[0]).toBeLessThan(configuring.mock.invocationCallOrder[0]);
+        expect(configuring.mock.invocationCallOrder[0]).toBeLessThan(prePrompting1.mock.invocationCallOrder[0]);
+        expect(prePrompting1.mock.invocationCallOrder[0]).toBeLessThan(prompting.mock.invocationCallOrder[0]);
+        expect(prompting.mock.invocationCallOrder[0]).toBeLessThan(end.mock.invocationCallOrder[0]);
+        expect(end.mock.invocationCallOrder[0]).toBeLessThan(afterEnd.mock.invocationCallOrder[0]);
       });
     });
 
     it('correctly run custom priority with once option', async () => {
-      const commonPreConfiguring = sinonSpy();
-      const customPreConfiguring1 = sinonSpy();
-      const customPreConfiguring2 = sinonSpy();
+      const commonPreConfiguring = vi.fn();
+      const customPreConfiguring1 = vi.fn();
+      const customPreConfiguring2 = vi.fn();
 
       extend(TestGenerator.prototype, {
         get preConfiguring1() {
@@ -1746,9 +1743,9 @@ describe('Base', () => {
       });
 
       return testGen.run().then(() => {
-        sinonAssert.calledOnce(commonPreConfiguring);
-        sinonAssert.calledOnce(customPreConfiguring1);
-        sinonAssert.calledOnce(customPreConfiguring2);
+        expect(commonPreConfiguring).toHaveBeenCalledOnce();
+        expect(customPreConfiguring1).toHaveBeenCalledOnce();
+        expect(customPreConfiguring2).toHaveBeenCalledOnce();
       });
     });
   });
@@ -1801,20 +1798,20 @@ describe('Base', () => {
           prompt2: 'prompt2NewValue',
         },
       });
-      promptSpy = sinonSpy(dummy.env.adapter, 'prompt');
+      promptSpy = vi.spyOn(dummy.env.adapter, 'prompt');
       dummy.options.askAnswered = true;
       dummy.config.set('prompt1', 'prompt1Value');
       dummy.config.set('prompt2', 'prompt2Value');
       dummy.config.set('notUsed', 'notUsedValue');
     });
     afterEach(() => {
-      promptSpy.restore();
+      promptSpy.mockRestore();
     });
 
     it('passes config value as answer to adapter', () => {
       const expectedAnswers = { prompt1: 'prompt1Value' };
       return dummy.prompt(input1Prompt, dummy.config).then(_ => {
-        expect(promptSpy.getCall(0).args[1]).toEqual(expectedAnswers);
+        expect(promptSpy.mock.calls[0][1]).toEqual(expectedAnswers);
       });
     });
 
@@ -1824,13 +1821,13 @@ describe('Base', () => {
         prompt2: 'prompt2Value',
       };
       return dummy.prompt([input1Prompt, input2Prompt], dummy.config).then(_ => {
-        expect(promptSpy.getCall(0).args[1]).toEqual(expectedAnswers);
+        expect(promptSpy.mock.calls[0][1]).toEqual(expectedAnswers);
       });
     });
 
     it('passes config values as the question default', () => {
       return dummy.prompt([input1Prompt, input2Prompt], dummy.config).then(_ => {
-        const [prompts, answers] = promptSpy.getCall(0).args;
+        const [[prompts, answers]] = promptSpy.mock.calls;
         expect(prompts[0].default(answers)).toEqual('prompt1Value');
         expect(prompts[1].default(answers)).toEqual('prompt2Value');
       });
@@ -1865,7 +1862,7 @@ describe('Base', () => {
 
     it('passes correct askAnswered option to adapter', () => {
       return dummy.prompt([input1Prompt], dummy.config).then(_ => {
-        expect(promptSpy.getCall(0).args[0][0].askAnswered).toEqual(true);
+        expect(promptSpy.mock.calls[0][0][0].askAnswered).toEqual(true);
       });
     });
   });
