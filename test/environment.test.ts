@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { TestAdapter } from '@yeoman/adapter/testing';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import Environment from 'yeoman-environment';

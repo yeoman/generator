@@ -5,13 +5,14 @@ const _filename = fileURLToPath(import.meta.url);
 
 export default class BaseTest extends Base {
   constructor(
-    options: Omit<Base['options'], 'namespace' | 'resolved'> & Partial<Pick<Base['options'], 'namespace' | 'resolved'>>,
+    options: Omit<Base['options'], 'namespace' | 'resolved' | 'help'> &
+      Partial<Pick<Base['options'], 'namespace' | 'resolved' | 'help'>>,
     features?: Base['features'],
   );
   constructor(
     args?: string[],
-    options?: Omit<Base['options'], 'namespace' | 'resolved'> &
-      Partial<Pick<Base['options'], 'namespace' | 'resolved'>>,
+    options?: Omit<Base['options'], 'namespace' | 'resolved' | 'help'> &
+      Partial<Pick<Base['options'], 'namespace' | 'resolved' | 'help'>>,
     features?: Base['features'],
   );
   constructor(...args: any[]) {

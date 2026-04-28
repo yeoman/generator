@@ -1,4 +1,4 @@
-import Generator from '../src/index.js';
+import Generator from './utils.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { execa, execaCommand, execaCommandSync, execaSync } from 'execa';
 
@@ -35,8 +35,8 @@ describe('generators.Base (actions/spawn-command)', () => {
 
     it('opts given are passed to spawnCommand', () => {
       const spawnSpy = vi.spyOn(testGenerator, 'spawnCommand');
-      testGenerator.spawnCommand('foo', { verbose: true });
-      expect(spawnSpy).toHaveBeenCalledWith('foo', { verbose: true });
+      testGenerator.spawnCommand('foo', { verbose: 'short' });
+      expect(spawnSpy).toHaveBeenCalledWith('foo', { verbose: 'short' });
     });
   });
 
@@ -84,8 +84,8 @@ describe('generators.Base (actions/spawn-command)', () => {
 
     it('opts given are passed to spawnCommandSync', () => {
       const spawnSyncSpy = vi.spyOn(testGenerator, 'spawnCommandSync');
-      testGenerator.spawnCommandSync('foo', { verbose: true });
-      expect(spawnSyncSpy).toHaveBeenCalledWith('foo', { verbose: true });
+      testGenerator.spawnCommandSync('foo', { verbose: 'short' });
+      expect(spawnSyncSpy).toHaveBeenCalledWith('foo', { verbose: 'short' });
     });
   });
 
@@ -102,10 +102,10 @@ describe('generators.Base (actions/spawn-command)', () => {
     });
 
     it('passes any args and opts along to execaSync()', () => {
-      testGenerator.spawnSync('foo', ['arg1', 2, 'the third arg'], { verbose: true });
-      expect(execaSync).toHaveBeenCalledWith('foo', ['arg1', 2, 'the third arg'], {
+      testGenerator.spawnSync('foo', ['arg1', '2', 'the third arg'], { verbose: 'short' });
+      expect(execaSync).toHaveBeenCalledWith('foo', ['arg1', '2', 'the third arg'], {
         cwd: testGenerator.destinationRoot(),
-        verbose: true,
+        verbose: 'short',
       });
     });
 
