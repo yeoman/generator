@@ -610,7 +610,7 @@ export abstract class TasksMixin {
     this: BaseGeneratorImpl,
     { Generator, resolved = Generator.resolved }: { Generator?: any; resolved: string },
     options: EnvironmentComposeOptions<G> = {},
-  ) {
+  ): Promise<G> {
     if (!resolved) {
       throw new Error('Generator path property is not a string');
     }
@@ -638,7 +638,7 @@ export abstract class TasksMixin {
     return this.env.composeWith<G>(Generator, options);
   }
 
-  private async resolveGeneratorPath(this: BaseGeneratorImpl, maybePath: string) {
+  private async resolveGeneratorPath(this: BaseGeneratorImpl, maybePath: string): Promise<string> {
     // Allows to run a local generator without namespace.
     // Resolve the generator absolute path to current generator;
     const generatorFile = isAbsolute(maybePath) ? maybePath : pathResolve(dirname(this.resolved), maybePath);
@@ -665,7 +665,7 @@ export abstract class TasksMixin {
     this: BaseGeneratorImpl,
     options?: GeneratorPipelineOptions,
     ...transforms: Array<FileTransform<MemFsEditorFile>>
-  ) {
+  ): Promise<void> {
     if (isFileTransform(options)) {
       transforms = [options, ...transforms];
       options = {};
@@ -710,7 +710,7 @@ export abstract class TasksMixin {
     this: BaseGeneratorImpl,
     options?: GeneratorPipelineOptions & { priorityToQueue?: string },
     ...transforms: Array<FileTransform<MemFsEditorFile>>
-  ) {
+  ): typeof this {
     if (isFileTransform(options)) {
       transforms = [options, ...transforms];
       options = {};
