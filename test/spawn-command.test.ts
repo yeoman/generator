@@ -1,6 +1,5 @@
 import Generator from '../src/index.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { spy } from 'sinon';
 import { execa, execaCommand, execaCommandSync, execaSync } from 'execa';
 
 vi.mock('execa', () => ({
@@ -35,9 +34,9 @@ describe('generators.Base (actions/spawn-command)', () => {
     });
 
     it('opts given are passed to spawnCommand', () => {
-      const spawnSpy = spy(testGenerator, 'spawnCommand');
+      const spawnSpy = vi.spyOn(testGenerator, 'spawnCommand');
       testGenerator.spawnCommand('foo', { verbose: true });
-      expect(spawnSpy.calledWith('foo', { verbose: true })).toBeTruthy();
+      expect(spawnSpy).toHaveBeenCalledWith('foo', { verbose: true });
     });
   });
 
@@ -84,9 +83,9 @@ describe('generators.Base (actions/spawn-command)', () => {
     });
 
     it('opts given are passed to spawnCommandSync', () => {
-      const spawnSyncSpy = spy(testGenerator, 'spawnCommandSync');
+      const spawnSyncSpy = vi.spyOn(testGenerator, 'spawnCommandSync');
       testGenerator.spawnCommandSync('foo', { verbose: true });
-      expect(spawnSyncSpy.calledWith('foo', { verbose: true })).toBeTruthy();
+      expect(spawnSyncSpy).toHaveBeenCalledWith('foo', { verbose: true });
     });
   });
 

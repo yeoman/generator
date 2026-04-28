@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
-import { type SinonStub, stub as sinonStub } from 'sinon';
 import type { Data as TemplateData } from 'ejs';
 import Environment from 'yeoman-environment';
 import { BaseGenerator } from '../src/generator.js';
@@ -107,8 +106,8 @@ describe('generators.Base (actions/fs)', () => {
     });
 
     Object.assign(base, {
-      templatePath: sinonStub().returns(baseReturns.templatePath),
-      destinationPath: sinonStub().returns(baseReturns.destinationPath),
+      templatePath: vi.fn().mockReturnValue(baseReturns.templatePath),
+      destinationPath: vi.fn().mockReturnValue(baseReturns.destinationPath),
       renderTemplate: Base.prototype.renderTemplate,
       renderTemplateAsync: Base.prototype.renderTemplateAsync,
       renderTemplates: Base.prototype.renderTemplates,
@@ -129,7 +128,7 @@ describe('generators.Base (actions/fs)', () => {
       'copyTplAsync',
     ]) {
       const returnValue = randomString();
-      base.fs[op] = sinonStub().returns(returnValue);
+      base.fs[op] = vi.fn().mockReturnValue(returnValue);
       returns[op] = returnValue;
     }
   });
@@ -143,8 +142,8 @@ describe('generators.Base (actions/fs)', () => {
     describe(`#${operation.name}`, () => {
       let returnValue: any;
       let expectedReturn: string | undefined;
-      let firstArgumentHandler: SinonStub | undefined;
-      let secondArgumentHandler: SinonStub;
+      let firstArgumentHandler: ReturnType<typeof vi.fn> | undefined;
+      let secondArgumentHandler: ReturnType<typeof vi.fn>;
 
       beforeEach(async () => {
         returnValue = await base[operation.name](passedArg1, passedArg2, passedArg3, passedArg4);
@@ -166,45 +165,45 @@ describe('generators.Base (actions/fs)', () => {
 
       it('handles the first parameter', () => {
         if (firstArgumentHandler) {
-          expect(firstArgumentHandler.getCall(0).args[0]).toBe(passedArg1);
+          expect(firstArgumentHandler.mock.calls[0][0]).toBe(passedArg1);
         }
       });
 
       it.skip('handles the second parameter', () => {
         if (operation.second && operation.first === operation.second) {
-          expect(secondArgumentHandler.calledTwice).toBeTruthy();
-          expect(secondArgumentHandler.getCall(1).args[0]).toMatch(passedArg2);
+          expect(secondArgumentHandler).toHaveBeenCalledTimes(2);
+          expect(secondArgumentHandler.mock.calls[1][0]).toMatch(passedArg2);
         } else if (operation.second) {
-          expect(secondArgumentHandler.calledOnce).toBeTruthy();
-          expect(secondArgumentHandler.getCall(0).args[0]).toMatch(passedArg2);
+          expect(secondArgumentHandler).toHaveBeenCalledOnce();
+          expect(secondArgumentHandler.mock.calls[0][0]).toMatch(passedArg2);
           if (firstArgumentHandler) {
-            expect(firstArgumentHandler.calledOnce).toBeTruthy();
+            expect(firstArgumentHandler).toHaveBeenCalledOnce();
           }
         }
       });
 
       it('calls fs with correct arguments', () => {
         const destCall = base.fs[operation.dest];
-        expect(destCall.calledOnce).toBeTruthy();
-        const call = destCall.getCall(0);
+        expect(destCall).toHaveBeenCalledOnce();
+        const [call] = destCall.mock.calls;
         // First argument should be the trated first arguments
-        expect(call.args[0]).toMatch(operation.first ? baseReturns[operation.first] : passedArg1);
+        expect(call[0]).toMatch(operation.first ? baseReturns[operation.first] : passedArg1);
 
         // Second argument should be the trated first arguments
         if (operation.second) {
-          expect(call.args[1]).toMatch(baseReturns[operation.second]);
+          expect(call[1]).toMatch(baseReturns[operation.second]);
         } else {
-          expect(call.args[1]).toMatch(passedArg2);
+          expect(call[1]).toMatch(passedArg2);
         }
 
         if (operation.dest === 'copy' || operation.dest === 'move') {
-          expect(call.args[2]).toMatchObject(passedArg3);
+          expect(call[2]).toMatchObject(passedArg3);
         } else {
-          expect(call.args[2]).toMatchObject(passedArg3);
+          expect(call[2]).toMatchObject(passedArg3);
         }
-        expect(call.args[3].foo).toMatch(passedArg4.foo);
+        expect(call[3].foo).toMatch(passedArg4.foo);
         if (operation.fromBasePath) {
-          expect(call.args[2].fromBasePath).toMatch(baseReturns[operation.fromBasePath]);
+          expect(call[2].fromBasePath).toMatch(baseReturns[operation.fromBasePath]);
         }
       });
     });
@@ -215,42 +214,38 @@ describe('generators.Base (actions/fs)', () => {
     const getPathReturn = { foo: 'bar' };
 
     beforeEach(() => {
-      sinonStub(gen, 'sourceRoot').returns('');
-      sinonStub(gen, 'destinationRoot').returns('');
-      sinonStub(gen.config, 'getAll').returns(getAllReturn);
-      sinonStub(gen.config, 'getPath').returns(getPathReturn);
+      vi.spyOn(gen, 'sourceRoot').mockReturnValue('');
+      vi.spyOn(gen, 'destinationRoot').mockReturnValue('');
+      vi.spyOn(gen.config, 'getAll').mockReturnValue(getAllReturn);
+      vi.spyOn(gen.config, 'getPath').mockReturnValue(getPathReturn);
 
       for (const op of ['copyTpl']) {
         const returnValue = randomString();
-        sinonStub(gen.fs, op).returns(returnValue);
+        vi.spyOn(gen.fs, op).mockReturnValue(returnValue);
         returns[op] = returnValue;
       }
     });
 
     afterEach(() => {
-      gen.sourceRoot.restore();
-      gen.destinationRoot.restore();
-      gen.config.getAll.restore();
-      gen.config.getPath.restore();
-      for (const op of ['copyTpl']) gen.fs[op].restore();
+      vi.restoreAllMocks();
     });
 
     it('gets default data from config', () => {
       gen.renderTemplate('a', 'b');
       const { copyTpl } = gen.fs;
 
-      expect(copyTpl.calledOnce).toBeTruthy();
-      const firsCall = copyTpl.getCall(0);
-      expect(firsCall.args[ARG_DATA]).toBe(getAllReturn);
+      expect(copyTpl).toHaveBeenCalledOnce();
+      const [firsCall] = (copyTpl as any).mock.calls;
+      expect(firsCall[ARG_DATA]).toBe(getAllReturn);
     });
 
     it('gets data with path from config', () => {
       gen.renderTemplate('a', 'b', 'test');
       const { copyTpl } = gen.fs;
 
-      expect(copyTpl.calledOnce).toBeTruthy();
-      const firsCall = copyTpl.getCall(0);
-      expect(firsCall.args[ARG_DATA]).toBe(getPathReturn);
+      expect(copyTpl).toHaveBeenCalledOnce();
+      const [firsCall] = (copyTpl as any).mock.calls;
+      expect(firsCall[ARG_DATA]).toBe(getPathReturn);
     });
 
     it('concatenates source and destination', () => {
@@ -261,11 +256,11 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplate(source, destination, data);
       const { copyTpl } = gen.fs;
 
-      expect(copyTpl.calledOnce).toBeTruthy();
-      const firsCall = copyTpl.getCall(0);
-      expect(firsCall.args[ARG_FROM]).toBe(path.join(...source));
-      expect(firsCall.args[ARG_TO]).toBe(path.join(...destination));
-      expect(firsCall.args[ARG_DATA]).toBe(data);
+      expect(copyTpl).toHaveBeenCalledOnce();
+      const [firsCall] = (copyTpl as any).mock.calls;
+      expect(firsCall[ARG_FROM]).toBe(path.join(...source));
+      expect(firsCall[ARG_TO]).toBe(path.join(...destination));
+      expect(firsCall[ARG_DATA]).toBe(data);
     });
   });
 
@@ -274,42 +269,38 @@ describe('generators.Base (actions/fs)', () => {
     const getPathReturn = { foo: 'bar' };
 
     beforeEach(() => {
-      sinonStub(gen, 'sourceRoot').returns('');
-      sinonStub(gen, 'destinationRoot').returns('');
-      sinonStub(gen.config, 'getAll').returns(getAllReturn);
-      sinonStub(gen.config, 'getPath').returns(getPathReturn);
+      vi.spyOn(gen, 'sourceRoot').mockReturnValue('');
+      vi.spyOn(gen, 'destinationRoot').mockReturnValue('');
+      vi.spyOn(gen.config, 'getAll').mockReturnValue(getAllReturn);
+      vi.spyOn(gen.config, 'getPath').mockReturnValue(getPathReturn);
 
       for (const op of ['copyTplAsync']) {
         const returnValue = randomString();
-        sinonStub(gen.fs, op).returns(returnValue);
+        vi.spyOn(gen.fs, op).mockReturnValue(returnValue);
         returns[op] = returnValue;
       }
     });
 
     afterEach(() => {
-      gen.sourceRoot.restore();
-      gen.destinationRoot.restore();
-      gen.config.getAll.restore();
-      gen.config.getPath.restore();
-      for (const op of ['copyTplAsync']) gen.fs[op].restore();
+      vi.restoreAllMocks();
     });
 
     it('gets default data from config', () => {
       gen.renderTemplateAsync('a', 'b');
       const { copyTplAsync } = gen.fs;
 
-      expect(copyTplAsync.calledOnce).toBeTruthy();
-      const firsCall = copyTplAsync.getCall(0);
-      expect(firsCall.args[ARG_DATA]).toBe(getAllReturn);
+      expect(copyTplAsync).toHaveBeenCalledOnce();
+      const [firsCall] = (copyTplAsync as any).mock.calls;
+      expect(firsCall[ARG_DATA]).toBe(getAllReturn);
     });
 
     it('gets data with path from config', async () => {
       await gen.renderTemplateAsync('a', 'b', 'test');
       const { copyTplAsync } = gen.fs;
 
-      expect(copyTplAsync.calledOnce).toBeTruthy();
-      const firsCall = copyTplAsync.getCall(0);
-      expect(firsCall.args[ARG_DATA]).toBe(getPathReturn);
+      expect(copyTplAsync).toHaveBeenCalledOnce();
+      const [firsCall] = (copyTplAsync as any).mock.calls;
+      expect(firsCall[ARG_DATA]).toBe(getPathReturn);
     });
 
     it('concatenates source and destination', () => {
@@ -320,30 +311,28 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplateAsync(source, destination, data);
       const { copyTplAsync } = gen.fs;
 
-      expect(copyTplAsync.calledOnce).toBeTruthy();
-      const firsCall = copyTplAsync.getCall(0);
-      expect(firsCall.args[ARG_FROM]).toBe(path.join(...source));
-      expect(firsCall.args[ARG_TO]).toBe(path.join(...destination));
-      expect(firsCall.args[ARG_DATA]).toBe(data);
+      expect(copyTplAsync).toHaveBeenCalledOnce();
+      const [firsCall] = (copyTplAsync as any).mock.calls;
+      expect(firsCall[ARG_FROM]).toBe(path.join(...source));
+      expect(firsCall[ARG_TO]).toBe(path.join(...destination));
+      expect(firsCall[ARG_DATA]).toBe(data);
     });
   });
 
   describe('#renderTemplates', () => {
     beforeEach(() => {
-      sinonStub(gen, 'sourceRoot').returns('');
-      sinonStub(gen, 'destinationRoot').returns('');
+      vi.spyOn(gen, 'sourceRoot').mockReturnValue('');
+      vi.spyOn(gen, 'destinationRoot').mockReturnValue('');
 
       for (const op of ['copyTpl']) {
         const returnValue = randomString();
-        sinonStub(gen.fs, op).returns(returnValue);
+        vi.spyOn(gen.fs, op).mockReturnValue(returnValue);
         returns[op] = returnValue;
       }
     });
 
     afterEach(() => {
-      gen.sourceRoot.restore();
-      gen.destinationRoot.restore();
-      for (const op of ['copyTpl']) gen.fs[op].restore();
+      vi.restoreAllMocks();
     });
 
     it('handles 1 template', () => {
@@ -352,12 +341,12 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplates([{ source: passedArg1 }], data);
 
       const { copyTpl } = gen.fs;
-      expect(copyTpl.callCount).toBe(1);
+      expect(copyTpl).toHaveBeenCalledTimes(1);
 
-      const firsCall = copyTpl.getCall(0);
-      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
-      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
-      expect(firsCall.args[ARG_DATA]).toBe(data);
+      const [firsCall] = (copyTpl as any).mock.calls;
+      expect(firsCall[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall[ARG_TO]).toBe(passedArg1);
+      expect(firsCall[ARG_DATA]).toBe(data);
     });
 
     it('handles more than 1 template', () => {
@@ -380,18 +369,18 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTpl } = gen.fs;
-      expect(copyTpl.callCount).toBe(2);
+      expect(copyTpl).toHaveBeenCalledTimes(2);
 
-      const firsCall = copyTpl.getCall(0);
-      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
-      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
-      expect(firsCall.args[ARG_DATA]).toBe(data);
+      const [firsCall] = (copyTpl as any).mock.calls;
+      expect(firsCall[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall[ARG_TO]).toBe(passedArg1);
+      expect(firsCall[ARG_DATA]).toBe(data);
 
-      const secondCall = copyTpl.getCall(1);
-      expect(secondCall.args[ARG_FROM]).toBe(secondCallArg1);
-      expect(secondCall.args[ARG_TO]).toBe(secondCallArg2);
-      expect(secondCall.args[ARG_DATA]).toBe(data);
-      expect(secondCall.args[ARG_COPYSETTINGS]).toMatchObject({ ...copyOptions, fromBasePath: expect.any(String) });
+      const [, secondCall] = (copyTpl as any).mock.calls;
+      expect(secondCall[ARG_FROM]).toBe(secondCallArg1);
+      expect(secondCall[ARG_TO]).toBe(secondCallArg2);
+      expect(secondCall[ARG_DATA]).toBe(data);
+      expect(secondCall[ARG_COPYSETTINGS]).toMatchObject({ ...copyOptions, fromBasePath: expect.any(String) });
     });
 
     it('skips templates based on when callback', () => {
@@ -415,12 +404,12 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTpl } = gen.fs;
-      expect(copyTpl.callCount).toBe(1);
+      expect(copyTpl).toHaveBeenCalledTimes(1);
 
-      const firsCall = copyTpl.getCall(0);
-      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
-      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
-      expect(firsCall.args[ARG_DATA]).toBe(data);
+      const [firsCall] = (copyTpl as any).mock.calls;
+      expect(firsCall[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall[ARG_TO]).toBe(passedArg1);
+      expect(firsCall[ARG_DATA]).toBe(data);
     });
 
     it('passes the data to when callback', () => {
@@ -441,7 +430,7 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTpl } = gen.fs;
-      expect(copyTpl.callCount).toBe(0);
+      expect(copyTpl).toHaveBeenCalledTimes(0);
 
       expect(receivedData).toBe(templateData);
     });
@@ -449,20 +438,18 @@ describe('generators.Base (actions/fs)', () => {
 
   describe('#renderTemplatesAsync', () => {
     beforeEach(() => {
-      sinonStub(gen, 'sourceRoot').returns('');
-      sinonStub(gen, 'destinationRoot').returns('');
+      vi.spyOn(gen, 'sourceRoot').mockReturnValue('');
+      vi.spyOn(gen, 'destinationRoot').mockReturnValue('');
 
       for (const op of ['copyTplAsync']) {
         const returnValue = randomString();
-        sinonStub(gen.fs, op).returns(returnValue);
+        vi.spyOn(gen.fs, op).mockReturnValue(returnValue);
         returns[op] = returnValue;
       }
     });
 
     afterEach(() => {
-      gen.sourceRoot.restore();
-      gen.destinationRoot.restore();
-      for (const op of ['copyTplAsync']) gen.fs[op].restore();
+      vi.restoreAllMocks();
     });
 
     it('handles 1 template', () => {
@@ -471,12 +458,12 @@ describe('generators.Base (actions/fs)', () => {
       gen.renderTemplatesAsync([{ source: passedArg1 }], data);
 
       const { copyTplAsync } = gen.fs;
-      expect(copyTplAsync.callCount).toBe(1);
+      expect(copyTplAsync).toHaveBeenCalledTimes(1);
 
-      const firsCall = copyTplAsync.getCall(0);
-      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
-      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
-      expect(firsCall.args[ARG_DATA]).toBe(data);
+      const [firsCall] = (copyTplAsync as any).mock.calls;
+      expect(firsCall[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall[ARG_TO]).toBe(passedArg1);
+      expect(firsCall[ARG_DATA]).toBe(data);
     });
 
     it('handles more than 1 template', () => {
@@ -499,18 +486,18 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTplAsync } = gen.fs;
-      expect(copyTplAsync.callCount).toBe(2);
+      expect(copyTplAsync).toHaveBeenCalledTimes(2);
 
-      const firsCall = copyTplAsync.getCall(0);
-      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
-      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
-      expect(firsCall.args[ARG_DATA]).toBe(data);
+      const [firsCall] = (copyTplAsync as any).mock.calls;
+      expect(firsCall[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall[ARG_TO]).toBe(passedArg1);
+      expect(firsCall[ARG_DATA]).toBe(data);
 
-      const secondCall = copyTplAsync.getCall(1);
-      expect(secondCall.args[ARG_FROM]).toBe(secondCallArg1);
-      expect(secondCall.args[ARG_TO]).toBe(secondCallArg2);
-      expect(secondCall.args[ARG_DATA]).toBe(data);
-      expect(secondCall.args[ARG_COPYSETTINGS]).toMatchObject({ ...copyOptions, fromBasePath: expect.any(String) });
+      const [, secondCall] = (copyTplAsync as any).mock.calls;
+      expect(secondCall[ARG_FROM]).toBe(secondCallArg1);
+      expect(secondCall[ARG_TO]).toBe(secondCallArg2);
+      expect(secondCall[ARG_DATA]).toBe(data);
+      expect(secondCall[ARG_COPYSETTINGS]).toMatchObject({ ...copyOptions, fromBasePath: expect.any(String) });
     });
 
     it('skips templates based on when callback', async () => {
@@ -534,12 +521,12 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTplAsync } = gen.fs;
-      expect(copyTplAsync.callCount).toBe(1);
+      expect(copyTplAsync).toHaveBeenCalledTimes(1);
 
-      const firsCall = copyTplAsync.getCall(0);
-      expect(firsCall.args[ARG_FROM]).toBe(passedArg1);
-      expect(firsCall.args[ARG_TO]).toBe(passedArg1);
-      expect(firsCall.args[ARG_DATA]).toBe(data);
+      const [firsCall] = (copyTplAsync as any).mock.calls;
+      expect(firsCall[ARG_FROM]).toBe(passedArg1);
+      expect(firsCall[ARG_TO]).toBe(passedArg1);
+      expect(firsCall[ARG_DATA]).toBe(data);
     });
 
     it('passes the data to when callback', () => {
@@ -560,7 +547,7 @@ describe('generators.Base (actions/fs)', () => {
       );
 
       const { copyTplAsync } = gen.fs;
-      expect(copyTplAsync.callCount).toBe(0);
+      expect(copyTplAsync).toHaveBeenCalledTimes(0);
 
       expect(receivedData).toBe(templateData);
     });

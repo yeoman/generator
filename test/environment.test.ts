@@ -1,7 +1,5 @@
 import { TestAdapter } from '@yeoman/adapter/testing';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { SinonStub } from 'sinon';
-import { stub as sinonStub } from 'sinon';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import Environment from 'yeoman-environment';
 import helpers from 'yeoman-test';
 import Base from './utils.js';
@@ -10,7 +8,7 @@ describe('Generator with environment version', () => {
   let env: Environment;
   let Dummy: typeof Base;
   let dummy: Base;
-  let getVersionStub: SinonStub;
+  let getVersionStub: ReturnType<typeof vi.spyOn>;
 
   beforeAll(async () => {
     await helpers.prepareTemporaryDir().run();
@@ -20,7 +18,7 @@ describe('Generator with environment version', () => {
     beforeAll(() => {
       env = new Environment({ skipInstall: true, adapter: new TestAdapter() });
       env.getVersion = env.getVersion || (() => {});
-      getVersionStub = sinonStub(env, 'getVersion');
+      getVersionStub = vi.spyOn(env, 'getVersion');
 
       Dummy = class extends Base {};
       dummy = new Dummy(['bar', 'baz', 'bom'], {
@@ -34,13 +32,13 @@ describe('Generator with environment version', () => {
     }, 100_000);
 
     afterAll(() => {
-      getVersionStub.restore();
+      getVersionStub.mockRestore();
     });
 
     describe('#checkEnvironmentVersion', () => {
       describe('without args', () => {
         it('returns true', () => {
-          getVersionStub.returns('3.0.0');
+          getVersionStub.mockReturnValue('3.0.0');
           // @ts-expect-error - check deprecated api
           expect(dummy.checkEnvironmentVersion()).toBe(true);
         });
@@ -48,7 +46,7 @@ describe('Generator with environment version', () => {
 
       describe('with required environment', () => {
         beforeAll(() => {
-          getVersionStub.returns('3.0.1');
+          getVersionStub.mockReturnValue('3.0.1');
         });
 
         it('returns true', () => {
@@ -65,7 +63,7 @@ describe('Generator with environment version', () => {
           });
 
           it('returns true', () => {
-            getVersionStub.returns('3.0.1');
+            getVersionStub.mockReturnValue('3.0.1');
             expect(dummy.checkEnvironmentVersion('3.0.1')).toBe(true);
           });
         });
@@ -73,14 +71,14 @@ describe('Generator with environment version', () => {
 
       describe('with greater than required environment', () => {
         it('returns true', () => {
-          getVersionStub.returns('3.0.2');
+          getVersionStub.mockReturnValue('3.0.2');
           expect(dummy.checkEnvironmentVersion('3.0.1')).toBe(true);
         });
       });
 
       describe('with less than required environment', () => {
         beforeAll(() => {
-          getVersionStub.returns('3.0.0');
+          getVersionStub.mockReturnValue('3.0.0');
         });
 
         it('should throw', () => {
@@ -112,21 +110,21 @@ describe('Generator with environment version', () => {
 
       describe('with required inquirer', () => {
         it('returns true', () => {
-          getVersionStub.withArgs('inquirer').returns('7.1.0');
+          getVersionStub.mockReturnValue('7.1.0');
           expect(dummy.checkEnvironmentVersion('inquirer', '7.1.0')).toBe(true);
         });
       });
 
       describe('with greater than required inquirer', () => {
         it('returns true', () => {
-          getVersionStub.withArgs('inquirer').returns('7.1.1');
+          getVersionStub.mockReturnValue('7.1.1');
           expect(dummy.checkEnvironmentVersion('inquirer', '7.1.0')).toBe(true);
         });
       });
 
       describe('with less than required inquirer', () => {
         beforeAll(() => {
-          getVersionStub.withArgs('inquirer').returns('7.1.0');
+          getVersionStub.mockReturnValue('7.1.0');
         });
 
         it('throws exception', () => {
@@ -159,8 +157,7 @@ describe('Generator with environment version', () => {
 
     describe('#prompt with storage', () => {
       it('with compatible environment', () => {
-        getVersionStub.withArgs().returns('3.0.0');
-        getVersionStub.withArgs('inquirer').returns('7.1.0');
+        getVersionStub.mockImplementation((arg?: string) => (arg === 'inquirer' ? '7.1.0' : '3.0.0'));
         return dummy.prompt([], dummy.config);
       });
     });

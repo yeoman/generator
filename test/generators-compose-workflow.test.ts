@@ -1,7 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
-import type { SinonSpy } from 'sinon';
-import { assert as sinonAssert, spy as sinonSpy } from 'sinon';
 import Environment from 'yeoman-environment';
 import helpers from 'yeoman-test';
 import Base from './utils.js';
@@ -15,23 +13,23 @@ describe('Multiples generators', () => {
   let dummy: Base;
   let dummy2: Base;
 
-  let spyExec: SinonSpy;
-  let spyExec1: SinonSpy;
-  let spyInit1: SinonSpy;
-  let spyWrite1: SinonSpy;
-  let spyEnd1: SinonSpy;
-  let spyExec2: SinonSpy;
-  let spyInit2: SinonSpy;
-  let spyWrite2: SinonSpy;
-  let spyEnd2: SinonSpy;
-  let spyExec3: SinonSpy;
+  let spyExec: ReturnType<typeof vi.fn>;
+  let spyExec1: ReturnType<typeof vi.fn>;
+  let spyInit1: ReturnType<typeof vi.fn>;
+  let spyWrite1: ReturnType<typeof vi.fn>;
+  let spyEnd1: ReturnType<typeof vi.fn>;
+  let spyExec2: ReturnType<typeof vi.fn>;
+  let spyInit2: ReturnType<typeof vi.fn>;
+  let spyWrite2: ReturnType<typeof vi.fn>;
+  let spyEnd2: ReturnType<typeof vi.fn>;
+  let spyExec3: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     await helpers.prepareTemporaryDir().run();
 
     env = createEnv();
     Dummy = class extends Base {};
-    spyExec = sinonSpy();
+    spyExec = vi.fn();
     Dummy.prototype.exec = spyExec;
   });
 
@@ -46,10 +44,10 @@ describe('Multiples generators', () => {
         'skip-cache': true,
       });
 
-      spyExec1 = sinonSpy();
-      spyInit1 = sinonSpy();
-      spyWrite1 = sinonSpy();
-      spyEnd1 = sinonSpy();
+      spyExec1 = vi.fn();
+      spyInit1 = vi.fn();
+      spyWrite1 = vi.fn();
+      spyEnd1 = vi.fn();
 
       const GenCompose1 = class extends Base {};
       GenCompose1.prototype.exec = spyExec1;
@@ -57,10 +55,10 @@ describe('Multiples generators', () => {
       GenCompose1.prototype.writing = spyWrite1;
       GenCompose1.prototype.end = spyEnd1;
 
-      spyExec2 = sinonSpy();
-      spyInit2 = sinonSpy();
-      spyWrite2 = sinonSpy();
-      spyEnd2 = sinonSpy();
+      spyExec2 = vi.fn();
+      spyInit2 = vi.fn();
+      spyWrite2 = vi.fn();
+      spyEnd2 = vi.fn();
 
       const GenCompose2 = class extends Base {};
       GenCompose2.prototype.exec = spyExec2;
@@ -75,56 +73,31 @@ describe('Multiples generators', () => {
     it('runs multiple composed generators', async () => {
       await dummy.composeWith(['composed:gen', 'composed:gen2']);
 
-      const runSpy = sinonSpy(dummy, 'run');
+      const runSpy = vi.spyOn(dummy, 'run');
 
       // I use a setTimeout here just to make sure composeWith() doesn't start the
       // generator before the base one is ran.
       await dummy.run();
-      sinonAssert.callOrder(
-        runSpy,
-        spyInit1,
-        spyInit2,
-        spyExec,
-        spyExec1,
-        spyExec2,
-        spyWrite1,
-        spyWrite2,
-        spyEnd1,
-        spyEnd2,
-      );
-      expect(spyInit1.calledAfter(runSpy)).toBeTruthy();
-      expect(spyInit2.calledAfter(spyInit1)).toBeTruthy();
-      expect(spyExec1.calledAfter(spyInit2)).toBeTruthy();
-      expect(spyExec2.calledAfter(spyExec1)).toBeTruthy();
+      expect(spyInit1.mock.invocationCallOrder[0]).toBeGreaterThan(runSpy.mock.invocationCallOrder[0]);
+      expect(spyInit2.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit1.mock.invocationCallOrder[0]);
+      expect(spyExec1.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit2.mock.invocationCallOrder[0]);
+      expect(spyExec2.mock.invocationCallOrder[0]).toBeGreaterThan(spyExec1.mock.invocationCallOrder[0]);
     });
 
     it('runs multiple composed generators (reverse)', async () => {
       await dummy.composeWith(['composed:gen2', 'composed:gen']);
 
-      const runSpy = sinonSpy(dummy, 'run');
+      const runSpy = vi.spyOn(dummy, 'run');
       await dummy.run();
-
-      sinonAssert.callOrder(
-        runSpy,
-        spyInit2,
-        spyInit1,
-        spyExec,
-        spyExec2,
-        spyExec1,
-        spyWrite2,
-        spyWrite1,
-        spyEnd2,
-        spyEnd1,
-      );
-      expect(spyInit2.calledAfter(runSpy)).toBeTruthy();
-      expect(spyInit1.calledAfter(spyInit2)).toBeTruthy();
-      expect(spyExec2.calledAfter(spyInit1)).toBeTruthy();
-      expect(spyExec1.calledAfter(spyExec2)).toBeTruthy();
+      expect(spyInit2.mock.invocationCallOrder[0]).toBeGreaterThan(runSpy.mock.invocationCallOrder[0]);
+      expect(spyInit1.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit2.mock.invocationCallOrder[0]);
+      expect(spyExec2.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit1.mock.invocationCallOrder[0]);
+      expect(spyExec1.mock.invocationCallOrder[0]).toBeGreaterThan(spyExec2.mock.invocationCallOrder[0]);
     });
 
     it('runs 3 composed generators', async () => {
-      spyExec3 = sinonSpy();
-      const spyInit3 = sinonSpy();
+      spyExec3 = vi.fn();
+      const spyInit3 = vi.fn();
       const GenCompose3 = class extends Base {};
       GenCompose3.prototype.exec = spyExec3;
       GenCompose3.prototype.initializing = spyInit3;
@@ -133,38 +106,23 @@ describe('Multiples generators', () => {
 
       await dummy.composeWith(['composed:gen', 'composed:gen2', 'composed:gen3']);
 
-      const runSpy = sinonSpy(dummy, 'run');
+      const runSpy = vi.spyOn(dummy, 'run');
       await dummy.run();
-
-      sinonAssert.callOrder(
-        runSpy,
-        spyInit1,
-        spyInit2,
-        spyInit3,
-        spyExec,
-        spyExec1,
-        spyExec2,
-        spyExec3,
-        spyWrite1,
-        spyWrite2,
-        spyEnd1,
-        spyEnd2,
-      );
-      expect(spyInit1.calledAfter(runSpy)).toBeTruthy();
-      expect(spyInit2.calledAfter(spyInit1)).toBeTruthy();
-      expect(spyInit3.calledAfter(spyInit2)).toBeTruthy();
-      expect(spyExec1.calledAfter(spyInit3)).toBeTruthy();
-      expect(spyExec2.calledAfter(spyExec1)).toBeTruthy();
-      expect(spyExec3.calledAfter(spyExec2)).toBeTruthy();
+      expect(spyInit1.mock.invocationCallOrder[0]).toBeGreaterThan(runSpy.mock.invocationCallOrder[0]);
+      expect(spyInit2.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit1.mock.invocationCallOrder[0]);
+      expect(spyInit3.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit2.mock.invocationCallOrder[0]);
+      expect(spyExec1.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit3.mock.invocationCallOrder[0]);
+      expect(spyExec2.mock.invocationCallOrder[0]).toBeGreaterThan(spyExec1.mock.invocationCallOrder[0]);
+      expect(spyExec3.mock.invocationCallOrder[0]).toBeGreaterThan(spyExec2.mock.invocationCallOrder[0]);
     });
 
     it('runs multiple composed generators inside a running generator', () =>
       new Promise<void>(done => {
         const Dummy2 = class extends Dummy {};
 
-        const writingSpy1 = sinonSpy();
-        const writingSpy2 = sinonSpy();
-        const endSpy = sinonSpy();
+        const writingSpy1 = vi.fn();
+        const writingSpy2 = vi.fn();
+        const endSpy = vi.fn();
         Dummy2.prototype.end = endSpy;
 
         Dummy2.prototype.writing = {
@@ -188,37 +146,23 @@ describe('Multiples generators', () => {
           'skip-cache': true,
         });
 
-        const runSpy = sinonSpy(dummy2, 'run');
+        const runSpy = vi.spyOn(dummy2, 'run');
 
         // I use a setTimeout here just to make sure composeWith() doesn't start the
         // generator before the base one is ran.
         setTimeout(() => {
           dummy2.run().then(() => {
-            sinonAssert.callOrder(
-              runSpy,
-              writingSpy1,
-              spyInit1,
-              spyInit2,
-              spyExec1,
-              spyExec2,
-              writingSpy2,
-              spyWrite1,
-              spyWrite2,
-              endSpy,
-              spyEnd1,
-              spyEnd2,
-            );
-            expect(writingSpy1.calledAfter(runSpy)).toBeTruthy();
-            expect(spyInit1.calledAfter(writingSpy1)).toBeTruthy();
-            expect(spyInit2.calledAfter(spyInit1)).toBeTruthy();
-            expect(spyExec1.calledAfter(spyInit2)).toBeTruthy();
-            expect(spyExec2.calledAfter(spyExec1)).toBeTruthy();
-            expect(writingSpy2.calledAfter(spyExec2)).toBeTruthy();
-            expect(spyWrite1.calledAfter(writingSpy2)).toBeTruthy();
-            expect(spyWrite2.calledAfter(spyWrite1)).toBeTruthy();
-            expect(endSpy.calledAfter(spyWrite2)).toBeTruthy();
-            expect(spyEnd1.calledAfter(endSpy)).toBeTruthy();
-            expect(spyEnd2.calledAfter(spyEnd1)).toBeTruthy();
+            expect(writingSpy1.mock.invocationCallOrder[0]).toBeGreaterThan(runSpy.mock.invocationCallOrder[0]);
+            expect(spyInit1.mock.invocationCallOrder[0]).toBeGreaterThan(writingSpy1.mock.invocationCallOrder[0]);
+            expect(spyInit2.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit1.mock.invocationCallOrder[0]);
+            expect(spyExec1.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit2.mock.invocationCallOrder[0]);
+            expect(spyExec2.mock.invocationCallOrder[0]).toBeGreaterThan(spyExec1.mock.invocationCallOrder[0]);
+            expect(writingSpy2.mock.invocationCallOrder[0]).toBeGreaterThan(spyExec2.mock.invocationCallOrder[0]);
+            expect(spyWrite1.mock.invocationCallOrder[0]).toBeGreaterThan(writingSpy2.mock.invocationCallOrder[0]);
+            expect(spyWrite2.mock.invocationCallOrder[0]).toBeGreaterThan(spyWrite1.mock.invocationCallOrder[0]);
+            expect(endSpy.mock.invocationCallOrder[0]).toBeGreaterThan(spyWrite2.mock.invocationCallOrder[0]);
+            expect(spyEnd1.mock.invocationCallOrder[0]).toBeGreaterThan(endSpy.mock.invocationCallOrder[0]);
+            expect(spyEnd2.mock.invocationCallOrder[0]).toBeGreaterThan(spyEnd1.mock.invocationCallOrder[0]);
             done();
           });
         }, 100);
@@ -228,10 +172,10 @@ describe('Multiples generators', () => {
       new Promise<void>(done => {
         const Dummy2 = class extends Dummy {};
 
-        const writingSpy1 = sinonSpy();
-        const writingSpy2 = sinonSpy();
-        const writingSpy3 = sinonSpy();
-        const endSpy = sinonSpy();
+        const writingSpy1 = vi.fn();
+        const writingSpy2 = vi.fn();
+        const writingSpy3 = vi.fn();
+        const endSpy = vi.fn();
 
         Dummy2.prototype.end = endSpy;
         Dummy2.prototype.writing = {
@@ -261,39 +205,24 @@ describe('Multiples generators', () => {
           'skip-cache': true,
         });
 
-        const runSpy = sinonSpy(dummy2, 'run');
+        const runSpy = vi.spyOn(dummy2, 'run');
 
         // I use a setTimeout here just to make sure composeWith() doesn't start the
         // generator before the base one is ran.
         setTimeout(() => {
           dummy2.run().then(() => {
-            sinonAssert.callOrder(
-              runSpy,
-              writingSpy1,
-              spyInit1,
-              spyExec1,
-              writingSpy2,
-              spyInit2,
-              spyExec2,
-              writingSpy3,
-              spyWrite1,
-              spyWrite2,
-              endSpy,
-              spyEnd1,
-              spyEnd2,
-            );
-            expect(writingSpy1.calledAfter(runSpy)).toBeTruthy();
-            expect(spyInit1.calledAfter(writingSpy1)).toBeTruthy();
-            expect(spyExec1.calledAfter(spyInit1)).toBeTruthy();
-            expect(writingSpy2.calledAfter(spyExec1)).toBeTruthy();
-            expect(spyInit2.calledAfter(writingSpy2)).toBeTruthy();
-            expect(spyExec2.calledAfter(spyExec1)).toBeTruthy();
-            expect(writingSpy3.calledAfter(spyExec2)).toBeTruthy();
-            expect(spyWrite1.calledAfter(writingSpy3)).toBeTruthy();
-            expect(spyWrite2.calledAfter(spyWrite1)).toBeTruthy();
-            expect(endSpy.calledAfter(spyWrite2)).toBeTruthy();
-            expect(spyEnd1.calledAfter(endSpy)).toBeTruthy();
-            expect(spyEnd2.calledAfter(spyEnd1)).toBeTruthy();
+            expect(writingSpy1.mock.invocationCallOrder[0]).toBeGreaterThan(runSpy.mock.invocationCallOrder[0]);
+            expect(spyInit1.mock.invocationCallOrder[0]).toBeGreaterThan(writingSpy1.mock.invocationCallOrder[0]);
+            expect(spyExec1.mock.invocationCallOrder[0]).toBeGreaterThan(spyInit1.mock.invocationCallOrder[0]);
+            expect(writingSpy2.mock.invocationCallOrder[0]).toBeGreaterThan(spyExec1.mock.invocationCallOrder[0]);
+            expect(spyInit2.mock.invocationCallOrder[0]).toBeGreaterThan(writingSpy2.mock.invocationCallOrder[0]);
+            expect(spyExec2.mock.invocationCallOrder[0]).toBeGreaterThan(spyExec1.mock.invocationCallOrder[0]);
+            expect(writingSpy3.mock.invocationCallOrder[0]).toBeGreaterThan(spyExec2.mock.invocationCallOrder[0]);
+            expect(spyWrite1.mock.invocationCallOrder[0]).toBeGreaterThan(writingSpy3.mock.invocationCallOrder[0]);
+            expect(spyWrite2.mock.invocationCallOrder[0]).toBeGreaterThan(spyWrite1.mock.invocationCallOrder[0]);
+            expect(endSpy.mock.invocationCallOrder[0]).toBeGreaterThan(spyWrite2.mock.invocationCallOrder[0]);
+            expect(spyEnd1.mock.invocationCallOrder[0]).toBeGreaterThan(endSpy.mock.invocationCallOrder[0]);
+            expect(spyEnd2.mock.invocationCallOrder[0]).toBeGreaterThan(spyEnd1.mock.invocationCallOrder[0]);
             done();
           });
         }, 100);
@@ -306,7 +235,7 @@ describe('Multiples generators', () => {
         await this.composeWith('composed:gen2');
       }
     };
-    const writingSpy1 = sinonSpy();
+    const writingSpy1 = vi.fn();
     Generator.prototype.writing = {
       compose1() {
         writingSpy1();
@@ -318,7 +247,7 @@ describe('Multiples generators', () => {
         await this.composeWith('composed:gen3');
       }
     };
-    const writingSpy2 = sinonSpy();
+    const writingSpy2 = vi.fn();
     Generator2.prototype.writing = {
       compose2() {
         writingSpy2();
@@ -326,7 +255,7 @@ describe('Multiples generators', () => {
     };
 
     const Generator3 = class extends Base {};
-    const writingSpy3 = sinonSpy();
+    const writingSpy3 = vi.fn();
     Generator3.prototype.writing = {
       compose3() {
         writingSpy3();
@@ -347,7 +276,7 @@ describe('Multiples generators', () => {
     });
 
     await dummy.run();
-    expect(writingSpy2.calledAfter(writingSpy1)).toBeTruthy();
-    expect(writingSpy3.calledAfter(writingSpy2)).toBeTruthy();
+    expect(writingSpy2.mock.invocationCallOrder[0]).toBeGreaterThan(writingSpy1.mock.invocationCallOrder[0]);
+    expect(writingSpy3.mock.invocationCallOrder[0]).toBeGreaterThan(writingSpy2.mock.invocationCallOrder[0]);
   });
 });
