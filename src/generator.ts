@@ -131,27 +131,27 @@ export class BaseGenerator<
    *   }
    * };
    */
-  constructor(args?: string[], options?: O, features?: F);
-  constructor(args?: string | string[] | O, options?: O | F, features?: F) {
+  constructor(args?: string[], options?: BaseOptions, features?: BaseFeatures);
+  constructor(args?: string | string[] | BaseOptions, options?: BaseOptions | BaseFeatures, features?: BaseFeatures) {
     super();
 
     args = typeof args === 'string' ? [args] : args;
 
     // Handle backward Compatibility
     let actualArgs: string[];
-    let actualOptions: O;
-    let actualFeatures: F | undefined;
+    let actualOptions: BaseOptions;
+    let actualFeatures: BaseFeatures | undefined;
     if (typeof features === 'object') {
       actualArgs = args as string[];
-      actualOptions = options as O;
-      actualFeatures = features;
+      actualOptions = options as BaseOptions;
+      actualFeatures = features as BaseFeatures;
     } else if (typeof args === 'object' && !Array.isArray(args)) {
       actualArgs = [];
-      actualOptions = args as O;
-      actualFeatures = options as F;
+      actualOptions = args as BaseOptions;
+      actualFeatures = options as BaseFeatures;
     } else {
       actualArgs = args ?? [];
-      actualOptions = options as O;
+      actualOptions = options as BaseOptions;
     }
 
     const { env, ...generatorOptions } = actualOptions;
@@ -170,7 +170,7 @@ export class BaseGenerator<
     }
 
     // Parse parameters
-    this._initOptions = { ...actualOptions };
+    this._initOptions = { ...actualOptions } as O;
     this._namespace = actualOptions.namespace;
     this._namespaceId = toNamespace(actualOptions.namespace);
 
