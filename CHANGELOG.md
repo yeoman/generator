@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.2.2](https://github.com/yeoman/generator/compare/v8.2.1...v8.2.2) (2026-04-29)
+
+
+### Bug Fixes
+
+* try to avoid could be instantiated with a different subtype of constraint issue ([#1798](https://github.com/yeoman/generator/issues/1798)) ([2a83721](https://github.com/yeoman/generator/commit/2a837218858bb5384d3873e5a585f9b5123b882a))
+
 ## [8.2.1](https://github.com/yeoman/generator/compare/v8.2.0...v8.2.1) (2026-04-28)
 
 ### Bug Fixes
