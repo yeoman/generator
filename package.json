@@ -16,7 +16,10 @@
     "app"
   ],
   "homepage": "http://yeoman.io",
-  "repository": "yeoman/generator",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yeoman/generator.git"
+  },
   "license": "BSD-2-Clause",
   "author": "Yeoman",
   "type": "module",
