@@ -31,7 +31,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.release-please.outputs.head_branch }}
       - uses: actions/setup-node@v6
@@ -55,7 +55,7 @@ jobs:
       contents: read
       id-token: write # Required for npm provenance
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
