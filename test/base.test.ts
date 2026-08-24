@@ -1322,6 +1322,16 @@ describe('Base', () => {
       fs.writeFileSync(path.join(resolveddir, 'package.json'), '{ "name": "generator-name" }');
       expect(dummy.rootGeneratorName()).toBe('generator-name');
     });
+
+    it('returns generator name from meta getPackageJson', () => {
+      const getPackageJson = vi.fn().mockReturnValue({ name: 'generator-meta-name', version: '2.0.0' });
+      // The environment sets the meta after instantiation.
+      dummy._meta = { namespace: 'dummy', getPackageJson };
+
+      expect(dummy.rootGeneratorName()).toBe('generator-meta-name');
+      expect(dummy.rootGeneratorVersion()).toBe('2.0.0');
+      expect(getPackageJson).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe('#rootGeneratorVersion', () => {

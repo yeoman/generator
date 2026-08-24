@@ -11,7 +11,13 @@ import minimist from 'minimist';
 import createDebug from 'debug';
 import { type MemFsEditor, create as createMemFsEditor } from 'mem-fs-editor';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
-import type { BaseEnvironment, BaseGenerator as GeneratorApi, Logger, QueuedAdapter } from '@yeoman/types';
+import type {
+  BaseEnvironment,
+  BaseGenerator as GeneratorApi,
+  GeneratorMeta,
+  Logger,
+  QueuedAdapter,
+} from '@yeoman/types';
 import type { ArgumentSpec, BaseFeatures, BaseOptions, CliOptionSpec } from './types.js';
 import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
 import Storage, { type StorageOptions } from './util/storage.js';
@@ -69,6 +75,8 @@ export class BaseGenerator<
   readonly _ = _;
   appname!: string;
   args!: string[];
+  /** Generator metadata, provided by the environment. */
+  _meta!: GeneratorMeta;
   /** @deprecated */
   arguments!: string[];
   _destinationRoot!: string;
@@ -157,6 +165,7 @@ export class BaseGenerator<
     const { env, ...generatorOptions } = actualOptions;
 
     // Load parameters
+    this._meta = ((actualOptions as any)._meta ?? {}) as GeneratorMeta;
     this._args = actualArgs;
     this.options = generatorOptions as any;
 
@@ -727,7 +736,7 @@ export class BaseGenerator<
    * @return The name of the root generator
    */
   rootGeneratorName() {
-    return readPackageUpSync({ cwd: this.resolved })?.packageJson?.name ?? '*';
+    return this.#rootGeneratorPackageJson()?.name ?? '*';
   }
 
   /**
@@ -735,7 +744,24 @@ export class BaseGenerator<
    * @return The version of the root generator
    */
   rootGeneratorVersion() {
-    return readPackageUpSync({ cwd: this.resolved })?.packageJson?.version ?? '0.0.0';
+    return this.#rootGeneratorPackageJson()?.version ?? '0.0.0';
+  }
+
+  /**
+   * The root generator's package.json.
+   *
+   * Uses `meta.getPackageJson` when provided by the environment (parsed once per package and cached by the environment).
+   * Otherwise, when the generator package's path is provided through meta, read its package.json directly.
+   * Otherwise (legacy environments, stubs, direct instantiation) look the package.json up from the resolved path,
+   * skipping normalization since only `name` and `version` are used.
+   */
+  #rootGeneratorPackageJson(): PackageJson | undefined {
+    const packageJson = (this as any)._meta?.getPackageJson?.();
+    if (packageJson) {
+      return packageJson as PackageJson;
+    }
+
+    return readPackageUpSync({ cwd: this.resolved, normalize: false })?.packageJson;
   }
 
   /**
