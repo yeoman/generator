@@ -496,6 +496,15 @@ describe('Storage', () => {
       store.set({ foo: 'bar', john: 'doe' });
       expect({ ...proxy }).toStrictEqual({ foo: 'bar', john: 'doe' });
     });
+
+    it('works with delete operator', () => {
+      store.set({ foo: 'bar', john: 'doe' });
+      delete proxy.foo;
+      expect(store.get('foo')).toBeUndefined();
+      expect('foo' in proxy).toBeFalsy();
+      expect({ ...proxy }).toStrictEqual({ john: 'doe' });
+      expect(JSON.parse(editor.read(storePath))).toStrictEqual({ test: { john: 'doe' } });
+    });
   });
 
   describe('caching', () => {
