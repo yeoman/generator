@@ -81,7 +81,7 @@
     "@types/text-table": "^0.2.5",
     "@typescript-eslint/parser": "^8.59.1",
     "@vitest/coverage-v8": "^4.1.5",
-    "@yeoman/adapter": "^4.0.2",
+    "@yeoman/adapter": "^5.0.0",
     "@yeoman/eslint": "1.1.0",
     "@yeoman/transform": "^2.1.1",
     "@yeoman/types": "^1.11.0",
