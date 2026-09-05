@@ -20,6 +20,14 @@ const proxyHandler: ProxyHandler<Storage> = {
 
     return false;
   },
+  deleteProperty(storage: Storage, property: string | symbol): boolean {
+    if (typeof property === 'string') {
+      storage.delete(property);
+      return true;
+    }
+
+    return false;
+  },
   ownKeys(storage: Storage) {
     return Reflect.ownKeys(storage._store);
   },
