@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.3.1](https://github.com/yeoman/generator/compare/v8.3.0...v8.3.1) (2026-09-05)
+
+
+### Bug Fixes
+
+* support delete in Storage proxy's ([#1838](https://github.com/yeoman/generator/issues/1838)) ([f0372d3](https://github.com/yeoman/generator/commit/f0372d3b421f17c5e718055256c3099b31236645))
+
 ## [8.3.0](https://github.com/yeoman/generator/compare/v8.2.2...v8.3.0) (2026-08-24)
 
 ### Features
