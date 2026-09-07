@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.4.0](https://github.com/yeoman/generator/compare/v8.3.2...v8.4.0) (2026-09-07)
+
+
+### Features
+
+* add editorMetadata support to fs helpers ([#1843](https://github.com/yeoman/generator/issues/1843)) ([3696d42](https://github.com/yeoman/generator/commit/3696d42a381c828d94cd43980c6c1e5ed1651776))
+
 ## [8.3.2](https://github.com/yeoman/generator/compare/v8.3.1...v8.3.2) (2026-09-07)
 
 ### Bug Fixes
