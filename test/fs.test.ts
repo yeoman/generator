@@ -221,6 +221,64 @@ describe('generators.Base (actions/fs)', () => {
     });
   }
 
+  describe('#editorMetadata', () => {
+    const editorMetadata = { foo: 'bar' };
+    const metadataArgument: Record<string, number> = {
+      copyTemplate: 2,
+      copyTemplateAsync: 2,
+      copyDestination: 2,
+      writeDestination: 2,
+      writeDestinationJSON: 4,
+      renderTemplate: 3,
+      renderTemplateAsync: 3,
+    };
+
+    it('is undefined by default', () => {
+      expect(
+        new BaseGenerator([], { namespace: 'foo', help: true, resolved: 'unknown' }).editorMetadata,
+      ).toBeUndefined();
+    });
+
+    describe('when not set', () => {
+      for (const [name, position] of Object.entries(metadataArgument)) {
+        it(`${name} passes no metadata`, async () => {
+          const op = testResults.find(result => result.name === name)!;
+          await (base[op.name] as any)('from', 'to', {}, {});
+          const [call] = (base.fs[op.dest] as ReturnType<typeof vi.fn>).mock.calls;
+          expect(call[position]?.metadata).toBeUndefined();
+        });
+      }
+    });
+
+    describe('when set', () => {
+      beforeEach(() => {
+        vi.spyOn(base, 'editorMetadata', 'get').mockReturnValue(editorMetadata);
+      });
+
+      for (const [name, position] of Object.entries(metadataArgument)) {
+        it(`${name} passes the metadata`, async () => {
+          const op = testResults.find(result => result.name === name)!;
+          await (base[op.name] as any)('from', 'to', {}, {});
+          const [call] = (base.fs[op.dest] as ReturnType<typeof vi.fn>).mock.calls;
+          expect(call[position].metadata).toEqual(editorMetadata);
+        });
+      }
+
+      it('writeDestination merges explicit metadata over the generator metadata', () => {
+        base.writeDestination('file.txt', 'content', { metadata: { foo: 'baz', other: true } });
+        const [call] = (base.fs.write as ReturnType<typeof vi.fn>).mock.calls;
+        expect(call[2].metadata).toEqual({ foo: 'baz', other: true });
+      });
+
+      it('renderTemplate merges explicit metadata over the generator metadata', () => {
+        base.renderTemplate('from', 'to', {}, { metadata: { other: true } });
+        const [call] = (base.fs.copyTpl as ReturnType<typeof vi.fn>).mock.calls;
+        expect(call[3].metadata).toEqual({ foo: 'bar', other: true });
+        expect(call[3].transformOptions.context).toBe(base);
+      });
+    });
+  });
+
   describe('#renderTemplate', () => {
     const getAllReturn = {};
     const getPathReturn = { foo: 'bar' };

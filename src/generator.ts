@@ -681,6 +681,16 @@ export class BaseGenerator<
   }
 
   /**
+   * Metadata attached to the files written through the fs helpers (`writeDestination`, `writeDestinationJSON`,
+   * `copyTemplate`, `copyTemplateAsync`, `copyDestination`, `renderTemplate`, `renderTemplateAsync`, ...).
+   * It is stored as `file.editorMetadata` by mem-fs-editor and stays available to commit transforms.
+   * Override to attach metadata, a `metadata` option passed to the helper takes precedence over it.
+   */
+  get editorMetadata(): Record<string, unknown> | undefined {
+    return undefined;
+  }
+
+  /**
    * Generator config Storage.
    */
   get config(): Storage<ConfigType> {

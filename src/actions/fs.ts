@@ -77,6 +77,25 @@ function applyToFirstAndSecondStringArg<Type extends [string | string[], string,
   return args;
 }
 
+type EditorMetadataOptions = { metadata?: Record<string, unknown> };
+
+/**
+ * Merge the generator's `editorMetadata` into mem-fs-editor options, an explicit `metadata` option takes precedence.
+ */
+function withEditorMetadata<T extends EditorMetadataOptions | undefined>(generator: BaseGenerator, options: T): T {
+  const { editorMetadata } = generator;
+  if (!editorMetadata) {
+    return options;
+  }
+
+  if (options && 'isFile' in options) {
+    // Deprecated `write(filepath, contents, stat)` signature.
+    return { stat: options, metadata: editorMetadata } as unknown as T;
+  }
+
+  return { ...options, metadata: { ...editorMetadata, ...options?.metadata } } as T;
+}
+
 export class FsMixin {
   fs!: MemFsEditor;
 
@@ -107,7 +126,7 @@ export class FsMixin {
     return this.fs.copy(
       from,
       this.destinationPath(to),
-      { fromBasePath: this.templatePath(), ...options },
+      withEditorMetadata(this, { fromBasePath: this.templatePath(), ...options }),
       ...remaining,
     );
   }
@@ -121,9 +140,13 @@ export class FsMixin {
     this: BaseGenerator,
     ...args: Parameters<MemFsEditor['copyAsync']>
   ): ReturnType<MemFsEditor['copyAsync']> {
-    return this.fs.copyAsync(
-      ...applyToFirstAndSecondStringArg(this.templatePath.bind(this), this.destinationPath.bind(this), args),
+    const [from, to, options, ...remaining] = applyToFirstAndSecondStringArg(
+      this.templatePath.bind(this),
+      this.destinationPath.bind(this),
+      args,
     );
+
+    return this.fs.copyAsync(from, to, withEditorMetadata(this, options), ...remaining);
   }
 
   /**
@@ -162,7 +185,9 @@ export class FsMixin {
    * Shortcut for this.fs!.write(this.destinationPath(filepath)).
    */
   writeDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['write']>): ReturnType<MemFsEditor['write']> {
-    return this.fs.write(...applyToFirstStringArg(this.destinationPath.bind(this), args));
+    const [filepath, contents, options, ...remaining] = applyToFirstStringArg(this.destinationPath.bind(this), args);
+
+    return this.fs.write(filepath, contents, withEditorMetadata(this, options), ...remaining);
   }
 
   /**
@@ -174,7 +199,12 @@ export class FsMixin {
     this: BaseGenerator,
     ...args: Parameters<MemFsEditor['writeJSON']>
   ): ReturnType<MemFsEditor['writeJSON']> {
-    return this.fs.writeJSON(...applyToFirstStringArg(this.destinationPath.bind(this), args));
+    const [filepath, contents, replacer, space, options, ...remaining] = applyToFirstStringArg(
+      this.destinationPath.bind(this),
+      args,
+    );
+
+    return this.fs.writeJSON(filepath, contents, replacer, space, withEditorMetadata(this, options), ...remaining);
   }
 
   /**
@@ -200,7 +230,7 @@ export class FsMixin {
     return this.fs.copy(
       from,
       this.destinationPath(to),
-      { fromBasePath: this.destinationPath(), ...options },
+      withEditorMetadata(this, { fromBasePath: this.destinationPath(), ...options }),
       ...remaining,
     );
   }
@@ -270,14 +300,19 @@ export class FsMixin {
     destination = Array.isArray(destination) ? destination : [destination];
     const destinationPath = this.destinationPath(...destination);
 
-    this.fs.copyTpl(templatePath, destinationPath, templateData, {
-      fromBasePath: this.templatePath(),
-      ...copyOptions,
-      transformOptions: {
-        context: this,
-        ...copyOptions?.transformOptions,
-      },
-    });
+    this.fs.copyTpl(
+      templatePath,
+      destinationPath,
+      templateData,
+      withEditorMetadata(this, {
+        fromBasePath: this.templatePath(),
+        ...copyOptions,
+        transformOptions: {
+          context: this,
+          ...copyOptions?.transformOptions,
+        },
+      }),
+    );
   }
 
   /**
@@ -317,14 +352,19 @@ export class FsMixin {
     destination = Array.isArray(destination) ? destination : [destination];
     const destinationPath = this.destinationPath(...destination);
 
-    return this.fs.copyTplAsync(templatePath, destinationPath, templateData, {
-      fromBasePath: this.templatePath(),
-      ...copyOptions,
-      transformOptions: {
-        context: this,
-        ...copyOptions?.transformOptions,
-      },
-    });
+    return this.fs.copyTplAsync(
+      templatePath,
+      destinationPath,
+      templateData,
+      withEditorMetadata(this, {
+        fromBasePath: this.templatePath(),
+        ...copyOptions,
+        transformOptions: {
+          context: this,
+          ...copyOptions?.transformOptions,
+        },
+      }),
+    );
   }
 
   /**
