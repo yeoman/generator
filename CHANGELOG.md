@@ -1,5 +1,11 @@
 # Changelog
 
+## [8.3.2](https://github.com/yeoman/generator/compare/v8.3.1...v8.3.2) (2026-09-07)
+
+### Bug Fixes
+
+- loose mem-fs dependency ([#1841](https://github.com/yeoman/generator/issues/1841)) ([c3f1758](https://github.com/yeoman/generator/commit/c3f17589b692a09b9d7820aafd9fcd86584ebc93))
+
 ## [8.3.1](https://github.com/yeoman/generator/compare/v8.3.0...v8.3.1) (2026-09-05)
 
 ### Bug Fixes
