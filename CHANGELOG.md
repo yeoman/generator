@@ -2,25 +2,23 @@
 
 ## [9.0.0](https://github.com/yeoman/generator/compare/v8.4.0...v9.0.0) (2026-09-11)
 
-
 ### ⚠ BREAKING CHANGES
 
-* do not eagerly create destinationRoot folder, create on demand at spawn ([#1852](https://github.com/yeoman/generator/issues/1852))
-* update execa to v10 ([#1850](https://github.com/yeoman/generator/issues/1850))
-* drop node 20 support and update dependencies ([#1849](https://github.com/yeoman/generator/issues/1849))
-* `templatePath()` and `destinationPath()` throw when the resolved path is outside the source/destination root.
+- do not eagerly create destinationRoot folder, create on demand at spawn ([#1852](https://github.com/yeoman/generator/issues/1852))
+- update execa to v10 ([#1850](https://github.com/yeoman/generator/issues/1850))
+- drop node 20 support and update dependencies ([#1849](https://github.com/yeoman/generator/issues/1849))
+- `templatePath()` and `destinationPath()` throw when the resolved path is outside the source/destination root.
 
 ### Features
 
-* do not eagerly create destinationRoot folder, create on demand at spawn ([#1852](https://github.com/yeoman/generator/issues/1852)) ([0a14c27](https://github.com/yeoman/generator/commit/0a14c271a423c124078f7d71887c5967eaf1b766))
-* drop node 20 support and update dependencies ([#1849](https://github.com/yeoman/generator/issues/1849)) ([3cff385](https://github.com/yeoman/generator/commit/3cff3857ab54d6f06fcce6b62d3de0e9216684b3))
-* throw when `templatePath()`/`destinationPath()` resolve outsid… ([#1848](https://github.com/yeoman/generator/issues/1848)) ([fb8de1b](https://github.com/yeoman/generator/commit/fb8de1b238ae91a53fc32b2166ac08fe7009f79f))
-* update execa to v10 ([#1850](https://github.com/yeoman/generator/issues/1850)) ([6f8320f](https://github.com/yeoman/generator/commit/6f8320fd3d9f224b79dcf772c12ed6f88ebd018a))
-
+- do not eagerly create destinationRoot folder, create on demand at spawn ([#1852](https://github.com/yeoman/generator/issues/1852)) ([0a14c27](https://github.com/yeoman/generator/commit/0a14c271a423c124078f7d71887c5967eaf1b766))
+- drop node 20 support and update dependencies ([#1849](https://github.com/yeoman/generator/issues/1849)) ([3cff385](https://github.com/yeoman/generator/commit/3cff3857ab54d6f06fcce6b62d3de0e9216684b3))
+- throw when `templatePath()`/`destinationPath()` resolve outsid… ([#1848](https://github.com/yeoman/generator/issues/1848)) ([fb8de1b](https://github.com/yeoman/generator/commit/fb8de1b238ae91a53fc32b2166ac08fe7009f79f))
+- update execa to v10 ([#1850](https://github.com/yeoman/generator/issues/1850)) ([6f8320f](https://github.com/yeoman/generator/commit/6f8320fd3d9f224b79dcf772c12ed6f88ebd018a))
 
 ### Bug Fixes
 
-* resolve `moveDestination` source against the destination root ([#1846](https://github.com/yeoman/generator/issues/1846)) ([db42587](https://github.com/yeoman/generator/commit/db42587643d1a97c47b29cc30b5de8f5115ceee8))
+- resolve `moveDestination` source against the destination root ([#1846](https://github.com/yeoman/generator/issues/1846)) ([db42587](https://github.com/yeoman/generator/commit/db42587643d1a97c47b29cc30b5de8f5115ceee8))
 
 ## [8.4.0](https://github.com/yeoman/generator/compare/v8.3.2...v8.4.0) (2026-09-07)
 
