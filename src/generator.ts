@@ -487,8 +487,8 @@ export class BaseGenerator<
       }
     }
 
-    questions = prefillQuestions(this._globalConfig, arrayQuestions);
-    questions = prefillQuestions(this.config, arrayQuestions);
+    // Local config defaults take precedence over the global ones.
+    questions = prefillQuestions(this.config, prefillQuestions(this._globalConfig, arrayQuestions));
 
     const initialAnswers: A = Object.fromEntries(
       questions.map(question => getAnswerFromStorage(question)).filter(Boolean) as Array<[string, any]>,

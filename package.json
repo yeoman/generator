@@ -58,7 +58,7 @@
     "@types/debug": "^4.1.13",
     "@types/lodash-es": "^4.17.12",
     "@yeoman/namespace": "^2.1.0",
-    "chalk": "^5.6.2",
+    "chalk": "^6.0.0",
     "debug": "^4.4.3",
     "execa": "^9.6.1",
     "latest-version": "^9.0.0",
@@ -66,35 +66,35 @@
     "mem-fs-editor": "^12.0.9",
     "minimist": "^1.2.8",
     "read-package-up": "^12.0.0",
-    "semver": "^7.7.4",
+    "semver": "^7.8.5",
     "simple-git": "^3.36.0",
-    "sort-keys": "^6.0.0",
+    "sort-keys": "^6.0.1",
     "text-table": "^0.2.0",
-    "type-fest": "^5.6.0"
+    "type-fest": "^5.9.0"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
     "@types/minimist": "^1.2.5",
     "@types/node": "^24.12.2",
     "@types/picomatch": "^4.0.3",
-    "@types/semver": "^7.7.1",
+    "@types/semver": "^7.8.0",
     "@types/text-table": "^0.2.5",
-    "@typescript-eslint/parser": "^8.59.1",
+    "@typescript-eslint/parser": "^8.70.0",
     "@vitest/coverage-v8": "^5.0.0",
-    "@yeoman/adapter": "^4.0.2",
+    "@yeoman/adapter": "^5.0.0",
     "@yeoman/eslint": "1.1.0",
-    "@yeoman/transform": "^2.1.1",
-    "@yeoman/types": "^1.11.0",
+    "@yeoman/transform": "^2.1.2",
+    "@yeoman/types": "^1.13.1",
     "cpy-cli": "^7.0.0",
-    "ejs": "^5.0.2",
-    "eslint": "10.2.1",
+    "ejs": "^6.0.1",
+    "eslint": "10.10.0",
     "jsdoc": "^4.0.5",
-    "prettier": "3.8.3",
+    "prettier": "3.9.6",
     "prettier-plugin-packagejson": "3.0.2",
     "typescript": "6.0.3",
     "vitest": "^5.0.0",
-    "yeoman-environment": "^6.0.1",
-    "yeoman-test": "^11.3.1"
+    "yeoman-environment": "^7.0.0",
+    "yeoman-test": "^11.8.2"
   },
   "peerDependencies": {
     "@types/node": ">=20.19.35",
@@ -107,7 +107,7 @@
     }
   },
   "engines": {
-    "node": "^20.17.0 || >=22.9.0"
+    "node": "^22.18.0 || >=24.11.0"
   },
   "overrides": {
     "yeoman-test": {
