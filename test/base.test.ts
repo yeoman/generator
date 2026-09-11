@@ -1166,6 +1166,22 @@ describe('Base', () => {
     });
   });
 
+  describe('#createSimpleGit()', () => {
+    it('creates the destination root when it does not exist, simple-git requires an existing directory', async () => {
+      const destinationRoot = path.resolve('destination', 'not-created');
+      dummy.destinationRoot(destinationRoot);
+      expect(fs.existsSync(destinationRoot)).toBeFalsy();
+
+      const git = dummy.createSimpleGit();
+
+      expect(fs.existsSync(destinationRoot)).toBeTruthy();
+      expect(await git.checkIsRepo(git.CheckRepoActions.IS_REPO_ROOT)).toBe(false);
+
+      await git.init();
+      expect(fs.existsSync(path.join(destinationRoot, '.git'))).toBeTruthy();
+    });
+  });
+
   describe('#destinationPath()', () => {
     const outsidePath = path.resolve('/outside/bar.js');
 
