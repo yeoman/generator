@@ -1,12 +1,11 @@
 import Generator from './utils.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { execa, execaCommand, execaCommandSync, execaSync } from 'execa';
+import { execa, execaSync } from 'execa';
 
-vi.mock('execa', () => ({
+vi.mock('execa', async importOriginal => ({
+  ...(await importOriginal()),
   execa: vi.fn(),
   execaSync: vi.fn(),
-  execaCommand: vi.fn(),
-  execaCommandSync: vi.fn(),
 }));
 
 describe('generators.Base (actions/spawn-command)', () => {
@@ -24,12 +23,19 @@ describe('generators.Base (actions/spawn-command)', () => {
   describe('#spawnCommand()', () => {
     describe('only the command is required', () => {
       describe('no args and no options are given', () => {
-        it('calls execaCommandSync with the command, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
+        it('calls execa with the parsed command, {cwd: this.destinationRoot()}', () => {
           testGenerator.spawnCommand('foo');
-          expect(execaCommand).toHaveBeenCalledWith('foo', {
+          expect(execa).toHaveBeenCalledWith('foo', [], {
             cwd: testGenerator.destinationRoot(),
           });
         });
+      });
+    });
+
+    it('splits the command string into file and arguments', () => {
+      testGenerator.spawnCommand('npm run the\\ task --silent');
+      expect(execa).toHaveBeenCalledWith('npm', ['run', 'the task', '--silent'], {
+        cwd: testGenerator.destinationRoot(),
       });
     });
 
@@ -73,12 +79,19 @@ describe('generators.Base (actions/spawn-command)', () => {
   describe('#spawnCommandSync()', () => {
     describe('only the command is required', () => {
       describe('no args and no options are given', () => {
-        it('calls execaCommandSync with the command, {stdio: "inherit", cwd: this.destinationRoot()}', () => {
+        it('calls execaSync with the parsed command, {cwd: this.destinationRoot()}', () => {
           testGenerator.spawnCommandSync('foo');
-          expect(execaCommandSync).toHaveBeenCalledWith('foo', {
+          expect(execaSync).toHaveBeenCalledWith('foo', [], {
             cwd: testGenerator.destinationRoot(),
           });
         });
+      });
+    });
+
+    it('splits the command string into file and arguments', () => {
+      testGenerator.spawnCommandSync('npm run the\\ task --silent');
+      expect(execaSync).toHaveBeenCalledWith('npm', ['run', 'the task', '--silent'], {
+        cwd: testGenerator.destinationRoot(),
       });
     });
 

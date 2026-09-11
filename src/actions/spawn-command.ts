@@ -4,9 +4,8 @@ import {
   type SyncOptions,
   type SyncResult,
   execa,
-  execaCommand,
-  execaCommandSync,
   execaSync,
+  parseCommandString,
 } from 'execa';
 import type { BaseGenerator } from '../generator.js';
 
@@ -16,15 +15,15 @@ export class SpawnCommandMixin {
    *
    * @param command program to execute
    * @param opt execa options options
-   * @see https://github.com/sindresorhus/execa#execacommandcommand-options
+   * @see https://github.com/sindresorhus/execa/blob/main/docs/execution.md#command-string
    */
   spawnCommand<const OptionsType extends ExecaOptions>(
     this: BaseGenerator,
     command: string,
     opt?: OptionsType,
   ): ResultPromise<OptionsType> {
-    opt = { cwd: this.destinationRoot(), ...opt } as OptionsType;
-    return execaCommand(command, opt) as any;
+    const [file, ...args] = parseCommandString(command);
+    return this.spawn(file, args, opt);
   }
 
   /**
@@ -50,15 +49,15 @@ export class SpawnCommandMixin {
    *
    * @param command program to execute
    * @param opt execa options options
-   * @see https://github.com/sindresorhus/execa#execacommandsynccommand-options
+   * @see https://github.com/sindresorhus/execa/blob/main/docs/execution.md#command-string
    */
   spawnCommandSync<const OptionsType extends SyncOptions>(
     this: BaseGenerator,
     command: string,
     opt?: OptionsType,
   ): SyncResult<OptionsType> {
-    opt = { cwd: this.destinationRoot(), ...opt } as OptionsType;
-    return execaCommandSync<OptionsType>(command, opt);
+    const [file, ...args] = parseCommandString(command);
+    return this.spawnSync(file, args, opt);
   }
 
   /**
