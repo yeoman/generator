@@ -2,34 +2,25 @@
 import assert from 'node:assert';
 import { type MemFsEditor } from 'mem-fs-editor';
 import type { BaseGenerator } from '../generator.js';
+import type { PathOptions } from '../types.js';
+import { splitPathOptions } from '../util/path-options.js';
 
-type ExtractOverload1<T> = T extends {
-  (...args: infer P): infer R; // Captura a 2ª (P = Parâmetros, R = Retorno)
-  (...args: any[]): any; // Ignora a 1ª
-  (...args: any[]): any; // Ignora a 1ª
-  (...args: any[]): any; // Ignora a 1ª
-}
-  ? (...args: P) => R
-  : never;
+type CopyOptions = NonNullable<Parameters<MemFsEditor['copy']>[2]>;
+type CopyAsyncOptions = NonNullable<Parameters<MemFsEditor['copyAsync']>[2]>;
+type WriteOptions = NonNullable<Parameters<MemFsEditor['write']>[2]>;
+type WriteJSONParameters = Parameters<MemFsEditor['writeJSON']>;
+type WriteJSONReplacer = WriteJSONParameters[2];
+type WriteJSONSpace = WriteJSONParameters[3];
+type WriteJSONOptions = WriteOptions & PathOptions & { replacer?: WriteJSONReplacer; space?: WriteJSONSpace };
+type DeleteOptions = NonNullable<Parameters<MemFsEditor['delete']>[1]>;
+type CopyTplOptions = NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>;
+type CopyTplAsyncOptions = NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>;
 
-type ExtractOverload2<T> = T extends {
-  (...args: any[]): any; // Ignora a 1ª
-  (...args: infer P): infer R; // Captura a 2ª (P = Parâmetros, R = Retorno)
-  (...args: any[]): any; // Ignora a 1ª
-  (...args: any[]): any; // Ignora a 1ª
-}
-  ? (...args: P) => R
-  : never;
-
-type ReadOverload1 = ExtractOverload1<MemFsEditor['read']>;
-type ReadOverload2 = ExtractOverload2<MemFsEditor['read']>;
-
-type ReadJSONOverload1 = ExtractOverload1<MemFsEditor['readJSON']>;
-type ReadJSONOverload2 = ExtractOverload2<MemFsEditor['readJSON']>;
+type ReadOptions = { raw?: boolean; defaults?: string | Buffer | null };
 
 export type Template<G, C extends 'copyTplAsync' | 'copyTpl', D extends NonNullable<Parameters<MemFsEditor[C]>[2]>> = {
   /**
-   * Template file, absolute or relative to templatePath().
+   * Template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled).
    */
   source: string;
   /**
@@ -40,13 +31,13 @@ export type Template<G, C extends 'copyTplAsync' | 'copyTpl', D extends NonNulla
    */
   when?: (data: D, generator: G) => boolean;
   /**
-   * Destination, absolute or relative to destinationPath().
+   * Destination, relative to destinationPath(), or absolute inside the destination root (outside when the `allowDestinationOutsideRoot` feature is enabled).
    */
   destination?: string;
   /**
-   * Mem-fs-editor copy options
+   * Mem-fs-editor copy options, `allowOutsideRoot` applies to both source and destination.
    */
-  copyOptions?: NonNullable<Parameters<MemFsEditor[C]>[3]>;
+  copyOptions?: NonNullable<Parameters<MemFsEditor[C]>[3]> & PathOptions;
   /**
    * Ejs data
    */
@@ -59,23 +50,21 @@ export type Templates<
   D extends NonNullable<Parameters<MemFsEditor[C]>[2]>,
 > = Array<Template<G, C, D>>;
 
-function applyToFirstStringArg<Type extends [string | string[], ...any] = [string | string[], ...any[]]>(
-  customizer: (arg1: string) => string,
-  args: Type,
-): Type {
-  args[0] = Array.isArray(args[0]) ? args[0].map(arg => customizer(arg)) : customizer(args[0]);
-  return args;
-}
+/**
+ * A replacer is a function, an array or null, so a plain object in its position is the options object.
+ */
+const isWriteJSONOptions = (value: WriteJSONReplacer | WriteJSONOptions): value is WriteJSONOptions =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
 
-function applyToFirstAndSecondStringArg<Type extends [string | string[], string, ...any]>(
-  customizer1: (arg1: string) => string,
-  customizer2: (arg1: string) => string,
-  args: Type,
-): Type {
-  args = applyToFirstStringArg(customizer1, args);
-  args[1] = customizer2(args[1]);
-  return args;
-}
+const writeJSONOptionsToPositional = ({
+  replacer,
+  space,
+  ...options
+}: WriteJSONOptions): [WriteJSONReplacer?, WriteJSONSpace?, (WriteOptions & PathOptions)?] => [
+  replacer,
+  space,
+  options,
+];
 
 type EditorMetadataOptions = { metadata?: Record<string, unknown> };
 
@@ -104,15 +93,26 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.read(this.templatePath(filepath))
    */
-  readTemplate(this: BaseGenerator, ...args: Parameters<ReadOverload1>): ReturnType<ReadOverload1>;
-  readTemplate(this: BaseGenerator, ...args: Parameters<ReadOverload2>): ReturnType<ReadOverload2>;
+  readTemplate(this: BaseGenerator, filepath: string, options?: PathOptions): string;
+  readTemplate<const DefaultType extends string | null>(
+    this: BaseGenerator,
+    filepath: string,
+    options: { raw?: false; defaults: DefaultType } & PathOptions,
+  ): string | DefaultType;
+  readTemplate(this: BaseGenerator, filepath: string, options: { raw: true; defaults?: never } & PathOptions): Buffer;
+  readTemplate<const DefaultType extends Buffer | null>(
+    this: BaseGenerator,
+    filepath: string,
+    options: { raw: true; defaults: DefaultType } & PathOptions,
+  ): Buffer | DefaultType;
   readTemplate(
     this: BaseGenerator,
-    ...args: Parameters<ReadOverload1> | Parameters<ReadOverload2>
-  ): ReturnType<ReadOverload1> | ReturnType<ReadOverload2> {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    return this.fs.read(...applyToFirstStringArg(this.templatePath.bind(this), args));
+    ...args: [filepath: string, options?: ReadOptions & PathOptions]
+  ): string | Buffer | null {
+    const [filepath, options, ...remaining] = args;
+    const [pathOptions, readOptions] = splitPathOptions(options);
+
+    return (this.fs.read as any)(this.templatePath(filepath, pathOptions), readOptions, ...remaining);
   }
 
   /**
@@ -120,13 +120,17 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.copy(this.templatePath(from), this.destinationPath(to))
    */
-  copyTemplate(this: BaseGenerator, ...args: Parameters<MemFsEditor['copy']>): ReturnType<MemFsEditor['copy']> {
-    const [from, to, options = {}, ...remaining] = args;
+  copyTemplate(
+    this: BaseGenerator,
+    ...args: [from: string | string[], to: string, options?: CopyOptions & PathOptions]
+  ): ReturnType<MemFsEditor['copy']> {
+    const [from, to, options, ...remaining] = args;
+    const [pathOptions, copyOptions] = splitPathOptions(options);
 
     return this.fs.copy(
       from,
-      this.destinationPath(to),
-      withEditorMetadata(this, { fromBasePath: this.templatePath(), ...options }),
+      this.destinationPath(to, pathOptions),
+      withEditorMetadata(this, { fromBasePath: this.templatePath(), ...copyOptions }),
       ...remaining,
     );
   }
@@ -138,15 +142,18 @@ export class FsMixin {
    */
   async copyTemplateAsync(
     this: BaseGenerator,
-    ...args: Parameters<MemFsEditor['copyAsync']>
+    ...args: [from: string | string[], to: string, options?: CopyAsyncOptions & PathOptions]
   ): ReturnType<MemFsEditor['copyAsync']> {
-    const [from, to, options, ...remaining] = applyToFirstAndSecondStringArg(
-      this.templatePath.bind(this),
-      this.destinationPath.bind(this),
-      args,
-    );
+    const [from, to, options, ...remaining] = args;
+    const [pathOptions, copyOptions] = splitPathOptions(options);
+    const templatePath = (filepath: string) => this.templatePath(filepath, pathOptions);
 
-    return this.fs.copyAsync(from, to, withEditorMetadata(this, options), ...remaining);
+    return this.fs.copyAsync(
+      Array.isArray(from) ? from.map(filepath => templatePath(filepath)) : templatePath(from),
+      this.destinationPath(to, pathOptions),
+      withEditorMetadata(this, copyOptions),
+      ...remaining,
+    );
   }
 
   /**
@@ -154,15 +161,30 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.read(this.destinationPath(filepath)).
    */
-  readDestination(this: BaseGenerator, ...args: Parameters<ReadOverload1>): ReturnType<ReadOverload1>;
-  readDestination(this: BaseGenerator, ...args: Parameters<ReadOverload2>): ReturnType<ReadOverload2>;
+  readDestination(this: BaseGenerator, filepath: string, options?: PathOptions): string;
+  readDestination<const DefaultType extends string | null>(
+    this: BaseGenerator,
+    filepath: string,
+    options: { raw?: false; defaults: DefaultType } & PathOptions,
+  ): string | DefaultType;
   readDestination(
     this: BaseGenerator,
-    ...args: Parameters<ReadOverload1> | Parameters<ReadOverload2>
-  ): ReturnType<ReadOverload1> | ReturnType<ReadOverload2> {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    return this.fs.read(...applyToFirstStringArg(this.destinationPath.bind(this), args));
+    filepath: string,
+    options: { raw: true; defaults?: never } & PathOptions,
+  ): Buffer;
+  readDestination<const DefaultType extends Buffer | null>(
+    this: BaseGenerator,
+    filepath: string,
+    options: { raw: true; defaults: DefaultType } & PathOptions,
+  ): Buffer | DefaultType;
+  readDestination(
+    this: BaseGenerator,
+    ...args: [filepath: string, options?: ReadOptions & PathOptions]
+  ): string | Buffer | null {
+    const [filepath, options, ...remaining] = args;
+    const [pathOptions, readOptions] = splitPathOptions(options);
+
+    return (this.fs.read as any)(this.destinationPath(filepath, pathOptions), readOptions, ...remaining);
   }
 
   /**
@@ -170,13 +192,20 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.readJSON(this.destinationPath(filepath)).
    */
-  readDestinationJSON(this: BaseGenerator, ...args: Parameters<ReadJSONOverload1>): ReturnType<ReadJSONOverload1>;
-  readDestinationJSON(this: BaseGenerator, ...args: Parameters<ReadJSONOverload2>): ReturnType<ReadJSONOverload2>;
   readDestinationJSON(
     this: BaseGenerator,
-    ...args: Parameters<ReadJSONOverload1> | Parameters<ReadJSONOverload2>
-  ): ReturnType<ReadJSONOverload1> | ReturnType<ReadJSONOverload2> {
-    return this.fs.readJSON(...applyToFirstStringArg(this.destinationPath.bind(this), args));
+    filepath: string,
+    defaults?: undefined,
+    options?: PathOptions,
+  ): object | undefined;
+  readDestinationJSON<T>(this: BaseGenerator, filepath: string, defaults: T, options?: PathOptions): object | T;
+  readDestinationJSON(
+    this: BaseGenerator,
+    ...args: [filepath: string, defaults?: unknown, options?: PathOptions]
+  ): object | unknown {
+    const [filepath, defaults, options, ...remaining] = args;
+
+    return (this.fs.readJSON as any)(this.destinationPath(filepath, options ?? {}), defaults, options, ...remaining);
   }
 
   /**
@@ -184,10 +213,19 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.write(this.destinationPath(filepath)).
    */
-  writeDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['write']>): ReturnType<MemFsEditor['write']> {
-    const [filepath, contents, options, ...remaining] = applyToFirstStringArg(this.destinationPath.bind(this), args);
+  writeDestination(
+    this: BaseGenerator,
+    ...args: [filepath: string, contents: string | Buffer, options?: WriteOptions & PathOptions]
+  ): ReturnType<MemFsEditor['write']> {
+    const [filepath, contents, options, ...remaining] = args;
+    const [pathOptions, writeOptions] = splitPathOptions(options);
 
-    return this.fs.write(filepath, contents, withEditorMetadata(this, options), ...remaining);
+    return this.fs.write(
+      this.destinationPath(filepath, pathOptions),
+      contents,
+      withEditorMetadata(this, writeOptions),
+      ...remaining,
+    );
   }
 
   /**
@@ -197,14 +235,43 @@ export class FsMixin {
    */
   writeDestinationJSON(
     this: BaseGenerator,
-    ...args: Parameters<MemFsEditor['writeJSON']>
+    filepath: string,
+    contents: unknown,
+    options?: WriteJSONOptions,
+  ): ReturnType<MemFsEditor['writeJSON']>;
+  writeDestinationJSON(
+    this: BaseGenerator,
+    filepath: string,
+    contents: unknown,
+    replacer?: WriteJSONReplacer,
+    space?: WriteJSONSpace,
+    options?: WriteOptions & PathOptions,
+  ): ReturnType<MemFsEditor['writeJSON']>;
+  writeDestinationJSON(
+    this: BaseGenerator,
+    ...args: [
+      filepath: string,
+      contents: unknown,
+      replacerOrOptions?: WriteJSONReplacer | WriteJSONOptions,
+      space?: WriteJSONSpace,
+      options?: WriteOptions & PathOptions,
+    ]
   ): ReturnType<MemFsEditor['writeJSON']> {
-    const [filepath, contents, replacer, space, options, ...remaining] = applyToFirstStringArg(
-      this.destinationPath.bind(this),
-      args,
-    );
+    const [filepath, contents, ...rest] = args;
+    // Normalize the `writeDestinationJSON(filepath, contents, options)` form to the positional one.
+    const [replacer, space, options, ...remaining] = isWriteJSONOptions(rest[0])
+      ? writeJSONOptionsToPositional(rest[0])
+      : (rest as [WriteJSONReplacer?, WriteJSONSpace?, (WriteOptions & PathOptions)?]);
+    const [pathOptions, writeOptions] = splitPathOptions(options);
 
-    return this.fs.writeJSON(filepath, contents, replacer, space, withEditorMetadata(this, options), ...remaining);
+    return this.fs.writeJSON(
+      this.destinationPath(filepath, pathOptions),
+      contents,
+      replacer,
+      space,
+      withEditorMetadata(this, writeOptions),
+      ...remaining,
+    );
   }
 
   /**
@@ -214,9 +281,17 @@ export class FsMixin {
    */
   deleteDestination(
     this: BaseGenerator,
-    ...args: Parameters<MemFsEditor['delete']>
+    ...args: [paths: string | string[], options?: DeleteOptions & PathOptions]
   ): ReturnType<MemFsEditor['delete']> {
-    return this.fs.delete(...applyToFirstStringArg(this.destinationPath.bind(this), args));
+    const [paths, options, ...remaining] = args;
+    const [pathOptions, deleteOptions] = splitPathOptions(options);
+    const destinationPath = (filepath: string) => this.destinationPath(filepath, pathOptions);
+
+    return this.fs.delete(
+      Array.isArray(paths) ? paths.map(filepath => destinationPath(filepath)) : destinationPath(paths),
+      deleteOptions,
+      ...remaining,
+    );
   }
 
   /**
@@ -224,13 +299,17 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.copy(this.destinationPath(from), this.destinationPath(to)).
    */
-  copyDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['copy']>): ReturnType<MemFsEditor['copy']> {
-    const [from, to, options = {}, ...remaining] = args;
+  copyDestination(
+    this: BaseGenerator,
+    ...args: [from: string | string[], to: string, options?: CopyOptions & PathOptions]
+  ): ReturnType<MemFsEditor['copy']> {
+    const [from, to, options, ...remaining] = args;
+    const [pathOptions, copyOptions] = splitPathOptions(options);
 
     return this.fs.copy(
       from,
-      this.destinationPath(to),
-      withEditorMetadata(this, { fromBasePath: this.destinationPath(), ...options }),
+      this.destinationPath(to, pathOptions),
+      withEditorMetadata(this, { fromBasePath: this.destinationPath(), ...copyOptions }),
       ...remaining,
     );
   }
@@ -240,13 +319,17 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.move(this.destinationPath(from), this.destinationPath(to)).
    */
-  moveDestination(this: BaseGenerator, ...args: Parameters<MemFsEditor['move']>): ReturnType<MemFsEditor['move']> {
+  moveDestination(
+    this: BaseGenerator,
+    ...args: [from: string, to: string, options?: CopyOptions & PathOptions]
+  ): ReturnType<MemFsEditor['move']> {
     const [from, to, options, ...remaining] = args;
+    const [pathOptions, moveOptions] = splitPathOptions(options);
 
     return this.fs.move(
-      this.destinationPath(from),
-      this.destinationPath(to),
-      { fromBasePath: this.destinationPath(), ...options },
+      this.destinationPath(from, pathOptions),
+      this.destinationPath(to, pathOptions),
+      { fromBasePath: this.destinationPath(), ...moveOptions },
       ...remaining,
     );
   }
@@ -258,34 +341,36 @@ export class FsMixin {
    */
   existsDestination(
     this: BaseGenerator,
-    ...args: Parameters<MemFsEditor['exists']>
+    ...args: [filepath: string, options?: PathOptions]
   ): ReturnType<MemFsEditor['exists']> {
-    return this.fs.exists(...applyToFirstStringArg(this.destinationPath.bind(this), args));
+    const [filepath, options, ...remaining] = args;
+
+    return (this.fs.exists as any)(this.destinationPath(filepath, options ?? {}), options, ...remaining);
   }
 
   /**
    * Copy a template from templates folder to the destination.
    *
-   * @param source - template file, absolute or relative to templatePath().
-   * @param destination - destination, absolute or relative to destinationPath().
+   * @param source - template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled).
+   * @param destination - destination, relative to destinationPath(), or absolute inside the destination root (outside when the `allowDestinationOutsideRoot` feature is enabled).
    * @param templateData - ejs data
    * @param templateOptions - ejs options
-   * @param copyOptions - mem-fs-editor copy options
+   * @param copyOptions - mem-fs-editor copy options, `allowOutsideRoot` applies to both source and destination
    */
   renderTemplate<const D extends NonNullable<Parameters<MemFsEditor['copyTpl']>[2]>>(
     this: BaseGenerator,
     source?: string | string[],
     destination?: string | string[],
     templateData?: string | D,
-    copyOptions?: NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>,
+    copyOptions?: CopyTplOptions & PathOptions,
   ): void;
   renderTemplate<const D extends NonNullable<Parameters<MemFsEditor['copyTpl']>[2]>>(
     this: BaseGenerator,
     source: string | string[] = '',
     destination: string | string[] = source,
     templateData?: string | D,
-    copyOptions?: NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>,
-    compatOptions?: NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>,
+    copyOptions?: CopyTplOptions & PathOptions,
+    compatOptions?: CopyTplOptions,
   ): void {
     if (compatOptions || 'context' in (copyOptions ?? {})) {
       copyOptions = { ...compatOptions, transformOptions: copyOptions as any };
@@ -295,10 +380,11 @@ export class FsMixin {
       templateData = this._templateData(templateData) as D;
     }
 
+    const [pathOptions, copyTplOptions] = splitPathOptions(copyOptions);
     source = Array.isArray(source) ? source : [source];
-    const templatePath = this.templatePath(...source);
+    const templatePath = this.templatePath(...source, pathOptions);
     destination = Array.isArray(destination) ? destination : [destination];
-    const destinationPath = this.destinationPath(...destination);
+    const destinationPath = this.destinationPath(...destination, pathOptions);
 
     this.fs.copyTpl(
       templatePath,
@@ -306,10 +392,10 @@ export class FsMixin {
       templateData,
       withEditorMetadata(this, {
         fromBasePath: this.templatePath(),
-        ...copyOptions,
+        ...copyTplOptions,
         transformOptions: {
           context: this,
-          ...copyOptions?.transformOptions,
+          ...copyTplOptions?.transformOptions,
         },
       }),
     );
@@ -318,26 +404,26 @@ export class FsMixin {
   /**
    * Copy a template from templates folder to the destination.
    *
-   * @param source - template file, absolute or relative to templatePath().
-   * @param destination - destination, absolute or relative to destinationPath().
+   * @param source - template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled).
+   * @param destination - destination, relative to destinationPath(), or absolute inside the destination root (outside when the `allowDestinationOutsideRoot` feature is enabled).
    * @param templateData - ejs data
    * @param templateOptions - ejs options
-   * @param copyOptions - mem-fs-editor copy options
+   * @param copyOptions - mem-fs-editor copy options, `allowOutsideRoot` applies to both source and destination
    */
   async renderTemplateAsync<const D extends NonNullable<Parameters<MemFsEditor['copyTplAsync']>[2]>>(
     this: BaseGenerator,
     source?: string | string[],
     destination?: string | string[],
     templateData?: string | D,
-    copyOptions?: NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>,
+    copyOptions?: CopyTplAsyncOptions & PathOptions,
   ): Promise<void>;
   async renderTemplateAsync<const D extends NonNullable<Parameters<MemFsEditor['copyTplAsync']>[2]>>(
     this: BaseGenerator,
     source: string | string[] = '',
     destination: string | string[] = source,
     templateData?: string | D,
-    copyOptions?: NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>,
-    compatOptions?: NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>,
+    copyOptions?: CopyTplAsyncOptions & PathOptions,
+    compatOptions?: CopyTplAsyncOptions,
   ): Promise<void> {
     if (compatOptions || 'context' in (copyOptions ?? {})) {
       copyOptions = { ...compatOptions, transformOptions: copyOptions as any };
@@ -347,10 +433,11 @@ export class FsMixin {
       templateData = this._templateData(templateData) as D;
     }
 
+    const [pathOptions, copyTplOptions] = splitPathOptions(copyOptions);
     source = Array.isArray(source) ? source : [source];
-    const templatePath = this.templatePath(...source);
+    const templatePath = this.templatePath(...source, pathOptions);
     destination = Array.isArray(destination) ? destination : [destination];
-    const destinationPath = this.destinationPath(...destination);
+    const destinationPath = this.destinationPath(...destination, pathOptions);
 
     return this.fs.copyTplAsync(
       templatePath,
@@ -358,10 +445,10 @@ export class FsMixin {
       templateData,
       withEditorMetadata(this, {
         fromBasePath: this.templatePath(),
-        ...copyOptions,
+        ...copyTplOptions,
         transformOptions: {
           context: this,
-          ...copyOptions?.transformOptions,
+          ...copyTplOptions?.transformOptions,
         },
       }),
     );
@@ -394,7 +481,7 @@ export class FsMixin {
   /**
    * Copy templates from templates folder to the destination.
    *
-   * @param templates - template file, absolute or relative to templatePath().
+   * @param templates - template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled).
    * @param templateData - ejs data
    */
   async renderTemplatesAsync<const D extends NonNullable<Parameters<MemFsEditor['copyTplAsync']>[2]>>(
