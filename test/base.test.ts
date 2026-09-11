@@ -1156,6 +1156,16 @@ describe('Base', () => {
     });
   });
 
+  describe('#destinationRoot()', () => {
+    it('does not create the directory, files are written through the in-memory file system', () => {
+      const destinationRoot = path.join(os.tmpdir(), 'yeoman-destination-root-not-created');
+      fs.rmSync(destinationRoot, { recursive: true, force: true });
+
+      expect(dummy.destinationRoot(destinationRoot)).toBe(destinationRoot);
+      expect(fs.existsSync(destinationRoot)).toBeFalsy();
+    });
+  });
+
   describe('#destinationPath()', () => {
     const outsidePath = path.resolve('/outside/bar.js');
 

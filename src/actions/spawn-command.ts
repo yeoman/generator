@@ -1,3 +1,5 @@
+import { existsSync, mkdirSync } from 'node:fs';
+
 import {
   type Options as ExecaOptions,
   type ResultPromise,
@@ -10,6 +12,25 @@ import {
 import type { BaseGenerator } from '../generator.js';
 
 export class SpawnCommandMixin {
+  /**
+   * Resolve the options to spawn a command with, defaulting `cwd` to the destination root.
+   * A command cannot be spawned in a directory that does not exist, so create it on demand.
+   *
+   * @param opt execa options
+   * @returns the options with `cwd` set
+   */
+  private resolveSpawnOptions<const OptionsType extends ExecaOptions | SyncOptions>(
+    this: BaseGenerator,
+    opt?: OptionsType,
+  ): OptionsType {
+    const cwd = opt?.cwd ?? this.destinationRoot();
+    if (!existsSync(cwd)) {
+      mkdirSync(cwd, { recursive: true });
+    }
+
+    return { ...opt, cwd } as OptionsType;
+  }
+
   /**
    * Normalize a command across OS and spawn it (asynchronously).
    *
@@ -40,8 +61,7 @@ export class SpawnCommandMixin {
     args?: readonly string[],
     opt?: OptionsType,
   ): ResultPromise<OptionsType> {
-    opt = { cwd: this.destinationRoot(), ...opt } as OptionsType;
-    return execa(command, args, opt) as any;
+    return execa(command, args, this.resolveSpawnOptions(opt)) as any;
   }
 
   /**
@@ -74,7 +94,6 @@ export class SpawnCommandMixin {
     args?: readonly string[],
     opt?: OptionsType,
   ): SyncResult<OptionsType> {
-    opt = { cwd: this.destinationRoot(), ...opt } as OptionsType;
-    return execaSync(command, args, opt);
+    return execaSync(command, args, this.resolveSpawnOptions(opt));
   }
 }

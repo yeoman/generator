@@ -1,3 +1,7 @@
+import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+
 import Generator from './utils.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { execa, execaSync } from 'execa';
@@ -10,14 +14,32 @@ vi.mock('execa', async importOriginal => ({
 
 describe('generators.Base (actions/spawn-command)', () => {
   let testGenerator: Generator;
+  let temporaryDir: string;
+  let destinationRoot: string;
 
   beforeEach(async () => {
+    temporaryDir = mkdtempSync(path.join(tmpdir(), 'yeoman-spawn-'));
+    destinationRoot = path.join(temporaryDir, 'destination', 'path');
     testGenerator = new Generator({ help: true, namespace: 'foo', resolved: 'unknown' });
-    testGenerator.destinationRoot = vi.fn().mockReturnValue('some/destination/path');
+    testGenerator.destinationRoot = vi.fn().mockReturnValue(destinationRoot);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    rmSync(temporaryDir, { recursive: true, force: true });
+  });
+
+  describe('the destination root does not exist', () => {
+    it('creates it, a command cannot be spawned in a directory that does not exist', () => {
+      expect(existsSync(destinationRoot)).toBe(false);
+      testGenerator.spawnCommand('foo');
+      expect(existsSync(destinationRoot)).toBe(true);
+    });
+
+    it('is not created when the cwd is passed', () => {
+      testGenerator.spawnCommand('foo', { cwd: temporaryDir });
+      expect(existsSync(destinationRoot)).toBe(false);
+    });
   });
 
   describe('#spawnCommand()', () => {

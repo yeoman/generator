@@ -1,4 +1,4 @@
-import fs, { readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import path, { dirname, join as pathJoin, resolve as pathResolve } from 'node:path';
 import os from 'node:os';
 import { EventEmitter } from 'node:events';
@@ -874,10 +874,6 @@ export class BaseGenerator<
       this._destinationRoot = pathResolve(rootPath);
       if ('getContextMap' in this.env) {
         this._contextMap = (this.env as any).getContextMap(this._destinationRoot);
-      }
-
-      if (!fs.existsSync(this._destinationRoot)) {
-        fs.mkdirSync(this._destinationRoot, { recursive: true });
       }
 
       this.emit(DESTINATION_ROOT_CHANGE_EVENT, this._destinationRoot);
