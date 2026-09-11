@@ -517,8 +517,6 @@ export abstract class TasksMixin {
       return this.composeWithOptions(generator, args);
     }
 
-    let parsedArgs: string[] = [];
-    let parsedOptions: Partial<BaseOptions> = {};
     if (typeof args === 'boolean') {
       return this.composeWithOptions<G>(generator, { schedule: !args });
     }
@@ -540,8 +538,8 @@ export abstract class TasksMixin {
     }
 
     if (typeof args === 'object') {
-      parsedOptions = args as any;
-      parsedArgs = (args as any).arguments ?? (args as any).args ?? [];
+      const parsedOptions: Partial<BaseOptions> = args as any;
+      const parsedArgs: string[] = (args as any).arguments ?? (args as any).args ?? [];
       if (typeof options === 'boolean') {
         immediately = options;
       }
