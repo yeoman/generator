@@ -344,7 +344,11 @@ describe('generators.Base (actions/fs)', () => {
 
     it('writeDestinationJSON accepts replacer and space inside options', () => {
       const replacer = ['a'];
-      base.writeDestinationJSON('file', { a: 1 }, { replacer, space: 4, allowOutsideRoot: true, metadata: { foo: 'bar' } });
+      base.writeDestinationJSON(
+        'file',
+        { a: 1 },
+        { replacer, space: 4, allowOutsideRoot: true, metadata: { foo: 'bar' } },
+      );
       const [pathCall] = (base.destinationPath as ReturnType<typeof vi.fn>).mock.calls;
       expect(pathCall).toEqual(['file', { allowOutsideRoot: true }]);
       const [call] = (base.fs.writeJSON as ReturnType<typeof vi.fn>).mock.calls;

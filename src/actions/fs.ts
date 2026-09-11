@@ -60,7 +60,11 @@ const writeJSONOptionsToPositional = ({
   replacer,
   space,
   ...options
-}: WriteJSONOptions): [WriteJSONReplacer?, WriteJSONSpace?, (WriteOptions & PathOptions)?] => [replacer, space, options];
+}: WriteJSONOptions): [WriteJSONReplacer?, WriteJSONSpace?, (WriteOptions & PathOptions)?] => [
+  replacer,
+  space,
+  options,
+];
 
 type EditorMetadataOptions = { metadata?: Record<string, unknown> };
 
@@ -163,7 +167,11 @@ export class FsMixin {
     filepath: string,
     options: { raw?: false; defaults: DefaultType } & PathOptions,
   ): string | DefaultType;
-  readDestination(this: BaseGenerator, filepath: string, options: { raw: true; defaults?: never } & PathOptions): Buffer;
+  readDestination(
+    this: BaseGenerator,
+    filepath: string,
+    options: { raw: true; defaults?: never } & PathOptions,
+  ): Buffer;
   readDestination<const DefaultType extends Buffer | null>(
     this: BaseGenerator,
     filepath: string,
@@ -184,7 +192,12 @@ export class FsMixin {
    * mem-fs-editor method's shortcut, for more information see [mem-fs-editor]{@link https://github.com/SBoudrias/mem-fs-editor}.
    * Shortcut for this.fs!.readJSON(this.destinationPath(filepath)).
    */
-  readDestinationJSON(this: BaseGenerator, filepath: string, defaults?: undefined, options?: PathOptions): object | undefined;
+  readDestinationJSON(
+    this: BaseGenerator,
+    filepath: string,
+    defaults?: undefined,
+    options?: PathOptions,
+  ): object | undefined;
   readDestinationJSON<T>(this: BaseGenerator, filepath: string, defaults: T, options?: PathOptions): object | T;
   readDestinationJSON(
     this: BaseGenerator,
