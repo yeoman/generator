@@ -2,9 +2,8 @@ name: Integration Build
 
 on:
   push:
-    branches-ignore:
-      - '*'
-      - 'dependabot/**'
+    branches:
+      - main
   pull_request:
     branches:
       - '*'
