@@ -119,6 +119,18 @@ describe('Generators module', () => {
       expect(global).toBe(customStorage.path);
       expect(customStorage.name).toBeUndefined();
     });
+
+    it('throws with path outside the destination root', () => {
+      const outside = path.join(env.cwd, '..', '.yo-rc-outside.json');
+      expect(() => generator.createStorage(outside)).toThrow(/outside the destination root/);
+    });
+
+    it('with path outside the destination root and allowOutsideRoot option', () => {
+      const outside = path.join(env.cwd, '..', '.yo-rc-outside.json');
+      const customStorage = generator.createStorage(outside, { name: '*', allowOutsideRoot: true });
+      expect(customStorage.path).toBe(outside);
+      expect(customStorage.name).toBe('*');
+    });
   });
 
   describe('#getContextData', () => {

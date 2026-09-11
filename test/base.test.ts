@@ -1108,16 +1108,106 @@ describe('Base', () => {
   });
 
   describe('#templatePath()', () => {
+    const outsidePath = path.resolve('/outside/bar.js');
+
     it('joins path to the source root', () => {
       expect(dummy.templatePath('bar.js')).toBe(path.join(dummy.sourceRoot(), 'bar.js'));
       expect(dummy.templatePath('dir/', 'bar.js')).toBe(path.join(dummy.sourceRoot(), '/dir/bar.js'));
+      expect(dummy.templatePath()).toBe(dummy.sourceRoot());
+    });
+
+    it('ignores a trailing options object when joining', () => {
+      expect(dummy.templatePath('dir/', 'bar.js', {})).toBe(path.join(dummy.sourceRoot(), '/dir/bar.js'));
+    });
+
+    it('accepts absolute path inside the source root', () => {
+      const inside = path.join(dummy.sourceRoot(), 'dir', 'bar.js');
+      expect(dummy.templatePath(inside)).toBe(inside);
+      expect(dummy.templatePath(dummy.sourceRoot())).toBe(dummy.sourceRoot());
+    });
+
+    it('throws on path outside the source root by default', () => {
+      expect(() => dummy.templatePath(outsidePath)).toThrow(/templatePath\(\) resolved .* outside the source root/);
+      expect(() => dummy.templatePath('..', 'bar.js')).toThrow(/allowTemplatesOutsideRoot/);
+      expect(() => dummy.templatePath('dir/../../bar.js')).toThrow(/outside the source root/);
+      expect(() => dummy.templatePath(`${dummy.sourceRoot()}-sibling/bar.js`)).toThrow(/outside the source root/);
+    });
+
+    it('allows path outside the source root with allowOutsideRoot option', () => {
+      expect(dummy.templatePath(outsidePath, { allowOutsideRoot: true })).toBe(outsidePath);
+      expect(dummy.templatePath('..', 'bar.js', { allowOutsideRoot: true })).toBe(
+        path.join(dummy.sourceRoot(), '..', 'bar.js'),
+      );
+    });
+
+    it('allows path outside the source root with allowTemplatesOutsideRoot feature', () => {
+      const generator = new Dummy([], { env, resolved: 'foo/bar' }, { allowTemplatesOutsideRoot: true });
+      expect(generator.templatePath(outsidePath)).toBe(outsidePath);
+    });
+
+    it('ignores allowDestinationOutsideRoot feature', () => {
+      const generator = new Dummy([], { env, resolved: 'foo/bar' }, { allowDestinationOutsideRoot: true });
+      expect(() => generator.templatePath(outsidePath)).toThrow(/outside the source root/);
+    });
+
+    it('option takes precedence over feature', () => {
+      const generator = new Dummy([], { env, resolved: 'foo/bar' }, { allowTemplatesOutsideRoot: true });
+      expect(() => generator.templatePath(outsidePath, { allowOutsideRoot: false })).toThrow(/outside the source root/);
     });
   });
 
   describe('#destinationPath()', () => {
-    it('joins path to the source root', () => {
+    const outsidePath = path.resolve('/outside/bar.js');
+
+    it('joins path to the destination root', () => {
       expect(dummy.destinationPath('bar.js')).toBe(path.join(dummy.destinationRoot(), 'bar.js'));
       expect(dummy.destinationPath('dir/', 'bar.js')).toBe(path.join(dummy.destinationRoot(), '/dir/bar.js'));
+      expect(dummy.destinationPath()).toBe(dummy.destinationRoot());
+    });
+
+    it('ignores a trailing options object when joining', () => {
+      expect(dummy.destinationPath('dir/', 'bar.js', {})).toBe(path.join(dummy.destinationRoot(), '/dir/bar.js'));
+    });
+
+    it('accepts absolute path inside the destination root', () => {
+      const inside = path.join(dummy.destinationRoot(), 'dir', 'bar.js');
+      expect(dummy.destinationPath(inside)).toBe(inside);
+      expect(dummy.destinationPath(dummy.destinationRoot())).toBe(dummy.destinationRoot());
+    });
+
+    it('throws on path outside the destination root by default', () => {
+      expect(() => dummy.destinationPath(outsidePath)).toThrow(
+        /destinationPath\(\) resolved .* outside the destination root/,
+      );
+      expect(() => dummy.destinationPath('..', 'bar.js')).toThrow(/allowDestinationOutsideRoot/);
+      expect(() => dummy.destinationPath('dir/../../bar.js')).toThrow(/outside the destination root/);
+      expect(() => dummy.destinationPath(`${dummy.destinationRoot()}-sibling/bar.js`)).toThrow(
+        /outside the destination root/,
+      );
+    });
+
+    it('allows path outside the destination root with allowOutsideRoot option', () => {
+      expect(dummy.destinationPath(outsidePath, { allowOutsideRoot: true })).toBe(outsidePath);
+      expect(dummy.destinationPath('..', 'bar.js', { allowOutsideRoot: true })).toBe(
+        path.join(dummy.destinationRoot(), '..', 'bar.js'),
+      );
+    });
+
+    it('allows path outside the destination root with allowDestinationOutsideRoot feature', () => {
+      const generator = new Dummy([], { env, resolved: 'foo/bar' }, { allowDestinationOutsideRoot: true });
+      expect(generator.destinationPath(outsidePath)).toBe(outsidePath);
+    });
+
+    it('ignores allowTemplatesOutsideRoot feature', () => {
+      const generator = new Dummy([], { env, resolved: 'foo/bar' }, { allowTemplatesOutsideRoot: true });
+      expect(() => generator.destinationPath(outsidePath)).toThrow(/outside the destination root/);
+    });
+
+    it('option takes precedence over feature', () => {
+      const generator = new Dummy([], { env, resolved: 'foo/bar' }, { allowDestinationOutsideRoot: true });
+      expect(() => generator.destinationPath(outsidePath, { allowOutsideRoot: false })).toThrow(
+        /outside the destination root/,
+      );
     });
   });
 

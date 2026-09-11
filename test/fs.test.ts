@@ -149,7 +149,8 @@ describe('generators.Base (actions/fs)', () => {
   for (const operation of testResults) {
     const passedArg1 = randomString();
     const passedArg2 = randomString();
-    const passedArg3 = {};
+    // A plain object in writeDestinationJSON's replacer position selects its options form, so pass an array replacer.
+    const passedArg3 = operation.name === 'writeDestinationJSON' ? ['key'] : {};
     const passedArg4 = { foo: 'bar' };
 
     describe(`#${operation.name as string}`, () => {
@@ -277,6 +278,101 @@ describe('generators.Base (actions/fs)', () => {
         expect(call[3].metadata).toEqual({ foo: 'bar', other: true });
         expect(call[3].transformOptions.context).toBe(base);
       });
+    });
+  });
+
+  describe('#allowOutsideRoot', () => {
+    // [helper name, argument index of the options object, mem-fs argument index of the forwarded options]
+    const optionsArgument: Array<[name: string, position: number, destPosition: number]> = [
+      ['copyTemplate', 2, 2],
+      ['copyTemplateAsync', 2, 2],
+      ['copyDestination', 2, 2],
+      ['moveDestination', 2, 2],
+      ['writeDestination', 2, 2],
+      ['writeDestinationJSON', 4, 4],
+      ['deleteDestination', 1, 1],
+      ['renderTemplate', 3, 3],
+      ['renderTemplateAsync', 3, 3],
+    ];
+
+    for (const [name, position, destPosition] of optionsArgument) {
+      it(`${name} passes allowOutsideRoot to path methods and strips it from fs options`, async () => {
+        const op = testResults.find(result => result.name === name)!;
+        // A plain object in writeDestinationJSON's replacer position selects its options form, so pass a null replacer.
+        const args: unknown[] = name === 'writeDestinationJSON' ? ['from', 'to', null, 2] : ['from', 'to', {}, {}];
+        args[position] = { allowOutsideRoot: true, foo: 'bar' };
+        await (base[op.name] as any)(...args);
+
+        for (const pathMethod of new Set([op.first, op.second].filter(Boolean))) {
+          const handler = base[pathMethod!] as ReturnType<typeof vi.fn>;
+          const pathCalls = handler.mock.calls.filter(call => call.length > 0);
+          expect(pathCalls.length).toBeGreaterThan(0);
+          for (const call of pathCalls) {
+            expect(call.at(-1)).toEqual({ allowOutsideRoot: true });
+          }
+        }
+
+        const [call] = (base.fs[op.dest] as ReturnType<typeof vi.fn>).mock.calls;
+        expect(call[destPosition]).not.toHaveProperty('allowOutsideRoot');
+        expect(call[destPosition].foo).toBe('bar');
+      });
+    }
+
+    for (const name of ['readTemplate', 'readDestination'] as const) {
+      it(`${name} passes allowOutsideRoot to the path method and strips it from read options`, () => {
+        const op = testResults.find(result => result.name === name)!;
+        base[name]('file', { allowOutsideRoot: true, defaults: 'x' });
+        const [pathCall] = (base[op.first!] as ReturnType<typeof vi.fn>).mock.calls;
+        expect(pathCall).toEqual(['file', { allowOutsideRoot: true }]);
+        const [call] = (base.fs.read as ReturnType<typeof vi.fn>).mock.calls;
+        expect(call[1]).toEqual({ defaults: 'x' });
+      });
+    }
+
+    it('readDestinationJSON passes allowOutsideRoot to destinationPath', () => {
+      base.fs.readJSON = vi.fn();
+      base.readDestinationJSON('file', undefined, { allowOutsideRoot: true });
+      const [pathCall] = (base.destinationPath as ReturnType<typeof vi.fn>).mock.calls;
+      expect(pathCall).toEqual(['file', { allowOutsideRoot: true }]);
+    });
+
+    it('existsDestination passes allowOutsideRoot to destinationPath', () => {
+      base.existsDestination('file', { allowOutsideRoot: true });
+      const [pathCall] = (base.destinationPath as ReturnType<typeof vi.fn>).mock.calls;
+      expect(pathCall).toEqual(['file', { allowOutsideRoot: true }]);
+    });
+
+    it('writeDestinationJSON accepts replacer and space inside options', () => {
+      const replacer = ['a'];
+      base.writeDestinationJSON('file', { a: 1 }, { replacer, space: 4, allowOutsideRoot: true, metadata: { foo: 'bar' } });
+      const [pathCall] = (base.destinationPath as ReturnType<typeof vi.fn>).mock.calls;
+      expect(pathCall).toEqual(['file', { allowOutsideRoot: true }]);
+      const [call] = (base.fs.writeJSON as ReturnType<typeof vi.fn>).mock.calls;
+      expect(call.slice(1)).toEqual([{ a: 1 }, replacer, 4, { metadata: { foo: 'bar' } }]);
+    });
+
+    it('writeDestinationJSON keeps null, array and function replacers positional', () => {
+      const fn = (_key: string, value: unknown) => value;
+      for (const replacer of [null, ['a'], fn]) {
+        base.writeDestinationJSON('file', { a: 1 }, replacer as any, 2, { allowOutsideRoot: true });
+        const call = (base.fs.writeJSON as ReturnType<typeof vi.fn>).mock.calls.at(-1)!;
+        expect(call.slice(2)).toEqual([replacer, 2, {}]);
+      }
+    });
+
+    it('writeDestination keeps the deprecated stat argument untouched', () => {
+      const stat = { isFile: () => true };
+      base.writeDestination('file', 'content', stat as any);
+      const [call] = (base.fs.write as ReturnType<typeof vi.fn>).mock.calls;
+      expect(call[2]).toBe(stat);
+    });
+
+    it('renderTemplates forwards allowOutsideRoot from template copyOptions', () => {
+      base.renderTemplates([{ source: 'from', destination: 'to', copyOptions: { allowOutsideRoot: true } }], {});
+      const templateCalls = (base.templatePath as ReturnType<typeof vi.fn>).mock.calls.filter(call => call.length > 0);
+      expect(templateCalls).toEqual([['from', { allowOutsideRoot: true }]]);
+      const [call] = (base.fs.copyTpl as ReturnType<typeof vi.fn>).mock.calls;
+      expect(call[3]).not.toHaveProperty('allowOutsideRoot');
     });
   });
 

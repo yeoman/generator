@@ -111,9 +111,30 @@ export type BaseFeatures = Merge<
 
     /** Transform the configuration before reading. */
     configTransform?: StorageTransform<Record<string, any>>;
+
+    /**
+     * Allow `templatePath()` to resolve paths outside the source root.
+     * By default a resulting path that is not inside the source root throws.
+     * Can be overridden per call using the `allowOutsideRoot` option.
+     */
+    allowTemplatesOutsideRoot?: boolean;
+
+    /**
+     * Allow `destinationPath()` to resolve paths outside the destination root.
+     * By default a resulting path that is not inside the destination root throws.
+     * Can be overridden per call using the `allowOutsideRoot` option.
+     */
+    allowDestinationOutsideRoot?: boolean;
   },
   FeaturesApi
 >;
+
+export type PathOptions = {
+  /**
+   * Allow the resulting path to be outside the root, overriding the `allowTemplatesOutsideRoot`/`allowDestinationOutsideRoot` feature.
+   */
+  allowOutsideRoot?: boolean;
+};
 
 export type BaseOptions = OptionsApi & {
   destinationRoot?: string;

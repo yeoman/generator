@@ -18,12 +18,13 @@ import type {
   Logger,
   QueuedAdapter,
 } from '@yeoman/types';
-import type { ArgumentSpec, BaseFeatures, BaseOptions, CliOptionSpec } from './types.js';
+import type { ArgumentSpec, BaseFeatures, BaseOptions, CliOptionSpec, PathOptions } from './types.js';
 import type { PromptAnswers, PromptQuestion, PromptQuestions, QuestionRegistrationOptions } from './questions.js';
 import Storage, { type StorageOptions } from './util/storage.js';
 import { prefillQuestions, storeAnswers } from './util/prompt-suggestion.js';
 import { DESTINATION_ROOT_CHANGE_EVENT, requiredEnvironmentVersion } from './constants.js';
 import { FsMixin } from './actions/fs.js';
+import { splitPathOptions } from './util/path-options.js';
 import { HelpMixin } from './actions/help.js';
 import { PackageJsonMixin } from './actions/package-json.js';
 import { SpawnCommandMixin } from './actions/spawn-command.js';
@@ -37,6 +38,36 @@ const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
 const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
+
+type PathArguments = string[] | [...dest: string[], options: PathOptions];
+
+/**
+ * Split the trailing `PathOptions` object, when present, from the path parts.
+ */
+const splitPathArguments = (args: PathArguments): [dest: string[], options: PathOptions | undefined] => {
+  const last = args.at(-1);
+  if (last !== undefined && typeof last !== 'string') {
+    return [args.slice(0, -1) as string[], last];
+  }
+
+  return [args as string[], undefined];
+};
+
+/**
+ * Join path parts, resolving relative paths against the root and keeping absolute paths as is.
+ */
+const joinToRoot = (root: string, dest: string[]): string => {
+  const filepath = path.join(...dest);
+  return path.isAbsolute(filepath) ? filepath : path.join(root, filepath);
+};
+
+/**
+ * Whether `filepath` is the root itself or a descendant of it.
+ */
+const isInsideRoot = (root: string, filepath: string): boolean => {
+  const relative = path.relative(path.resolve(root), path.resolve(filepath));
+  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+};
 
 const ENV_VER_WITH_VER_API = '2.9.0';
 
@@ -776,20 +807,20 @@ export class BaseGenerator<
 
   /**
    * Return a storage instance.
-   * @param storePath  The path of the json file
-   * @param options storage options or the storage name
+   * @param storePath  The path of the json file, relative to the destination root
+   * @param options storage options or the storage name, `allowOutsideRoot` allows a store path outside the destination root
    */
   createStorage<StoredType extends Record<any, any> = Record<any, any>>(
     storePath: string,
-    options?: string | StorageOptions,
+    options?: string | (StorageOptions & PathOptions),
   ): Storage<StoredType>;
-  createStorage(storePath: string, options?: string | StorageOptions): Storage<Record<string, any>> {
+  createStorage(storePath: string, options?: string | (StorageOptions & PathOptions)): Storage<Record<string, any>> {
     if (typeof options === 'string') {
       options = { name: options };
     }
 
-    storePath = this.destinationPath(storePath);
-    return new Storage(this.fs, storePath, options);
+    const [pathOptions, storageOptions] = splitPathOptions(options);
+    return new Storage(this.fs, this.destinationPath(storePath, pathOptions), storageOptions);
   }
 
   /**
@@ -823,7 +854,12 @@ export class BaseGenerator<
     const globalStorageDir = this.options.localConfigOnly ? this.destinationRoot() : os.homedir();
     const storePath = path.join(globalStorageDir, '.yo-rc-global.json');
     const storeName = `${this.rootGeneratorName()}:${this.rootGeneratorVersion()}`;
-    return this.createStorage(storePath, { transform: this.#features.configTransform, name: storeName });
+    // The global storage lives outside the destination root by design.
+    return this.createStorage(storePath, {
+      transform: this.#features.configTransform,
+      name: storeName,
+      allowOutsideRoot: true,
+    });
   }
 
   /**
@@ -869,14 +905,20 @@ export class BaseGenerator<
 
   /**
    * Join a path to the source root.
-   * @param dest - path parts
+   * Throws if the resulting path is not inside the source root, unless the `allowTemplatesOutsideRoot` feature or the `allowOutsideRoot` option is enabled.
+   * @param dest - path parts, optionally followed by a `PathOptions` object
    * @return joined path
    */
-  templatePath(...dest: string[]): string {
-    let filepath = path.join(...dest);
-
-    if (!path.isAbsolute(filepath)) {
-      filepath = path.join(this.sourceRoot(), filepath);
+  templatePath(...dest: string[]): string;
+  templatePath(...args: [...dest: string[], options: PathOptions]): string;
+  templatePath(...args: PathArguments): string {
+    const [dest, options] = splitPathArguments(args);
+    const root = this.sourceRoot();
+    const filepath = joinToRoot(root, dest);
+    if (!(options?.allowOutsideRoot ?? this.#features.allowTemplatesOutsideRoot) && !isInsideRoot(root, filepath)) {
+      throw new Error(
+        `templatePath() resolved '${filepath}' outside the source root '${root}'. Pass a path inside the root, enable the 'allowTemplatesOutsideRoot' feature, or pass the '{ allowOutsideRoot: true }' option.`,
+      );
     }
 
     return filepath;
@@ -884,14 +926,20 @@ export class BaseGenerator<
 
   /**
    * Join a path to the destination root.
-   * @param dest - path parts
+   * Throws if the resulting path is not inside the destination root, unless the `allowDestinationOutsideRoot` feature or the `allowOutsideRoot` option is enabled.
+   * @param dest - path parts, optionally followed by a `PathOptions` object
    * @return joined path
    */
-  destinationPath(...dest: string[]): string {
-    let filepath = path.join(...dest);
-
-    if (!path.isAbsolute(filepath)) {
-      filepath = path.join(this.destinationRoot(), filepath);
+  destinationPath(...dest: string[]): string;
+  destinationPath(...args: [...dest: string[], options: PathOptions]): string;
+  destinationPath(...args: PathArguments): string {
+    const [dest, options] = splitPathArguments(args);
+    const root = this.destinationRoot();
+    const filepath = joinToRoot(root, dest);
+    if (!(options?.allowOutsideRoot ?? this.#features.allowDestinationOutsideRoot) && !isInsideRoot(root, filepath)) {
+      throw new Error(
+        `destinationPath() resolved '${filepath}' outside the destination root '${root}'. Pass a path inside the root, enable the 'allowDestinationOutsideRoot' feature, or pass the '{ allowOutsideRoot: true }' option.`,
+      );
     }
 
     return filepath;
