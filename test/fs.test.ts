@@ -79,6 +79,7 @@ const testResults: FSOpResult[] = [
   },
   {
     name: 'moveDestination',
+    first: 'destinationPath',
     second: 'destinationPath',
     fromBasePath: 'destinationPath',
     dest: 'move',
@@ -626,6 +627,23 @@ describe('generators.Base (actions/fs)', () => {
       expect(copyTplAsync).toHaveBeenCalledTimes(0);
 
       expect(receivedData).toBe(templateData);
+    });
+  });
+  describe('#moveDestination (source deletion)', () => {
+    it('deletes the source relative to the destination root', () => {
+      const generator = new Base({ env: createEnv(), resolved: 'unknown', help: true });
+      const destinationRoot = path.join(process.cwd(), `move-destination-${randomString()}`);
+      const destinationRootStub = vi.spyOn(generator, 'destinationRoot').mockReturnValue(destinationRoot);
+
+      try {
+        generator.writeDestination('a.txt', 'foo');
+        generator.moveDestination('a.txt', 'b.txt');
+
+        expect(generator.readDestination('b.txt')).toBe('foo');
+        expect(generator.existsDestination('a.txt')).toBe(false);
+      } finally {
+        destinationRootStub.mockRestore();
+      }
     });
   });
 });

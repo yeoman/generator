@@ -244,7 +244,7 @@ export class FsMixin {
     const [from, to, options, ...remaining] = args;
 
     return this.fs.move(
-      from,
+      this.destinationPath(from),
       this.destinationPath(to),
       { fromBasePath: this.destinationPath(), ...options },
       ...remaining,
