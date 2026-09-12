@@ -2,6 +2,7 @@ import process from 'node:process';
 import { CheckRepoActions, CleanOptions, type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 import { BaseGenerator } from './generator.js';
 import type { BaseFeatures, BaseOptions } from './types.js';
+import { existsSync, mkdirSync } from 'node:fs';
 
 export type * from './types.js';
 export type * from './questions.js';
@@ -41,6 +42,11 @@ export default class Generator<
   }
 
   createSimpleGit(options?: Partial<SimpleGitOptions>): SimpleGitWithConstants {
+    const baseDir = this.destinationPath();
+    if (!existsSync(baseDir)) {
+      // simple-git requires an existing directory.
+      mkdirSync(baseDir, { recursive: true });
+    }
     const git = simpleGit({ baseDir: this.destinationPath(), ...options }).env({
       HOME: process.env.HOME,
       PATH: process.env.PATH,
