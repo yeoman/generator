@@ -20,7 +20,7 @@ type ReadOptions = { raw?: boolean; defaults?: string | Buffer | null };
 
 export type Template<G, C extends 'copyTplAsync' | 'copyTpl', D extends NonNullable<Parameters<MemFsEditor[C]>[2]>> = {
   /**
-   * Template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled).
+   * Template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled, inside the generator package when the `allowPackageTemplates` feature is enabled).
    */
   source: string;
   /**
@@ -351,7 +351,7 @@ export class FsMixin {
   /**
    * Copy a template from templates folder to the destination.
    *
-   * @param source - template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled).
+   * @param source - template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled, inside the generator package when the `allowPackageTemplates` feature is enabled).
    * @param destination - destination, relative to destinationPath(), or absolute inside the destination root (outside when the `allowDestinationOutsideRoot` feature is enabled).
    * @param templateData - ejs data
    * @param templateOptions - ejs options
@@ -404,7 +404,7 @@ export class FsMixin {
   /**
    * Copy a template from templates folder to the destination.
    *
-   * @param source - template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled).
+   * @param source - template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled, inside the generator package when the `allowPackageTemplates` feature is enabled).
    * @param destination - destination, relative to destinationPath(), or absolute inside the destination root (outside when the `allowDestinationOutsideRoot` feature is enabled).
    * @param templateData - ejs data
    * @param templateOptions - ejs options
@@ -481,7 +481,7 @@ export class FsMixin {
   /**
    * Copy templates from templates folder to the destination.
    *
-   * @param templates - template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled).
+   * @param templates - template file, relative to templatePath(), or absolute inside the source root (outside when the `allowTemplatesOutsideRoot` feature is enabled, inside the generator package when the `allowPackageTemplates` feature is enabled).
    * @param templateData - ejs data
    */
   async renderTemplatesAsync<const D extends NonNullable<Parameters<MemFsEditor['copyTplAsync']>[2]>>(
