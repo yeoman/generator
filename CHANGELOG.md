@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.1.0](https://github.com/yeoman/generator/compare/v9.0.0...v9.1.0) (2026-09-12)
+
+
+### Features
+
+* add allowPackageTemplates feature ([#1855](https://github.com/yeoman/generator/issues/1855)) ([a9d69dd](https://github.com/yeoman/generator/commit/a9d69dd2a7357ab26c491930166bc3b5f0183c35))
+* create destination root on demand at createSimpleGit ([#1854](https://github.com/yeoman/generator/issues/1854)) ([c1c5425](https://github.com/yeoman/generator/commit/c1c54250361afe8fe1d6fce126a915340e88f31f))
+
 ## [9.0.0](https://github.com/yeoman/generator/compare/v8.4.0...v9.0.0) (2026-09-11)
 
 ### ⚠ BREAKING CHANGES
