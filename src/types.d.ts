@@ -120,6 +120,15 @@ export type BaseFeatures = Merge<
     allowTemplatesOutsideRoot?: boolean;
 
     /**
+     * Allow `templatePath()` to resolve paths anywhere inside the generator package.
+     * The package root is the `packagePath` from the generator meta provided by the environment.
+     * When the meta has no `packagePath`, the feature is ignored and only the source root is allowed.
+     * Useful to share templates between generators of the same package.
+     * Can be overridden per call using the `allowOutsideRoot` option.
+     */
+    allowPackageTemplates?: boolean;
+
+    /**
      * Allow `destinationPath()` to resolve paths outside the destination root.
      * By default a resulting path that is not inside the destination root throws.
      * Can be overridden per call using the `allowOutsideRoot` option.
@@ -131,7 +140,7 @@ export type BaseFeatures = Merge<
 
 export type PathOptions = {
   /**
-   * Allow the resulting path to be outside the root, overriding the `allowTemplatesOutsideRoot`/`allowDestinationOutsideRoot` feature.
+   * Allow the resulting path to be outside the root, overriding the `allowTemplatesOutsideRoot`/`allowPackageTemplates`/`allowDestinationOutsideRoot` feature.
    */
   allowOutsideRoot?: boolean;
 };

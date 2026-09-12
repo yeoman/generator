@@ -900,8 +900,22 @@ export class BaseGenerator<
   }
 
   /**
+   * Whether `filepath` is inside the generator package, when the `allowPackageTemplates` feature is enabled.
+   * The package root is the `packagePath` from the meta provided by the environment, when not provided the feature is ignored.
+   */
+  #isPackageTemplate(filepath: string): boolean {
+    if (!this.#features.allowPackageTemplates) {
+      return false;
+    }
+
+    const packageRoot = this._meta?.packagePath;
+    return packageRoot ? isInsideRoot(packageRoot, filepath) : false;
+  }
+
+  /**
    * Join a path to the source root.
-   * Throws if the resulting path is not inside the source root, unless the `allowTemplatesOutsideRoot` feature or the `allowOutsideRoot` option is enabled.
+   * Throws if the resulting path is not inside the source root, unless the `allowTemplatesOutsideRoot` feature,
+   * the `allowPackageTemplates` feature (for paths inside the generator package) or the `allowOutsideRoot` option is enabled.
    * @param dest - path parts, optionally followed by a `PathOptions` object
    * @return joined path
    */
@@ -911,10 +925,15 @@ export class BaseGenerator<
     const [dest, options] = splitPathArguments(args);
     const root = this.sourceRoot();
     const filepath = joinToRoot(root, dest);
-    if (!(options?.allowOutsideRoot ?? this.#features.allowTemplatesOutsideRoot) && !isInsideRoot(root, filepath)) {
-      throw new Error(
-        `templatePath() resolved '${filepath}' outside the source root '${root}'. Pass a path inside the root, enable the 'allowTemplatesOutsideRoot' feature, or pass the '{ allowOutsideRoot: true }' option.`,
-      );
+    if (!isInsideRoot(root, filepath)) {
+      // The per call option takes precedence over the features.
+      const allowed =
+        options?.allowOutsideRoot ?? (this.#features.allowTemplatesOutsideRoot || this.#isPackageTemplate(filepath));
+      if (!allowed) {
+        throw new Error(
+          `templatePath() resolved '${filepath}' outside the source root '${root}'. Pass a path inside the root, enable the 'allowTemplatesOutsideRoot' feature, enable the 'allowPackageTemplates' feature for a path inside the generator package, or pass the '{ allowOutsideRoot: true }' option.`,
+        );
+      }
     }
 
     return filepath;

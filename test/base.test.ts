@@ -1154,6 +1154,51 @@ describe('Base', () => {
       const generator = new Dummy([], { env, resolved: 'foo/bar' }, { allowTemplatesOutsideRoot: true });
       expect(() => generator.templatePath(outsidePath, { allowOutsideRoot: false })).toThrow(/outside the source root/);
     });
+
+    describe('with allowPackageTemplates feature', () => {
+      const packagePath = path.resolve('/package');
+      const resolved = path.join(packagePath, 'generators', 'app', 'index.js');
+      const sharedTemplate = path.join(packagePath, 'generators', 'shared', 'templates', 'bar.js');
+      let generator: Base;
+
+      beforeEach(() => {
+        generator = new Dummy(
+          [],
+          { env, resolved, _meta: { namespace: 'dummy', packagePath } },
+          { allowPackageTemplates: true },
+        );
+      });
+
+      it('allows path inside the package taken from meta packagePath', () => {
+        expect(generator.templatePath(sharedTemplate)).toBe(sharedTemplate);
+        expect(generator.templatePath('..', '..', 'shared', 'templates', 'bar.js')).toBe(sharedTemplate);
+        expect(generator.templatePath(packagePath)).toBe(packagePath);
+      });
+
+      it('throws on path outside the package', () => {
+        expect(() => generator.templatePath(outsidePath)).toThrow(/allowPackageTemplates/);
+        expect(() => generator.templatePath(`${packagePath}-sibling/bar.js`)).toThrow(/outside the source root/);
+        expect(() => generator.templatePath(path.join(packagePath, '..', 'bar.js'))).toThrow(/outside the source root/);
+      });
+
+      it('is not applied without the feature', () => {
+        const generator = new Dummy([], { env, resolved, _meta: { namespace: 'dummy', packagePath } });
+        expect(() => generator.templatePath(sharedTemplate)).toThrow(/outside the source root/);
+      });
+
+      it('option takes precedence over feature', () => {
+        expect(() => generator.templatePath(sharedTemplate, { allowOutsideRoot: false })).toThrow(
+          /outside the source root/,
+        );
+        expect(generator.templatePath(outsidePath, { allowOutsideRoot: true })).toBe(outsidePath);
+      });
+
+      it('is ignored when meta has no packagePath', () => {
+        const generator = new Dummy([], { env, resolved }, { allowPackageTemplates: true });
+        expect(() => generator.templatePath(sharedTemplate)).toThrow(/outside the source root/);
+        expect(generator.templatePath('bar.js')).toBe(path.join(generator.sourceRoot(), 'bar.js'));
+      });
+    });
   });
 
   describe('#destinationRoot()', () => {
@@ -1210,6 +1255,15 @@ describe('Base', () => {
 
     it('ignores allowTemplatesOutsideRoot feature', () => {
       const generator = new Dummy([], { env, resolved: 'foo/bar' }, { allowTemplatesOutsideRoot: true });
+      expect(() => generator.destinationPath(outsidePath)).toThrow(/outside the destination root/);
+    });
+
+    it('ignores allowPackageTemplates feature', () => {
+      const generator = new Dummy(
+        [],
+        { env, resolved: 'foo/bar', _meta: { namespace: 'dummy', packagePath: path.resolve('/') } },
+        { allowPackageTemplates: true },
+      );
       expect(() => generator.destinationPath(outsidePath)).toThrow(/outside the destination root/);
     });
 
