@@ -2,15 +2,13 @@
 
 ## [9.2.0](https://github.com/yeoman/generator/compare/v9.1.0...v9.2.0) (2026-09-14)
 
-
 ### Features
 
-* add skipGlobalConfig option to disable the global config storage ([#1858](https://github.com/yeoman/generator/issues/1858)) ([ea9ef51](https://github.com/yeoman/generator/commit/ea9ef510180f61fae9a70b96c3df8e5bbb5902c6))
-
+- add skipGlobalConfig option to disable the global config storage ([#1858](https://github.com/yeoman/generator/issues/1858)) ([ea9ef51](https://github.com/yeoman/generator/commit/ea9ef510180f61fae9a70b96c3df8e5bbb5902c6))
 
 ### Bug Fixes
 
-* store answers of stored questions that follow a non-stored one ([#1859](https://github.com/yeoman/generator/issues/1859)) ([df71470](https://github.com/yeoman/generator/commit/df714709e4820a5da3353461f1c5181da8ef7377))
+- store answers of stored questions that follow a non-stored one ([#1859](https://github.com/yeoman/generator/issues/1859)) ([df71470](https://github.com/yeoman/generator/commit/df714709e4820a5da3353461f1c5181da8ef7377))
 
 ## [9.1.0](https://github.com/yeoman/generator/compare/v9.0.0...v9.1.0) (2026-09-12)
 
