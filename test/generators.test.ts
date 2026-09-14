@@ -75,6 +75,40 @@ describe('Generators module', () => {
     expect(generator._globalConfig.path).toBe(path.join(env.cwd, '.yo-rc-global.json'));
   });
 
+  it('with skipGlobalConfig option', () => {
+    generator = new Base({
+      env: env,
+      resolved: 'test',
+      skipGlobalConfig: true,
+    });
+    expect(generator._globalConfig).toBe(generator.config);
+  });
+
+  it('resets the global config when destinationRoot changes with localConfigOnly', () => {
+    generator = new Base({
+      env: env,
+      resolved: 'test',
+      localConfigOnly: true,
+    });
+    expect(generator._globalConfig.path).toBe(path.join(env.cwd, '.yo-rc-global.json'));
+
+    const newRoot = path.join(env.cwd, 'subdir');
+    generator.destinationRoot(newRoot);
+    expect(generator._globalConfig.path).toBe(path.join(newRoot, '.yo-rc-global.json'));
+  });
+
+  it('follows the local config when destinationRoot changes with skipGlobalConfig', () => {
+    generator = new Base({
+      env: env,
+      resolved: 'test',
+      skipGlobalConfig: true,
+    });
+    expect(generator._globalConfig).toBe(generator.config);
+
+    generator.destinationRoot(path.join(env.cwd, 'subdir'));
+    expect(generator._globalConfig).toBe(generator.config);
+  });
+
   describe('#run', () => {
     beforeEach(() => {
       const Generator = class extends Base {};

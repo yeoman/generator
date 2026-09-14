@@ -158,6 +158,9 @@ export type BaseOptions = OptionsApi & {
 
   localConfigOnly?: boolean;
 
+  /** Do not use the global config storage (`~/.yo-rc-global.json`), the local config is used in its place. */
+  skipGlobalConfig?: boolean;
+
   skipCache?: boolean;
 
   skipLocalCache?: boolean;
