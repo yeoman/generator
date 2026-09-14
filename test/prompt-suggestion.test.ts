@@ -440,6 +440,30 @@ describe('PromptSuggestion', () => {
       expect(store.get('promptValues').respuesta).toBe('foo');
     });
 
+    it('store answers of stored questions that follow a non stored one', () => {
+      const questions = [
+        {
+          name: 'skipped',
+          default: 'bar',
+        },
+        {
+          name: 'respuesta',
+          default: 'bar',
+          store: true,
+        },
+      ];
+
+      const mockAnswers = {
+        skipped: 'baz',
+        respuesta: 'baz',
+      };
+
+      store.delete('promptValues');
+      prefillQuestions(store, questions);
+      storeAnswers(store, questions, mockAnswers);
+      expect(store.get('promptValues')).toEqual({ respuesta: 'baz' });
+    });
+
     it('store answer from rawlist type', () => {
       const question = {
         type: 'rawlist',

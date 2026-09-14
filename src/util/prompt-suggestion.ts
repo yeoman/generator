@@ -186,7 +186,8 @@ export const storeAnswers = (store: Storage<any>, questions: any, answers: Promp
 
   for (const question of questions) {
     if (question.store !== true) {
-      return;
+      // Only the questions asking to be stored are remembered, the remaining ones are skipped.
+      continue;
     }
 
     let saveAnswer;
