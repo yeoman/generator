@@ -754,6 +754,8 @@ export class BaseGenerator<
   /**
    * Global config Storage resolved to `~/.yo-rc-global.json`.
    * Falls back to the local config when the `skipGlobalConfig` option is set.
+   *
+   * @todo Next major, return undefined instead of falling back to the local config when the `skipGlobalConfig` option is set.
    */
   get _globalConfig(): Storage<GlobalConfigType> {
     // The global config is rarely used, fall back to the local config instead of touching the global file.
