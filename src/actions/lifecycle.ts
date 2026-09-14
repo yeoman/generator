@@ -566,6 +566,7 @@ export abstract class TasksMixin {
           skipInstall: this.options.skipInstall,
           skipCache: this.options.skipCache,
           skipLocalCache: this.options.skipLocalCache,
+          skipGlobalConfig: this.options.skipGlobalConfig,
         };
 
     composeOptions.generatorOptions = {

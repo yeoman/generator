@@ -119,7 +119,7 @@ export class BaseGenerator<
   _config?: Storage<ConfigType>;
   _packageJson?: Storage<PackageJson>;
 
-  _globalConfig!: Storage<GlobalConfigType>;
+  #globalConfigStorage?: Storage<GlobalConfigType>;
 
   // If for some reason environment adds more queues, we should use or own for stability.
   static get queues() {
@@ -314,8 +314,6 @@ export class BaseGenerator<
       }
     }
 
-    this._globalConfig = this._getGlobalStorage();
-
     this.checkEnvironmentVersion(requiredEnvironmentVersion, this.options.skipCheckEnv ?? false);
   }
 
@@ -488,7 +486,11 @@ export class BaseGenerator<
     }
 
     // Local config defaults take precedence over the global ones.
-    questions = prefillQuestions(this.config, prefillQuestions(this._globalConfig, arrayQuestions));
+    const globalConfig = this.#globalConfig;
+    questions = prefillQuestions(
+      this.config,
+      globalConfig ? prefillQuestions(globalConfig, arrayQuestions) : arrayQuestions,
+    );
 
     const initialAnswers: A = Object.fromEntries(
       questions.map(question => getAnswerFromStorage(question)).filter(Boolean) as Array<[string, any]>,
@@ -501,7 +503,9 @@ export class BaseGenerator<
     }
 
     if (!this.options.skipCache) {
-      storeAnswers(this._globalConfig, questions, answers, false);
+      if (globalConfig) {
+        storeAnswers(globalConfig, questions, answers, false);
+      }
       if (!this.options.skipLocalCache) {
         storeAnswers(this.config, questions, answers, true);
       }
@@ -733,6 +737,30 @@ export class BaseGenerator<
   }
 
   /**
+   * Global config Storage resolved to `~/.yo-rc-global.json`, undefined when the `skipGlobalConfig` option is set.
+   */
+  get #globalConfig(): Storage<GlobalConfigType> | undefined {
+    if (this.options.skipGlobalConfig) {
+      return undefined;
+    }
+
+    if (!this.#globalConfigStorage) {
+      this.#globalConfigStorage = this._getGlobalStorage();
+    }
+
+    return this.#globalConfigStorage;
+  }
+
+  /**
+   * Global config Storage resolved to `~/.yo-rc-global.json`.
+   * Falls back to the local config when the `skipGlobalConfig` option is set.
+   */
+  get _globalConfig(): Storage<GlobalConfigType> {
+    // The global config is rarely used, fall back to the local config instead of touching the global file.
+    return this.#globalConfig ?? (this.config as unknown as Storage<GlobalConfigType>);
+  }
+
+  /**
    * Package.json Storage resolved to `this.destinationPath('package.json')`.
    *
    * Environment watches for package.json changes at `this.env.cwd`, and triggers an package manager install if it has been committed to disk.
@@ -849,7 +877,7 @@ export class BaseGenerator<
    * Setup a globalConfig storage instance.
    * @return Global config storage
    */
-  _getGlobalStorage() {
+  _getGlobalStorage(): Storage<GlobalConfigType> {
     // When localConfigOnly === true simulate a globalConfig at local dir
     const globalStorageDir = this.options.localConfigOnly ? this.destinationRoot() : os.homedir();
     const storePath = path.join(globalStorageDir, '.yo-rc-global.json');
@@ -881,6 +909,8 @@ export class BaseGenerator<
       this._config = undefined;
       // Reset packageJson
       this._packageJson = undefined;
+      // Reset globalConfig, its path depends on destinationRoot when localConfigOnly is set
+      this.#globalConfigStorage = undefined;
     }
 
     return this._destinationRoot || this.env.cwd;

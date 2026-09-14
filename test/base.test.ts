@@ -1985,6 +1985,37 @@ describe('Base', () => {
       });
     });
 
+    it('stores answers with store: true only in the local config when skipGlobalConfig is set', async () => {
+      const localGenerator = new Base({
+        env: dummy.env,
+        resolved: 'test',
+        skipGlobalConfig: true,
+        skipLocalCache: false,
+      });
+      expect(localGenerator._globalConfig).toBe(localGenerator.config);
+
+      const writeSpy = vi.spyOn(localGenerator.fs, 'writeJSON');
+      const answers = await localGenerator.prompt([{ ...input1Prompt, store: true }]);
+      expect(answers.prompt1).toBe('prompt1NewValue');
+      expect(localGenerator.config.get('promptValues')).toEqual({ prompt1: 'prompt1NewValue' });
+      expect(writeSpy).toHaveBeenCalledTimes(1);
+      expect(writeSpy).toHaveBeenCalledWith(localGenerator.config.path, expect.anything(), undefined, 2);
+      writeSpy.mockRestore();
+    });
+
+    it('honors skipLocalCache when skipGlobalConfig is set', async () => {
+      const localGenerator = new Base({
+        env: dummy.env,
+        resolved: 'test',
+        skipGlobalConfig: true,
+        skipLocalCache: true,
+      });
+
+      const answers = await localGenerator.prompt([{ ...input1Prompt, store: true }]);
+      expect(answers.prompt1).toBe('prompt1NewValue');
+      expect(localGenerator.config.get('promptValues')).toBeUndefined();
+    });
+
     it('passes correct askAnswered option to adapter', () => {
       return dummy.prompt([input1Prompt], dummy.config).then(_ => {
         expect(promptSpy.mock.calls[0][0][0].askAnswered).toEqual(true);
