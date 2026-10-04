@@ -48,7 +48,8 @@ export class SpawnCommandMixin {
   }
 
   /**
-   * Normalize a command across OS and spawn it (asynchronously).
+   * Normalize a command across OS and spawn it (asynchronously). It is cancelled when the adapter of the environment is
+   * aborted, unless the options give a `cancelSignal`.
    *
    * @param command program to execute
    * @param args list of arguments to pass to the program
@@ -61,7 +62,13 @@ export class SpawnCommandMixin {
     args?: readonly string[],
     opt?: OptionsType,
   ): ResultPromise<OptionsType> {
-    return execa(command, args, this.resolveSpawnOptions(opt)) as any;
+    // Cancelled with the operation the generator runs in, the adapter aborted: unless the options give a cancelSignal.
+    const cancelSignal = this.env?.adapter?.signal;
+    return execa(
+      command,
+      args,
+      this.resolveSpawnOptions<ExecaOptions>(cancelSignal ? { cancelSignal, ...opt } : opt),
+    ) as any;
   }
 
   /**
