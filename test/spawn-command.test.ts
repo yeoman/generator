@@ -89,6 +89,33 @@ describe('generators.Base (actions/spawn-command)', () => {
       });
     });
 
+    describe('the adapter of the environment has a signal', () => {
+      let signal: AbortSignal;
+
+      beforeEach(() => {
+        ({ signal } = new AbortController());
+        Object.assign(testGenerator, {
+          env: { ...testGenerator.env, adapter: { ...testGenerator.env?.adapter, signal } },
+        });
+      });
+
+      it('cancels the command with it', () => {
+        testGenerator.spawnCommand('foo');
+        expect(execa).toHaveBeenCalledWith('foo', [], { cwd: testGenerator.destinationRoot(), cancelSignal: signal });
+      });
+
+      it('cancels the command with the cancelSignal of the options instead', () => {
+        const cancelSignal = new AbortController().signal;
+        testGenerator.spawn('foo', undefined, { cancelSignal });
+        expect(execa).toHaveBeenCalledWith('foo', undefined, { cwd: testGenerator.destinationRoot(), cancelSignal });
+      });
+
+      it('is not given to a synchronous command, which execaSync cannot cancel', () => {
+        testGenerator.spawnSync('foo');
+        expect(execaSync).toHaveBeenCalledWith('foo', undefined, { cwd: testGenerator.destinationRoot() });
+      });
+    });
+
     it('can override default stdio option', () => {
       testGenerator.spawn('foo', undefined, { stdio: 'pipe' });
       expect(execa).toHaveBeenCalledWith('foo', undefined, {
