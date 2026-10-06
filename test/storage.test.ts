@@ -497,6 +497,36 @@ describe('Storage', () => {
       expect({ ...proxy }).toStrictEqual({ foo: 'bar', john: 'doe' });
     });
 
+    describe('a nested object read before a write', () => {
+      beforeEach(() => {
+        store.set({ flag: true, nested: { a: 'a' } });
+      });
+
+      it('keeps its changes after a delete', () => {
+        const { nested } = proxy;
+        delete proxy.flag;
+        nested.b = 'b';
+        store.save();
+        expect(editor.readJSON(storePath)).toMatchObject({ test: { nested: { a: 'a', b: 'b' } } });
+      });
+
+      it('keeps its changes after a set', () => {
+        const { nested } = proxy;
+        proxy.name = 'Yeoman!';
+        nested.b = 'b';
+        store.save();
+        expect(editor.readJSON(storePath)).toMatchObject({ test: { name: 'Yeoman!', nested: { a: 'a', b: 'b' } } });
+      });
+
+      it('keeps its changes after a save', () => {
+        const { nested } = proxy;
+        store.save();
+        nested.b = 'b';
+        store.save();
+        expect(editor.readJSON(storePath)).toMatchObject({ test: { nested: { a: 'a', b: 'b' } } });
+      });
+    });
+
     it('works with delete operator', () => {
       store.set({ foo: 'bar', john: 'doe' });
       delete proxy.foo;
