@@ -1,5 +1,22 @@
 # Changelog
 
+## [10.0.0](https://github.com/yeoman/generator/compare/v9.2.0...v10.0.0) (2026-10-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** bump simple-git from 3.36.0 to 4.0.2 ([#1864](https://github.com/yeoman/generator/issues/1864))
+
+### Features
+
+* cancel a spawned command with the signal of the adapter ([#1866](https://github.com/yeoman/generator/issues/1866)) ([b9840f6](https://github.com/yeoman/generator/commit/b9840f686489c412e7178a9a9b441558ffe5e432))
+* **deps:** bump simple-git from 3.36.0 to 4.0.2 ([#1864](https://github.com/yeoman/generator/issues/1864)) ([c950cce](https://github.com/yeoman/generator/commit/c950ccef38bd70d20a1dcfa0685fef7cb5bd8246))
+
+
+### Bug Fixes
+
+* **storage:** keep the objects read before a write ([#1868](https://github.com/yeoman/generator/issues/1868)) ([e9cbb1b](https://github.com/yeoman/generator/commit/e9cbb1bc46ddf46b7f76dd889fda3727a455a3e8))
+
 ## [9.2.0](https://github.com/yeoman/generator/compare/v9.1.0...v9.2.0) (2026-09-14)
 
 ### Features
