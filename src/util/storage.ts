@@ -218,6 +218,11 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
     }
 
     this.writeContent(fullStore);
+    // Writing drops the cache (the change listener): keep what was written instead, so the objects read from this
+    // storage before the write, like a nested object of its proxy, are still the stored ones.
+    if (!this.disableCache) {
+      this._cachedStore = fullStore;
+    }
   }
 
   /**
