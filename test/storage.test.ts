@@ -497,6 +497,46 @@ describe('Storage', () => {
       expect({ ...proxy }).toStrictEqual({ foo: 'bar', john: 'doe' });
     });
 
+    describe('a write made by a change listener of another write', () => {
+      beforeEach(() => {
+        let written = false;
+        memFsInstance.on('change', (filename?: string) => {
+          if (written || filename !== storePath) return;
+          written = true;
+          store.set('second', 'second');
+        });
+      });
+
+      it('keeps both writes', () => {
+        store.set('first', 'first');
+        expect(store.getAll()).toMatchObject({ first: 'first', second: 'second' });
+        expect(editor.readJSON(storePath)).toMatchObject({ test: { first: 'first', second: 'second' } });
+      });
+    });
+
+    describe('a write made by another storage of the file in a change listener of a write', () => {
+      beforeEach(() => {
+        const other = new Storage('test', editor, storePath);
+        let written = false;
+        memFsInstance.on('change', (filename?: string) => {
+          if (written || filename !== storePath) return;
+          written = true;
+          other.set('second', 'second');
+        });
+      });
+
+      it('reads the file again', () => {
+        store.set('first', 'first');
+        expect(store.getAll()).toMatchObject({ first: 'first', second: 'second' });
+      });
+    });
+
+    it('reads the file again after a write of another editor action', () => {
+      store.set('first', 'first');
+      editor.writeJSON(storePath, { test: { first: 'first', external: 'external' } });
+      expect(store.getAll()).toStrictEqual({ first: 'first', external: 'external' });
+    });
+
     describe('a nested object read before a write', () => {
       beforeEach(() => {
         store.set({ flag: true, nested: { a: 'a' } });
