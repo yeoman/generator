@@ -95,6 +95,8 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   sorted: boolean;
   existed: boolean;
   _cachedStore?: StorageRecord;
+  /** The contents the cached store was written with: a change of the file to other contents makes the cache outdated. */
+  private _cachedContents?: Buffer;
   private transform?: StorageTransform<Record<string, any>>;
 
   constructor(name: string | undefined, fs: MemFsEditor, configPath: string, options?: StorageOptions);
@@ -152,7 +154,17 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
         return;
       }
 
+      // A write of this storage leaves the content it cached; any other content makes the cache outdated.
+      if (
+        filename &&
+        this._cachedContents !== undefined &&
+        this.fs.store.get(this.path).contents === this._cachedContents
+      ) {
+        return;
+      }
+
       delete this._cachedStore;
+      this._cachedContents = undefined;
     });
   }
 
@@ -174,7 +186,11 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return the store content
    */
   writeContent(fullStore: StorageValue): string {
-    return this.fs.writeJSON(this.path, fullStore, undefined, this.indent);
+    const contents = Buffer.from(`${JSON.stringify(fullStore, undefined, this.indent)}\n`);
+    // The file keeps this buffer as its contents: the change listener keeps the cache for it only.
+    this._cachedContents = this.disableCache ? undefined : contents;
+    this.fs.write(this.path, contents);
+    return contents.toString();
   }
 
   /**
@@ -217,12 +233,14 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
       fullStore = value;
     }
 
-    this.writeContent(fullStore);
-    // Writing drops the cache (the change listener): keep what was written instead, so the objects read from this
-    // storage before the write, like a nested object of its proxy, are still the stored ones.
+    // What is written is the cache, so the objects read from this storage before the write, like a nested object of its
+    // proxy, are still the stored ones; the change listener keeps it for this content only, a write nested in the
+    // notification of this one makes it outdated.
     if (!this.disableCache) {
       this._cachedStore = fullStore;
     }
+
+    this.writeContent(fullStore);
   }
 
   /**

@@ -2064,12 +2064,12 @@ describe('Base', () => {
       });
       expect(localGenerator._globalConfig).toBe(localGenerator.config);
 
-      const writeSpy = vi.spyOn(localGenerator.fs, 'writeJSON');
+      const writeSpy = vi.spyOn(localGenerator.fs, 'write');
       const answers = await localGenerator.prompt([{ ...input1Prompt, store: true }]);
       expect(answers.prompt1).toBe('prompt1NewValue');
       expect(localGenerator.config.get('promptValues')).toEqual({ prompt1: 'prompt1NewValue' });
       expect(writeSpy).toHaveBeenCalledTimes(1);
-      expect(writeSpy).toHaveBeenCalledWith(localGenerator.config.path, expect.anything(), undefined, 2);
+      expect(writeSpy).toHaveBeenCalledWith(localGenerator.config.path, expect.anything());
       writeSpy.mockRestore();
     });
 
