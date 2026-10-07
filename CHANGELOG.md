@@ -2,10 +2,9 @@
 
 ## [10.0.1](https://github.com/yeoman/generator/compare/v10.0.0...v10.0.1) (2026-10-07)
 
-
 ### Bug Fixes
 
-* **storage:** drop the cache when the file changes to other contents ([#1870](https://github.com/yeoman/generator/issues/1870)) ([bf56faf](https://github.com/yeoman/generator/commit/bf56fafea46b96a52322ee45050a198cb4d5a847))
+- **storage:** drop the cache when the file changes to other contents ([#1870](https://github.com/yeoman/generator/issues/1870)) ([bf56faf](https://github.com/yeoman/generator/commit/bf56fafea46b96a52322ee45050a198cb4d5a847))
 
 ## [10.0.0](https://github.com/yeoman/generator/compare/v9.2.0...v10.0.0) (2026-10-06)
 
