@@ -212,7 +212,7 @@ export class BaseGenerator<
     // Parse parameters
     this._initOptions = { ...actualOptions } as O;
     this._namespace = actualOptions.namespace;
-    this._namespaceId = toNamespace(actualOptions.namespace);
+    this._namespaceId = toNamespace(actualOptions.namespaceId ?? actualOptions.namespace);
 
     if (!this.features.disableInGeneratorOptionsSupport) {
       this.option('help', {
@@ -272,12 +272,17 @@ export class BaseGenerator<
       return;
     }
 
+    // The instance of the generator: the one of the namespace, else the argument with `unique: 'argument'`.
+    const instanceId =
+      this._namespaceId?.instanceId ??
+      (this.#features.unique === 'argument' && this._args.length === 1 ? this._args[0] : undefined);
+
     if (this.#features.unique && !this.#features.uniqueBy) {
       let uniqueBy: string;
       if (this.#features.unique === true || this.#features.unique === 'namespace') {
         uniqueBy = this._namespace;
-      } else if (this.#features.unique === 'argument' && this._args.length === 1) {
-        const namespaceId = requireNamespace(this._namespace).with({ instanceId: this._args[0] });
+      } else if (this.#features.unique === 'argument' && instanceId !== undefined) {
+        const namespaceId = requireNamespace(this._namespace).with({ instanceId });
         uniqueBy = namespaceId.id;
       } else {
         throw new Error(
@@ -309,8 +314,8 @@ export class BaseGenerator<
     // Create config for the generator and instance
     if (this._namespaceId?.generator) {
       this.generatorConfig = this.config.createStorage(`:${this._namespaceId.generator}`);
-      if (this._namespaceId.instanceId) {
-        this.instanceConfig = this.generatorConfig.createStorage(`#${this._namespaceId.instanceId}`);
+      if (instanceId) {
+        this.instanceConfig = this.generatorConfig.createStorage(`#${instanceId}`);
       }
     }
 
