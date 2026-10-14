@@ -50,23 +50,30 @@ export abstract class TasksMixin {
       return !edit;
     });
 
-    const customPriorities = priorities.map(customPriority => ({ ...customPriority }));
-    // Sort customPriorities, a referenced custom queue must be added before the one that reference it.
-    customPriorities.sort((a, b) => {
-      if (a.priorityName === b.priorityName) {
-        throw new Error(`Duplicate custom queue ${a.priorityName}`);
+    const names = priorities.map(({ priorityName }) => priorityName);
+    const duplicate = names.find((name, index) => names.indexOf(name) !== index);
+    if (duplicate) {
+      throw new Error(`Duplicate custom queue ${duplicate}`);
+    }
+
+    // A referenced custom queue must be added before the one that references it: the first pending one, after the
+    // pending ones it references.
+    const pending = priorities.map(customPriority => ({ ...customPriority }));
+    const referenceOf = (index: number) =>
+      pending.findIndex(({ priorityName }) => priorityName === pending[index].before);
+    const customPriorities: typeof pending = [];
+    while (pending.length > 0) {
+      let index = 0;
+      for (let steps = 0; referenceOf(index) !== -1; steps++) {
+        if (steps === pending.length) {
+          throw new Error(`Circular custom queues ${pending.map(({ priorityName }) => priorityName).join(', ')}`);
+        }
+
+        index = referenceOf(index);
       }
 
-      if (a.priorityName === b.before) {
-        return -1;
-      }
-
-      if (b.priorityName === a.before) {
-        return 1;
-      }
-
-      return 0;
-    });
+      customPriorities.push(...pending.splice(index, 1));
+    }
 
     for (const customQueue of customPriorities) {
       customQueue.queueName = customQueue.queueName ?? `${this._namespace}#${customQueue.priorityName}`;
