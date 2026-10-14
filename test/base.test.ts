@@ -1946,6 +1946,48 @@ describe('Base', () => {
     });
   });
 
+  describe('Custom priorities order', () => {
+    it('registers a priority after the one it is added before, whatever their order', () => {
+      const TestGenerator = class extends Base {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
+          super(args, options, {
+            // A priority given before the one it is added before, and a pair not referencing each other in between.
+            customPriorities: [
+              { priorityName: 'first', before: 'second' },
+              { priorityName: 'third', before: 'prompting' },
+              { priorityName: 'second', before: 'third' },
+            ],
+          });
+        }
+      };
+
+      const generator = new TestGenerator([], { resolved: 'generator-ember/all/index.js', namespace: 'dummy', env });
+
+      const queueNames = generator.env.runLoop.queueNames as string[];
+      const indexOf = (priorityName: string) => queueNames.indexOf(generator._queues[priorityName].queueName!);
+      expect(indexOf('first')).toBeLessThan(indexOf('second'));
+      expect(indexOf('second')).toBeLessThan(indexOf('third'));
+      expect(indexOf('third')).toBeLessThan(queueNames.indexOf('prompting'));
+    });
+
+    it('error is thrown with circular custom queues', () => {
+      const TestGenerator = class extends Base {
+        constructor(args?: string[], options?: TestGeneratorOptions) {
+          super(args, options, {
+            customPriorities: [
+              { priorityName: 'first', before: 'second' },
+              { priorityName: 'second', before: 'first' },
+            ],
+          });
+        }
+      };
+
+      expect(
+        () => new TestGenerator([], { resolved: 'generator-ember/all/index.js', namespace: 'dummy', env }),
+      ).toThrow('Circular custom queues');
+    });
+  });
+
   describe('Custom priorities errors', () => {
     it('error is thrown with duplicate custom queue', () => {
       const TestGenerator = class extends Base {
