@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.2](https://github.com/yeoman/generator/compare/v10.0.1...v10.0.2) (2026-10-15)
+
+### Bug Fixes
+
+- **lifecycle:** register a custom priority after the one it is added before ([#1876](https://github.com/yeoman/generator/issues/1876)) ([c4df879](https://github.com/yeoman/generator/commit/c4df8794febf2a33755fc0665e405b05515d5bbf))
+- skip a package.json without name nor version looking the root generator package up ([#1878](https://github.com/yeoman/generator/issues/1878)) ([9e6dd1f](https://github.com/yeoman/generator/commit/9e6dd1f646a509653ed9e6ae4f5197fd8f8c5aca))
+
 ## [10.0.1](https://github.com/yeoman/generator/compare/v10.0.0...v10.0.1) (2026-10-07)
 
 ### Bug Fixes
