@@ -824,7 +824,8 @@ export class BaseGenerator<
    * Uses `meta.getPackageJson` when provided by the environment (parsed once per package and cached by the environment).
    * Otherwise, when the generator package's path is provided through meta, read its package.json directly.
    * Otherwise (legacy environments, stubs, direct instantiation) look the package.json up from the resolved path,
-   * skipping normalization since only `name` and `version` are used.
+   * skipping normalization since only `name` and `version` are used. A package.json of a folder inside the package,
+   * like `{ "type": "module" }` of a `dist` folder, has neither and is skipped.
    */
   #rootGeneratorPackageJson(): PackageJson | undefined {
     const packageJson = (this as any)._meta?.getPackageJson?.();
@@ -832,7 +833,20 @@ export class BaseGenerator<
       return packageJson as PackageJson;
     }
 
-    return readPackageUpSync({ cwd: this.resolved, normalize: false })?.packageJson;
+    let cwd = this.resolved;
+    for (;;) {
+      const found = readPackageUpSync({ cwd, normalize: false });
+      if (!found || found.packageJson.name || found.packageJson.version) {
+        return found?.packageJson;
+      }
+
+      const parent = dirname(dirname(found.path));
+      if (parent === dirname(found.path)) {
+        return undefined;
+      }
+
+      cwd = parent;
+    }
   }
 
   /**
