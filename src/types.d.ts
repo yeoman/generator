@@ -166,6 +166,12 @@ export type BaseOptions = OptionsApi & {
   skipLocalCache?: boolean;
 
   description?: string;
+
+  /**
+   * The namespace the generator was created for, with its instance id (`namespace#id`), passed by the environment.
+   * `namespace` stays the one of the generator, without the instance id.
+   */
+  namespaceId?: string;
 };
 
 export type ArgumentSpec = {
