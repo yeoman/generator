@@ -5,7 +5,7 @@ import { EventEmitter } from 'node:events';
 import { fileURLToPath } from 'node:url';
 import * as _ from 'lodash-es';
 import { lte as semverLte } from 'semver';
-import { readPackageUpSync } from 'read-package-up';
+import { findUpSync } from 'find-up-simple';
 import chalk from 'chalk';
 import minimist from 'minimist';
 import createDebug from 'debug';
@@ -824,15 +824,28 @@ export class BaseGenerator<
    * Uses `meta.getPackageJson` when provided by the environment (parsed once per package and cached by the environment).
    * Otherwise, when the generator package's path is provided through meta, read its package.json directly.
    * Otherwise (legacy environments, stubs, direct instantiation) look the package.json up from the resolved path,
-   * skipping normalization since only `name` and `version` are used.
+   * keeping only `name` and `version`. A package.json of a folder inside the package, like `{ "type": "module" }` of a
+   * `dist` folder, has neither and is skipped.
    */
-  #rootGeneratorPackageJson(): PackageJson | undefined {
+  #rootGeneratorPackageJson(): Pick<PackageJson, 'name' | 'version'> | undefined {
     const packageJson = (this as any)._meta?.getPackageJson?.();
     if (packageJson) {
       return packageJson as PackageJson;
     }
 
-    return readPackageUpSync({ cwd: this.resolved, normalize: false })?.packageJson;
+    let filePath = findUpSync('package.json', { cwd: this.resolved });
+    while (filePath) {
+      const { name, version } = JSON.parse(readFileSync(filePath, 'utf8')) as PackageJson;
+      if (name || version) {
+        return { name, version };
+      }
+
+      const folder = dirname(filePath);
+      const parent = dirname(folder);
+      filePath = parent === folder ? undefined : findUpSync('package.json', { cwd: parent });
+    }
+
+    return undefined;
   }
 
   /**

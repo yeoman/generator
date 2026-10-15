@@ -1493,6 +1493,20 @@ describe('Base', () => {
       expect(dummy.rootGeneratorName()).toBe('generator-name');
     });
 
+    it('skips a package.json of a folder inside the package, without name nor version', () => {
+      const generatorDir = path.join(resolveddir, 'dist/generators/app');
+      mkdirSync(generatorDir, { recursive: true });
+      fs.writeFileSync(path.join(resolveddir, 'package.json'), '{ "name": "generator-name", "version": "1.2.3" }');
+      fs.writeFileSync(path.join(resolveddir, 'dist/package.json'), '{ "type": "module" }');
+      try {
+        const generator = new Dummy([], { resolved: path.join(generatorDir, 'index.js'), namespace: 'dummy', env });
+        expect(generator.rootGeneratorName()).toBe('generator-name');
+        expect(generator.rootGeneratorVersion()).toBe('1.2.3');
+      } finally {
+        rmSync(path.join(resolveddir, 'dist'), { recursive: true, force: true });
+      }
+    });
+
     it('returns generator name from meta getPackageJson', () => {
       const getPackageJson = vi.fn().mockReturnValue({ name: 'generator-meta-name', version: '2.0.0' });
       // The environment sets the meta after instantiation.
