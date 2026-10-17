@@ -676,6 +676,78 @@ describe('Storage', () => {
     });
   });
 
+  describe('a subclass storing another format', () => {
+    class LinesStorage extends Storage {
+      parsed = 0;
+
+      parseContent(contents: string) {
+        this.parsed++;
+        return Object.fromEntries(
+          contents
+            .split('\n')
+            .filter(Boolean)
+            .map(line => line.split('=')),
+        );
+      }
+
+      serializeContent(fullStore: Record<string, any>) {
+        return Object.entries(fullStore)
+          .map(([key, value]) => `${key}=${value}\n`)
+          .join('');
+      }
+
+      defaultContent() {
+        return { created: 'default' };
+      }
+    }
+
+    let linesPath: string;
+
+    beforeEach(() => {
+      linesPath = path.join(tmpdir, 'store.lines');
+    });
+
+    it('starts with the default content of a missing file', () => {
+      const store = new LinesStorage(editor, linesPath);
+      expect(store.get('created')).toBe('default');
+      expect(editor.exists(linesPath)).toBe(false);
+    });
+
+    it('reads and writes its format', () => {
+      editor.write(linesPath, 'a=1\n');
+      const store = new LinesStorage(editor, linesPath);
+      expect(store.get('a')).toBe('1');
+      store.set('b', '2');
+      expect(editor.read(linesPath)).toBe('a=1\nb=2\n');
+    });
+
+    it('caches the parsed content until the file changes', () => {
+      editor.write(linesPath, 'a=1\n');
+      const store = new LinesStorage(editor, linesPath);
+      store.set('b', '2');
+      const { parsed } = store;
+      store.get('a');
+      store.get('b');
+      expect(store.parsed).toBe(parsed);
+
+      editor.write(linesPath, 'a=changed\n');
+      expect(store.get('a')).toBe('changed');
+      expect(store.parsed).toBe(parsed + 1);
+    });
+
+    it('creates children of its class', () => {
+      editor.write(linesPath, 'a=1\n');
+      const store = new LinesStorage(editor, linesPath);
+      const child = store.createStorage('child');
+      expect(child).toBeInstanceOf(LinesStorage);
+    });
+  });
+
+  it('throws on a storage file that is not valid JSON', () => {
+    editor.write(storePath, '{ invalid');
+    expect(() => new Storage(editor, storePath)).toThrow(/Could not parse JSON in file: .*Detail:/);
+  });
+
   describe('non sorted store', () => {
     let store: Storage;
 
