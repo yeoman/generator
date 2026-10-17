@@ -166,6 +166,13 @@ export type BaseOptions = OptionsApi & {
   skipLocalCache?: boolean;
 
   description?: string;
+
+  /**
+   * The namespace the generator was created for, complete with its version, instance id, methods and flags
+   * (`namespace@semver@#id+method?`), passed by the environment. `namespace` stays the one of the generator, without
+   * them.
+   */
+  namespaceId?: string;
 };
 
 export type ArgumentSpec = {

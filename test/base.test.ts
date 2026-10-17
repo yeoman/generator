@@ -2197,6 +2197,53 @@ describe('Base', () => {
       );
       expect(gen.features.uniqueBy).toBe('foo#bar');
     });
+
+    it("should keep the namespace as uniqueBy with an instance in namespaceId when unique is 'namespace'", () => {
+      const gen = new Base([], { namespace: 'foo:app', namespaceId: 'foo:app#one', env }, { unique: 'namespace' });
+      expect(gen.features.uniqueBy).toBe('foo:app');
+      expect(gen._namespaceId?.id).toBe('foo:app#one');
+      expect(gen.instanceConfig?.name).toMatch(/:app\.#one$/);
+    });
+
+    it('should keep the methods and flags of namespaceId', () => {
+      const gen = new Base(
+        [],
+        { namespace: 'foo:app', namespaceId: 'foo:app#one+writing?', env },
+        { unique: 'argument' },
+      );
+      expect(gen.features.uniqueBy).toBe('foo:app#one');
+      expect(gen._namespaceId?.methods).toEqual(['writing']);
+      expect(gen._namespaceId?.optional).toBe(true);
+    });
+
+    it("should return namespace with the instance of namespaceId as uniqueBy when unique is 'argument'", () => {
+      const gen = new Base([], { namespace: 'foo:app', namespaceId: 'foo:app#one', env }, { unique: 'argument' });
+      expect(gen.features.uniqueBy).toBe('foo:app#one');
+      expect(gen.instanceConfig?.name).toMatch(/:app\.#one$/);
+    });
+
+    it("should prefer the instance of namespaceId over the argument when unique is 'argument'", () => {
+      const gen = new Base(['two'], { namespace: 'foo:app', namespaceId: 'foo:app#one', env }, { unique: 'argument' });
+      expect(gen.features.uniqueBy).toBe('foo:app#one');
+      expect(gen.instanceConfig?.name).toMatch(/:app\.#one$/);
+    });
+
+    it("should create the instanceConfig from the argument when unique is 'argument'", () => {
+      const gen = new Base(['bar'], { namespace: 'foo:app', env }, { unique: 'argument' });
+      expect(gen.features.uniqueBy).toBe('foo:app#bar');
+      expect(gen.instanceConfig?.name).toMatch(/:app\.#bar$/);
+    });
+
+    it("should throw without an instance nor a single argument when unique is 'argument'", () => {
+      expect(() => new Base([], { namespace: 'foo:app', namespaceId: 'foo:app', env }, { unique: 'argument' })).toThrow(
+        /Error generating a uniqueBy value/,
+      );
+    });
+
+    it('should not create an instanceConfig from the arguments without unique argument', () => {
+      const gen = new Base(['bar'], { namespace: 'foo:app', env });
+      expect(gen.instanceConfig).toBeUndefined();
+    });
   });
 
   describe('getTaskNames', () => {
