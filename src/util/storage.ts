@@ -170,11 +170,46 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   }
 
   /**
+   * Convert the contents of the storage file to the store, JSON by default.
+   * Override with `serializeContent` and `defaultContent` to store another format.
+   * @protected
+   * @param contents the contents of the storage file
+   * @return the store content
+   */
+  parseContent(contents: string): StorageRecord {
+    try {
+      return JSON.parse(contents) as StorageRecord;
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      throw new Error(`Could not parse JSON in file: ${this.path}. Detail: ${detail}`, { cause: error });
+    }
+  }
+
+  /**
+   * Convert the store to the contents of the storage file, JSON by default.
+   * @protected
+   * @param fullStore the store content
+   * @return the contents of the storage file
+   */
+  serializeContent(fullStore: StorageValue): string {
+    return `${JSON.stringify(fullStore, undefined, this.indent)}\n`;
+  }
+
+  /**
+   * The store content of a storage file that does not exist, an empty object by default.
+   * @protected
+   * @return the store content
+   */
+  defaultContent(): StorageRecord {
+    return {} as StorageRecord;
+  }
+
+  /**
    * @protected
    * @return the store content
    */
   readContent(): StorageRecord {
-    const content = this.fs.readJSON(this.path, {}) as StorageRecord;
+    const content = this.fs.exists(this.path) ? this.parseContent(this.fs.read(this.path)!) : this.defaultContent();
     if (!content || typeof content !== 'object' || Array.isArray(content)) {
       throw new Error(`${this.path} is not a valid Storage`);
     }
@@ -187,7 +222,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @return the store content
    */
   writeContent(fullStore: StorageValue): string {
-    const contents = Buffer.from(`${JSON.stringify(fullStore, undefined, this.indent)}\n`);
+    const contents = Buffer.from(this.serializeContent(fullStore));
     // The file keeps this buffer as its contents: the cache is kept for it only, a write nested in the change
     // notification of this one gives the file other contents and makes it outdated.
     this._cachedContents = this.disableCache ? undefined : contents;
@@ -385,7 +420,15 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   createStorage<const KeyPath extends string>(path: KeyPath): Storage<Get<StorageRecord, KeyPath>>;
   createStorage(path: string): Storage<any> {
     const childName = this.name ? `${this.name}.${path}` : path;
-    return new Storage(childName, this.fs, this.path, { lodashPath: true, transform: this.transform });
+    // A child of a subclass, like a storage of another format, is of the same class: a subclass keeps the
+    // `(name, fs, configPath, options)` constructor or overrides createStorage.
+    const StorageClass = this.constructor as new (
+      name: string,
+      fs: MemFsEditor,
+      configPath: string,
+      options: StorageOptions,
+    ) => Storage<any>;
+    return new StorageClass(childName, this.fs, this.path, { lodashPath: true, transform: this.transform });
   }
 
   /**
