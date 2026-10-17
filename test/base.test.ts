@@ -2205,6 +2205,17 @@ describe('Base', () => {
       expect(gen.instanceConfig?.name).toMatch(/:app\.#one$/);
     });
 
+    it('should keep the methods and flags of namespaceId', () => {
+      const gen = new Base(
+        [],
+        { namespace: 'foo:app', namespaceId: 'foo:app#one+writing?', env },
+        { unique: 'argument' },
+      );
+      expect(gen.features.uniqueBy).toBe('foo:app#one');
+      expect(gen._namespaceId?.methods).toEqual(['writing']);
+      expect(gen._namespaceId?.optional).toBe(true);
+    });
+
     it("should return namespace with the instance of namespaceId as uniqueBy when unique is 'argument'", () => {
       const gen = new Base([], { namespace: 'foo:app', namespaceId: 'foo:app#one', env }, { unique: 'argument' });
       expect(gen.features.uniqueBy).toBe('foo:app#one');
