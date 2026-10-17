@@ -54,7 +54,7 @@ export type StorageOptions = {
    */
   disableCache?: boolean;
   /**
-   * Set true to cleanup cache for every fs change.
+   * @deprecated Has no effect: the cache is dropped when the contents of the storage file change, whoever changes them.
    */
   disableCacheByFile?: boolean;
   /**
@@ -91,12 +91,18 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   indent: number;
   lodashPath: boolean;
   disableCache: boolean;
+  /**
+   * @deprecated Has no effect: the cache is dropped when the contents of the storage file change, whoever changes them.
+   */
   disableCacheByFile: boolean;
   sorted: boolean;
   existed: boolean;
   _cachedStore?: StorageRecord;
-  /** The contents the cached store was written with: a change of the file to other contents makes the cache outdated. */
-  private _cachedContents?: Buffer;
+  /**
+   * The contents of the file the cached store was read or written with. mem-fs-editor gives a file new contents on
+   * every write, so other contents make the cache outdated, whoever wrote them.
+   */
+  private _cachedContents?: Buffer | null;
   private transform?: StorageTransform<Record<string, any>>;
 
   constructor(name: string | undefined, fs: MemFsEditor, configPath: string, options?: StorageOptions);
@@ -146,26 +152,21 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
     this.sorted = actualOptions.sorted ?? false;
     this.transform = actualOptions.transform;
 
+    // The cache is checked against the contents of the file when it is read, without a listener: a storage is created
+    // by generator, and a listener each made every change of the store call every storage.
     this.existed = Object.keys(this._store).length > 0;
+  }
 
-    this.fs.store.on('change', filename => {
-      // At mem-fs 1.1.3 filename is not passed to the event.
-      if (this.disableCacheByFile || (filename && filename !== this.path)) {
-        return;
-      }
+  /**
+   * The contents of the storage file in the mem-fs store.
+   */
+  private get fileContents(): Buffer | null | undefined {
+    return (this.fs.store.get(this.path) as { contents?: Buffer | null }).contents;
+  }
 
-      // A write of this storage leaves the content it cached; any other content makes the cache outdated.
-      if (
-        filename &&
-        this._cachedContents !== undefined &&
-        this.fs.store.get(this.path).contents === this._cachedContents
-      ) {
-        return;
-      }
-
-      delete this._cachedStore;
-      this._cachedContents = undefined;
-    });
+  private clearCache() {
+    delete this._cachedStore;
+    this._cachedContents = undefined;
   }
 
   /**
@@ -187,9 +188,18 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    */
   writeContent(fullStore: StorageValue): string {
     const contents = Buffer.from(`${JSON.stringify(fullStore, undefined, this.indent)}\n`);
-    // The file keeps this buffer as its contents: the change listener keeps the cache for it only.
+    // The file keeps this buffer as its contents: the cache is kept for it only, a write nested in the change
+    // notification of this one gives the file other contents and makes it outdated.
     this._cachedContents = this.disableCache ? undefined : contents;
     this.fs.write(this.path, contents);
+    if (this._cachedContents) {
+      // A write of the contents the file already has leaves the file as it is, with its own buffer.
+      const { fileContents } = this;
+      if (fileContents && fileContents !== contents && fileContents.equals(contents)) {
+        this._cachedContents = fileContents;
+      }
+    }
+
     return contents.toString();
   }
 
@@ -199,9 +209,18 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    * @private
    */
   get _store(): StorageRecord {
-    const store = this._cachedStore ?? this.readContent();
-    if (!this.disableCache) {
-      this._cachedStore = store;
+    if (this._cachedStore !== undefined && this.fileContents !== this._cachedContents) {
+      this.clearCache();
+    }
+
+    let store = this._cachedStore;
+    if (store === undefined) {
+      const contents = this.fileContents;
+      store = this.readContent();
+      if (!this.disableCache) {
+        this._cachedStore = store;
+        this._cachedContents = contents;
+      }
     }
 
     if (!this.name) {
@@ -234,8 +253,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
     }
 
     // What is written is the cache, so the objects read from this storage before the write, like a nested object of its
-    // proxy, are still the stored ones; the change listener keeps it for this content only, a write nested in the
-    // notification of this one makes it outdated.
+    // proxy, are still the stored ones; it is kept for the contents written only.
     if (!this.disableCache) {
       this._cachedStore = fullStore;
     }

@@ -603,25 +603,76 @@ describe('Storage', () => {
     });
 
     it('cleanups when the file changes', () => {
-      editor.writeJSON(store.path, {});
-      expect(store._cachedStore === undefined).toBeTruthy();
+      const cached = store._cachedStore;
+      editor.writeJSON(store.path, { test: { foo: 'changed' } });
+      expect(store.get('foo')).toBe('changed');
+      expect(store._cachedStore).not.toBe(cached);
     });
 
     it("doesn't cleanup when another file changes", () => {
+      const cached = store._cachedStore;
       editor.write('a.txt', 'anything');
-      expect(store._cachedStore).toBeTruthy();
+      expect(store.get('foo')).toBe('bar');
+      expect(store._cachedStore).toBe(cached);
     });
 
-    it('cleanups when per file cache is disabled and another file changes', () => {
-      editor.writeJSON(store.path, { disableCacheByFile: true });
-      editor.write('a.txt', 'anything');
-      expect(store._cachedStore === undefined).toBeTruthy();
+    it("doesn't cleanup on a write of the contents the file already has", () => {
+      const cached = store._cachedStore;
+      editor.write(store.path, editor.read(store.path)!);
+      store.get('foo');
+      expect(store._cachedStore).toBe(cached);
     });
 
-    // Compatibility for mem-fs <= 1.1.3
-    it('cleanups when change event argument is undefined', () => {
-      memFsInstance.emit('change');
-      expect(store._cachedStore === undefined).toBeTruthy();
+    it('keeps the cache when another file changes with the deprecated disableCacheByFile', () => {
+      const listeners = memFsInstance.listenerCount('change');
+      const byFileStore = new Storage('test', editor, storePath, { disableCacheByFile: true });
+      byFileStore.get('foo');
+      const cached = byFileStore._cachedStore;
+      editor.write('a.txt', 'anything');
+      expect(byFileStore.get('foo')).toBe('bar');
+      expect(byFileStore._cachedStore).toBe(cached);
+      expect(memFsInstance.listenerCount('change')).toBe(listeners);
+    });
+
+    it("doesn't listen to the changes of the mem-fs store", () => {
+      const listeners = memFsInstance.listenerCount('change');
+      const otherStore = new Storage('other', editor, storePath);
+      otherStore.createStorage('child').get('foo');
+      expect(memFsInstance.listenerCount('change')).toBe(listeners);
+    });
+
+    it('sees the writes of a child storage, and the child the writes of its parent', () => {
+      const parent = new Storage(editor, storePath);
+      const child = parent.createStorage('child');
+      parent.get('test');
+      child.get('foo');
+
+      child.set('foo', 'from-child');
+      expect(parent.get('child')).toEqual({ foo: 'from-child' });
+
+      parent.set('child', { foo: 'from-parent' });
+      expect(child.get('foo')).toBe('from-parent');
+    });
+
+    it('sees the writes of the storages of other generators, with their own editors on the same mem-fs store', () => {
+      const otherGenerator = createMemFsEditor(memFsInstance);
+      const otherConfig = new Storage('test', otherGenerator, storePath);
+      const otherGeneratorConfig = otherConfig.createStorage(':app');
+      expect(otherConfig.get('foo')).toBe('bar');
+
+      store.set('foo', 'from-first');
+      expect(otherConfig.get('foo')).toBe('from-first');
+
+      otherGeneratorConfig.set('flag', true);
+      otherConfig.set('foo', 'from-second');
+      expect(store.get('foo')).toBe('from-second');
+      expect(store.get(':app')).toEqual({ flag: true });
+    });
+
+    it('sees the writes of another storage of the same file', () => {
+      const other = new Storage('test', editor, storePath);
+      other.set('foo', 'from-other');
+      expect(store.get('foo')).toBe('from-other');
     });
   });
 
