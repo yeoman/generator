@@ -2,18 +2,16 @@
 
 ## [10.1.0](https://github.com/yeoman/generator/compare/v10.0.1...v10.1.0) (2026-10-17)
 
-
 ### Features
 
-* **storage:** add parseContent, serializeContent and defaultContent hooks ([#1882](https://github.com/yeoman/generator/issues/1882)) ([7bcc126](https://github.com/yeoman/generator/commit/7bcc12629eddab82a4d273e297c670569e9fb1f4))
-* use the namespaceId option for the instance of the generator ([#1875](https://github.com/yeoman/generator/issues/1875)) ([306aa99](https://github.com/yeoman/generator/commit/306aa99ecf50ac9aaec0f93831354f71401cc730))
-
+- **storage:** add parseContent, serializeContent and defaultContent hooks ([#1882](https://github.com/yeoman/generator/issues/1882)) ([7bcc126](https://github.com/yeoman/generator/commit/7bcc12629eddab82a4d273e297c670569e9fb1f4))
+- use the namespaceId option for the instance of the generator ([#1875](https://github.com/yeoman/generator/issues/1875)) ([306aa99](https://github.com/yeoman/generator/commit/306aa99ecf50ac9aaec0f93831354f71401cc730))
 
 ### Bug Fixes
 
-* **lifecycle:** register a custom priority after the one it is added before ([#1876](https://github.com/yeoman/generator/issues/1876)) ([c4df879](https://github.com/yeoman/generator/commit/c4df8794febf2a33755fc0665e405b05515d5bbf))
-* skip a package.json without name nor version looking the root generator package up ([#1878](https://github.com/yeoman/generator/issues/1878)) ([9e6dd1f](https://github.com/yeoman/generator/commit/9e6dd1f646a509653ed9e6ae4f5197fd8f8c5aca))
-* **storage:** check the cache against the file contents instead of a change listener per storage ([#1881](https://github.com/yeoman/generator/issues/1881)) ([9da1688](https://github.com/yeoman/generator/commit/9da1688e814549d4b8188114fe59c9977f1ca642))
+- **lifecycle:** register a custom priority after the one it is added before ([#1876](https://github.com/yeoman/generator/issues/1876)) ([c4df879](https://github.com/yeoman/generator/commit/c4df8794febf2a33755fc0665e405b05515d5bbf))
+- skip a package.json without name nor version looking the root generator package up ([#1878](https://github.com/yeoman/generator/issues/1878)) ([9e6dd1f](https://github.com/yeoman/generator/commit/9e6dd1f646a509653ed9e6ae4f5197fd8f8c5aca))
+- **storage:** check the cache against the file contents instead of a change listener per storage ([#1881](https://github.com/yeoman/generator/issues/1881)) ([9da1688](https://github.com/yeoman/generator/commit/9da1688e814549d4b8188114fe59c9977f1ca642))
 
 ## [10.0.1](https://github.com/yeoman/generator/compare/v10.0.0...v10.0.1) (2026-10-07)
 
