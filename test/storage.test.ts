@@ -623,12 +623,15 @@ describe('Storage', () => {
       expect(store._cachedStore).toBe(cached);
     });
 
-    it('cleanups when per file cache is disabled and another file changes', () => {
+    it('keeps the cache when another file changes with the deprecated disableCacheByFile', () => {
+      const listeners = memFsInstance.listenerCount('change');
       const byFileStore = new Storage('test', editor, storePath, { disableCacheByFile: true });
       byFileStore.get('foo');
-      expect(byFileStore._cachedStore).toBeTruthy();
+      const cached = byFileStore._cachedStore;
       editor.write('a.txt', 'anything');
-      expect(byFileStore._cachedStore === undefined).toBeTruthy();
+      expect(byFileStore.get('foo')).toBe('bar');
+      expect(byFileStore._cachedStore).toBe(cached);
+      expect(memFsInstance.listenerCount('change')).toBe(listeners);
     });
 
     it("doesn't listen to the changes of the mem-fs store", () => {

@@ -54,7 +54,7 @@ export type StorageOptions = {
    */
   disableCache?: boolean;
   /**
-   * Set true to cleanup cache for every fs change, instead of only when the contents of the storage file change.
+   * @deprecated Has no effect: the cache is dropped when the contents of the storage file change, whoever changes them.
    */
   disableCacheByFile?: boolean;
   /**
@@ -91,6 +91,9 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
   indent: number;
   lodashPath: boolean;
   disableCache: boolean;
+  /**
+   * @deprecated Has no effect: the cache is dropped when the contents of the storage file change, whoever changes them.
+   */
   disableCacheByFile: boolean;
   sorted: boolean;
   existed: boolean;
@@ -149,15 +152,9 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
     this.sorted = actualOptions.sorted ?? false;
     this.transform = actualOptions.transform;
 
-    this.existed = Object.keys(this._store).length > 0;
-
     // The cache is checked against the contents of the file when it is read, without a listener: a storage is created
     // by generator, and a listener each made every change of the store call every storage.
-    if (this.disableCacheByFile) {
-      this.fs.store.on('change', () => {
-        this.clearCache();
-      });
-    }
+    this.existed = Object.keys(this._store).length > 0;
   }
 
   /**
