@@ -15,7 +15,7 @@ type WriteJSONSpace = WriteJSONParameters[3];
 type WriteJSONOptions = WriteOptions & PathOptions & { replacer?: WriteJSONReplacer; space?: WriteJSONSpace };
 type DeleteOptions = NonNullable<Parameters<MemFsEditor['delete']>[1]>;
 /**
- * The context of a template rendered with the `disableTemplateContext` feature: reading a property of `this` throws.
+ * The context of a template rendered with the `templateContext` feature `'throw'`: reading a property of `this` throws.
  */
 const createDisabledTemplateContext = (templatePath: string): object =>
   new Proxy(Object.create(null), {
@@ -34,7 +34,7 @@ const createDisabledTemplateContext = (templatePath: string): object =>
 const warnedTemplateContexts = new WeakMap<object, Set<string>>();
 
 /**
- * The context of a template rendered without the `disableTemplateContext` feature: the generator, warning once by
+ * The context of a template rendered with the `templateContext` feature `'warn'`: the generator, warning once by
  * template and property read from `this`. A method keeps the generator as `this`, for its private fields.
  */
 const createWarningTemplateContext = (generator: BaseGenerator, templatePath: string): object =>
@@ -51,7 +51,7 @@ const createWarningTemplateContext = (generator: BaseGenerator, templatePath: st
         const key = `${templatePath}#${property}`;
         if (!warned.has(key)) {
           warned.add(key);
-          const message = `${chalk.yellow('(!)')} Template ${templatePath} reads this.${property}: the generator will not be the context of its templates in the next major, pass it in the template data (the disableTemplateContext feature, true, renders without it)`;
+          const message = `${chalk.yellow('(!)')} Template ${templatePath} reads this.${property}: the generator will not be the context of its templates in the next major, pass it in the template data (the templateContext feature 'throw' renders without it)`;
           // A generator without an environment adapter has no log.
           if (typeof target.log === 'function') {
             target.log(message);
@@ -66,18 +66,27 @@ const createWarningTemplateContext = (generator: BaseGenerator, templatePath: st
   });
 
 /**
- * The context of a template: the generator with the `disableTemplateContext` feature false, the generator warning on
- * its use when the feature is not set, none when it is true.
+ * The context of a template, by the `templateContext` feature.
  */
-const getTemplateContext = (generator: BaseGenerator, templatePath: string): object => {
-  const { disableTemplateContext } = generator.features;
-  if (disableTemplateContext === false) {
-    return generator;
-  }
+const getTemplateContext = (generator: BaseGenerator, templatePath: string): object | undefined => {
+  const { templateContext = 'warn' } = generator.features;
+  switch (templateContext) {
+    case 'generator': {
+      return generator;
+    }
 
-  return disableTemplateContext
-    ? createDisabledTemplateContext(templatePath)
-    : createWarningTemplateContext(generator, templatePath);
+    case 'throw': {
+      return createDisabledTemplateContext(templatePath);
+    }
+
+    case 'none': {
+      return undefined;
+    }
+
+    default: {
+      return createWarningTemplateContext(generator, templatePath);
+    }
+  }
 };
 
 type CopyTplOptions = NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>;

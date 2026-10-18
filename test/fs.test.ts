@@ -279,7 +279,7 @@ describe('generators.Base (actions/fs)', () => {
         base.renderTemplate('from', 'to', {}, { metadata: { other: true } });
         const [call] = (base.fs.copyTpl as ReturnType<typeof vi.fn>).mock.calls;
         expect(call[3].metadata).toEqual({ foo: 'bar', other: true });
-        // The generator, warning on its use without the disableTemplateContext feature.
+        // The generator, warning on its use with the default templateContext feature.
         expect(call[3].transformOptions.context.fs).toBe(base.fs);
       });
     });
@@ -384,7 +384,7 @@ describe('generators.Base (actions/fs)', () => {
     });
   });
 
-  describe('disableTemplateContext feature', () => {
+  describe('templateContext feature', () => {
     let root: string;
     const createGenerator = (features?: BaseFeatures) => {
       const generator = new Base({ env: createEnv(), namespace: 'dummy:app' }, features);
@@ -406,8 +406,8 @@ describe('generators.Base (actions/fs)', () => {
       rmSync(root, { recursive: true, force: true });
     });
 
-    it('renders with the generator as the context, without a warning, when the feature is false', async () => {
-      const generator = createGenerator({ disableTemplateContext: false });
+    it("renders with the generator as the context, without a warning, with 'generator'", async () => {
+      const generator = createGenerator({ templateContext: 'generator' });
       const log = vi.fn();
       (generator as any).log = log;
       generator.renderTemplate('context.txt', 'sync.txt', {});
@@ -417,7 +417,7 @@ describe('generators.Base (actions/fs)', () => {
       expect(log).not.toHaveBeenCalled();
     });
 
-    it('renders with the generator as the context, warning once by template and property, when the feature is not set', async () => {
+    it('renders with the generator as the context, warning once by template and property, by default', async () => {
       const generator = createGenerator();
       const log = vi.fn();
       (generator as any).log = log;
@@ -432,15 +432,37 @@ describe('generators.Base (actions/fs)', () => {
       );
     });
 
-    it('calls a method of the generator with the generator as this when the feature is not set', () => {
+    it('calls a method of the generator with the generator as this, warning, by default', () => {
       const generator = createGenerator();
       (generator as any).log = vi.fn();
       generator.renderTemplate('method.txt', 'method.txt', {});
       expect(generator.readDestination('method.txt')).toBe(generator.destinationPath('file'));
     });
 
-    it('renders the data of a template', async () => {
-      const generator = createGenerator({ disableTemplateContext: true });
+    it("warns with 'warn' as by default", () => {
+      const generator = createGenerator({ templateContext: 'warn' });
+      const log = vi.fn();
+      (generator as any).log = log;
+      generator.renderTemplate('context.txt', 'sync.txt', {});
+      expect(generator.readDestination('sync.txt')).toBe('from-generator');
+      expect(log).toHaveBeenCalledTimes(1);
+    });
+
+    it("passes no context with 'none'", async () => {
+      const generator = createGenerator({ templateContext: 'none' });
+      const log = vi.fn();
+      (generator as any).log = log;
+      generator.renderTemplate('data.txt', 'data.txt', { name: 'data' });
+      generator.renderTemplate('context.txt', 'sync.txt', {});
+      await generator.renderTemplateAsync('context.txt', 'async.txt', {});
+      expect(generator.readDestination('data.txt')).toBe('data');
+      expect(generator.readDestination('sync.txt')).toBe('');
+      expect(generator.readDestination('async.txt')).toBe('');
+      expect(log).not.toHaveBeenCalled();
+    });
+
+    it("renders the data of a template with 'throw'", async () => {
+      const generator = createGenerator({ templateContext: 'throw' });
       generator.renderTemplate('data.txt', 'sync.txt', { name: 'sync' });
       await generator.renderTemplateAsync('data.txt', 'async.txt', { name: 'async' });
       generator.renderTemplates([{ source: 'data.txt', destination: 'many.txt' }], { name: 'many' });
@@ -449,15 +471,15 @@ describe('generators.Base (actions/fs)', () => {
       expect(generator.readDestination('many.txt')).toBe('many');
     });
 
-    it('throws naming the template and the property read from this', async () => {
-      const generator = createGenerator({ disableTemplateContext: true });
+    it("throws naming the template and the property read from this with 'throw'", async () => {
+      const generator = createGenerator({ templateContext: 'throw' });
       const message = /Template .*context\.txt reads this\.foo: the generator is not the context of its templates/;
       expect(() => generator.renderTemplate('context.txt', 'sync.txt', {})).toThrow(message);
       await expect(generator.renderTemplateAsync('context.txt', 'async.txt', {})).rejects.toThrow(message);
     });
 
     it('uses a context passed in transformOptions', () => {
-      const generator = createGenerator({ disableTemplateContext: true });
+      const generator = createGenerator({ templateContext: 'throw' });
       generator.renderTemplate('context.txt', 'sync.txt', {}, { transformOptions: { context: { foo: 'explicit' } } });
       expect(generator.readDestination('sync.txt')).toBe('explicit');
     });
