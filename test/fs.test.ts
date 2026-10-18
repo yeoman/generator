@@ -1,9 +1,12 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import type { Data as TemplateData } from 'ejs';
 import Environment from 'yeoman-environment';
 import { BaseGenerator } from '../src/generator.js';
+import type { BaseFeatures } from '../src/types.js';
 import Base from './utils.js';
 
 const randomString = () => Math.random().toString(36).slice(7);
@@ -377,6 +380,59 @@ describe('generators.Base (actions/fs)', () => {
       expect(templateCalls).toEqual([['from', { allowOutsideRoot: true }]]);
       const [call] = (base.fs.copyTpl as ReturnType<typeof vi.fn>).mock.calls;
       expect(call[3]).not.toHaveProperty('allowOutsideRoot');
+    });
+  });
+
+  describe('disableTemplateContext feature', () => {
+    let root: string;
+    const createGenerator = (features?: BaseFeatures) => {
+      const generator = new Base({ env: createEnv(), namespace: 'dummy:app' }, features);
+      generator.sourceRoot(path.join(root, 'templates'));
+      generator.destinationRoot(path.join(root, 'destination'));
+      (generator as any).foo = 'from-generator';
+      return generator;
+    };
+
+    beforeAll(() => {
+      root = mkdtempSync(path.join(os.tmpdir(), 'yeoman-template-context-'));
+      mkdirSync(path.join(root, 'templates'), { recursive: true });
+      writeFileSync(path.join(root, 'templates', 'data.txt'), '<%= name %>');
+      writeFileSync(path.join(root, 'templates', 'context.txt'), '<%= this.foo %>');
+    });
+
+    afterAll(() => {
+      rmSync(root, { recursive: true, force: true });
+    });
+
+    it('renders with the generator as the context by default', async () => {
+      const generator = createGenerator();
+      generator.renderTemplate('context.txt', 'sync.txt', {});
+      await generator.renderTemplateAsync('context.txt', 'async.txt', {});
+      expect(generator.readDestination('sync.txt')).toBe('from-generator');
+      expect(generator.readDestination('async.txt')).toBe('from-generator');
+    });
+
+    it('renders the data of a template', async () => {
+      const generator = createGenerator({ disableTemplateContext: true });
+      generator.renderTemplate('data.txt', 'sync.txt', { name: 'sync' });
+      await generator.renderTemplateAsync('data.txt', 'async.txt', { name: 'async' });
+      generator.renderTemplates([{ source: 'data.txt', destination: 'many.txt' }], { name: 'many' });
+      expect(generator.readDestination('sync.txt')).toBe('sync');
+      expect(generator.readDestination('async.txt')).toBe('async');
+      expect(generator.readDestination('many.txt')).toBe('many');
+    });
+
+    it('throws naming the template and the property read from this', async () => {
+      const generator = createGenerator({ disableTemplateContext: true });
+      const message = /Template .*context\.txt reads this\.foo: the generator is not the context of its templates/;
+      expect(() => generator.renderTemplate('context.txt', 'sync.txt', {})).toThrow(message);
+      await expect(generator.renderTemplateAsync('context.txt', 'async.txt', {})).rejects.toThrow(message);
+    });
+
+    it('uses a context passed in transformOptions', () => {
+      const generator = createGenerator({ disableTemplateContext: true });
+      generator.renderTemplate('context.txt', 'sync.txt', {}, { transformOptions: { context: { foo: 'explicit' } } });
+      expect(generator.readDestination('sync.txt')).toBe('explicit');
     });
   });
 

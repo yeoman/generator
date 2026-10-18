@@ -13,6 +13,22 @@ type WriteJSONReplacer = WriteJSONParameters[2];
 type WriteJSONSpace = WriteJSONParameters[3];
 type WriteJSONOptions = WriteOptions & PathOptions & { replacer?: WriteJSONReplacer; space?: WriteJSONSpace };
 type DeleteOptions = NonNullable<Parameters<MemFsEditor['delete']>[1]>;
+/**
+ * The context of a template rendered with the `disableTemplateContext` feature: reading a property of `this` throws.
+ */
+const createDisabledTemplateContext = (templatePath: string): object =>
+  new Proxy(Object.create(null), {
+    get(_target, property) {
+      if (typeof property === 'symbol') {
+        return;
+      }
+
+      throw new Error(
+        `Template ${templatePath} reads this.${property}: the generator is not the context of its templates, pass it in the template data`,
+      );
+    },
+  });
+
 type CopyTplOptions = NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>;
 type CopyTplAsyncOptions = NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>;
 
@@ -394,7 +410,7 @@ export class FsMixin {
         fromBasePath: this.templatePath(),
         ...copyTplOptions,
         transformOptions: {
-          context: this,
+          context: this.features.disableTemplateContext ? createDisabledTemplateContext(templatePath) : this,
           ...copyTplOptions?.transformOptions,
         },
       }),
@@ -447,7 +463,7 @@ export class FsMixin {
         fromBasePath: this.templatePath(),
         ...copyTplOptions,
         transformOptions: {
-          context: this,
+          context: this.features.disableTemplateContext ? createDisabledTemplateContext(templatePath) : this,
           ...copyTplOptions?.transformOptions,
         },
       }),

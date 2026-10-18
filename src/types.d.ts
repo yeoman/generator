@@ -134,6 +134,14 @@ export type BaseFeatures = Merge<
      * Can be overridden per call using the `allowOutsideRoot` option.
      */
     allowDestinationOutsideRoot?: boolean;
+
+    /**
+     * Render the templates of `renderTemplate`, `renderTemplateAsync`, `renderTemplates` and `renderTemplatesAsync`
+     * without the generator as their context (`this`): a template reads only its data, and reading a property of `this`
+     * throws. A `context` passed in `transformOptions` is still used. Templates rendered with `this.fs.copyTpl` directly
+     * are not affected.
+     */
+    disableTemplateContext?: boolean;
   },
   FeaturesApi
 >;
