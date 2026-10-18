@@ -1,9 +1,12 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import type { Data as TemplateData } from 'ejs';
 import Environment from 'yeoman-environment';
 import { BaseGenerator } from '../src/generator.js';
+import type { BaseFeatures } from '../src/types.js';
 import Base from './utils.js';
 
 const randomString = () => Math.random().toString(36).slice(7);
@@ -377,6 +380,109 @@ describe('generators.Base (actions/fs)', () => {
       expect(templateCalls).toEqual([['from', { allowOutsideRoot: true }]]);
       const [call] = (base.fs.copyTpl as ReturnType<typeof vi.fn>).mock.calls;
       expect(call[3]).not.toHaveProperty('allowOutsideRoot');
+    });
+  });
+
+  describe('templateContext feature', () => {
+    let root: string;
+    const createGenerator = (features?: BaseFeatures) => {
+      const generator = new Base({ env: createEnv(), namespace: 'dummy:app' }, features);
+      generator.sourceRoot(path.join(root, 'templates'));
+      generator.destinationRoot(path.join(root, 'destination'));
+      (generator as any).foo = 'from-generator';
+      return generator;
+    };
+
+    beforeAll(() => {
+      root = mkdtempSync(path.join(os.tmpdir(), 'yeoman-template-context-'));
+      mkdirSync(path.join(root, 'templates'), { recursive: true });
+      writeFileSync(path.join(root, 'templates', 'data.txt'), '<%= name %>');
+      writeFileSync(path.join(root, 'templates', 'context.txt'), '<%= this.foo %>');
+      writeFileSync(path.join(root, 'templates', 'method.txt'), "<%= this.destinationPath('file') %>");
+    });
+
+    afterAll(() => {
+      rmSync(root, { recursive: true, force: true });
+    });
+
+    it("renders with the generator as the context, without a warning, with 'generator'", async () => {
+      const generator = createGenerator({ templateContext: 'generator' });
+      const log = vi.fn();
+      (generator as any).log = log;
+      generator.renderTemplate('context.txt', 'sync.txt', {});
+      await generator.renderTemplateAsync('context.txt', 'async.txt', {});
+      expect(generator.readDestination('sync.txt')).toBe('from-generator');
+      expect(generator.readDestination('async.txt')).toBe('from-generator');
+      expect(log).not.toHaveBeenCalled();
+    });
+
+    it("renders with the generator as the context, warning once by template and property, with 'warn'", async () => {
+      const generator = createGenerator({ templateContext: 'warn' });
+      const log = vi.fn();
+      (generator as any).log = log;
+      generator.renderTemplate('context.txt', 'sync.txt', {});
+      await generator.renderTemplateAsync('context.txt', 'async.txt', {});
+      generator.renderTemplate('context.txt', 'again.txt', {});
+      expect(generator.readDestination('sync.txt')).toBe('from-generator');
+      expect(generator.readDestination('async.txt')).toBe('from-generator');
+      expect(log).toHaveBeenCalledTimes(1);
+      expect(log.mock.calls[0][0]).toMatch(
+        /Template .*context\.txt reads this\.foo: the generator will not be the context/,
+      );
+    });
+
+    it("calls a method of the generator with the generator as this with 'warn'", () => {
+      const generator = createGenerator({ templateContext: 'warn' });
+      (generator as any).log = vi.fn();
+      generator.renderTemplate('method.txt', 'method.txt', {});
+      expect(generator.readDestination('method.txt')).toBe(generator.destinationPath('file'));
+    });
+
+    it('renders with the generator as the context, without a warning, by default', async () => {
+      const generator = createGenerator();
+      const log = vi.fn();
+      (generator as any).log = log;
+      generator.renderTemplate('context.txt', 'sync.txt', {});
+      await generator.renderTemplateAsync('context.txt', 'async.txt', {});
+      expect(generator.readDestination('sync.txt')).toBe('from-generator');
+      expect(generator.readDestination('async.txt')).toBe('from-generator');
+      expect(log).not.toHaveBeenCalled();
+    });
+
+    it("passes no context with 'none'", async () => {
+      const generator = createGenerator({ templateContext: 'none' });
+      const log = vi.fn();
+      (generator as any).log = log;
+      generator.renderTemplate('data.txt', 'data.txt', { name: 'data' });
+      generator.renderTemplate('context.txt', 'sync.txt', {});
+      await generator.renderTemplateAsync('context.txt', 'async.txt', {});
+      expect(generator.readDestination('data.txt')).toBe('data');
+      expect(generator.readDestination('sync.txt')).toBe('');
+      expect(generator.readDestination('async.txt')).toBe('');
+      expect(log).not.toHaveBeenCalled();
+    });
+
+    it("renders the data of a template with 'throw'", async () => {
+      const generator = createGenerator({ templateContext: 'throw' });
+      generator.renderTemplate('data.txt', 'sync.txt', { name: 'sync' });
+      await generator.renderTemplateAsync('data.txt', 'async.txt', { name: 'async' });
+      generator.renderTemplates([{ source: 'data.txt', destination: 'many.txt' }], { name: 'many' });
+      expect(generator.readDestination('sync.txt')).toBe('sync');
+      expect(generator.readDestination('async.txt')).toBe('async');
+      expect(generator.readDestination('many.txt')).toBe('many');
+    });
+
+    it("throws naming the template and the property read from this with 'throw'", async () => {
+      const generator = createGenerator({ templateContext: 'throw' });
+      const message = /Template .*context\.txt reads this\.foo: the generator is not the context of its templates/;
+      expect(() => generator.renderTemplate('context.txt', 'sync.txt', {})).toThrow(message);
+      await expect(generator.renderTemplateAsync('context.txt', 'async.txt', {})).rejects.toThrow(message);
+    });
+
+    it('uses a context passed in transformOptions', () => {
+      const generator = createGenerator({ templateContext: 'throw' });
+      generator.renderTemplate('context.txt', 'sync.txt', {}, { transformOptions: { context: { foo: 'explicit' } } });
+      expect(generator.readDestination('sync.txt')).toBe('explicit');
     });
   });
 

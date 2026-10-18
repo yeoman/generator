@@ -1,5 +1,6 @@
 /* eslint max-params: [1, 6] */
 import assert from 'node:assert';
+import chalk from 'chalk';
 import { type MemFsEditor } from 'mem-fs-editor';
 import type { BaseGenerator } from '../generator.js';
 import type { PathOptions } from '../types.js';
@@ -13,6 +14,81 @@ type WriteJSONReplacer = WriteJSONParameters[2];
 type WriteJSONSpace = WriteJSONParameters[3];
 type WriteJSONOptions = WriteOptions & PathOptions & { replacer?: WriteJSONReplacer; space?: WriteJSONSpace };
 type DeleteOptions = NonNullable<Parameters<MemFsEditor['delete']>[1]>;
+/**
+ * The context of a template rendered with the `templateContext` feature `'throw'`: reading a property of `this` throws.
+ */
+const createDisabledTemplateContext = (templatePath: string): object =>
+  new Proxy(Object.create(null), {
+    get(_target, property) {
+      if (typeof property === 'symbol') {
+        return;
+      }
+
+      throw new Error(
+        `Template ${templatePath} reads this.${property}: the generator is not the context of its templates, pass it in the template data`,
+      );
+    },
+  });
+
+// The properties each generator warned a template reads from `this`, to warn once.
+const warnedTemplateContexts = new WeakMap<object, Set<string>>();
+
+/**
+ * The context of a template rendered with the `templateContext` feature `'warn'`: the generator, warning once by
+ * template and property read from `this`. A method keeps the generator as `this`, for its private fields.
+ */
+const createWarningTemplateContext = (generator: BaseGenerator, templatePath: string): object =>
+  new Proxy(generator, {
+    get(target, property) {
+      const value = Reflect.get(target, property, target);
+      if (typeof property !== 'symbol') {
+        let warned = warnedTemplateContexts.get(target);
+        if (!warned) {
+          warned = new Set();
+          warnedTemplateContexts.set(target, warned);
+        }
+
+        const key = `${templatePath}#${property}`;
+        if (!warned.has(key)) {
+          warned.add(key);
+          const message = `${chalk.yellow('(!)')} Template ${templatePath} reads this.${property}: the generator will not be the context of its templates in the next major, pass it in the template data (the templateContext feature 'throw' renders without it)`;
+          // A generator without an environment adapter has no log.
+          if (typeof target.log === 'function') {
+            target.log(message);
+          } else {
+            console.warn(message);
+          }
+        }
+      }
+
+      return typeof value === 'function' ? value.bind(target) : value;
+    },
+  });
+
+/**
+ * The context of a template, by the `templateContext` feature.
+ */
+const getTemplateContext = (generator: BaseGenerator, templatePath: string): object | undefined => {
+  const { templateContext = 'generator' } = generator.features;
+  switch (templateContext) {
+    case 'warn': {
+      return createWarningTemplateContext(generator, templatePath);
+    }
+
+    case 'throw': {
+      return createDisabledTemplateContext(templatePath);
+    }
+
+    case 'none': {
+      return undefined;
+    }
+
+    default: {
+      return generator;
+    }
+  }
+};
+
 type CopyTplOptions = NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>;
 type CopyTplAsyncOptions = NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>;
 
@@ -394,7 +470,7 @@ export class FsMixin {
         fromBasePath: this.templatePath(),
         ...copyTplOptions,
         transformOptions: {
-          context: this,
+          context: getTemplateContext(this, templatePath),
           ...copyTplOptions?.transformOptions,
         },
       }),
@@ -447,7 +523,7 @@ export class FsMixin {
         fromBasePath: this.templatePath(),
         ...copyTplOptions,
         transformOptions: {
-          context: this,
+          context: getTemplateContext(this, templatePath),
           ...copyTplOptions?.transformOptions,
         },
       }),
