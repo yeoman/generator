@@ -887,6 +887,56 @@ describe('Base', () => {
     });
   });
 
+  describe('#cancelCancellableTasks() in beforeQueue', () => {
+    it('cancels the cancellable own tasks, keeping the tasks not cancellable and the generators composed', async () => {
+      const calls: string[] = [];
+      env.register(
+        class extends Base {
+          writing() {
+            calls.push('composed');
+          }
+        },
+        { namespace: 'composed:gen' },
+      );
+
+      class Main extends Base {
+        async _beforeQueue() {
+          await this.composeWith('composed:gen');
+          this.queueTask({
+            method() {
+              calls.push('not cancellable');
+            },
+            taskName: 'notCancellable',
+            queueName: 'writing',
+          });
+          this.cancelCancellableTasks();
+        }
+
+        writing() {
+          calls.push('own cancellable');
+        }
+      }
+
+      const generator = new Main([], { resolved: resolveddir, namespace: 'main:app', env });
+      await env.runGenerator(generator);
+      expect(calls.toSorted()).toEqual(['composed', 'not cancellable']);
+    });
+
+    it('runs the own tasks without a cancel in beforeQueue', async () => {
+      const calls: string[] = [];
+      class Main extends Base {
+        async _beforeQueue() {}
+
+        writing() {
+          calls.push('own cancellable');
+        }
+      }
+
+      await env.runGenerator(new Main([], { resolved: resolveddir, namespace: 'main:app', env }));
+      expect(calls).toEqual(['own cancellable']);
+    });
+  });
+
   describe('#composeWith()', () => {
     let spy: ReturnType<typeof vi.fn>;
     let GenCompose: typeof Base;

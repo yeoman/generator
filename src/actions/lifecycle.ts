@@ -420,11 +420,20 @@ export abstract class TasksMixin {
           : undefined;
     }
 
+    // The status of the tasks queued before the own tasks: a cancelCancellableTasks() in beforeQueue cancels it, and the
+    // cancellable own tasks queued next.
+    const beforeQueueStatus: TaskStatus = { cancelled: false, timestamp: new Date() };
+    this._taskStatus = beforeQueueStatus;
+
     if (beforeQueueCallback) {
       await beforeQueueCallback.call(this);
     }
 
     await this._queueTasks();
+
+    if (beforeQueueStatus.cancelled) {
+      this.cancelCancellableTasks();
+    }
   }
 
   async _queueTasks(this: BaseGeneratorImpl): Promise<void> {
