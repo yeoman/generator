@@ -2,15 +2,13 @@
 
 ## [10.2.0](https://github.com/yeoman/generator/compare/v10.1.0...v10.2.0) (2026-10-18)
 
-
 ### Features
 
-* add the templateContext feature ([#1883](https://github.com/yeoman/generator/issues/1883)) ([30e6b8a](https://github.com/yeoman/generator/commit/30e6b8a33e6ff4e9861a931b70f5638c6652cc7b))
-
+- add the templateContext feature ([#1883](https://github.com/yeoman/generator/issues/1883)) ([30e6b8a](https://github.com/yeoman/generator/commit/30e6b8a33e6ff4e9861a931b70f5638c6652cc7b))
 
 ### Bug Fixes
 
-* a cancelCancellableTasks() in beforeQueue cancels the own tasks queued next ([#1884](https://github.com/yeoman/generator/issues/1884)) ([59cd8f2](https://github.com/yeoman/generator/commit/59cd8f2b6cd456b2224e12af5df4e8a8034d2274))
+- a cancelCancellableTasks() in beforeQueue cancels the own tasks queued next ([#1884](https://github.com/yeoman/generator/issues/1884)) ([59cd8f2](https://github.com/yeoman/generator/commit/59cd8f2b6cd456b2224e12af5df4e8a8034d2274))
 
 ## [10.1.0](https://github.com/yeoman/generator/compare/v10.0.1...v10.1.0) (2026-10-17)
 
