@@ -1,5 +1,6 @@
 /* eslint max-params: [1, 6] */
 import assert from 'node:assert';
+import chalk from 'chalk';
 import { type MemFsEditor } from 'mem-fs-editor';
 import type { BaseGenerator } from '../generator.js';
 import type { PathOptions } from '../types.js';
@@ -28,6 +29,56 @@ const createDisabledTemplateContext = (templatePath: string): object =>
       );
     },
   });
+
+// The properties each generator warned a template reads from `this`, to warn once.
+const warnedTemplateContexts = new WeakMap<object, Set<string>>();
+
+/**
+ * The context of a template rendered without the `disableTemplateContext` feature: the generator, warning once by
+ * template and property read from `this`. A method keeps the generator as `this`, for its private fields.
+ */
+const createWarningTemplateContext = (generator: BaseGenerator, templatePath: string): object =>
+  new Proxy(generator, {
+    get(target, property) {
+      const value = Reflect.get(target, property, target);
+      if (typeof property !== 'symbol') {
+        let warned = warnedTemplateContexts.get(target);
+        if (!warned) {
+          warned = new Set();
+          warnedTemplateContexts.set(target, warned);
+        }
+
+        const key = `${templatePath}#${property}`;
+        if (!warned.has(key)) {
+          warned.add(key);
+          const message = `${chalk.yellow('(!)')} Template ${templatePath} reads this.${property}: the generator will not be the context of its templates in the next major, pass it in the template data (the disableTemplateContext feature, true, renders without it)`;
+          // A generator without an environment adapter has no log.
+          if (typeof target.log === 'function') {
+            target.log(message);
+          } else {
+            console.warn(message);
+          }
+        }
+      }
+
+      return typeof value === 'function' ? value.bind(target) : value;
+    },
+  });
+
+/**
+ * The context of a template: the generator with the `disableTemplateContext` feature false, the generator warning on
+ * its use when the feature is not set, none when it is true.
+ */
+const getTemplateContext = (generator: BaseGenerator, templatePath: string): object => {
+  const { disableTemplateContext } = generator.features;
+  if (disableTemplateContext === false) {
+    return generator;
+  }
+
+  return disableTemplateContext
+    ? createDisabledTemplateContext(templatePath)
+    : createWarningTemplateContext(generator, templatePath);
+};
 
 type CopyTplOptions = NonNullable<Parameters<MemFsEditor['copyTpl']>[3]>;
 type CopyTplAsyncOptions = NonNullable<Parameters<MemFsEditor['copyTplAsync']>[3]>;
@@ -410,7 +461,7 @@ export class FsMixin {
         fromBasePath: this.templatePath(),
         ...copyTplOptions,
         transformOptions: {
-          context: this.features.disableTemplateContext ? createDisabledTemplateContext(templatePath) : this,
+          context: getTemplateContext(this, templatePath),
           ...copyTplOptions?.transformOptions,
         },
       }),
@@ -463,7 +514,7 @@ export class FsMixin {
         fromBasePath: this.templatePath(),
         ...copyTplOptions,
         transformOptions: {
-          context: this.features.disableTemplateContext ? createDisabledTemplateContext(templatePath) : this,
+          context: getTemplateContext(this, templatePath),
           ...copyTplOptions?.transformOptions,
         },
       }),

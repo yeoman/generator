@@ -136,10 +136,18 @@ export type BaseFeatures = Merge<
     allowDestinationOutsideRoot?: boolean;
 
     /**
-     * Render the templates of `renderTemplate`, `renderTemplateAsync`, `renderTemplates` and `renderTemplatesAsync`
-     * without the generator as their context (`this`): a template reads only its data, and reading a property of `this`
-     * throws. A `context` passed in `transformOptions` is still used. Templates rendered with `this.fs.copyTpl` directly
-     * are not affected.
+     * The context (`this`) of the templates of `renderTemplate`, `renderTemplateAsync`, `renderTemplates` and
+     * `renderTemplatesAsync`:
+     * - `true`: no context, a template reads only its data, and reading a property of `this` throws. It will be the
+     *   default in the next major.
+     * - not set (deprecated): the generator, with a warning once by template and property read from `this`.
+     * - `false` (deprecated): the generator, without a warning.
+     *
+     * A `context` passed in `transformOptions` is still used. Templates rendered with `this.fs.copyTpl` directly are not
+     * affected.
+     *
+     * EJS keeps the context with the compiled template: with the EJS cache, a template rendered by several generators
+     * has an unpredictable context, which `true` avoids.
      */
     disableTemplateContext?: boolean;
   },
