@@ -69,10 +69,10 @@ const createWarningTemplateContext = (generator: BaseGenerator, templatePath: st
  * The context of a template, by the `templateContext` feature.
  */
 const getTemplateContext = (generator: BaseGenerator, templatePath: string): object | undefined => {
-  const { templateContext = 'warn' } = generator.features;
+  const { templateContext = 'generator' } = generator.features;
   switch (templateContext) {
-    case 'generator': {
-      return generator;
+    case 'warn': {
+      return createWarningTemplateContext(generator, templatePath);
     }
 
     case 'throw': {
@@ -84,7 +84,7 @@ const getTemplateContext = (generator: BaseGenerator, templatePath: string): obj
     }
 
     default: {
-      return createWarningTemplateContext(generator, templatePath);
+      return generator;
     }
   }
 };

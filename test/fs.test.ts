@@ -279,8 +279,7 @@ describe('generators.Base (actions/fs)', () => {
         base.renderTemplate('from', 'to', {}, { metadata: { other: true } });
         const [call] = (base.fs.copyTpl as ReturnType<typeof vi.fn>).mock.calls;
         expect(call[3].metadata).toEqual({ foo: 'bar', other: true });
-        // The generator, warning on its use with the default templateContext feature.
-        expect(call[3].transformOptions.context.fs).toBe(base.fs);
+        expect(call[3].transformOptions.context).toBe(base);
       });
     });
   });
@@ -417,8 +416,8 @@ describe('generators.Base (actions/fs)', () => {
       expect(log).not.toHaveBeenCalled();
     });
 
-    it('renders with the generator as the context, warning once by template and property, by default', async () => {
-      const generator = createGenerator();
+    it("renders with the generator as the context, warning once by template and property, with 'warn'", async () => {
+      const generator = createGenerator({ templateContext: 'warn' });
       const log = vi.fn();
       (generator as any).log = log;
       generator.renderTemplate('context.txt', 'sync.txt', {});
@@ -432,20 +431,22 @@ describe('generators.Base (actions/fs)', () => {
       );
     });
 
-    it('calls a method of the generator with the generator as this, warning, by default', () => {
-      const generator = createGenerator();
+    it("calls a method of the generator with the generator as this with 'warn'", () => {
+      const generator = createGenerator({ templateContext: 'warn' });
       (generator as any).log = vi.fn();
       generator.renderTemplate('method.txt', 'method.txt', {});
       expect(generator.readDestination('method.txt')).toBe(generator.destinationPath('file'));
     });
 
-    it("warns with 'warn' as by default", () => {
-      const generator = createGenerator({ templateContext: 'warn' });
+    it('renders with the generator as the context, without a warning, by default', async () => {
+      const generator = createGenerator();
       const log = vi.fn();
       (generator as any).log = log;
       generator.renderTemplate('context.txt', 'sync.txt', {});
+      await generator.renderTemplateAsync('context.txt', 'async.txt', {});
       expect(generator.readDestination('sync.txt')).toBe('from-generator');
-      expect(log).toHaveBeenCalledTimes(1);
+      expect(generator.readDestination('async.txt')).toBe('from-generator');
+      expect(log).not.toHaveBeenCalled();
     });
 
     it("passes no context with 'none'", async () => {

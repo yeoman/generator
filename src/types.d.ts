@@ -138,11 +138,11 @@ export type BaseFeatures = Merge<
     /**
      * The context (`this`) of the templates of `renderTemplate`, `renderTemplateAsync`, `renderTemplates` and
      * `renderTemplatesAsync`:
-     * - `'warn'` (default): the generator, with a warning once by template and property read from `this`.
+     * - `'generator'` (default): the generator, without a warning.
+     * - `'warn'`: the generator, with a warning once by template and property read from `this`.
      * - `'throw'`: no context, a template reads only its data, and reading a property of `this` throws, naming the
      *   template. It will be the default in the next major.
      * - `'none'`: no context is passed, EJS gives the template its default `this`.
-     * - `'generator'` (deprecated): the generator, without a warning.
      *
      * A `context` passed in `transformOptions` is still used. Templates rendered with `this.fs.copyTpl` directly are not
      * affected.
