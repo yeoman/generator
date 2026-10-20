@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { cloneDeep, get, merge, set, defaults as setDefaults } from 'lodash-es';
+import { cloneDeep, get, merge, set, defaults as setDefaults } from './object.js';
 import sortKeys from 'sort-keys';
 import type { Get } from 'type-fest';
 import type { MemFsEditor } from 'mem-fs-editor';
@@ -394,7 +394,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    */
   defaults(defaults: Partial<StorageRecord>): StorageRecord {
     assert.ok(typeof defaults === 'object', 'Storage `defaults` method only accept objects');
-    const store = setDefaults({}, this._store, defaults);
+    const store = setDefaults({} as StorageRecord, this._store, defaults);
     this._persist(store);
     return this.getAll();
   }
@@ -405,7 +405,7 @@ class Storage<StorageRecord extends Record<string, any> = Record<string, any>> {
    */
   merge(source: Partial<StorageRecord>): StorageRecord {
     assert.ok(typeof source === 'object', 'Storage `merge` method only accept objects');
-    const value = merge({}, this._store, source);
+    const value = merge({} as StorageRecord, this._store, source);
     this._persist(value);
     return this.getAll();
   }
