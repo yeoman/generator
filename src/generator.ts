@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import path, { dirname, join as pathJoin, resolve as pathResolve } from 'node:path';
 import os from 'node:os';
 import { EventEmitter } from 'node:events';
 import { fileURLToPath } from 'node:url';
-import * as _ from 'lodash-es';
+import type * as Lodash from 'lodash-es';
 import { lte as semverLte } from 'semver';
 import { findUpSync } from 'find-up-simple';
 import chalk from 'chalk';
@@ -36,6 +37,7 @@ type Environment = BaseEnvironment<QueuedAdapter>;
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
+const require = createRequire(import.meta.url);
 
 const EMPTY = '@@_YEOMAN_EMPTY_MARKER_@@';
 
@@ -103,7 +105,20 @@ export class BaseGenerator<
   readonly env: Environment;
   readonly fs!: MemFsEditor;
   readonly log!: Logger;
-  readonly _ = _;
+  /**
+   * lodash, loaded at the first use: the lodash-es index imports every lodash-es module.
+   * Throws with the `disableLodashProperty` feature.
+   */
+  get _(): typeof Lodash {
+    if (this.features.disableLodashProperty) {
+      throw new Error(
+        `The generator ${this._namespace} does not provide lodash as _: the disableLodashProperty feature is set`,
+      );
+    }
+
+    return require('lodash-es') as typeof Lodash;
+  }
+
   appname!: string;
   args!: string[];
   /** Generator metadata, provided by the environment. */

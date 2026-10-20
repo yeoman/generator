@@ -155,6 +155,23 @@ describe('Base', () => {
       generator.argument('baz');
     });
 
+    it('should give lodash as _, loaded at the first use', () => {
+      const generator = new Base([], { help: true, resolved: 'test' });
+      expect(generator._.camelCase('foo bar')).toBe('fooBar');
+      expect(generator._).toBe(generator._);
+    });
+
+    it('should not give lodash as _ with the disableLodashProperty feature', () => {
+      const generator = new Base(
+        [],
+        { help: true, resolved: 'test', namespace: 'foo:app' },
+        { disableLodashProperty: true },
+      );
+      expect(() => generator._).toThrow(
+        /foo:app does not provide lodash as _: the disableLodashProperty feature is set/,
+      );
+    });
+
     it('should not fail without an env for help', () => {
       const generator = new Base([], {
         help: true,
