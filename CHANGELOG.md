@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.2.1](https://github.com/yeoman/generator/compare/v10.2.0...v10.2.1) (2026-10-20)
+
+### Performance Improvements
+
+- load lodash at the first use of the _ property, and add disableLodashProperty ([#1888](https://github.com/yeoman/generator/issues/1888)) ([830860a](https://github.com/yeoman/generator/commit/830860ae06b3ea356cb264e6ec0619136867d7c7))
+- replace lodash-es in the storage with local helpers ([#1886](https://github.com/yeoman/generator/issues/1886)) ([eceae02](https://github.com/yeoman/generator/commit/eceae023aebf5852ec1ce6c4691be7330a182198))
+
 ## [10.2.0](https://github.com/yeoman/generator/compare/v10.1.0...v10.2.0) (2026-10-18)
 
 ### Features
