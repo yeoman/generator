@@ -136,6 +136,12 @@ export type BaseFeatures = Merge<
     allowDestinationOutsideRoot?: boolean;
 
     /**
+     * Do not provide lodash as the `_` property of the generator: reading it throws. lodash, which the property loads at
+     * its first use, is then never loaded by the generator.
+     */
+    disableLodashProperty?: boolean;
+
+    /**
      * The context (`this`) of the templates of `renderTemplate`, `renderTemplateAsync`, `renderTemplates` and
      * `renderTemplatesAsync`:
      * - `'generator'` (default): the generator, without a warning.
