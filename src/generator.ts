@@ -827,6 +827,10 @@ export class BaseGenerator<
    * @return The name of the root generator
    */
   rootGeneratorName() {
+    if (this.features.rootGeneratorNameFromNamespace && this._namespaceId) {
+      return this._namespaceId.generatorHint;
+    }
+
     return this.#rootGeneratorPackageJson()?.name ?? '*';
   }
 
