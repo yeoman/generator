@@ -1583,6 +1583,27 @@ describe('Base', () => {
       expect(dummy.rootGeneratorVersion()).toBe('2.0.0');
       expect(getPackageJson).toHaveBeenCalledTimes(2);
     });
+
+    it('returns the name of the namespace with the rootGeneratorNameFromNamespace feature', () => {
+      fs.writeFileSync(
+        path.join(resolveddir, 'package.json'),
+        '{ "name": "@scope/generator-foo", "version": "1.2.3" }',
+      );
+      try {
+        const features = { rootGeneratorNameFromNamespace: true };
+        expect(new Dummy([], { resolved: resolveddir, namespace: 'foo:app', env }, features).rootGeneratorName()).toBe(
+          'generator-foo',
+        );
+        const scoped = new Dummy([], { resolved: resolveddir, namespace: '@alias/foo:app', env }, features);
+        expect(scoped.rootGeneratorName()).toBe('@alias/generator-foo');
+        expect(scoped.rootGeneratorVersion()).toBe('1.2.3');
+        expect(new Dummy([], { resolved: resolveddir, namespace: 'foo:app', env }).rootGeneratorName()).toBe(
+          '@scope/generator-foo',
+        );
+      } finally {
+        rmSync(path.join(resolveddir, 'package.json'), { force: true });
+      }
+    });
   });
 
   describe('#rootGeneratorVersion', () => {

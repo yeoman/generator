@@ -142,6 +142,13 @@ export type BaseFeatures = Merge<
     disableLodashProperty?: boolean;
 
     /**
+     * Name the root generator after the namespace it was registered with (`foo:app` is `generator-foo`, `@scope/foo:app`
+     * is `@scope/generator-foo`) instead of the name of its package.json. A package installed under an alias keeps the
+     * config section of the alias. Without a namespace, the package.json name is used.
+     */
+    rootGeneratorNameFromNamespace?: boolean;
+
+    /**
      * The context (`this`) of the templates of `renderTemplate`, `renderTemplateAsync`, `renderTemplates` and
      * `renderTemplatesAsync`:
      * - `'generator'` (default): the generator, without a warning.
