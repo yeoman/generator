@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.3.0](https://github.com/yeoman/generator/compare/v10.2.1...v10.3.0) (2026-10-28)
+
+
+### Features
+
+* add the rootGeneratorNameFromNamespace feature ([#1892](https://github.com/yeoman/generator/issues/1892)) ([326687e](https://github.com/yeoman/generator/commit/326687e8ed8fc5a3b9de64b9af157c497eb72314))
+
 ## [10.2.1](https://github.com/yeoman/generator/compare/v10.2.0...v10.2.1) (2026-10-20)
 
 ### Performance Improvements
