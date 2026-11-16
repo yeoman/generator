@@ -1,5 +1,11 @@
 # Changelog
 
+## [10.3.1](https://github.com/yeoman/generator/compare/v10.3.0...v10.3.1) (2026-11-16)
+
+### Bug Fixes
+
+- pass the namespace and the path of a composed class in the compose options ([#1895](https://github.com/yeoman/generator/issues/1895)) ([a215b16](https://github.com/yeoman/generator/commit/a215b1679446f0b0e30e5940e05bd7a3526a05c5))
+
 ## [10.3.0](https://github.com/yeoman/generator/compare/v10.2.1...v10.3.0) (2026-10-28)
 
 ### Features
