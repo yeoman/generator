@@ -648,9 +648,14 @@ export abstract class TasksMixin {
       throw new Error('Missing Generator property');
     }
 
+    // An environment before the namespace and resolved options reads them from the class, which may be shared.
     Generator.namespace = generatorNamespace;
     Generator.resolved = resolved;
-    return this.env.composeWith<G>(Generator, options);
+    return this.env.composeWith<G>(Generator, {
+      ...options,
+      namespace: generatorNamespace,
+      resolved,
+    } as EnvironmentComposeOptions<G>);
   }
 
   private async resolveGeneratorPath(this: BaseGeneratorImpl, maybePath: string): Promise<string> {
