@@ -1,0 +1,45 @@
+name: Dependabot lockfile updates
+# A Dependabot update of a production dependency is a feat, but one that changes only package-lock.json (a transitive
+# dependency) does not change the package: it is released as a chore, by the title and a commit override of
+# release-please, the squash merge of a single commit keeping the commit message.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+permissions: {}
+jobs:
+  chore:
+    # Only the pull requests of Dependabot from a branch of this repository, never from a fork.
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Release a lockfile only update as a chore
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          files=$(gh pr view "$PR" --json files --jq '[.files[].path] | unique | join(" ")')
+          if [ "$files" != "package-lock.json" ]; then
+            echo "Changes $files, not only package-lock.json"
+            exit 0
+          fi
+
+          title=$(gh pr view "$PR" --json title --jq .title)
+          body=$(gh pr view "$PR" --json body --jq .body)
+          case "$title" in
+            feat\(deps\)*) title="chore${title#feat}" ;;
+            chore\(deps\)*) ;;
+            *) echo "Title $title is not a feat(deps) update"; exit 0 ;;
+          esac
+
+          case "$body" in
+            *BEGIN_COMMIT_OVERRIDE*) gh pr edit "$PR" --title "$title" ;;
+            *)
+              printf '%s\n\nBEGIN_COMMIT_OVERRIDE\n%s\nEND_COMMIT_OVERRIDE\n' "$body" "$title" > "$RUNNER_TEMP/body.md"
+              gh pr edit "$PR" --title "$title" --body-file "$RUNNER_TEMP/body.md"
+              ;;
+          esac
