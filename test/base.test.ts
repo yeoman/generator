@@ -997,6 +997,20 @@ describe('Base', () => {
       expect(spy.mock.instances[0].options.resolved).toBe(createRequire(import.meta.url).resolve(stubPath));
     });
 
+    it('passes the namespace and the path of the composed Generator class in the compose options', async () => {
+      const stubPath = path.join(_dirname, 'fixtures/generator-mocha');
+      const composeWith = vi.spyOn(env, 'composeWith');
+
+      await dummy.composeWith({
+        Generator: GenCompose,
+        path: stubPath,
+      });
+      expect(composeWith).toHaveBeenLastCalledWith(
+        GenCompose,
+        expect.objectContaining({ namespace: 'mocha', resolved: createRequire(import.meta.url).resolve(stubPath) }),
+      );
+    });
+
     describe('object as first argument', () => {
       it('fails for missing Generator property', async () => {
         const gen = dummy;
