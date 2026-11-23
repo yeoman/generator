@@ -83,7 +83,7 @@
     "@vitest/coverage-v8": "^5.0.0",
     "@yeoman/adapter": "^5.0.0",
     "@yeoman/eslint": "1.1.0",
-    "@yeoman/transform": "^2.1.2",
+    "@yeoman/transform": "^3.0.0",
     "@yeoman/types": "^1.13.1",
     "cpy-cli": "^7.0.0",
     "ejs": "^7.0.1",
